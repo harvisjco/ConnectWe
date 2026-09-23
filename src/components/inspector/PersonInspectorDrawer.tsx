@@ -16,6 +16,7 @@ interface PersonInspectorDrawerProps {
   onUpdatePerson: (updated: Person) => void;
   onDeletePerson: (personId: string) => void;
   onOpenBridgeModal?: (person: Person) => void;
+  onOpenDossier?: (person: Person) => void;
 }
 
 export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
@@ -23,7 +24,8 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
   onClose,
   onUpdatePerson,
   onDeletePerson,
-  onOpenBridgeModal
+  onOpenBridgeModal,
+  onOpenDossier
 }) => {
   const [isEditingMemo, setIsEditingMemo] = useState(false);
   const [memoText, setMemoText] = useState(person?.memo || '');
@@ -199,6 +201,16 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
                 <span>이메일 전송</span>
               </a>
             </div>
+
+            {/* 미팅 전 1-Page AI 전략 브리핑 버튼 */}
+            <button
+              type="button"
+              onClick={() => onOpenDossier?.(person)}
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-950/80 via-purple-950/80 to-slate-900 hover:border-indigo-400 text-indigo-200 border border-indigo-500/40 text-xs font-bold transition-all active:scale-95 shadow-lg shadow-indigo-500/10"
+            >
+              <Sparkles className="w-4 h-4 text-indigo-400 animate-pulse" />
+              <span>미팅 전 1-Page AI 전략 브리핑 (Executive Dossier)</span>
+            </button>
 
             <button
               type="button"

@@ -9,8 +9,9 @@ import { GraphSearchBar } from './components/search/GraphSearchBar';
 import { CompanyAlumniView } from './components/views/CompanyAlumniView';
 import { AgeSpectrumView } from './components/views/AgeSpectrumView';
 import { NetworkCanvasView } from './components/views/NetworkCanvasView';
-import { ReferralBountyView } from './components/views/ReferralBountyView';
+import { InteractionTimelineView } from './components/views/InteractionTimelineView';
 import { PersonInspectorDrawer } from './components/inspector/PersonInspectorDrawer';
+import { ExecutiveDossierModal } from './components/inspector/ExecutiveDossierModal';
 import { ImportDataModal } from './components/import/ImportDataModal';
 import { AddPersonModal } from './components/crm/AddPersonModal';
 import { DailyDigestModal } from './components/digest/DailyDigestModal';
@@ -19,12 +20,12 @@ import { NetworkDashboard } from './components/dashboard/NetworkDashboard';
 import { EncryptionSetupModal } from './components/security/EncryptionSetupModal';
 import { UserSettingsModal } from './components/settings/UserSettingsModal';
 
-import { Building2, Calendar, Share2, CheckCircle2, Gift } from 'lucide-react';
+import { Building2, Calendar, Share2, CheckCircle2, Clock } from 'lucide-react';
 
 export const App: React.FC = () => {
   // 로컬 스토리지 기반 오프라인 퍼스트 상태
   const [people, setPeople] = useState<Person[]>(() => loadPeopleFromStorage());
-  const [activeView, setActiveView] = useState<'company' | 'age' | 'canvas' | 'referral'>('company');
+  const [activeView, setActiveView] = useState<'company' | 'age' | 'canvas' | 'timeline'>('company');
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
   // Search & GraphRAG State
@@ -39,6 +40,7 @@ export const App: React.FC = () => {
   const [isEncryptionModalOpen, setIsEncryptionModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [bridgeTargetPerson, setBridgeTargetPerson] = useState<Person | null>(null);
+  const [dossierTargetPerson, setDossierTargetPerson] = useState<Person | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // people 상태 변경 시 자동 영속화
@@ -168,18 +170,15 @@ export const App: React.FC = () => {
             </button>
 
             <button
-              onClick={() => setActiveView('referral')}
+              onClick={() => setActiveView('timeline')}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
-                activeView === 'referral'
-                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/30'
+                activeView === 'timeline'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
-              <Gift className="w-4 h-4 text-amber-400" />
-              <span>🎁 인맥 추천 & 리워드</span>
-              <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
-                바운티
-              </span>
+              <Clock className="w-4 h-4 text-emerald-400" />
+              <span>📅 소통 타임라인 &amp; 미팅 관리</span>
             </button>
           </div>
 
@@ -216,10 +215,11 @@ export const App: React.FC = () => {
             />
           )}
 
-          {activeView === 'referral' && (
-            <ReferralBountyView
+          {activeView === 'timeline' && (
+            <InteractionTimelineView
               people={people}
               onSelectPerson={setSelectedPerson}
+              onOpenDossier={(target) => setDossierTargetPerson(target)}
               onShowToast={showToast}
             />
           )}
@@ -234,6 +234,7 @@ export const App: React.FC = () => {
         onUpdatePerson={handleUpdatePerson}
         onDeletePerson={handleDeletePerson}
         onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
+        onOpenDossier={(target) => setDossierTargetPerson(target)}
       />
 
       {/* Multi-source Ingestion Modal */}
@@ -295,6 +296,16 @@ export const App: React.FC = () => {
           mePerson={mePerson}
           onUpdateMe={handleUpdatePerson}
           onClose={() => setIsSettingsModalOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* 1-Page Executive Dossier Meeting Strategy Modal */}
+      {dossierTargetPerson && (
+        <ExecutiveDossierModal
+          person={dossierTargetPerson}
+          people={people}
+          onClose={() => setDossierTargetPerson(null)}
           onShowToast={showToast}
         />
       )}
