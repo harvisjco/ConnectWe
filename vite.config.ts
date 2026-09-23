@@ -16,7 +16,8 @@ export default defineConfig({
           'vendor-react': ['react', 'react-dom'],
           // lucide 아이콘 분리
           'vendor-lucide': ['lucide-react'],
-          // DART 데이터셋은 별도 청크 (동적 import 전환 전 임시)
+          // Three.js 3D 렌더링 엔진 분리
+          'vendor-three': ['three'],
         },
       },
     },

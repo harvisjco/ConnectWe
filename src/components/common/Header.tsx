@@ -7,7 +7,7 @@ import { pickContactsFromDevice } from '../../services/contactPicker';
 import { 
   Share2, UploadCloud, Download, ShieldCheck, Clock, 
   Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
-  BarChart2, Lock, Settings
+  BarChart2, Lock, Settings, Cloud, Bot
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -18,6 +18,8 @@ interface HeaderProps {
   onOpenDashboard: () => void;
   onOpenEncryptionModal: () => void;
   onOpenSettingsModal: () => void;
+  onOpenCloudSyncModal?: () => void;
+  onOpenCopilot?: () => void;
   onUpdatePeople: (people: Person[]) => void;
   onShowToast: (msg: string) => void;
 }
@@ -30,6 +32,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenDashboard,
   onOpenEncryptionModal,
   onOpenSettingsModal,
+  onOpenCloudSyncModal,
+  onOpenCopilot,
   onUpdatePeople,
   onShowToast
 }) => {
@@ -212,6 +216,15 @@ export const Header: React.FC<HeaderProps> = ({
               <Lock className="w-3.5 h-3.5 text-amber-400" />
             </button>
 
+            {/* E2EE 클라우드 동기화 볼트 */}
+            <button
+              onClick={onOpenCloudSyncModal}
+              title="E2EE 클라우드 동기화 볼트 (Multi-device Sync)"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
+            >
+              <Cloud className="w-3.5 h-3.5 text-sky-400" />
+            </button>
+
             {/* 환경설정 및 내 프로필 */}
             <button
               onClick={onOpenSettingsModal}
@@ -219,6 +232,16 @@ export const Header: React.FC<HeaderProps> = ({
               className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
             >
               <Settings className="w-3.5 h-3.5 text-indigo-400" />
+            </button>
+
+            {/* AI 인맥 코파일럿 */}
+            <button
+              onClick={onOpenCopilot}
+              title="자연어 인맥 코파일럿 (AI Copilot Chat)"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold transition-all shadow-md shadow-indigo-600/20 active:scale-95"
+            >
+              <Bot className="w-3.5 h-3.5" />
+              <span>AI 코파일럿</span>
             </button>
 
             {/* DART Scan */}

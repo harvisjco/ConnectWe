@@ -10,8 +10,11 @@ import { CompanyAlumniView } from './components/views/CompanyAlumniView';
 import { AgeSpectrumView } from './components/views/AgeSpectrumView';
 import { NetworkCanvasView } from './components/views/NetworkCanvasView';
 import { InteractionTimelineView } from './components/views/InteractionTimelineView';
+import { CosmicGalaxy3DView } from './components/views/CosmicGalaxy3DView';
+import { ReferralBountyView } from './components/views/ReferralBountyView';
 import { PersonInspectorDrawer } from './components/inspector/PersonInspectorDrawer';
 import { ExecutiveDossierModal } from './components/inspector/ExecutiveDossierModal';
+import { RelationshipCopilotDrawer } from './components/copilot/RelationshipCopilotDrawer';
 import { ImportDataModal } from './components/import/ImportDataModal';
 import { AddPersonModal } from './components/crm/AddPersonModal';
 import { DailyDigestModal } from './components/digest/DailyDigestModal';
@@ -19,13 +22,14 @@ import { DegreesOfSeparationModal } from './components/network/DegreesOfSeparati
 import { NetworkDashboard } from './components/dashboard/NetworkDashboard';
 import { EncryptionSetupModal } from './components/security/EncryptionSetupModal';
 import { UserSettingsModal } from './components/settings/UserSettingsModal';
+import { CloudSyncModal } from './components/settings/CloudSyncModal';
 
-import { Building2, Calendar, Share2, CheckCircle2, Clock } from 'lucide-react';
+import { Building2, Calendar, Share2, CheckCircle2, Clock, Sparkles, Orbit, Gift } from 'lucide-react';
 
 export const App: React.FC = () => {
   // 로컬 스토리지 기반 오프라인 퍼스트 상태
   const [people, setPeople] = useState<Person[]>(() => loadPeopleFromStorage());
-  const [activeView, setActiveView] = useState<'company' | 'age' | 'canvas' | 'timeline'>('company');
+  const [activeView, setActiveView] = useState<'company' | 'age' | 'canvas' | 'galaxy' | 'timeline' | 'referral'>('company');
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
   // Search & GraphRAG State
@@ -39,6 +43,8 @@ export const App: React.FC = () => {
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [isEncryptionModalOpen, setIsEncryptionModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
+  const [isCloudSyncOpen, setIsCloudSyncOpen] = useState(false);
+  const [isCopilotOpen, setIsCopilotOpen] = useState(false);
   const [bridgeTargetPerson, setBridgeTargetPerson] = useState<Person | null>(null);
   const [dossierTargetPerson, setDossierTargetPerson] = useState<Person | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -112,6 +118,8 @@ export const App: React.FC = () => {
         onOpenDashboard={() => setIsDashboardOpen(true)}
         onOpenEncryptionModal={() => setIsEncryptionModalOpen(true)}
         onOpenSettingsModal={() => setIsSettingsModalOpen(true)}
+        onOpenCloudSyncModal={() => setIsCloudSyncOpen(true)}
+        onOpenCopilot={() => setIsCopilotOpen(true)}
         onUpdatePeople={setPeople}
         onShowToast={showToast}
       />
@@ -166,7 +174,19 @@ export const App: React.FC = () => {
               }`}
             >
               <Share2 className="w-4 h-4" />
-              <span>🕸️ 지식 그래프 캔버스</span>
+              <span>🕸️ 2D 지식 그래프</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView('galaxy')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                activeView === 'galaxy'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Orbit className="w-4 h-4 text-purple-400" />
+              <span>🪐 3D 코스믹 은하</span>
             </button>
 
             <button
@@ -178,7 +198,19 @@ export const App: React.FC = () => {
               }`}
             >
               <Clock className="w-4 h-4 text-emerald-400" />
-              <span>📅 소통 타임라인 &amp; 미팅 관리</span>
+              <span>📅 소통 타임라인</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView('referral')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                activeView === 'referral'
+                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Gift className="w-4 h-4 text-emerald-400" />
+              <span>🎁 인맥 추천 &amp; 바운티</span>
             </button>
           </div>
 
@@ -215,11 +247,26 @@ export const App: React.FC = () => {
             />
           )}
 
+          {activeView === 'galaxy' && (
+            <CosmicGalaxy3DView
+              people={displayPeople}
+              onSelectPerson={setSelectedPerson}
+            />
+          )}
+
           {activeView === 'timeline' && (
             <InteractionTimelineView
               people={people}
               onSelectPerson={setSelectedPerson}
               onOpenDossier={(target) => setDossierTargetPerson(target)}
+              onShowToast={showToast}
+            />
+          )}
+
+          {activeView === 'referral' && (
+            <ReferralBountyView
+              people={people}
+              onSelectPerson={setSelectedPerson}
               onShowToast={showToast}
             />
           )}
@@ -270,6 +317,7 @@ export const App: React.FC = () => {
           people={people}
           onClose={() => setBridgeTargetPerson(null)}
           onSelectPerson={setSelectedPerson}
+          onShowToast={showToast}
         />
       )}
 
@@ -310,9 +358,39 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* E2EE Cloud Sync Modal */}
+      {isCloudSyncOpen && (
+        <CloudSyncModal
+          people={people}
+          onUpdatePeople={setPeople}
+          onClose={() => setIsCloudSyncOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* Relationship Copilot Drawer */}
+      <RelationshipCopilotDrawer
+        isOpen={isCopilotOpen}
+        people={people}
+        onClose={() => setIsCopilotOpen(false)}
+        onSelectPerson={setSelectedPerson}
+        onShowToast={showToast}
+      />
+
+      {/* Floating AI Copilot Trigger Button (우측 하단) */}
+      <button
+        onClick={() => setIsCopilotOpen(true)}
+        title="AI 인맥 지능 코파일럿 열기"
+        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:scale-105 active:scale-95 text-white font-bold text-xs shadow-2xl shadow-indigo-600/40 border border-indigo-400/40 transition-all group"
+      >
+        <Sparkles className="w-4 h-4 text-purple-200 group-hover:rotate-12 transition-transform" />
+        <span>인맥 코파일럿</span>
+        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+      </button>
+
       {/* Toast Notification Banner */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-2xl bg-indigo-600 text-white text-xs font-semibold shadow-2xl shadow-indigo-500/40 border border-indigo-400/30 animate-in slide-in-from-bottom-4 duration-300">
+        <div className="fixed bottom-20 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-2xl bg-indigo-600 text-white text-xs font-semibold shadow-2xl shadow-indigo-500/40 border border-indigo-400/30 animate-in slide-in-from-bottom-4 duration-300">
           <CheckCircle2 className="w-4 h-4" />
           <span>{toastMessage}</span>
         </div>

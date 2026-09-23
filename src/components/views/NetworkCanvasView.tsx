@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Person } from '../../types/network';
 import { buildNetworkGraph } from '../../services/networkGraph';
-import { ZoomIn, ZoomOut, RotateCcw, Info, Zap } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw, Info, Zap, Sparkles } from 'lucide-react';
+import { CosmicGalaxy3DView } from './CosmicGalaxy3DView';
 
 interface NetworkCanvasViewProps {
   people: Person[];
@@ -57,6 +58,7 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
   const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null);
   const [draggedNodeId, setDraggedNodeId] = useState<string | null>(null);
   const [simRunning, setSimRunning] = useState(true);
+  const [is3DMode, setIs3DMode] = useState(false);
 
   const scaleRef = useRef(scale);
   const offsetRef = useRef(offset);
@@ -409,16 +411,45 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
 
   return (
     <div className="relative w-full h-[650px] bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
-      <canvas
-        ref={canvasRef}
-        className="w-full h-full"
-        style={{ cursor: draggedNodeId ? 'grabbing' : hoveredNodeId ? 'pointer' : isPanning ? 'grabbing' : 'grab' }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={() => { setIsPanning(false); setDraggedNodeId(null); setHoveredNodeId(null); }}
-        onWheel={handleWheel}
-      />
+      {/* 2D / 3D Mode Switcher Header Floating Bar */}
+      <div className="absolute top-4 right-4 z-20 flex items-center gap-1 p-1 rounded-xl bg-slate-900/90 border border-slate-800 backdrop-blur shadow-xl">
+        <button
+          onClick={() => setIs3DMode(false)}
+          className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            !is3DMode
+              ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          2D 물리 은하수
+        </button>
+        <button
+          onClick={() => setIs3DMode(true)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            is3DMode
+              ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-600/30'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <Sparkles className="w-3.5 h-3.5 text-purple-300 animate-pulse" />
+          <span>3D 우주 궤도 (Three.js)</span>
+        </button>
+      </div>
+
+      {is3DMode ? (
+        <CosmicGalaxy3DView people={people} onSelectPerson={onSelectPerson} />
+      ) : (
+        <>
+          <canvas
+            ref={canvasRef}
+            className="w-full h-full"
+            style={{ cursor: draggedNodeId ? 'grabbing' : hoveredNodeId ? 'pointer' : isPanning ? 'grabbing' : 'grab' }}
+            onMouseDown={handleMouseDown}
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={() => { setIsPanning(false); setDraggedNodeId(null); setHoveredNodeId(null); }}
+            onWheel={handleWheel}
+          />
 
       {/* 캔버스 컨트롤 */}
       <div className="absolute top-4 left-4 flex items-center gap-1.5 p-1.5 rounded-xl bg-slate-900/90 border border-slate-800 backdrop-blur shadow-lg">
@@ -462,19 +493,21 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
         <div className="text-[10px] text-slate-500 mt-1">⚡ 버튼: 레이아웃 재계산 · 드래그: 노드 이동</div>
       </div>
 
-      {/* 호버 카드 */}
-      {hoveredNode?.rawPerson && (
-        <div className="absolute top-4 right-4 p-4 rounded-xl bg-slate-900/95 border border-indigo-500/50 backdrop-blur shadow-2xl max-w-xs space-y-1 animate-in fade-in duration-150 pointer-events-none">
-          <div className="flex items-center justify-between">
-            <span className="font-bold text-sm text-white">{hoveredNode.rawPerson.name}</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300">클릭하여 상세 정보</span>
-          </div>
-          <p className="text-xs text-indigo-400 font-medium">{hoveredNode.rawPerson.currentCompany} · {hoveredNode.rawPerson.currentTitle}</p>
-          <p className="text-[11px] text-slate-400">{hoveredNode.rawPerson.primaryDomain} ({hoveredNode.rawPerson.estimatedAgeGroup})</p>
-          {hoveredNode.rawPerson.dartInfo && (
-            <p className="text-[10px] text-emerald-400">🏛️ DART 공시 검증 완료</p>
+          {/* 호버 카드 */}
+          {hoveredNode?.rawPerson && (
+            <div className="absolute top-4 right-4 p-4 rounded-xl bg-slate-900/95 border border-indigo-500/50 backdrop-blur shadow-2xl max-w-xs space-y-1 animate-in fade-in duration-150 pointer-events-none">
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-sm text-white">{hoveredNode.rawPerson.name}</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300">클릭하여 상세 정보</span>
+              </div>
+              <p className="text-xs text-indigo-400 font-medium">{hoveredNode.rawPerson.currentCompany} · {hoveredNode.rawPerson.currentTitle}</p>
+              <p className="text-[11px] text-slate-400">{hoveredNode.rawPerson.primaryDomain} ({hoveredNode.rawPerson.estimatedAgeGroup})</p>
+              {hoveredNode.rawPerson.dartInfo && (
+                <p className="text-[10px] text-emerald-400">🏛️ DART 공시 검증 완료</p>
+              )}
+            </div>
           )}
-        </div>
+        </>
       )}
     </div>
   );
