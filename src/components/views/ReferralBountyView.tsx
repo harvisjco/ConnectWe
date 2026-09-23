@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { Person, ReferralPosition, ReferralSubmission } from '../../types/network';
 import { mockReferralPositions } from '../../data/mockReferralPositions';
 import { calculateMatchesForPosition } from '../../services/referralMatcher';
+import { fetchPositionsFromHrcoBridge, submitReferralToHrcoBridge } from '../../services/hrcoBridgeService';
 import { 
   Briefcase, Gift, Sparkles, Building2, MapPin, 
   ChevronRight, Send, 
-  ShieldCheck, Clock
+  ShieldCheck, Clock, RefreshCw
 } from 'lucide-react';
 
 interface ReferralBountyViewProps {
@@ -19,10 +20,19 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
   onSelectPerson,
   onShowToast
 }) => {
-  const [positions] = useState<ReferralPosition[]>(mockReferralPositions);
-  const [selectedPosition, setSelectedPosition] = useState<ReferralPosition>(positions[0]);
+  const [bridgeResult] = useState(() => fetchPositionsFromHrcoBridge());
+  const [positions, setPositions] = useState<ReferralPosition[]>(bridgeResult.positions);
+  const [selectedPosition, setSelectedPosition] = useState<ReferralPosition>(bridgeResult.positions[0] || mockReferralPositions[0]);
+  const [isLiveBridge, setIsLiveBridge] = useState(bridgeResult.isLiveFromHrco);
   const [activeTab, setActiveTab] = useState<'positions' | 'submissions'>('positions');
   
+  const handleRefreshBridge = () => {
+    const fresh = fetchPositionsFromHrcoBridge();
+    setPositions(fresh.positions);
+    setIsLiveBridge(fresh.isLiveFromHrco);
+    onShowToast(`HRCO GoodPartner 실시간 포지션 피드 갱신 완료 (${fresh.positions.length}건)`);
+  };
+
   // 추천 제출 내역 관리 (로컬스토리지 연동)
   const [submissions, setSubmissions] = useState<ReferralSubmission[]>(() => {
     try {
@@ -72,7 +82,13 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
     setSubmissions(updated);
     localStorage.setItem('connectwe_referral_submissions', JSON.stringify(updated));
 
-    onShowToast(`🎉 [${targetCandidate.name}] 님께 ${selectedPosition.clientCompany} 추천 타진이 발송되었습니다!`);
+    // HRCO 브릿지로 지인 추천 데이터 실시간 전송
+    const matchObj = matchedCandidates.find(m => m.person.id === targetCandidate.id);
+    const matchReasonList = matchObj?.matchReasons || ['신뢰 1촌 네트워크 매칭'];
+    const matchScoreVal = matchObj?.matchScore || 90;
+    submitReferralToHrcoBridge(newSubmission, matchReasonList, matchScoreVal);
+
+    onShowToast(`🎉 [${targetCandidate.name}] 님께 ${selectedPosition.clientCompany} 추천 타진이 발송되고 HRCO 파이프라인으로 연동되었습니다!`);
     setTargetCandidate(null);
     setRecommendationNote('');
   };
@@ -127,6 +143,38 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
             <span>내 추천 현황 ({submissions.length})</span>
           </button>
         </div>
+      </div>
+
+      {/* HRCO GoodPartner Bridge Sync Bar */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-indigo-950/40 via-purple-950/20 to-slate-900 border border-indigo-800/40 text-xs">
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20 shrink-0">
+            <Building2 className="w-4 h-4" />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-white">HRCO GoodPartner 헤드헌팅 ERP 실시간 연동</span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                isLiveBridge 
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' 
+                  : 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
+              }`}>
+                {isLiveBridge ? '● LIVE ERP SYNC' : '● ACTIVE FEED'}
+              </span>
+            </div>
+            <p className="text-[11px] text-slate-400">
+              추천 수락 시 HRCO 채용 관리자 파이프라인으로 지인 이력이 안전하게 직결됩니다.
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={handleRefreshBridge}
+          className="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-bold flex items-center gap-1.5 transition-colors self-end sm:self-auto shrink-0"
+        >
+          <RefreshCw className="w-3.5 h-3.5 text-indigo-400" />
+          <span>HRCO 포지션 동기화 ({positions.length})</span>
+        </button>
       </div>
 
       {activeTab === 'positions' ? (
