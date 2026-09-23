@@ -1,418 +1,449 @@
-import React, { useState, useMemo } from 'react';
-import { Person, ReferralPosition, ReferralSubmission, ReferralCandidateMatch } from '../../types/network';
-import { MOCK_REFERRAL_POSITIONS } from '../../data/mockReferralPositions';
+import React, { useState } from 'react';
+import { Person, ReferralPosition, ReferralSubmission } from '../../types/network';
+import { mockReferralPositions } from '../../data/mockReferralPositions';
+import { calculateMatchesForPosition } from '../../services/referralMatcher';
 import { 
-  findReferralMatchesForPosition, 
-  loadReferralSubmissions, 
-  saveReferralSubmissions 
-} from '../../services/referralEngine';
-import { ReferralActionModal } from '../referral/ReferralActionModal';
-import { 
-  Gift, Users, Building2, Briefcase, 
-  Sparkles, Clock, ShieldCheck, 
-  Coins, TrendingUp
+  Briefcase, Gift, Sparkles, Building2, MapPin, 
+  ChevronRight, Send, 
+  ShieldCheck, Clock
 } from 'lucide-react';
 
 interface ReferralBountyViewProps {
   people: Person[];
+  onSelectPerson: (person: Person) => void;
   onShowToast: (msg: string) => void;
-  onOpenAddPersonModal?: () => void;
 }
 
 export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
   people,
-  onShowToast,
-  onOpenAddPersonModal
+  onSelectPerson,
+  onShowToast
 }) => {
-  const [activeSubTab, setActiveSubTab] = useState<'positions' | 'pipeline'>('positions');
-  const [positions] = useState<ReferralPosition[]>(MOCK_REFERRAL_POSITIONS);
-  const [submissions, setSubmissions] = useState<ReferralSubmission[]>(() => loadReferralSubmissions());
+  const [positions] = useState<ReferralPosition[]>(mockReferralPositions);
+  const [selectedPosition, setSelectedPosition] = useState<ReferralPosition>(positions[0]);
+  const [activeTab, setActiveTab] = useState<'positions' | 'submissions'>('positions');
   
-  // Selected for Action Modal
-  const [activeMatch, setActiveMatch] = useState<{
-    position: ReferralPosition;
-    match: ReferralCandidateMatch;
-  } | null>(null);
-
-  // Position-by-Position Matches Cache
-  const positionMatches = useMemo(() => {
-    const map = new Map<string, ReferralCandidateMatch[]>();
-    for (const pos of positions) {
-      map.set(pos.id, findReferralMatchesForPosition(pos, people));
+  // 추천 제출 내역 관리 (로컬스토리지 연동)
+  const [submissions, setSubmissions] = useState<ReferralSubmission[]>(() => {
+    try {
+      const saved = localStorage.getItem('connectwe_referral_submissions');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
     }
-    return map;
-  }, [positions, people]);
+  });
 
-  // Statistics
-  const totalEarnedAmount = useMemo(() => {
-    return submissions.reduce((acc, sub) => acc + sub.earnedRewards.totalAmount, 0);
-  }, [submissions]);
+  // 추천서 작성 모달 상태
+  const [targetCandidate, setTargetCandidate] = useState<Person | null>(null);
+  const [recommendationNote, setRecommendationNote] = useState('');
 
-  const activeSubmissionsCount = useMemo(() => {
-    return submissions.filter(s => s.status !== 'completed' && s.status !== 'rejected').length;
-  }, [submissions]);
+  // 현재 포지션에 대한 추천 후보자 계산
+  const matchedCandidates = calculateMatchesForPosition(selectedPosition, people);
 
-  const totalMatchesCount = useMemo(() => {
-    let count = 0;
-    positionMatches.forEach(matches => {
-      count += matches.length;
-    });
-    return count;
-  }, [positionMatches]);
+  // 추천서 제출 핸들러
+  const handleConfirmSubmit = () => {
+    if (!targetCandidate || !recommendationNote.trim()) {
+      alert('추천 사유 및 코멘트를 입력해주세요.');
+      return;
+    }
 
-  // Submission Handler
-  const handleAddNewSubmission = (newSub: ReferralSubmission) => {
-    const updated = [newSub, ...submissions];
+    const newSubmission: ReferralSubmission = {
+      id: `ref-${Date.now()}`,
+      positionId: selectedPosition.id,
+      positionTitle: selectedPosition.title,
+      clientCompany: selectedPosition.clientCompany,
+      personId: targetCandidate.id,
+      candidateName: targetCandidate.name,
+      candidateTitle: targetCandidate.currentTitle,
+      candidateCompany: targetCandidate.currentCompany,
+      status: 'invitation_sent',
+      recommendationNote,
+      submittedAt: new Date().toISOString().slice(0, 10),
+      updatedAt: new Date().toISOString().slice(0, 10),
+      earnedRewards: {
+        coffeeChatPaid: false,
+        interviewPaid: false,
+        hirePaid: false,
+        totalAmount: 0
+      }
+    };
+
+    const updated = [newSubmission, ...submissions];
     setSubmissions(updated);
-    saveReferralSubmissions(updated);
-    onShowToast(`[${newSub.candidateName}] 님의 추천이 파이프라인에 성공적으로 등록되었습니다.`);
+    localStorage.setItem('connectwe_referral_submissions', JSON.stringify(updated));
+
+    onShowToast(`🎉 [${targetCandidate.name}] 님께 ${selectedPosition.clientCompany} 추천 타진이 발송되었습니다!`);
+    setTargetCandidate(null);
+    setRecommendationNote('');
+  };
+
+  // 포맷팅 헬퍼
+  const formatMoney = (val: number) => {
+    if (val >= 10000000) return `${(val / 10000000).toFixed(1)}천만원`;
+    if (val >= 10000) return `${Math.round(val / 10000)}만원`;
+    return `${val.toLocaleString()}원`;
   };
 
   return (
     <div className="space-y-6">
-      
-      {/* 1. Top Stat Highlights */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {/* Total Earned */}
-        <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-950/60 to-slate-900 border border-indigo-800/50 shadow-lg relative overflow-hidden">
-          <div className="flex items-center justify-between text-indigo-300 text-xs font-semibold mb-2">
-            <span className="flex items-center gap-1.5">
-              <Coins className="w-4 h-4 text-amber-400" />
-              누적 확정 수령 베네핏
-            </span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-              정산 완료
+      {/* 상단 탭 및 바운티 통계 배너 */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5 rounded-2xl bg-gradient-to-r from-indigo-950/70 via-slate-900 to-purple-950/70 border border-indigo-500/30 shadow-xl">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2">
+            <Gift className="w-5 h-5 text-indigo-400" />
+            <h2 className="text-lg font-bold text-white tracking-tight">
+              인맥 기반 헤드헌팅 &amp; 채용 바운티 허브
+            </h2>
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+              최대 1,000만원 보상
             </span>
           </div>
-          <div className="text-2xl font-black text-white tracking-tight">
-            {totalEarnedAmount.toLocaleString()} <span className="text-sm font-medium text-slate-400">원</span>
-          </div>
-          <div className="text-[11px] text-slate-400 mt-2">
-            커피챗 성사 및 면접 보상금 실시간 입금
-          </div>
+          <p className="text-xs text-slate-300">
+            내 지인의 알럼나이 및 DART 팩트 경력을 기반으로 최적 포지션에 비공개 타진하고, 커피챗부터 최종 합격까지 단계별 리워드를 획득하세요.
+          </p>
         </div>
 
-        {/* Active Pipeline */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg relative overflow-hidden">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-semibold mb-2">
-            <span className="flex items-center gap-1.5">
-              <Clock className="w-4 h-4 text-indigo-400" />
-              진행 중인 추천 파이프라인
-            </span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-              {activeSubmissionsCount}건 진행 중
-            </span>
-          </div>
-          <div className="text-2xl font-black text-indigo-400 tracking-tight">
-            최대 8,000,000 <span className="text-sm font-medium text-slate-400">원 대기</span>
-          </div>
-          <div className="text-[11px] text-slate-400 mt-2">
-            면접 및 최종 오퍼 단계 진입 시 단계별 추가 지급
-          </div>
-        </div>
-
-        {/* Matched Opportunities */}
-        <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg relative overflow-hidden">
-          <div className="flex items-center justify-between text-slate-400 text-xs font-semibold mb-2">
-            <span className="flex items-center gap-1.5">
-              <Sparkles className="w-4 h-4 text-purple-400" />
-              내 인맥 매칭 추천 기회
-            </span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/30">
-              Zero-Knowledge
-            </span>
-          </div>
-          <div className="text-2xl font-black text-white tracking-tight">
-            {totalMatchesCount} <span className="text-sm font-medium text-slate-400">명의 지인 매칭</span>
-          </div>
-          <div className="text-[11px] text-slate-400 mt-2">
-            포지션별 평균 최대 400만원 바운티
-          </div>
+        <div className="flex items-center gap-2 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800">
+          <button
+            onClick={() => setActiveTab('positions')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              activeTab === 'positions'
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Briefcase className="w-3.5 h-3.5" />
+            <span>오픈 포지션 ({positions.length})</span>
+          </button>
+          <button
+            onClick={() => setActiveTab('submissions')}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              activeTab === 'submissions'
+                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                : 'text-slate-400 hover:text-slate-200'
+            }`}
+          >
+            <Clock className="w-3.5 h-3.5" />
+            <span>내 추천 현황 ({submissions.length})</span>
+          </button>
         </div>
       </div>
 
-      {/* 2. Sub Navigation Tabs */}
-      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => setActiveSubTab('positions')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              activeSubTab === 'positions'
-                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/30'
-                : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-            }`}
-          >
-            <Briefcase className="w-4 h-4" />
-            <span>🎯 추천 오픈 포지션 레이더 ({positions.length})</span>
-          </button>
+      {activeTab === 'positions' ? (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* 좌측: 포지션 목록 (5컬럼) */}
+          <div className="lg:col-span-5 space-y-3">
+            <h3 className="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">
+              추천 보상 오픈 포지션
+            </h3>
+            <div className="space-y-2.5 max-h-[720px] overflow-y-auto pr-1">
+              {positions.map((pos) => {
+                const isSelected = selectedPosition.id === pos.id;
+                const matchCount = calculateMatchesForPosition(pos, people).length;
 
-          <button
-            onClick={() => setActiveSubTab('pipeline')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-              activeSubTab === 'pipeline'
-                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/30'
-                : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
-            }`}
-          >
-            <TrendingUp className="w-4 h-4" />
-            <span>📋 내 추천 진행 & 리워드 현황 ({submissions.length})</span>
-          </button>
-        </div>
-
-        <div className="hidden sm:flex items-center gap-1.5 text-xs text-slate-500">
-          <ShieldCheck className="w-4 h-4 text-emerald-400" />
-          <span>로컬 프라이버시 보호: 내 인맥 정보는 외부에 공개되지 않습니다</span>
-        </div>
-      </div>
-
-      {/* 3. Tab Contents */}
-      {activeSubTab === 'positions' ? (
-        /* Tab 1: Positions Radar */
-        <div className="space-y-4">
-          {positions.map(position => {
-            const matches = positionMatches.get(position.id) || [];
-
-            return (
-              <div
-                key={position.id}
-                className="p-5 md:p-6 rounded-2xl bg-slate-900/90 border border-slate-800 hover:border-slate-700/80 transition-all shadow-md space-y-5"
-              >
-                {/* Position Header */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
-                  <div className="space-y-1.5">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className="text-base font-bold text-white hover:text-indigo-300 transition-colors">
-                        {position.title}
+                return (
+                  <div
+                    key={pos.id}
+                    onClick={() => setSelectedPosition(pos)}
+                    className={`p-4 rounded-xl border cursor-pointer transition-all ${
+                      isSelected
+                        ? 'bg-slate-850 border-indigo-500 shadow-lg shadow-indigo-500/10 ring-1 ring-indigo-500/40'
+                        : 'bg-slate-900/80 border-slate-800 hover:border-slate-700 hover:bg-slate-850'
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                      <span className="text-[11px] font-semibold text-indigo-400">
+                        {pos.clientCompany}
                       </span>
-                      {position.urgentBadge && (
-                        <span className="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30">
-                          {position.urgentBadge}
+                      {pos.urgentBadge && (
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 font-bold border border-amber-500/30">
+                          {pos.urgentBadge}
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center gap-3 text-xs text-slate-400 flex-wrap">
-                      <span className="font-semibold text-slate-200 flex items-center gap-1">
-                        <Building2 className="w-3.5 h-3.5 text-indigo-400" />
-                        {position.clientCompany}
+
+                    <h4 className="text-sm font-bold text-white mb-2 leading-snug">
+                      {pos.title}
+                    </h4>
+
+                    <div className="flex items-center gap-3 text-xs text-slate-400 mb-3">
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-slate-500" /> {pos.location.split(' ')[1]}
                       </span>
-                      <span>•</span>
-                      <span>{position.industry}</span>
-                      <span>•</span>
-                      <span>{position.location}</span>
-                      <span>•</span>
-                      <span className="text-indigo-400 font-semibold">{position.salaryRange}</span>
+                      <span>·</span>
+                      <span>연차 {pos.targetExperienceYears}</span>
                     </div>
-                  </div>
 
-                  {/* Bounty Badge */}
-                  <div className="flex items-center gap-3 self-start md:self-center shrink-0">
-                    <div className="text-right">
-                      <div className="text-[10px] text-slate-400">채용 성공 시 바운티</div>
-                      <div className="text-lg font-black text-amber-400">
-                        {position.rewards.hireSuccessBounty.toLocaleString()}원
+                    <div className="flex items-center justify-between pt-2.5 border-t border-slate-800/80">
+                      <div className="flex items-center gap-1 text-xs">
+                        <span className="text-slate-400">합격 바운티:</span>
+                        <span className="font-bold text-emerald-400">
+                          {formatMoney(pos.rewards.hireSuccessBounty)}
+                        </span>
                       </div>
+                      <span className="text-xs px-2 py-0.5 rounded-md bg-indigo-950/60 text-indigo-300 border border-indigo-500/30 font-medium">
+                        매칭 인맥 <strong className="text-white">{matchCount}</strong>명
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 우측: 포지션 상세 & AI 인맥 매칭 결과 (7컬럼) */}
+          <div className="lg:col-span-7 space-y-5">
+            {/* 포지션 상세 정보 카드 */}
+            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-800">
+                <div>
+                  <div className="flex items-center gap-2 text-xs text-indigo-400 font-semibold mb-1">
+                    <Building2 className="w-4 h-4" /> {selectedPosition.clientCompany} · {selectedPosition.department}
+                  </div>
+                  <h3 className="text-lg font-bold text-white">
+                    {selectedPosition.title}
+                  </h3>
+                </div>
+                <div className="text-right sm:text-right">
+                  <div className="text-[11px] text-slate-400">예상 연봉</div>
+                  <div className="text-sm font-bold text-slate-200">{selectedPosition.salaryRange}</div>
+                </div>
+              </div>
+
+              {/* 4단계 추천 보상 프로세스 바운티 카드 */}
+              <div className="space-y-1.5">
+                <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                  단계별 추천 리워드 플랜
+                </span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <div className="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-center">
+                    <div className="text-[10px] text-slate-400">1단계 커피챗</div>
+                    <div className="text-xs font-bold text-indigo-300 mt-0.5">
+                      {formatMoney(selectedPosition.rewards.coffeeChatReward)}
+                    </div>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-center">
+                    <div className="text-[10px] text-slate-400">2단계 면접진행</div>
+                    <div className="text-xs font-bold text-sky-300 mt-0.5">
+                      {formatMoney(selectedPosition.rewards.interviewReward)}
+                    </div>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-center">
+                    <div className="text-[10px] text-emerald-400 font-semibold">3단계 최종합격</div>
+                    <div className="text-xs font-bold text-emerald-300 mt-0.5">
+                      {formatMoney(selectedPosition.rewards.hireSuccessBounty)}
+                    </div>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-center">
+                    <div className="text-[10px] text-slate-400">4단계 수습통과</div>
+                    <div className="text-xs font-bold text-purple-300 mt-0.5">
+                      {formatMoney(selectedPosition.rewards.probationBounty || 0)}
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Key Requirements & Preferences */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                  <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/60 space-y-1.5">
-                    <div className="font-semibold text-slate-300">핵심 자격 및 직무 요건</div>
-                    <ul className="space-y-1 text-slate-400">
-                      {position.keyRequirements.map((req, idx) => (
-                        <li key={idx} className="flex items-start gap-1.5">
-                          <span className="text-indigo-400">▪</span>
-                          <span>{req}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/60 space-y-1.5">
-                    <div className="font-semibold text-slate-300">선호 알럼나이 & 타겟 연령</div>
-                    <div className="flex flex-wrap gap-1.5 pt-1">
-                      {position.targetAlumniCompanies?.map((company, idx) => (
-                        <span key={idx} className="px-2 py-0.5 rounded bg-indigo-950/60 text-indigo-300 border border-indigo-800/60 text-[11px]">
-                          🏢 {company} 출신
-                        </span>
-                      ))}
-                      {position.targetAgeGroup?.map((age, idx) => (
-                        <span key={idx} className="px-2 py-0.5 rounded bg-purple-950/60 text-purple-300 border border-purple-800/60 text-[11px]">
-                          🎂 {age === '40s' ? '40대 임원급' : age === '30s' ? '30대 리드급' : '50대 경영진'}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="text-[11px] text-slate-500 pt-1">
-                      커피챗 수락시 +{position.rewards.coffeeChatReward.toLocaleString()}원 • 1차면접 +{position.rewards.interviewReward.toLocaleString()}원
-                    </div>
-                  </div>
+              {/* 요구조건 & 선호 알럼나이 */}
+              <div className="space-y-2 text-xs">
+                <div className="font-semibold text-slate-300">선호 알럼나이(출신기업):</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {selectedPosition.targetAlumniCompanies?.map(alumni => (
+                    <span key={alumni} className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700 font-medium">
+                      🏛️ {alumni}
+                    </span>
+                  ))}
                 </div>
+              </div>
+            </div>
 
-                {/* Matched People in My Network */}
-                <div className="space-y-2 pt-1">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-slate-200 flex items-center gap-1.5">
-                      <Users className="w-4 h-4 text-emerald-400" />
-                      내 인맥 중 추천 적합 지인 ({matches.length}명 매칭)
-                    </span>
-                    <span className="text-[11px] text-slate-500">
-                      로컬 GraphRAG가 회사 이력·나이대·스킬을 분석하여 자동 도출
-                    </span>
-                  </div>
+            {/* AI 인맥 추천 매칭 리스트 */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-indigo-400" />
+                  <h4 className="text-sm font-bold text-white">
+                    내 인맥 중 적합 후보자 ({matchedCandidates.length}명)
+                  </h4>
+                </div>
+                <span className="text-[11px] text-slate-400">
+                  DART 팩트 &amp; 알럼나이 교차 알고리즘
+                </span>
+              </div>
 
-                  {matches.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                      {matches.map(m => (
-                        <div
-                          key={m.person.id}
-                          className="p-3.5 rounded-xl bg-slate-800/50 hover:bg-slate-800/80 border border-slate-700/60 flex items-center justify-between gap-3 transition-colors"
-                        >
-                          <div className="space-y-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-bold text-white truncate">
-                                {m.person.name}
+              {matchedCandidates.length === 0 ? (
+                <div className="p-8 text-center rounded-2xl bg-slate-900 border border-slate-800 text-slate-400 text-xs">
+                  현재 주소록에 본 포지션 요구역량과 일치하는 인맥이 부족합니다. 새 인맥을 등록하거나 CSV를 추가 가져오기 해보세요.
+                </div>
+              ) : (
+                <div className="space-y-2.5 max-h-[460px] overflow-y-auto pr-1">
+                  {matchedCandidates.map(match => {
+                    const p = match.person;
+                    return (
+                      <div
+                        key={p.id}
+                        className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-indigo-500/50 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                      >
+                        <div className="space-y-1.5 flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span 
+                              onClick={() => onSelectPerson(p)}
+                              className="font-bold text-sm text-white hover:text-indigo-300 cursor-pointer transition-colors"
+                            >
+                              {p.name}
+                            </span>
+                            <span className="text-xs text-slate-400">
+                              {p.currentCompany} · {p.currentTitle}
+                            </span>
+                            {p.dartInfo && (
+                              <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 flex items-center gap-0.5">
+                                <ShieldCheck className="w-3 h-3" /> DART
                               </span>
-                              <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 shrink-0">
-                                적합도 {m.matchScore}%
+                            )}
+                          </div>
+
+                          {/* 매칭 사유 배지 */}
+                          <div className="flex flex-wrap gap-1.5">
+                            {match.matchReasons.map((reason, idx) => (
+                              <span key={idx} className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-950/60 text-indigo-300 border border-indigo-500/30">
+                                ✓ {reason}
                               </span>
-                            </div>
-                            <div className="text-xs text-slate-400 truncate">
-                              {m.person.currentCompany} • {m.person.currentTitle}
-                            </div>
-                            <div className="flex flex-wrap gap-1 pt-0.5">
-                              {m.matchReasons.slice(0, 2).map((r, idx) => (
-                                <span key={idx} className="text-[10px] text-slate-400 bg-slate-900 px-1.5 py-0.5 rounded border border-slate-800">
-                                  {r}
-                                </span>
-                              ))}
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* 매칭 스코어 & 추천 액션 */}
+                        <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800">
+                          <div className="text-right">
+                            <div className="text-[10px] text-slate-400">적합도</div>
+                            <div className="text-base font-extrabold text-indigo-400">
+                              {match.matchScore}%
                             </div>
                           </div>
 
                           <button
-                            onClick={() => setActiveMatch({ position, match: m })}
-                            className="px-3 py-1.5 rounded-lg text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shrink-0 shadow-sm transition-all flex items-center gap-1"
+                            onClick={() => {
+                              setTargetCandidate(p);
+                              setRecommendationNote(`${p.name} 님은 ${p.currentCompany}에서 ${p.primaryDomain} 분야를 총괄하며 탁월한 역량과 팀워크를 검증받은 핵심 인재입니다.`);
+                            }}
+                            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shadow-md shadow-indigo-600/30 active:scale-95 whitespace-nowrap"
                           >
-                            <Gift className="w-3.5 h-3.5" />
+                            <Send className="w-3.5 h-3.5" />
                             <span>추천하기</span>
                           </button>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="p-4 rounded-xl bg-slate-950/40 border border-slate-800/40 text-center text-xs text-slate-500 space-y-2">
-                      <p>현재 등록된 내 명함/인맥 중 바로 매칭되는 후보자가 없습니다.</p>
-                      {onOpenAddPersonModal && (
-                        <button
-                          onClick={onOpenAddPersonModal}
-                          className="text-xs text-indigo-400 hover:text-indigo-300 underline font-medium"
-                        >
-                          + 이 포지션에 어울리는 새로운 지인 명함 등록하기
-                        </button>
-                      )}
-                    </div>
-                  )}
+                      </div>
+                    );
+                  })}
                 </div>
-
-              </div>
-            );
-          })}
+              )}
+            </div>
+          </div>
         </div>
       ) : (
-        /* Tab 2: Referral Pipeline Tracker */
-        <div className="space-y-4">
-          {submissions.length > 0 ? (
-            submissions.map(sub => {
-              const statusBadge = 
-                sub.status === 'coffee_chat_accepted' 
-                  ? { label: '☕ 커피챗 수락 (1단계 보상 지급)', bg: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' }
-                  : sub.status === 'interviewing'
-                  ? { label: '💼 공식 면접 진행 중', bg: 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30' }
-                  : sub.status === 'hired_placed'
-                  ? { label: '🎉 최종 입사 확정 (바운티 대기)', bg: 'bg-amber-500/20 text-amber-300 border-amber-500/30' }
-                  : { label: '📨 비공개 타진 전달됨', bg: 'bg-slate-700/50 text-slate-300 border-slate-600' };
+        /* 추천 진행 현황 탭 (Bounty CRM) */
+        <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <Clock className="w-4 h-4 text-indigo-400" />
+              내 인맥 추천 진행 &amp; 리워드 정산 파이프라인
+            </h3>
+            <span className="text-xs text-slate-400">
+              총 {submissions.length}건 진행 중
+            </span>
+          </div>
 
-              return (
-                <div
-                  key={sub.id}
-                  className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-4 shadow-sm"
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-base font-bold text-white">{sub.candidateName} 님 추천</span>
-                        <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold border ${statusBadge.bg}`}>
-                          {statusBadge.label}
-                        </span>
-                      </div>
-                      <div className="text-xs text-slate-400">
-                        포지션: <strong className="text-slate-200">{sub.clientCompany} - {sub.positionTitle}</strong> • 접수일: {sub.submittedAt}
-                      </div>
+          {submissions.length === 0 ? (
+            <div className="py-12 text-center text-slate-400 text-xs">
+              아직 진행 중인 추천 내역이 없습니다. 오픈 포지션 탭에서 내 인맥을 추천해보세요!
+            </div>
+          ) : (
+            <div className="divide-y divide-slate-800">
+              {submissions.map((sub) => (
+                <div key={sub.id} className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-white text-sm">{sub.candidateName}</span>
+                      <span className="text-xs text-slate-400">({sub.candidateCompany} · {sub.candidateTitle})</span>
+                      <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+                      <span className="text-xs font-semibold text-indigo-400">{sub.clientCompany}</span>
                     </div>
-
-                    <div className="text-right">
-                      <div className="text-[10px] text-slate-400">현재 확정 리워드</div>
-                      <div className="text-base font-black text-emerald-400">
-                        +{sub.earnedRewards.totalAmount.toLocaleString()}원
-                      </div>
-                    </div>
+                    <p className="text-xs text-slate-300 font-medium">{sub.positionTitle}</p>
+                    <p className="text-[11px] text-slate-500 italic">"{sub.recommendationNote}"</p>
                   </div>
 
-                  {/* Stage Stepper */}
-                  <div className="grid grid-cols-4 gap-2 text-center text-xs">
-                    <div className={`p-2.5 rounded-xl border ${sub.status !== 'draft' ? 'bg-indigo-950/40 border-indigo-700/60 text-indigo-300' : 'bg-slate-950 border-slate-800 text-slate-600'}`}>
-                      <div className="font-bold">1. 타진 전달</div>
-                      <div className="text-[10px] text-slate-500 mt-0.5">완료</div>
-                    </div>
-
-                    <div className={`p-2.5 rounded-xl border ${sub.status === 'coffee_chat_accepted' || sub.status === 'interviewing' || sub.status === 'hired_placed' ? 'bg-emerald-950/40 border-emerald-700/60 text-emerald-300' : 'bg-slate-950 border-slate-800 text-slate-600'}`}>
-                      <div className="font-bold">2. 커피챗 수락</div>
-                      <div className="text-[10px] text-emerald-400 mt-0.5">+50,000원</div>
-                    </div>
-
-                    <div className={`p-2.5 rounded-xl border ${sub.status === 'interviewing' || sub.status === 'hired_placed' ? 'bg-indigo-950/40 border-indigo-700/60 text-indigo-300' : 'bg-slate-950 border-slate-800 text-slate-600'}`}>
-                      <div className="font-bold">3. 1차 면접</div>
-                      <div className="text-[10px] text-indigo-400 mt-0.5">+200,000원</div>
-                    </div>
-
-                    <div className={`p-2.5 rounded-xl border ${sub.status === 'hired_placed' ? 'bg-amber-950/40 border-amber-700/60 text-amber-300' : 'bg-slate-950 border-slate-800 text-slate-600'}`}>
-                      <div className="font-bold">4. 최종 입사</div>
-                      <div className="text-[10px] text-amber-400 mt-0.5">+바운티 완납</div>
-                    </div>
-                  </div>
-
-                  {/* Recommendation Note Preview */}
-                  <div className="p-3 rounded-xl bg-slate-950 border border-slate-800/80 text-xs text-slate-400 space-y-1">
-                    <span className="font-semibold text-slate-300">작성된 추천사 요약:</span>
-                    <p className="line-clamp-2 italic">"{sub.recommendationNote}"</p>
+                  <div className="flex items-center gap-3">
+                    <span className="text-xs px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold">
+                      {sub.status === 'invitation_sent' && '✉️ 비공개 타진 전달완료'}
+                      {sub.status === 'coffee_chat_accepted' && '☕ 커피챗 성사 (리워드 지급)'}
+                      {sub.status === 'interviewing' && '🎤 1차 면접 진행 중'}
+                      {sub.status === 'hired_placed' && '🎉 최종 입사 (바운티 정산)'}
+                    </span>
+                    <span className="text-xs text-slate-400 font-mono">{sub.submittedAt}</span>
                   </div>
                 </div>
-              );
-            })
-          ) : (
-            <div className="p-12 text-center text-slate-500 rounded-2xl bg-slate-900 border border-slate-800 space-y-2">
-              <Gift className="w-8 h-8 mx-auto text-slate-600" />
-              <p className="text-sm font-semibold text-slate-400">아직 진행 중인 추천 내역이 없습니다.</p>
-              <p className="text-xs">상단의 [추천 오픈 포지션 레이더]에서 내 지인을 추천하고 첫 리워드를 받아보세요.</p>
+              ))}
             </div>
           )}
         </div>
       )}
 
-      {/* Action Modal */}
-      {activeMatch && (
-        <ReferralActionModal
-          position={activeMatch.position}
-          match={activeMatch.match}
-          onClose={() => setActiveMatch(null)}
-          onSubmitReferral={(submission) => {
-            handleAddNewSubmission(submission);
-            setActiveSubTab('pipeline');
-          }}
-          onShowToast={onShowToast}
-        />
-      )}
+      {/* 추천서 작성 모달 */}
+      {targetCandidate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="w-full max-w-lg bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl p-6 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2">
+                <Send className="w-4 h-4 text-indigo-400" />
+                <h3 className="text-sm font-bold text-white">비공개 지인 추천서 작성</h3>
+              </div>
+              <button
+                onClick={() => setTargetCandidate(null)}
+                className="text-slate-400 hover:text-white text-sm"
+              >
+                닫기
+              </button>
+            </div>
 
+            <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-700 text-xs space-y-1">
+              <div><strong className="text-white">추천 후보자:</strong> {targetCandidate.name} ({targetCandidate.currentCompany} · {targetCandidate.currentTitle})</div>
+              <div><strong className="text-white">지원 포지션:</strong> {selectedPosition.clientCompany} - {selectedPosition.title}</div>
+              <div><strong className="text-white">합격 시 수령 바운티:</strong> <span className="text-emerald-400 font-bold">{formatMoney(selectedPosition.rewards.hireSuccessBounty)}</span></div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-slate-300">
+                추천사 및 적합 사유 (인재의 강점, 레퍼런스 등):
+              </label>
+              <textarea
+                rows={4}
+                value={recommendationNote}
+                onChange={(e) => setRecommendationNote(e.target.value)}
+                placeholder="지인의 주요 성과 및 추천 이유를 입력하세요..."
+                className="w-full p-3 rounded-xl bg-slate-800 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              />
+            </div>
+
+            <div className="p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/30 text-[11px] text-indigo-300">
+              💡 추천 타진은 지인의 사전 동의를 전제로 비공개로 전달되며, 후보자가 커피챗을 수락하면 1단계 리워드가 지급됩니다.
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2">
+              <button
+                onClick={() => setTargetCandidate(null)}
+                className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium"
+              >
+                취소
+              </button>
+              <button
+                onClick={handleConfirmSubmit}
+                className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-600/30"
+              >
+                비공개 추천 제출
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

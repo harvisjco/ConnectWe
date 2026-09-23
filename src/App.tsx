@@ -17,6 +17,7 @@ import { DailyDigestModal } from './components/digest/DailyDigestModal';
 import { DegreesOfSeparationModal } from './components/network/DegreesOfSeparationModal';
 import { NetworkDashboard } from './components/dashboard/NetworkDashboard';
 import { EncryptionSetupModal } from './components/security/EncryptionSetupModal';
+import { UserSettingsModal } from './components/settings/UserSettingsModal';
 
 import { Building2, Calendar, Share2, CheckCircle2, Gift } from 'lucide-react';
 
@@ -36,6 +37,7 @@ export const App: React.FC = () => {
   const [isDigestModalOpen, setIsDigestModalOpen] = useState(false);
   const [isDashboardOpen, setIsDashboardOpen] = useState(false);
   const [isEncryptionModalOpen, setIsEncryptionModalOpen] = useState(false);
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [bridgeTargetPerson, setBridgeTargetPerson] = useState<Person | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -95,6 +97,7 @@ export const App: React.FC = () => {
   // 현재 표출 대상 인물
   const displayPeople = searchResult ? searchResult.matchedPeople : people;
   const highlightNodeIds = searchResult ? searchResult.highlightNodeIds : [];
+  const mePerson = people.find(p => p.closeness === 1);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
@@ -106,6 +109,7 @@ export const App: React.FC = () => {
         onOpenDigestModal={() => setIsDigestModalOpen(true)}
         onOpenDashboard={() => setIsDashboardOpen(true)}
         onOpenEncryptionModal={() => setIsEncryptionModalOpen(true)}
+        onOpenSettingsModal={() => setIsSettingsModalOpen(true)}
         onUpdatePeople={setPeople}
         onShowToast={showToast}
       />
@@ -215,8 +219,8 @@ export const App: React.FC = () => {
           {activeView === 'referral' && (
             <ReferralBountyView
               people={people}
+              onSelectPerson={setSelectedPerson}
               onShowToast={showToast}
-              onOpenAddPersonModal={() => setIsAddModalOpen(true)}
             />
           )}
         </section>
@@ -281,6 +285,16 @@ export const App: React.FC = () => {
       {isEncryptionModalOpen && (
         <EncryptionSetupModal
           onClose={() => setIsEncryptionModalOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* User & DART Settings Modal */}
+      {isSettingsModalOpen && (
+        <UserSettingsModal
+          mePerson={mePerson}
+          onUpdateMe={handleUpdatePerson}
+          onClose={() => setIsSettingsModalOpen(false)}
           onShowToast={showToast}
         />
       )}

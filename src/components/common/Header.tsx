@@ -7,7 +7,7 @@ import { pickContactsFromDevice } from '../../services/contactPicker';
 import { 
   Share2, UploadCloud, Download, ShieldCheck, Clock, 
   Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
-  BarChart2, Lock
+  BarChart2, Lock, Settings
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -17,6 +17,7 @@ interface HeaderProps {
   onOpenDigestModal: () => void;
   onOpenDashboard: () => void;
   onOpenEncryptionModal: () => void;
+  onOpenSettingsModal: () => void;
   onUpdatePeople: (people: Person[]) => void;
   onShowToast: (msg: string) => void;
 }
@@ -28,6 +29,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenDigestModal,
   onOpenDashboard,
   onOpenEncryptionModal,
+  onOpenSettingsModal,
   onUpdatePeople,
   onShowToast
 }) => {
@@ -36,15 +38,22 @@ export const Header: React.FC<HeaderProps> = ({
   const dartFactCount = people.filter(p => p.sourceType === 'DART_FACT' || p.dartInfo?.isPublicDirector).length;
   const staleCount = people.filter(p => p.isStale).length;
 
-  // CSV 다운로드 (BOM \uFEFF 필수 적용)
+  // CSV 다운로드 (BOM \uFEFF 필수 적용 + PII 마스킹 옵션)
   const handleExportCsv = () => {
+    const isMaskPii = localStorage.getItem('connectwe_mask_pii') === 'true';
+
+    const maskMobile = (tel: string) => {
+      if (!isMaskPii) return tel;
+      return tel.replace(/^(\d{2,3})-(\d{3,4})-(\d{4})$/, '$1-****-$3');
+    };
+
     const headers = ['이름', '현재회사', '현재직함', '소속부서', '휴대전화', '이메일', '출처구분', '추정나이대', 'DART상장공시', '소통단절여부', '메모'];
     const rows = people.map(p => [
       `"${p.name}"`,
       `"${p.currentCompany}"`,
       `"${p.currentTitle}"`,
       `"${p.currentDepartment || ''}"`,
-      `"${p.mobile}"`,
+      `"${maskMobile(p.mobile)}"`,
       `"${p.email}"`,
       `"${p.sourceType}"`,
       `"${p.estimatedAgeGroup}"`,
@@ -201,6 +210,15 @@ export const Header: React.FC<HeaderProps> = ({
               className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
             >
               <Lock className="w-3.5 h-3.5 text-amber-400" />
+            </button>
+
+            {/* 환경설정 및 내 프로필 */}
+            <button
+              onClick={onOpenSettingsModal}
+              title="내 프로필 및 시스템 환경설정 (DART API키 / PII 마스킹)"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
+            >
+              <Settings className="w-3.5 h-3.5 text-indigo-400" />
             </button>
 
             {/* DART Scan */}
