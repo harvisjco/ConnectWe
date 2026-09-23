@@ -3,15 +3,17 @@ import { Person } from '../../types/network';
 import { exportPeopleToVcf } from '../../services/vcardExporter';
 import { exportBackupJson, restoreBackupFromJson, resetStorage } from '../../services/storageService';
 import { batchCrossCheckWithDart } from '../../services/dartFactEngine';
+import { pickContactsFromDevice } from '../../services/contactPicker';
 import { 
   Share2, UploadCloud, Download, ShieldCheck, Clock, 
-  Users, UserPlus, FileDown, RotateCcw, Sparkles
+  Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone
 } from 'lucide-react';
 
 interface HeaderProps {
   people: Person[];
   onOpenImportModal: () => void;
   onOpenAddModal: () => void;
+  onOpenDigestModal: () => void;
   onUpdatePeople: (people: Person[]) => void;
   onShowToast: (msg: string) => void;
 }
@@ -20,6 +22,7 @@ export const Header: React.FC<HeaderProps> = ({
   people, 
   onOpenImportModal, 
   onOpenAddModal,
+  onOpenDigestModal,
   onUpdatePeople,
   onShowToast
 }) => {
@@ -102,6 +105,21 @@ export const Header: React.FC<HeaderProps> = ({
     }
   };
 
+  // 모바일 단말기 주소록 직접 가져오기 (Contact Picker API)
+  const handleDeviceContacts = async () => {
+    const res = await pickContactsFromDevice();
+    if (!res.supported) {
+      onOpenImportModal();
+      return;
+    }
+    if (res.people.length > 0) {
+      onUpdatePeople([...res.people, ...people]);
+      onShowToast(`스마트폰 주소록에서 ${res.people.length}명의 연락처가 직접 연동되었습니다.`);
+    } else if (res.errorMessage) {
+      onShowToast(res.errorMessage);
+    }
+  };
+
   return (
     <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 px-6 py-4">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
@@ -139,10 +157,22 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="font-bold text-emerald-300">{dartFactCount}명</span>
           </div>
 
+          {/* Daily Intelligence Digest Trigger Button */}
+          <button
+            onClick={onOpenDigestModal}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-950/60 to-purple-950/60 border border-indigo-500/40 hover:border-indigo-400 text-xs font-semibold text-indigo-300 hover:text-white transition-all active:scale-95 shadow-sm"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
+            <span>오늘의 다이제스트</span>
+            {staleCount > 0 && (
+              <span className="w-2 h-2 rounded-full bg-pink-500" />
+            )}
+          </button>
+
           {staleCount > 0 && (
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-950/40 border border-amber-500/30 text-xs">
               <Clock className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-amber-400 font-medium">미소통 리마인더:</span>
+              <span className="text-amber-400 font-medium">미소통:</span>
               <span className="font-bold text-amber-300">{staleCount}명</span>
             </div>
           )}
@@ -168,10 +198,20 @@ export const Header: React.FC<HeaderProps> = ({
               <span>인맥 등록</span>
             </button>
 
+            {/* Mobile Contact Picker */}
+            <button
+              onClick={handleDeviceContacts}
+              title="스마트폰 주소록 직접 선택 동기화 (Contact Picker API)"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
+            >
+              <Smartphone className="w-3.5 h-3.5 text-sky-400" />
+              <span>폰 주소록</span>
+            </button>
+
             {/* Import Contacts */}
             <button
               onClick={onOpenImportModal}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
             >
               <UploadCloud className="w-3.5 h-3.5" />
               <span>가져오기</span>

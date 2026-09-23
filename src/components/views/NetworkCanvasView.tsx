@@ -23,8 +23,21 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [hoveredNode, setHoveredNode] = useState<GraphNode | null>(null);
 
+  // 개별 노드 드래그 앤 드롭 이동 상태
+  const [draggedNodeId, setDraggedNodeId] = useState<string | null>(null);
+  const [customPositions, setCustomPositions] = useState<Map<string, { x: number; y: number }>>(new Map());
+
   // 그래프 모델 생성
   const graph = buildNetworkGraph(people);
+  
+  // 커스텀 위치 덮어쓰기
+  graph.nodes.forEach(n => {
+    const pos = customPositions.get(n.id);
+    if (pos) {
+      n.x = pos.x;
+      n.y = pos.y;
+    }
+  });
 
   // 캔버스 그리기 루프
   useEffect(() => {
@@ -123,16 +136,35 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
     ctx.restore();
   }, [graph, scale, offset, hoveredNode, highlightNodeIds]);
 
-  // 마우스 인터랙션 (팬 / 줌 / 노드 선택)
+  // 마우스 인터랙션 (팬 / 줌 / 노드 드래그 & 선택)
   const handleMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    setIsDragging(true);
-    setDragStart({ x: e.clientX - offset.x, y: e.clientY - offset.y });
+    if (hoveredNode) {
+      setDraggedNodeId(hoveredNode.id);
+    } else {
+      setIsDragging(true);
+      setDragStart({ x: e.clientX - offset.x, y: e.clientY - offset.y });
+    }
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const rect = canvas.getBoundingClientRect();
+    const mouseX = (e.clientX - rect.left - offset.x) / scale;
+    const mouseY = (e.clientY - rect.top - offset.y) / scale;
+
+    // 1. 노드 개별 드래그 이동 중인 경우
+    if (draggedNodeId) {
+      setCustomPositions(prev => {
+        const next = new Map(prev);
+        next.set(draggedNodeId, { x: mouseX, y: mouseY });
+        return next;
+      });
+      return;
+    }
+
+    // 2. 캔버스 배경 팬 이동 중인 경우
     if (isDragging) {
       setOffset({
         x: e.clientX - dragStart.x,
@@ -141,11 +173,7 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
       return;
     }
 
-    // 마우스 호버 노드 탐색
-    const rect = canvas.getBoundingClientRect();
-    const mouseX = (e.clientX - rect.left - offset.x) / scale;
-    const mouseY = (e.clientY - rect.top - offset.y) / scale;
-
+    // 3. 마우스 호버 노드 탐색
     const hit = graph.nodes.find(n => {
       const dist = Math.hypot(n.x - mouseX, n.y - mouseY);
       return dist <= n.radius + 5;
@@ -156,6 +184,7 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
 
   const handleMouseUp = () => {
     setIsDragging(false);
+    setDraggedNodeId(null);
   };
 
   const handleClick = () => {

@@ -120,3 +120,74 @@ export interface GraphQueryResult {
   relatedCompanies: string[];
   filterTags: string[];
 }
+
+// --------------------------------------------------
+// 인맥 기반 채용 추천 & 베네핏(Referral Bounty) 시스템
+// --------------------------------------------------
+
+export interface ReferralRewardStructure {
+  coffeeChatReward: number;   // 1단계: 커피챗 수락 보상 (원, 예: 50,000)
+  interviewReward: number;    // 2단계: 1차 면접 진행 보상 (원, 예: 200,000)
+  hireSuccessBounty: number;  // 3단계: 최종 입사 성공 바운티 (원, 예: 3,000,000)
+  probationBounty?: number;   // 4단계: 수습(3개월) 통과 보너스 (원, 예: 1,000,000)
+}
+
+export interface ReferralPosition {
+  id: string;
+  title: string;
+  clientCompany: string;
+  industry: string;
+  department: string;
+  salaryRange: string;
+  location: string;
+  targetExperienceYears: string;
+  targetAgeGroup?: AgeGroup[];
+  targetAlumniCompanies?: string[]; // 선호 알럼나이 (예: 네이버, 삼성전자, 쿠팡 등)
+  keyRequirements: string[];
+  rewards: ReferralRewardStructure;
+  urgentBadge?: string;
+  description: string;
+  deadline?: string;
+  isOpen: boolean;
+}
+
+export interface ReferralCandidateMatch {
+  person: Person;
+  positionId: string;
+  matchScore: number; // 0 ~ 100
+  matchReasons: string[];
+  alumniMatchCompany?: string;
+  isRecommended: boolean;
+}
+
+export type ReferralStatus = 
+  | 'draft'                  // 추천서 작성 중
+  | 'invitation_sent'        // 지인에게 비공개 타진 전달
+  | 'coffee_chat_accepted'   // 지인이 커피챗 수락 (1단계 리워드 확정)
+  | 'interviewing'           // 공식 면접 진행 중 (2단계 리워드 확정)
+  | 'hired_placed'           // 최종 입사 성공 (3단계 대형 바운티 확정)
+  | 'completed'              // 수습 통과 및 전액 정산 완료
+  | 'rejected'               // 불합격 또는 포기
+  | 'declined_by_candidate'; // 지인의 정중한 거절
+
+export interface ReferralSubmission {
+  id: string;
+  positionId: string;
+  positionTitle: string;
+  clientCompany: string;
+  personId: string;
+  candidateName: string;
+  candidateTitle: string;
+  candidateCompany: string;
+  status: ReferralStatus;
+  recommendationNote: string;
+  submittedAt: string;
+  updatedAt: string;
+  earnedRewards: {
+    coffeeChatPaid: boolean;
+    interviewPaid: boolean;
+    hirePaid: boolean;
+    totalAmount: number;
+  };
+}
+

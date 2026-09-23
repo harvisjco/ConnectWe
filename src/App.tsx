@@ -12,6 +12,8 @@ import { NetworkCanvasView } from './components/views/NetworkCanvasView';
 import { PersonInspectorDrawer } from './components/inspector/PersonInspectorDrawer';
 import { ImportDataModal } from './components/import/ImportDataModal';
 import { AddPersonModal } from './components/crm/AddPersonModal';
+import { DailyDigestModal } from './components/digest/DailyDigestModal';
+import { DegreesOfSeparationModal } from './components/network/DegreesOfSeparationModal';
 
 import { Building2, Calendar, Share2, CheckCircle2 } from 'lucide-react';
 
@@ -28,6 +30,8 @@ export const App: React.FC = () => {
   // Modal State
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isDigestModalOpen, setIsDigestModalOpen] = useState(false);
+  const [bridgeTargetPerson, setBridgeTargetPerson] = useState<Person | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // people 상태 변경 시 자동 영속화
@@ -94,6 +98,7 @@ export const App: React.FC = () => {
         people={people}
         onOpenImportModal={() => setIsImportModalOpen(true)}
         onOpenAddModal={() => setIsAddModalOpen(true)}
+        onOpenDigestModal={() => setIsDigestModalOpen(true)}
         onUpdatePeople={setPeople}
         onShowToast={showToast}
       />
@@ -194,6 +199,7 @@ export const App: React.FC = () => {
         onClose={() => setSelectedPerson(null)}
         onUpdatePerson={handleUpdatePerson}
         onDeletePerson={handleDeletePerson}
+        onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
       />
 
       {/* Multi-source Ingestion Modal */}
@@ -209,6 +215,26 @@ export const App: React.FC = () => {
         <AddPersonModal
           onClose={() => setIsAddModalOpen(false)}
           onSave={handleSaveNewPerson}
+        />
+      )}
+
+      {/* Daily Intelligence Digest Modal */}
+      {isDigestModalOpen && (
+        <DailyDigestModal
+          people={people}
+          onClose={() => setIsDigestModalOpen(false)}
+          onSelectPerson={setSelectedPerson}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* 2nd-Degree Separation Bridge Modal */}
+      {bridgeTargetPerson && (
+        <DegreesOfSeparationModal
+          targetPerson={bridgeTargetPerson}
+          people={people}
+          onClose={() => setBridgeTargetPerson(null)}
+          onSelectPerson={setSelectedPerson}
         />
       )}
 

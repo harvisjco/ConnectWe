@@ -7,7 +7,7 @@ import {
   X, Phone, Mail, Briefcase, GraduationCap, 
   Calendar, ShieldCheck, Clock, Edit3, Check, 
   Tag, ExternalLink, Download, Trash2, Plus, MessageSquare, 
-  Sparkles
+  Sparkles, GitFork
 } from 'lucide-react';
 
 interface PersonInspectorDrawerProps {
@@ -15,13 +15,15 @@ interface PersonInspectorDrawerProps {
   onClose: () => void;
   onUpdatePerson: (updated: Person) => void;
   onDeletePerson: (personId: string) => void;
+  onOpenBridgeModal?: (person: Person) => void;
 }
 
 export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
   person,
   onClose,
   onUpdatePerson,
-  onDeletePerson
+  onDeletePerson,
+  onOpenBridgeModal
 }) => {
   const [isEditingMemo, setIsEditingMemo] = useState(false);
   const [memoText, setMemoText] = useState(person?.memo || '');
@@ -179,22 +181,33 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
 
           {/* Quick Communication Actions */}
-          <div className="grid grid-cols-2 gap-3">
-            <a
-              href={`tel:${person.mobile}`}
-              className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/20 active:scale-95 transition-all"
-            >
-              <Phone className="w-4 h-4" />
-              <span>전화 ({person.mobile})</span>
-            </a>
+          <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-3">
+              <a
+                href={`tel:${person.mobile}`}
+                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/20 active:scale-95 transition-all"
+              >
+                <Phone className="w-4 h-4" />
+                <span>전화 ({person.mobile})</span>
+              </a>
 
-            <a
-              href={`mailto:${person.email}`}
-              className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 active:scale-95 transition-all"
+              <a
+                href={`mailto:${person.email}`}
+                className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 active:scale-95 transition-all"
+              >
+                <Mail className="w-4 h-4" />
+                <span>이메일 전송</span>
+              </a>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => onOpenBridgeModal?.(person)}
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/40 text-xs font-semibold transition-all active:scale-95"
             >
-              <Mail className="w-4 h-4" />
-              <span>이메일 전송</span>
-            </a>
+              <GitFork className="w-4 h-4 text-purple-400" />
+              <span>2촌 소개 접점 경로 탐색 (Degrees of Separation)</span>
+            </button>
           </div>
 
           {/* DART Fact Verification Section */}

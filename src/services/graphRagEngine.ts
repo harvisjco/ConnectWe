@@ -1,8 +1,8 @@
 import { Person, GraphQueryResult, AgeGroup } from '../types/network';
+import { calculateSemanticMatches } from './semanticSearch';
 
 /**
- * GraphRAG 자연어 인맥 질의 처리 인터프리터
- * 키워드 및 의미론적 그래프 경로를 분석하여 매칭 인물과 추론 브리핑 제공
+ * GraphRAG 자연어 인맥 질의 처리 인터프리터 (Semantic Vector + Graph Topology Hybrid)
  */
 export function executeGraphRagQuery(query: string, people: Person[]): GraphQueryResult {
   const cleanQ = query.trim().toLowerCase();
@@ -60,6 +60,11 @@ export function executeGraphRagQuery(query: string, people: Person[]): GraphQuer
   if (isStaleIntent) filterTags.push('상태: ⚡ 6개월 이상 소통 단절');
   if (isKaist) filterTags.push('학맥: KAIST');
   if (isSeoulUniv) filterTags.push('학맥: 서울대학교');
+
+  // 의미론적 벡터 유사도 매칭 수행
+  const semanticMatches = calculateSemanticMatches(cleanQ, people);
+  const semanticScores = new Map<string, number>();
+  semanticMatches.forEach(m => semanticScores.set(m.person.id, m.score));
 
   // 2. 인맥 필터링 및 엣지 경로 검증
   const matched = people.filter(p => {
@@ -119,6 +124,12 @@ export function executeGraphRagQuery(query: string, people: Person[]): GraphQuer
     }
     if (isSeoulUniv && p.academics.some(a => a.schoolName.toLowerCase().includes('서울대'))) {
       score += 4;
+    }
+
+    // 의미론적 벡터 유사도 매칭 (Cosine Similarity)
+    const semanticMatch = semanticScores.get(p.id) || 0;
+    if (semanticMatch > 0.15) {
+      score += Math.round(semanticMatch * 10);
     }
 
     // 범용 텍스트 매칭
