@@ -6,9 +6,9 @@
 const SALT = new Uint8Array([0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x57, 0x65, 0x53, 0x61, 0x6c, 0x74, 0x32, 0x30, 0x32]); // "ConnectWeSalt202"
 
 /**
- * 디바이스 고유 키 또는 비밀번호로부터 AES-GCM 256bit 암호화 키 유도 (PBKDF2)
+ * 비밀번호로부터 AES-GCM 256bit 암호화 키 유도 (PBKDF2, 310,000 iterations)
  */
-async function deriveKey(passphrase: string): Promise<CryptoKey> {
+export async function deriveKey(passphrase: string): Promise<CryptoKey> {
   const enc = new TextEncoder();
   const baseKey = await crypto.subtle.importKey(
     'raw',
@@ -22,7 +22,7 @@ async function deriveKey(passphrase: string): Promise<CryptoKey> {
     {
       name: 'PBKDF2',
       salt: SALT,
-      iterations: 100000,
+      iterations: 310000,
       hash: 'SHA-256'
     },
     baseKey,
@@ -33,11 +33,19 @@ async function deriveKey(passphrase: string): Promise<CryptoKey> {
 }
 
 /**
- * 텍스트 암호화 (IV + 암호문 -> Base64)
+ * 텍스트 암호화 (IV + 암호문 → Base64)
+ * @param plainText 암호화할 평문
+ * @param keyOrPassphrase CryptoKey 객체 또는 패스프레이즈 문자열
  */
-export async function encryptData(plainText: string, masterKey: string = 'ConnectWe_Default_Local_Key_v1'): Promise<string> {
+export async function encryptData(
+  plainText: string,
+  keyOrPassphrase: CryptoKey | string = 'ConnectWe_Default_Local_Key_v1'
+): Promise<string> {
   try {
-    const key = await deriveKey(masterKey);
+    const key = typeof keyOrPassphrase === 'string'
+      ? await deriveKey(keyOrPassphrase)
+      : keyOrPassphrase;
+
     const iv = crypto.getRandomValues(new Uint8Array(12)); // 96-bit IV for AES-GCM
     const enc = new TextEncoder();
     const encodedData = enc.encode(plainText);
@@ -67,11 +75,19 @@ export async function encryptData(plainText: string, masterKey: string = 'Connec
 }
 
 /**
- * 텍스트 복호화 (Base64 -> IV + 암호문 -> 평문)
+ * 텍스트 복호화 (Base64 → IV + 암호문 → 평문)
+ * @param cipherBase64 복호화할 Base64 문자열
+ * @param keyOrPassphrase CryptoKey 객체 또는 패스프레이즈 문자열
  */
-export async function decryptData(cipherBase64: string, masterKey: string = 'ConnectWe_Default_Local_Key_v1'): Promise<string> {
+export async function decryptData(
+  cipherBase64: string,
+  keyOrPassphrase: CryptoKey | string = 'ConnectWe_Default_Local_Key_v1'
+): Promise<string> {
   try {
-    const key = await deriveKey(masterKey);
+    const key = typeof keyOrPassphrase === 'string'
+      ? await deriveKey(keyOrPassphrase)
+      : keyOrPassphrase;
+
     const binary = atob(cipherBase64);
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) {
@@ -89,7 +105,7 @@ export async function decryptData(cipherBase64: string, masterKey: string = 'Con
 
     const dec = new TextDecoder();
     return dec.decode(decryptedBuffer);
-  } catch (err) {
+  } catch {
     // 암호화되지 않은 기존 평문 데이터일 경우 원문 반환
     return cipherBase64;
   }

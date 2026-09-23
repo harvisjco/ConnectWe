@@ -14,6 +14,8 @@ import { ImportDataModal } from './components/import/ImportDataModal';
 import { AddPersonModal } from './components/crm/AddPersonModal';
 import { DailyDigestModal } from './components/digest/DailyDigestModal';
 import { DegreesOfSeparationModal } from './components/network/DegreesOfSeparationModal';
+import { NetworkDashboard } from './components/dashboard/NetworkDashboard';
+import { EncryptionSetupModal } from './components/security/EncryptionSetupModal';
 
 import { Building2, Calendar, Share2, CheckCircle2 } from 'lucide-react';
 
@@ -31,6 +33,8 @@ export const App: React.FC = () => {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDigestModalOpen, setIsDigestModalOpen] = useState(false);
+  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
+  const [isEncryptionModalOpen, setIsEncryptionModalOpen] = useState(false);
   const [bridgeTargetPerson, setBridgeTargetPerson] = useState<Person | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -99,6 +103,8 @@ export const App: React.FC = () => {
         onOpenImportModal={() => setIsImportModalOpen(true)}
         onOpenAddModal={() => setIsAddModalOpen(true)}
         onOpenDigestModal={() => setIsDigestModalOpen(true)}
+        onOpenDashboard={() => setIsDashboardOpen(true)}
+        onOpenEncryptionModal={() => setIsEncryptionModalOpen(true)}
         onUpdatePeople={setPeople}
         onShowToast={showToast}
       />
@@ -235,6 +241,23 @@ export const App: React.FC = () => {
           people={people}
           onClose={() => setBridgeTargetPerson(null)}
           onSelectPerson={setSelectedPerson}
+        />
+      )}
+
+      {/* Network Intelligence Dashboard */}
+      {isDashboardOpen && (
+        <NetworkDashboard
+          people={people}
+          onClose={() => setIsDashboardOpen(false)}
+          onSelectPerson={setSelectedPerson}
+        />
+      )}
+
+      {/* Encryption Setup Modal */}
+      {isEncryptionModalOpen && (
+        <EncryptionSetupModal
+          onClose={() => setIsEncryptionModalOpen(false)}
+          onShowToast={showToast}
         />
       )}
 

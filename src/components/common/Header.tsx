@@ -6,7 +6,8 @@ import { batchCrossCheckWithDart } from '../../services/dartFactEngine';
 import { pickContactsFromDevice } from '../../services/contactPicker';
 import { 
   Share2, UploadCloud, Download, ShieldCheck, Clock, 
-  Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone
+  Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
+  BarChart2, Lock
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -14,6 +15,8 @@ interface HeaderProps {
   onOpenImportModal: () => void;
   onOpenAddModal: () => void;
   onOpenDigestModal: () => void;
+  onOpenDashboard: () => void;
+  onOpenEncryptionModal: () => void;
   onUpdatePeople: (people: Person[]) => void;
   onShowToast: (msg: string) => void;
 }
@@ -23,6 +26,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenImportModal, 
   onOpenAddModal,
   onOpenDigestModal,
+  onOpenDashboard,
+  onOpenEncryptionModal,
   onUpdatePeople,
   onShowToast
 }) => {
@@ -179,6 +184,25 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Action Buttons */}
           <div className="flex items-center gap-1.5 ml-auto">
+            {/* 인맥 대시보드 */}
+            <button
+              onClick={onOpenDashboard}
+              title="인맥 포트폴리오 통계 대시보드"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all active:scale-95"
+            >
+              <BarChart2 className="w-3.5 h-3.5 text-purple-400" />
+              <span>대시보드</span>
+            </button>
+
+            {/* 암호화 설정 */}
+            <button
+              onClick={onOpenEncryptionModal}
+              title="AES-256-GCM 로컬 데이터 암호화 설정"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
+            >
+              <Lock className="w-3.5 h-3.5 text-amber-400" />
+            </button>
+
             {/* DART Scan */}
             <button
               onClick={handleBatchDartCheck}
