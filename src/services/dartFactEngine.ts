@@ -20,6 +20,9 @@ export interface RawDartExecutive {
   remuneration?: string;
   remunerationAmount?: number;
   birthYearMonth?: string;
+  serviceYears?: string;
+  industry?: string;
+  marketType?: string;
 }
 
 const DART_EXECUTIVES = LIVE_DART_EXECUTIVES_RAW as RawDartExecutive[];

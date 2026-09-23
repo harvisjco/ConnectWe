@@ -3,34 +3,51 @@ import { Person, GraphQueryResult } from './types/network';
 import { loadPeopleFromStorage, savePeopleToStorage } from './services/storageService';
 import { executeGraphRagQuery } from './services/graphRagEngine';
 import { resolveAndMergePeople } from './services/entityResolver';
+import { 
+  CalendarMeeting, 
+  loadMeetingsFromStorage, 
+  getImminentMeeting 
+} from './services/calendarRadarService';
 
 import { Header } from './components/common/Header';
+import { MeetingRadarBanner } from './components/radar/MeetingRadarBanner';
 import { GraphSearchBar } from './components/search/GraphSearchBar';
 import { CompanyAlumniView } from './components/views/CompanyAlumniView';
+import { CorporateOrgChartView } from './components/views/CorporateOrgChartView';
+import { TeamNetworkView } from './components/views/TeamNetworkView';
+import { ReferralBountyView } from './components/views/ReferralBountyView';
 import { AgeSpectrumView } from './components/views/AgeSpectrumView';
 import { NetworkCanvasView } from './components/views/NetworkCanvasView';
 import { InteractionTimelineView } from './components/views/InteractionTimelineView';
 import { CosmicGalaxy3DView } from './components/views/CosmicGalaxy3DView';
-import { ReferralBountyView } from './components/views/ReferralBountyView';
 import { PersonInspectorDrawer } from './components/inspector/PersonInspectorDrawer';
 import { ExecutiveDossierModal } from './components/inspector/ExecutiveDossierModal';
 import { RelationshipCopilotDrawer } from './components/copilot/RelationshipCopilotDrawer';
 import { ImportDataModal } from './components/import/ImportDataModal';
 import { AddPersonModal } from './components/crm/AddPersonModal';
 import { DailyDigestModal } from './components/digest/DailyDigestModal';
+import { DisclosureAlertModal } from './components/digest/DisclosureAlertModal';
 import { DegreesOfSeparationModal } from './components/network/DegreesOfSeparationModal';
 import { NetworkDashboard } from './components/dashboard/NetworkDashboard';
 import { EncryptionSetupModal } from './components/security/EncryptionSetupModal';
 import { UserSettingsModal } from './components/settings/UserSettingsModal';
 import { CloudSyncModal } from './components/settings/CloudSyncModal';
+import { CardScannerModal } from './components/ocr/CardScannerModal';
+import { CalendarImportModal } from './components/radar/CalendarImportModal';
 
-import { Building2, Calendar, Share2, CheckCircle2, Clock, Sparkles, Orbit, Gift } from 'lucide-react';
+import { Building2, Calendar, Share2, CheckCircle2, Clock, Sparkles, Orbit, Users, Gift } from 'lucide-react';
 
 export const App: React.FC = () => {
   // 로컬 스토리지 기반 오프라인 퍼스트 상태
   const [people, setPeople] = useState<Person[]>(() => loadPeopleFromStorage());
-  const [activeView, setActiveView] = useState<'company' | 'age' | 'canvas' | 'galaxy' | 'timeline' | 'referral'>('company');
+  const [activeView, setActiveView] = useState<'company' | 'orgchart' | 'age' | 'canvas' | 'galaxy' | 'timeline' | 'team' | 'referral'>('company');
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
+
+  // 실시간 미팅 레이더 캘린더 상태
+  const [meetings, setMeetings] = useState<CalendarMeeting[]>(() => loadMeetingsFromStorage(people));
+  const [isCardScannerOpen, setIsCardScannerOpen] = useState(false);
+  const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
+  const [isDisclosureAlertOpen, setIsDisclosureAlertOpen] = useState(false);
 
   // Search & GraphRAG State
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -106,9 +123,17 @@ export const App: React.FC = () => {
   const displayPeople = searchResult ? searchResult.matchedPeople : people;
   const highlightNodeIds = searchResult ? searchResult.highlightNodeIds : [];
   const mePerson = people.find(p => p.closeness === 1);
+  const imminentMeeting = getImminentMeeting(meetings);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+      {/* Real-time Meeting Radar Banner */}
+      <MeetingRadarBanner
+        imminentMeeting={imminentMeeting}
+        onOpenDossier={(target) => setDossierTargetPerson(target)}
+        onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
+      />
+
       {/* Top Header */}
       <Header
         people={people}
@@ -120,6 +145,9 @@ export const App: React.FC = () => {
         onOpenSettingsModal={() => setIsSettingsModalOpen(true)}
         onOpenCloudSyncModal={() => setIsCloudSyncOpen(true)}
         onOpenCopilot={() => setIsCopilotOpen(true)}
+        onOpenCardScanner={() => setIsCardScannerOpen(true)}
+        onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
+        onOpenDisclosureAlertModal={() => setIsDisclosureAlertOpen(true)}
         onUpdatePeople={setPeople}
         onShowToast={showToast}
       />
@@ -143,80 +171,104 @@ export const App: React.FC = () => {
           <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-slate-800">
             <button
               onClick={() => setActiveView('company')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
                 activeView === 'company'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <Building2 className="w-4 h-4" />
-              <span>🏢 회사별 & 알럼나이 뷰</span>
+              <span>🏢 회사·알럼나이</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView('orgchart')}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+                activeView === 'orgchart'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Building2 className="w-4 h-4 text-amber-400" />
+              <span>🏛️ DART 기업 조직도</span>
             </button>
 
             <button
               onClick={() => setActiveView('age')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
                 activeView === 'age'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <Calendar className="w-4 h-4" />
-              <span>🎂 나이대별 스펙트럼 뷰</span>
+              <span>🎂 나이대별</span>
             </button>
 
             <button
               onClick={() => setActiveView('canvas')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
                 activeView === 'canvas'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <Share2 className="w-4 h-4" />
-              <span>🕸️ 2D 지식 그래프</span>
+              <span>🕸️ 2D 그래프</span>
             </button>
 
             <button
               onClick={() => setActiveView('galaxy')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
                 activeView === 'galaxy'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <Orbit className="w-4 h-4 text-purple-400" />
-              <span>🪐 3D 코스믹 은하</span>
+              <span>🪐 3D 은하</span>
             </button>
 
             <button
               onClick={() => setActiveView('timeline')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
                 activeView === 'timeline'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <Clock className="w-4 h-4 text-emerald-400" />
-              <span>📅 소통 타임라인</span>
+              <span>📅 타임라인</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView('team')}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+                activeView === 'team'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Users className="w-4 h-4 text-sky-400" />
+              <span>👥 팀 인맥</span>
             </button>
 
             <button
               onClick={() => setActiveView('referral')}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
                 activeView === 'referral'
                   ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
                   : 'text-slate-400 hover:text-slate-200'
               }`}
             >
               <Gift className="w-4 h-4 text-emerald-400" />
-              <span>🎁 인맥 추천 &amp; 바운티</span>
+              <span>🎁 바운티</span>
             </button>
           </div>
 
           <div className="text-xs text-slate-400 hidden sm:block">
             {displayPeople.length === people.length ? (
-              <span>전체 <strong className="text-white">{people.length}명</strong>의 인맥 탐색 중</span>
+              <span>전체 <strong className="text-white">{people.length}명</strong> 탐색 중</span>
             ) : (
               <span>검색 필터링 결과 <strong className="text-indigo-400">{displayPeople.length}명</strong> 표출 중</span>
             )}
@@ -229,6 +281,15 @@ export const App: React.FC = () => {
             <CompanyAlumniView
               people={displayPeople}
               onSelectPerson={setSelectedPerson}
+            />
+          )}
+
+          {activeView === 'orgchart' && (
+            <CorporateOrgChartView
+              people={people}
+              onSelectPerson={setSelectedPerson}
+              onOpenWarmIntro={(target) => setBridgeTargetPerson(target)}
+              onOpenDossier={(target) => setDossierTargetPerson(target)}
             />
           )}
 
@@ -259,6 +320,13 @@ export const App: React.FC = () => {
               people={people}
               onSelectPerson={setSelectedPerson}
               onOpenDossier={(target) => setDossierTargetPerson(target)}
+              onShowToast={showToast}
+            />
+          )}
+
+          {activeView === 'team' && (
+            <TeamNetworkView
+              people={people}
               onShowToast={showToast}
             />
           )}
@@ -364,6 +432,40 @@ export const App: React.FC = () => {
           people={people}
           onUpdatePeople={setPeople}
           onClose={() => setIsCloudSyncOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* Card Scanner Modal (1초 명함 OCR & DART 결합) */}
+      {isCardScannerOpen && (
+        <CardScannerModal
+          onSavePerson={(p: Person) => {
+            setPeople(prev => [p, ...prev]);
+            setSelectedPerson(p);
+          }}
+          onClose={() => setIsCardScannerOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* DART Corporate Disclosure Alert Modal */}
+      {isDisclosureAlertOpen && (
+        <DisclosureAlertModal
+          people={people}
+          onClose={() => setIsDisclosureAlertOpen(false)}
+          onSelectPerson={setSelectedPerson}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* Calendar Import & Radar Modal */}
+      {isCalendarModalOpen && (
+        <CalendarImportModal
+          meetings={meetings}
+          people={people}
+          onUpdateMeetings={setMeetings}
+          onOpenDossier={(target) => setDossierTargetPerson(target)}
+          onClose={() => setIsCalendarModalOpen(false)}
           onShowToast={showToast}
         />
       )}

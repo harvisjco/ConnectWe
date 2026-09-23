@@ -7,7 +7,7 @@ import { pickContactsFromDevice } from '../../services/contactPicker';
 import { 
   Share2, UploadCloud, Download, ShieldCheck, Clock, 
   Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
-  BarChart2, Lock, Settings, Cloud, Bot
+  BarChart2, Lock, Settings, Cloud, Bot, Camera, Calendar, Bell
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -20,6 +20,9 @@ interface HeaderProps {
   onOpenSettingsModal: () => void;
   onOpenCloudSyncModal?: () => void;
   onOpenCopilot?: () => void;
+  onOpenCardScanner?: () => void;
+  onOpenCalendarModal?: () => void;
+  onOpenDisclosureAlertModal?: () => void;
   onUpdatePeople: (people: Person[]) => void;
   onShowToast: (msg: string) => void;
 }
@@ -34,6 +37,9 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenSettingsModal,
   onOpenCloudSyncModal,
   onOpenCopilot,
+  onOpenCardScanner,
+  onOpenCalendarModal,
+  onOpenDisclosureAlertModal,
   onUpdatePeople,
   onShowToast
 }) => {
@@ -254,6 +260,18 @@ export const Header: React.FC<HeaderProps> = ({
               <span>DART 스캔</span>
             </button>
 
+            {/* DART 공시 변동 알림 봇 */}
+            {onOpenDisclosureAlertModal && (
+              <button
+                onClick={onOpenDisclosureAlertModal}
+                title="내 인맥 소속 상장사 최신 공시 변동 알림"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-950/60 hover:bg-amber-900/60 text-amber-300 border border-amber-500/40 text-xs font-semibold transition-all active:scale-95"
+              >
+                <Bell className="w-3.5 h-3.5 text-amber-400" />
+                <span>공시 알림</span>
+              </button>
+            )}
+
             {/* Add Person */}
             <button
               onClick={onOpenAddModal}
@@ -262,6 +280,30 @@ export const Header: React.FC<HeaderProps> = ({
               <UserPlus className="w-3.5 h-3.5" />
               <span>인맥 등록</span>
             </button>
+
+            {/* 명함 1초 OCR 스캔 */}
+            {onOpenCardScanner && (
+              <button
+                onClick={onOpenCardScanner}
+                title="종이 명함 촬영 OCR 및 DART 임원 자동 결합"
+                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white active:scale-95 transition-all text-xs font-bold shadow-md shadow-emerald-600/20"
+              >
+                <Camera className="w-3.5 h-3.5" />
+                <span>명함 스캔</span>
+              </button>
+            )}
+
+            {/* 캘린더 미팅 레이더 */}
+            {onOpenCalendarModal && (
+              <button
+                onClick={onOpenCalendarModal}
+                title="캘린더(.ics) 연동 및 실시간 미팅 레이더"
+                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
+              >
+                <Calendar className="w-3.5 h-3.5 text-sky-400" />
+                <span>캘린더</span>
+              </button>
+            )}
 
             {/* Mobile Contact Picker */}
             <button
