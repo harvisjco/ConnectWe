@@ -1,0 +1,370 @@
+[
+  {
+    "corpCode": "00266961",
+    "corpName": "NAVER",
+    "stockCode": "035420",
+    "marketType": "KOSPI",
+    "industry": "IT·플랫폼",
+    "executiveCount": 7
+  },
+  {
+    "corpCode": "00258801",
+    "corpName": "카카오",
+    "stockCode": "035720",
+    "marketType": "KOSPI",
+    "industry": "IT·플랫폼",
+    "executiveCount": 6
+  },
+  {
+    "corpCode": "01133217",
+    "corpName": "카카오뱅크",
+    "stockCode": "323410",
+    "marketType": "KOSPI",
+    "industry": "IT·플랫폼",
+    "executiveCount": 30
+  },
+  {
+    "corpCode": "01244601",
+    "corpName": "카카오페이",
+    "stockCode": "377300",
+    "marketType": "KOSPI",
+    "industry": "IT·플랫폼",
+    "executiveCount": 42
+  },
+  {
+    "corpCode": "00126380",
+    "corpName": "삼성전자",
+    "stockCode": "005930",
+    "marketType": "KOSPI",
+    "industry": "반도체·전자",
+    "executiveCount": 8
+  },
+  {
+    "corpCode": "00164779",
+    "corpName": "SK하이닉스",
+    "stockCode": "000660",
+    "marketType": "KOSPI",
+    "industry": "반도체·전자",
+    "executiveCount": 10
+  },
+  {
+    "corpCode": "00161383",
+    "corpName": "한미반도체",
+    "stockCode": "042700",
+    "marketType": "KOSPI",
+    "industry": "반도체·전자",
+    "executiveCount": 4
+  },
+  {
+    "corpCode": "01288827",
+    "corpName": "HPSP",
+    "stockCode": "403870",
+    "marketType": "KOSDAQ",
+    "industry": "반도체·전자",
+    "executiveCount": 11
+  },
+  {
+    "corpCode": "00369657",
+    "corpName": "리노공업",
+    "stockCode": "058470",
+    "marketType": "KOSDAQ",
+    "industry": "반도체·전자",
+    "executiveCount": 13
+  },
+  {
+    "corpCode": "00164742",
+    "corpName": "현대자동차",
+    "stockCode": "005380",
+    "marketType": "KOSPI",
+    "industry": "모빌리티·2차전지",
+    "executiveCount": 12
+  },
+  {
+    "corpCode": "00106641",
+    "corpName": "기아",
+    "stockCode": "000270",
+    "marketType": "KOSPI",
+    "industry": "모빌리티·2차전지",
+    "executiveCount": 8
+  },
+  {
+    "corpCode": "00164788",
+    "corpName": "현대모비스",
+    "stockCode": "012330",
+    "marketType": "KOSPI",
+    "industry": "모빌리티·2차전지",
+    "executiveCount": 101
+  },
+  {
+    "corpCode": "01515323",
+    "corpName": "LG에너지솔루션",
+    "stockCode": "373220",
+    "marketType": "KOSPI",
+    "industry": "모빌리티·2차전지",
+    "executiveCount": 114
+  },
+  {
+    "corpCode": "00126362",
+    "corpName": "삼성SDI",
+    "stockCode": "006400",
+    "marketType": "KOSPI",
+    "industry": "모빌리티·2차전지",
+    "executiveCount": 5
+  },
+  {
+    "corpCode": "00155319",
+    "corpName": "POSCO홀딩스",
+    "stockCode": "005490",
+    "marketType": "KOSPI",
+    "industry": "모빌리티·2차전지",
+    "executiveCount": 12
+  },
+  {
+    "corpCode": "00536541",
+    "corpName": "에코프로",
+    "stockCode": "086520",
+    "marketType": "KOSDAQ",
+    "industry": "모빌리티·2차전지",
+    "executiveCount": 19
+  },
+  {
+    "corpCode": "01160363",
+    "corpName": "에코프로비엠",
+    "stockCode": "247540",
+    "marketType": "KOSDAQ",
+    "industry": "모빌리티·2차전지",
+    "executiveCount": 27
+  },
+  {
+    "corpCode": "00155276",
+    "corpName": "포스코퓨처엠",
+    "stockCode": "003670",
+    "marketType": "KOSPI",
+    "industry": "모빌리티·2차전지",
+    "executiveCount": 7
+  },
+  {
+    "corpCode": "00877059",
+    "corpName": "삼성바이오로직스",
+    "stockCode": "207940",
+    "marketType": "KOSPI",
+    "industry": "바이오·제약",
+    "executiveCount": 7
+  },
+  {
+    "corpCode": "00413046",
+    "corpName": "셀트리온",
+    "stockCode": "068270",
+    "marketType": "KOSPI",
+    "industry": "바이오·제약",
+    "executiveCount": 84
+  },
+  {
+    "corpCode": "00989619",
+    "corpName": "알테오젠",
+    "stockCode": "196170",
+    "marketType": "KOSDAQ",
+    "industry": "바이오·제약",
+    "executiveCount": 15
+  },
+  {
+    "corpCode": "00145109",
+    "corpName": "유한양행",
+    "stockCode": "000100",
+    "marketType": "KOSPI",
+    "industry": "바이오·제약",
+    "executiveCount": 36
+  },
+  {
+    "corpCode": "00828497",
+    "corpName": "한미약품",
+    "stockCode": "128940",
+    "marketType": "KOSPI",
+    "industry": "바이오·제약",
+    "executiveCount": 41
+  },
+  {
+    "corpCode": "01397620",
+    "corpName": "루닛",
+    "stockCode": "328130",
+    "marketType": "KOSDAQ",
+    "industry": "바이오·제약",
+    "executiveCount": 14
+  },
+  {
+    "corpCode": "01204056",
+    "corpName": "하이브",
+    "stockCode": "352820",
+    "marketType": "KOSPI",
+    "industry": "게임·엔터",
+    "executiveCount": 14
+  },
+  {
+    "corpCode": "00760971",
+    "corpName": "크래프톤",
+    "stockCode": "259960",
+    "marketType": "KOSPI",
+    "industry": "게임·엔터",
+    "executiveCount": 17
+  },
+  {
+    "corpCode": "00904672",
+    "corpName": "넷마블",
+    "stockCode": "251270",
+    "marketType": "KOSPI",
+    "industry": "게임·엔터",
+    "executiveCount": 9
+  },
+  {
+    "corpCode": "00258689",
+    "corpName": "JYP Ent.",
+    "stockCode": "035900",
+    "marketType": "KOSDAQ",
+    "industry": "게임·엔터",
+    "executiveCount": 14
+  },
+  {
+    "corpCode": "00260930",
+    "corpName": "에스엠",
+    "stockCode": "041510",
+    "marketType": "KOSDAQ",
+    "industry": "게임·엔터",
+    "executiveCount": 24
+  },
+  {
+    "corpCode": "00265324",
+    "corpName": "CJ ENM",
+    "stockCode": "035760",
+    "marketType": "KOSDAQ",
+    "industry": "게임·엔터",
+    "executiveCount": 7
+  },
+  {
+    "corpCode": "01168684",
+    "corpName": "스튜디오드래곤",
+    "stockCode": "253450",
+    "marketType": "KOSDAQ",
+    "industry": "게임·엔터",
+    "executiveCount": 5
+  },
+  {
+    "corpCode": "01152470",
+    "corpName": "펄어비스",
+    "stockCode": "263750",
+    "marketType": "KOSDAQ",
+    "industry": "게임·엔터",
+    "executiveCount": 7
+  },
+  {
+    "corpCode": "00126566",
+    "corpName": "한화에어로스페이스",
+    "stockCode": "012450",
+    "marketType": "KOSPI",
+    "industry": "방산·중공업",
+    "executiveCount": 107
+  },
+  {
+    "corpCode": "01390344",
+    "corpName": "HD현대중공업",
+    "stockCode": "329180",
+    "marketType": "KOSPI",
+    "industry": "방산·중공업",
+    "executiveCount": 140
+  },
+  {
+    "corpCode": "00309503",
+    "corpName": "한국항공우주",
+    "stockCode": "047810",
+    "marketType": "KOSPI",
+    "industry": "방산·중공업",
+    "executiveCount": 38
+  },
+  {
+    "corpCode": "00302926",
+    "corpName": "현대로템",
+    "stockCode": "064350",
+    "marketType": "KOSPI",
+    "industry": "방산·중공업",
+    "executiveCount": 7
+  },
+  {
+    "corpCode": "00159616",
+    "corpName": "두산에너빌리티",
+    "stockCode": "034020",
+    "marketType": "KOSPI",
+    "industry": "방산·중공업",
+    "executiveCount": 7
+  },
+  {
+    "corpCode": "01105153",
+    "corpName": "두산로보틱스",
+    "stockCode": "454910",
+    "marketType": "KOSPI",
+    "industry": "방산·중공업",
+    "executiveCount": 9
+  },
+  {
+    "corpCode": "01261644",
+    "corpName": "레인보우로보틱스",
+    "stockCode": "277810",
+    "marketType": "KOSDAQ",
+    "industry": "방산·중공업",
+    "executiveCount": 11
+  },
+  {
+    "corpCode": "00688996",
+    "corpName": "KB금융",
+    "stockCode": "105560",
+    "marketType": "KOSPI",
+    "industry": "금융·지주",
+    "executiveCount": 32
+  },
+  {
+    "corpCode": "00382199",
+    "corpName": "신한지주",
+    "stockCode": "055550",
+    "marketType": "KOSPI",
+    "industry": "금융·지주",
+    "executiveCount": 20
+  },
+  {
+    "corpCode": "00111722",
+    "corpName": "미래에셋증권",
+    "stockCode": "006800",
+    "marketType": "KOSPI",
+    "industry": "금융·지주",
+    "executiveCount": 146
+  },
+  {
+    "corpCode": "00296290",
+    "corpName": "키움증권",
+    "stockCode": "039490",
+    "marketType": "KOSPI",
+    "industry": "금융·지주",
+    "executiveCount": 65
+  },
+  {
+    "corpCode": "00356361",
+    "corpName": "LG화학",
+    "stockCode": "051910",
+    "marketType": "KOSPI",
+    "industry": "화학·소재",
+    "executiveCount": 103
+  },
+  {
+    "corpCode": "00102858",
+    "corpName": "고려아연",
+    "stockCode": "010130",
+    "marketType": "KOSPI",
+    "industry": "화학·소재",
+    "executiveCount": 67
+  },
+  {
+    "corpCode": "00149655",
+    "corpName": "삼성물산",
+    "stockCode": "028260",
+    "marketType": "KOSPI",
+    "industry": "화학·소재",
+    "executiveCount": 7
+  }
+]

@@ -1,36 +1,111 @@
-import React, { useState } from 'react';
-import { Person } from '../../types/network';
+import React, { useState, useEffect } from 'react';
+import { Person, ActivityLog, ActivityLogType } from '../../types/network';
+import { crossCheckPersonWithDart, getDartReportUrl } from '../../services/dartFactEngine';
+import { loadActivityLogs, recordCommunication } from '../../services/storageService';
+import { exportPeopleToVcf } from '../../services/vcardExporter';
 import { 
   X, Phone, Mail, Briefcase, GraduationCap, 
   Calendar, ShieldCheck, Clock, Edit3, Check, 
-  Tag
+  Tag, ExternalLink, Download, Trash2, Plus, MessageSquare, 
+  Sparkles
 } from 'lucide-react';
 
 interface PersonInspectorDrawerProps {
   person: Person | null;
   onClose: () => void;
-  onUpdatePersonMemo?: (personId: string, newMemo: string) => void;
+  onUpdatePerson: (updated: Person) => void;
+  onDeletePerson: (personId: string) => void;
 }
 
 export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
   person,
   onClose,
-  onUpdatePersonMemo
+  onUpdatePerson,
+  onDeletePerson
 }) => {
   const [isEditingMemo, setIsEditingMemo] = useState(false);
   const [memoText, setMemoText] = useState(person?.memo || '');
+  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
 
-  // person 바뀔 때 메모 초기화
-  React.useEffect(() => {
-    setMemoText(person?.memo || '');
-    setIsEditingMemo(false);
+  // 소통 기록 입력 폼 상태
+  const [isAddingLog, setIsAddingLog] = useState(false);
+  const [logType, setLogType] = useState<ActivityLogType>('call');
+  const [logTitle, setLogTitle] = useState('');
+  const [logContent, setLogContent] = useState('');
+
+  // DART 검증 상태
+  const [isCheckingDart, setIsCheckingDart] = useState(false);
+  const [dartStatusMsg, setDartStatusMsg] = useState<string | null>(null);
+
+  // 인물 변경 시 초기화
+  useEffect(() => {
+    if (person) {
+      setMemoText(person.memo || '');
+      setIsEditingMemo(false);
+      setIsAddingLog(false);
+      setDartStatusMsg(null);
+      // 이 인물에 대한 활동 로그 필터링
+      const allLogs = loadActivityLogs();
+      setActivityLogs(allLogs.filter(l => l.personId === person.id));
+    }
   }, [person]);
 
   if (!person) return null;
 
+  // 메모 저장
   const handleSaveMemo = () => {
     setIsEditingMemo(false);
-    onUpdatePersonMemo?.(person.id, memoText);
+    const updated = { ...person, memo: memoText };
+    onUpdatePerson(updated);
+  };
+
+  // 실시간 DART 상장사 임원 교차 검증 실행
+  const handleCrossCheckDart = () => {
+    setIsCheckingDart(true);
+    setDartStatusMsg(null);
+
+    setTimeout(() => {
+      const res = crossCheckPersonWithDart(person);
+      if (res.matched && res.updatedPerson) {
+        onUpdatePerson(res.updatedPerson);
+        setDartStatusMsg(`성공: ${res.dartInfo?.stockName} 실공시 팩트가 매칭되어 DART FACT로 승격되었습니다!`);
+      } else {
+        setDartStatusMsg('안내: 일치하는 금융감독원 상장사 임원 정기공시를 찾지 못했습니다.');
+      }
+      setIsCheckingDart(false);
+    }, 350);
+  };
+
+  // 소통 이력 추가
+  const handleAddLog = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!logTitle.trim()) return;
+
+    const { updatedLogs, updatedPeople } = recordCommunication(person.id, logType, logTitle.trim(), logContent.trim());
+    setActivityLogs(updatedLogs.filter(l => l.personId === person.id));
+    
+    // 대상 인물 상태 갱신
+    const updated = updatedPeople.find(p => p.id === person.id);
+    if (updated) {
+      onUpdatePerson(updated);
+    }
+
+    setLogTitle('');
+    setLogContent('');
+    setIsAddingLog(false);
+  };
+
+  // vCard 다운로드
+  const handleDownloadVcard = () => {
+    exportPeopleToVcf([person], `${person.name}_${person.currentCompany}.vcf`);
+  };
+
+  // 인맥 삭제
+  const handleDelete = () => {
+    if (confirm(`정말로 [${person.name}] 님의 인맥 정보를 지식 허브에서 삭제하시겠습니까?`)) {
+      onDeletePerson(person.id);
+      onClose();
+    }
   };
 
   return (
@@ -47,8 +122,9 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
         {/* Top Header */}
         <div className="p-6 border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-20 flex items-start justify-between">
           <div className="space-y-1">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-xl font-bold text-white tracking-tight">{person.name}</h2>
+              
               {/* Fact Tagging */}
               {person.sourceType === 'DART_FACT' ? (
                 <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
@@ -75,12 +151,28 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
             )}
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={handleDownloadVcard}
+              title="vCard (.vcf) 다운로드"
+              className="p-2 rounded-xl text-slate-400 hover:text-indigo-300 hover:bg-slate-800 transition-colors"
+            >
+              <Download className="w-4 h-4" />
+            </button>
+            <button
+              onClick={handleDelete}
+              title="인맥 삭제"
+              className="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition-colors"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Scrollable Body Content */}
@@ -93,7 +185,7 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
               className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/20 active:scale-95 transition-all"
             >
               <Phone className="w-4 h-4" />
-              <span>전화 걸기 ({person.mobile})</span>
+              <span>전화 ({person.mobile})</span>
             </a>
 
             <a
@@ -106,44 +198,79 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
           </div>
 
           {/* DART Fact Verification Section */}
-          {person.dartInfo && (
-            <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-900 border border-emerald-500/30 space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold tracking-wide uppercase">
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>금융감독원 DART 공시 실명 팩트</span>
-                </div>
-                <span className="text-[10px] text-slate-400">기준: {person.dartInfo.verifiedAt}</span>
+          <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-900 border border-emerald-500/30 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-emerald-400 text-xs font-bold tracking-wide uppercase">
+                <ShieldCheck className="w-4 h-4" />
+                <span>금융감독원 DART 공시 실명 팩트</span>
               </div>
+              
+              {person.sourceType !== 'DART_FACT' && (
+                <button
+                  onClick={handleCrossCheckDart}
+                  disabled={isCheckingDart}
+                  className="px-2 py-1 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-[11px] font-semibold border border-emerald-500/30 transition-all flex items-center gap-1 active:scale-95"
+                >
+                  <Sparkles className="w-3 h-3" />
+                  <span>{isCheckingDart ? '조회 중...' : '실공시 교차검증'}</span>
+                </button>
+              )}
+            </div>
 
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                  <span className="text-slate-400 block text-[11px]">상장사명</span>
-                  <span className="font-semibold text-slate-200">{person.dartInfo.stockName}</span>
+            {dartStatusMsg && (
+              <div className="p-2.5 rounded-xl bg-slate-950/80 border border-emerald-500/30 text-xs text-emerald-300">
+                {dartStatusMsg}
+              </div>
+            )}
+
+            {person.dartInfo ? (
+              <div className="space-y-2 text-xs">
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                    <span className="text-slate-400 block text-[11px]">상장사명</span>
+                    <span className="font-semibold text-slate-200">{person.dartInfo.stockName}</span>
+                  </div>
+                  <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                    <span className="text-slate-400 block text-[11px]">공시 직위</span>
+                    <span className="font-semibold text-emerald-300">{person.dartInfo.registeredRole}</span>
+                  </div>
                 </div>
-                <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                  <span className="text-slate-400 block text-[11px]">공시 직위</span>
-                  <span className="font-semibold text-emerald-300">{person.dartInfo.registeredRole}</span>
-                </div>
+
                 {person.dartInfo.registeredTerm && (
-                  <div className="col-span-2 bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
-                    <span className="text-slate-400 block text-[11px]">임기(재선임 현황)</span>
+                  <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800">
+                    <span className="text-slate-400 block text-[11px]">임기 현황</span>
                     <span className="font-medium text-slate-200">{person.dartInfo.registeredTerm}</span>
                   </div>
                 )}
-                {person.dartInfo.ownershipShares && (
-                  <div className="col-span-2 bg-slate-900/80 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center">
-                    <span className="text-slate-400 text-[11px]">보유 보통주 주식수</span>
-                    <span className="font-semibold text-indigo-300">
-                      {person.dartInfo.ownershipShares.toLocaleString()}주
-                    </span>
+
+                {person.dartInfo.remuneration && (
+                  <div className="bg-slate-900/80 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center">
+                    <span className="text-slate-400 text-[11px]">공시 보수액</span>
+                    <span className="font-bold text-amber-300">{person.dartInfo.remuneration}</span>
                   </div>
                 )}
-              </div>
-            </div>
-          )}
 
-          {/* Age Spectrum & Demographic Info */}
+                {/* DART 원문 보고서 다이렉트 링크 */}
+                <div className="pt-1">
+                  <a
+                    href={getDartReportUrl(person.currentCompany, person.dartInfo.rceptNo)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-300 text-xs font-semibold transition-all"
+                  >
+                    <span>DART 전자공시 보고서 원문 열람</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <p className="text-xs text-slate-400">
+                아직 DART 공시와 연동되지 않은 원천 데이터입니다. 상단의 '실공시 교차검증' 버튼을 눌러 상장사 공시 임원 여부를 확인할 수 있습니다.
+              </p>
+            )}
+          </div>
+
+          {/* Demographic Info */}
           <div className="bg-slate-800/40 border border-slate-800 rounded-2xl p-4 space-y-2">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-indigo-400" />
@@ -166,6 +293,12 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
                 )}
               </div>
             </div>
+            {person.lastContactDate && (
+              <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-800/60">
+                <span className="text-slate-400">최근 소통 일자:</span>
+                <span className="text-slate-200 font-medium">{person.lastContactDate}</span>
+              </div>
+            )}
           </div>
 
           {/* Multi-source Career Timeline (Alumni 역추적 핵심) */}
@@ -287,6 +420,109 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
             ) : (
               <div className="bg-slate-800/40 border border-slate-800 rounded-xl p-3.5 text-xs text-slate-300 leading-relaxed whitespace-pre-wrap">
                 {person.memo || '작성된 메모가 없습니다.'}
+              </div>
+            )}
+          </div>
+
+          {/* CRM Activity Timeline (통화, 미팅, 메일 이력) */}
+          <div className="space-y-3 pt-2 border-t border-slate-800">
+            <div className="flex items-center justify-between">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                <MessageSquare className="w-3.5 h-3.5 text-indigo-400" />
+                <span>소통 및 관계 유지 이력 ({activityLogs.length}건)</span>
+              </h3>
+              <button
+                onClick={() => setIsAddingLog(!isAddingLog)}
+                className="text-xs text-indigo-400 hover:text-indigo-300 font-semibold flex items-center gap-1"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>{isAddingLog ? '닫기' : '소통 기록 추가'}</span>
+              </button>
+            </div>
+
+            {/* Inline Add Log Form */}
+            {isAddingLog && (
+              <form onSubmit={handleAddLog} className="p-4 rounded-2xl bg-slate-800/80 border border-indigo-500/40 space-y-3 animate-in fade-in duration-200">
+                <div className="grid grid-cols-2 gap-2">
+                  <div>
+                    <label className="text-[11px] text-slate-400 block mb-1">소통 채널</label>
+                    <select
+                      value={logType}
+                      onChange={(e) => setLogType(e.target.value as ActivityLogType)}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white"
+                    >
+                      <option value="call">전화 통화</option>
+                      <option value="meeting">미팅 / 면담</option>
+                      <option value="email">이메일 송수신</option>
+                      <option value="note">특이사항 기록</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-[11px] text-slate-400 block mb-1">제목 *</label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="예: 3분기 투자 라운드 티타임"
+                      value={logTitle}
+                      onChange={(e) => setLogTitle(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="text-[11px] text-slate-400 block mb-1">상세 내용 (선택)</label>
+                  <textarea
+                    rows={2}
+                    placeholder="소통 요약 및 다음 약속 사항..."
+                    value={logContent}
+                    onChange={(e) => setLogContent(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white"
+                  />
+                </div>
+
+                <div className="flex justify-end gap-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingLog(false)}
+                    className="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white text-xs"
+                  >
+                    취소
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold"
+                  >
+                    저장 (소통일 갱신)
+                  </button>
+                </div>
+              </form>
+            )}
+
+            {/* Activity Logs Timeline List */}
+            {activityLogs.length === 0 ? (
+              <p className="text-xs text-slate-500 italic p-3 text-center border border-dashed border-slate-800 rounded-xl">
+                기록된 소통 이력이 없습니다. 상단의 '소통 기록 추가'를 눌러 통화나 미팅을 기록해 보세요.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {activityLogs.map(log => (
+                  <div key={log.id} className="p-3 rounded-xl bg-slate-800/40 border border-slate-800 space-y-1">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="font-semibold text-slate-200 flex items-center gap-1.5">
+                        {log.type === 'call' && '📞 전화 통화'}
+                        {log.type === 'meeting' && '🤝 미팅/면담'}
+                        {log.type === 'email' && '✉️ 이메일'}
+                        {log.type === 'note' && '📝 메모'}
+                        <span>: {log.title}</span>
+                      </span>
+                      <span className="text-[10px] text-slate-500 font-mono">{log.loggedAt}</span>
+                    </div>
+                    {log.content && (
+                      <p className="text-xs text-slate-400 pl-4">{log.content}</p>
+                    )}
+                  </div>
+                ))}
               </div>
             )}
           </div>

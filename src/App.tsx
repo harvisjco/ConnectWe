@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Person, GraphQueryResult } from './types/network';
-import { INITIAL_PEOPLE_SEED } from './data/mockNetworkData';
+import { loadPeopleFromStorage, savePeopleToStorage } from './services/storageService';
 import { executeGraphRagQuery } from './services/graphRagEngine';
 import { resolveAndMergePeople } from './services/entityResolver';
 
@@ -11,11 +11,13 @@ import { AgeSpectrumView } from './components/views/AgeSpectrumView';
 import { NetworkCanvasView } from './components/views/NetworkCanvasView';
 import { PersonInspectorDrawer } from './components/inspector/PersonInspectorDrawer';
 import { ImportDataModal } from './components/import/ImportDataModal';
+import { AddPersonModal } from './components/crm/AddPersonModal';
 
 import { Building2, Calendar, Share2, CheckCircle2 } from 'lucide-react';
 
 export const App: React.FC = () => {
-  const [people, setPeople] = useState<Person[]>(INITIAL_PEOPLE_SEED);
+  // 로컬 스토리지 기반 오프라인 퍼스트 상태
+  const [people, setPeople] = useState<Person[]>(() => loadPeopleFromStorage());
   const [activeView, setActiveView] = useState<'company' | 'age' | 'canvas'>('company');
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
@@ -25,7 +27,13 @@ export const App: React.FC = () => {
 
   // Modal State
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // people 상태 변경 시 자동 영속화
+  useEffect(() => {
+    savePeopleToStorage(people);
+  }, [people]);
 
   // Toast 헬퍼
   const showToast = (msg: string) => {
@@ -53,16 +61,29 @@ export const App: React.FC = () => {
     showToast(`성공적으로 ${incoming.length}명의 인맥 노드가 지식 허브에 병합되었습니다.`);
   };
 
-  // 메모 업데이트
-  const handleUpdateMemo = (personId: string, newMemo: string) => {
-    setPeople(prev => prev.map(p => p.id === personId ? { ...p, memo: newMemo } : p));
-    if (selectedPerson && selectedPerson.id === personId) {
-      setSelectedPerson(prev => prev ? { ...prev, memo: newMemo } : null);
-    }
-    showToast('인맥 메모가 안전하게 업데이트되었습니다.');
+  // 신규 인맥 수동 등록
+  const handleSaveNewPerson = (newPerson: Person) => {
+    setPeople(prev => [newPerson, ...prev]);
+    setSelectedPerson(newPerson);
+    showToast(`[${newPerson.name}] 님이 인맥 허브에 새로 등록되었습니다.`);
   };
 
-  // 현재 표출 대상 인물 (검색 결과가 있으면 필터링된 인맥, 없으면 전체 인맥)
+  // 인맥 정보 업데이트 (메모, DART 팩트 승격, 소통 이력 갱신 등)
+  const handleUpdatePerson = (updated: Person) => {
+    setPeople(prev => prev.map(p => p.id === updated.id ? updated : p));
+    setSelectedPerson(updated);
+  };
+
+  // 인맥 삭제
+  const handleDeletePerson = (personId: string) => {
+    setPeople(prev => prev.filter(p => p.id !== personId));
+    if (selectedPerson && selectedPerson.id === personId) {
+      setSelectedPerson(null);
+    }
+    showToast('인맥 정보가 안전하게 삭제되었습니다.');
+  };
+
+  // 현재 표출 대상 인물
   const displayPeople = searchResult ? searchResult.matchedPeople : people;
   const highlightNodeIds = searchResult ? searchResult.highlightNodeIds : [];
 
@@ -72,7 +93,9 @@ export const App: React.FC = () => {
       <Header
         people={people}
         onOpenImportModal={() => setIsImportModalOpen(true)}
-        onSelectPerson={setSelectedPerson}
+        onOpenAddModal={() => setIsAddModalOpen(true)}
+        onUpdatePeople={setPeople}
+        onShowToast={showToast}
       />
 
       {/* Main Container */}
@@ -169,7 +192,8 @@ export const App: React.FC = () => {
       <PersonInspectorDrawer
         person={selectedPerson}
         onClose={() => setSelectedPerson(null)}
-        onUpdatePersonMemo={handleUpdateMemo}
+        onUpdatePerson={handleUpdatePerson}
+        onDeletePerson={handleDeletePerson}
       />
 
       {/* Multi-source Ingestion Modal */}
@@ -177,6 +201,14 @@ export const App: React.FC = () => {
         <ImportDataModal
           onClose={() => setIsImportModalOpen(false)}
           onImportSuccess={handleImportSuccess}
+        />
+      )}
+
+      {/* Add Person CRM Modal */}
+      {isAddModalOpen && (
+        <AddPersonModal
+          onClose={() => setIsAddModalOpen(false)}
+          onSave={handleSaveNewPerson}
         />
       )}
 

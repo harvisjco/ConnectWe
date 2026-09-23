@@ -35,6 +35,20 @@ export interface DartFactInfo {
   registeredTerm?: string;
   verifiedAt: string;
   ownershipShares?: number;
+  rceptNo?: string;
+  remuneration?: string;
+  reportLabel?: string;
+}
+
+export type ActivityLogType = 'call' | 'meeting' | 'email' | 'note';
+
+export interface ActivityLog {
+  id: string;
+  personId: string;
+  type: ActivityLogType;
+  title: string;
+  content?: string;
+  loggedAt: string; // YYYY-MM-DD HH:mm
 }
 
 export interface Person {
