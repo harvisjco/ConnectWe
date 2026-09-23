@@ -9,6 +9,7 @@ import { GraphSearchBar } from './components/search/GraphSearchBar';
 import { CompanyAlumniView } from './components/views/CompanyAlumniView';
 import { AgeSpectrumView } from './components/views/AgeSpectrumView';
 import { NetworkCanvasView } from './components/views/NetworkCanvasView';
+import { ReferralBountyView } from './components/views/ReferralBountyView';
 import { PersonInspectorDrawer } from './components/inspector/PersonInspectorDrawer';
 import { ImportDataModal } from './components/import/ImportDataModal';
 import { AddPersonModal } from './components/crm/AddPersonModal';
@@ -17,12 +18,12 @@ import { DegreesOfSeparationModal } from './components/network/DegreesOfSeparati
 import { NetworkDashboard } from './components/dashboard/NetworkDashboard';
 import { EncryptionSetupModal } from './components/security/EncryptionSetupModal';
 
-import { Building2, Calendar, Share2, CheckCircle2 } from 'lucide-react';
+import { Building2, Calendar, Share2, CheckCircle2, Gift } from 'lucide-react';
 
 export const App: React.FC = () => {
   // 로컬 스토리지 기반 오프라인 퍼스트 상태
   const [people, setPeople] = useState<Person[]>(() => loadPeopleFromStorage());
-  const [activeView, setActiveView] = useState<'company' | 'age' | 'canvas'>('company');
+  const [activeView, setActiveView] = useState<'company' | 'age' | 'canvas' | 'referral'>('company');
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
   // Search & GraphRAG State
@@ -161,6 +162,21 @@ export const App: React.FC = () => {
               <Share2 className="w-4 h-4" />
               <span>🕸️ 지식 그래프 캔버스</span>
             </button>
+
+            <button
+              onClick={() => setActiveView('referral')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-bold transition-all ${
+                activeView === 'referral'
+                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-md shadow-indigo-600/30'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Gift className="w-4 h-4 text-amber-400" />
+              <span>🎁 인맥 추천 & 리워드</span>
+              <span className="px-1.5 py-0.5 rounded-full text-[9px] font-bold bg-amber-400/20 text-amber-300 border border-amber-400/30">
+                바운티
+              </span>
+            </button>
           </div>
 
           <div className="text-xs text-slate-400 hidden sm:block">
@@ -193,6 +209,14 @@ export const App: React.FC = () => {
               people={displayPeople}
               highlightNodeIds={highlightNodeIds}
               onSelectPerson={setSelectedPerson}
+            />
+          )}
+
+          {activeView === 'referral' && (
+            <ReferralBountyView
+              people={people}
+              onShowToast={showToast}
+              onOpenAddPersonModal={() => setIsAddModalOpen(true)}
             />
           )}
         </section>
