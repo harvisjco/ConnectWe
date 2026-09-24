@@ -160,6 +160,14 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold tracking-wide">
                 Production-Ready
               </span>
+              <button
+                onClick={onOpenCloudSyncModal}
+                title="Supabase PostgreSQL E2EE Cloud Live 연동 중"
+                className="hidden sm:inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-medium hover:bg-emerald-500/20 transition-colors cursor-pointer"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>Supabase Live</span>
+              </button>
             </div>
             <p className="text-xs text-slate-400">
               리멤버 · 스마트폰 주소록 · DART 8,500+ 상장사 실공시 팩트 융합 인맥 허브
