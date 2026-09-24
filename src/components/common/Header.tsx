@@ -163,12 +163,12 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 px-4 sm:px-6 py-3">
+    <header className="border-b border-slate-800/80 bg-slate-900/80 backdrop-blur-xl sticky top-0 z-40 px-4 sm:px-6 py-3 shadow-[0_4px_24px_rgba(0,0,0,0.35)]">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
         {/* Zone 1: Brand & Slogan */}
         <div className="flex items-center justify-between md:justify-start gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-sky-400 flex items-center justify-center shadow-lg shadow-indigo-500/25 ring-1 ring-white/20 shrink-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-sky-400 flex items-center justify-center shadow-[0_4px_14px_rgba(79,70,229,0.35),inset_0_1px_0_rgba(255,255,255,0.3)] ring-1 ring-white/20 shrink-0">
               <Share2 className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -176,13 +176,13 @@ export const Header: React.FC<HeaderProps> = ({
                 <h1 className="text-lg sm:text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent whitespace-nowrap">
                   ConnectWe
                 </h1>
-                <span className="hidden sm:inline-block text-[11px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold tracking-wide whitespace-nowrap">
+                <span className="hidden sm:inline-block text-[11px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold tracking-wide shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] whitespace-nowrap">
                   Production-Ready
                 </span>
                 <button
                   onClick={onOpenCloudSyncModal}
                   title="Supabase PostgreSQL E2EE Cloud Live 연동 중"
-                  className="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-medium hover:bg-emerald-500/20 transition-colors cursor-pointer whitespace-nowrap"
+                  className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-medium hover:bg-emerald-500/20 transition-all cursor-pointer shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] whitespace-nowrap active:scale-95"
                 >
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                   <span>Supabase Live</span>
@@ -195,8 +195,8 @@ export const Header: React.FC<HeaderProps> = ({
           </div>
         </div>
 
-        {/* Zone 2: Executive Metric Capsule (Desktop & Tablet) */}
-        <div className="hidden lg:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs shadow-inner whitespace-nowrap">
+        {/* Zone 2: Executive Metric Capsule (Desktop & Tablet) - Neo-Tactile Debossed Track */}
+        <div className="hidden lg:flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-950/80 border border-slate-800/70 text-xs shadow-[inset_0_2px_4px_rgba(0,0,0,0.6),0_1px_0_rgba(255,255,255,0.06)] ring-1 ring-white/5 whitespace-nowrap">
           <div className="flex items-center gap-1.5 text-slate-300">
             <Users className="w-3.5 h-3.5 text-indigo-400" />
             <span className="text-slate-400">총 인맥</span>
@@ -225,7 +225,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Daily Intelligence Digest CTA */}
           <button
             onClick={onOpenDigestModal}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-950/80 to-purple-950/80 border border-indigo-500/40 hover:border-indigo-400 text-xs font-semibold text-indigo-200 hover:text-white transition-all active:scale-95 shadow-sm whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-b from-indigo-950/90 to-purple-950/90 border border-indigo-500/40 hover:border-indigo-400 text-xs font-semibold text-indigo-200 hover:text-white transition-all active:scale-[0.98] shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-white/5 whitespace-nowrap"
             title="오늘의 인맥 지능 다이제스트"
           >
             <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
@@ -235,10 +235,10 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </button>
 
-          {/* Add Person CTA */}
+          {/* Add Person CTA - Tactile Floating Pill */}
           <button
             onClick={onOpenAddModal}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 transition-all text-xs font-semibold text-white shadow-md shadow-indigo-600/30 whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-b from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 active:scale-[0.98] transition-all text-xs font-semibold text-white shadow-[0_4px_14px_rgba(79,70,229,0.4),inset_0_1px_0_rgba(255,255,255,0.3)] border-t border-white/20 ring-1 ring-white/10 whitespace-nowrap"
             title="새 인맥 직접 등록"
           >
             <UserPlus className="w-3.5 h-3.5" />
@@ -249,10 +249,10 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="relative" ref={toolsMenuRef}>
             <button
               onClick={() => setIsToolsOpen(prev => !prev)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold transition-all whitespace-nowrap active:scale-95 ${
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold transition-all whitespace-nowrap active:scale-[0.98] ${
                 isToolsOpen
-                  ? 'bg-slate-700 text-white border-indigo-500/50 shadow-md ring-2 ring-indigo-500/20'
-                  : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border-slate-700'
+                  ? 'bg-slate-800 text-white border-indigo-500/50 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] ring-1 ring-indigo-500/30'
+                  : 'bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border-slate-700/80 shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] ring-1 ring-white/5'
               }`}
               title="도구 모음 (분석, 스캔, 암호화, 동기화, 내보내기)"
             >
@@ -261,11 +261,11 @@ export const Header: React.FC<HeaderProps> = ({
               <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isToolsOpen ? 'rotate-180' : ''}`} />
             </button>
 
-            {/* Dropdown Menu Popover */}
+            {/* Dropdown Menu Popover - visionOS Spatial Glass */}
             {isToolsOpen && (
-              <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-slate-900 border border-slate-700 shadow-2xl shadow-black/80 backdrop-blur-xl p-2 z-50 space-y-2 animate-in fade-in zoom-in-95 duration-150">
+              <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-[0_20px_50px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-2xl p-2 z-50 space-y-2 ring-1 ring-white/10 animate-in fade-in zoom-in-95 duration-150">
                 {/* Mobile KPI Summary in Popover */}
-                <div className="lg:hidden p-2 rounded-xl bg-slate-800/80 border border-slate-700 text-xs flex items-center justify-between text-slate-300">
+                <div className="lg:hidden p-2.5 rounded-xl bg-slate-950/80 border border-slate-800/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] text-xs flex items-center justify-between text-slate-300">
                   <span>총 <b className="text-white">{people.length}명</b></span>
                   <span>DART <b className="text-emerald-300">{dartFactCount}명</b></span>
                   {staleCount > 0 && <span>미소통 <b className="text-amber-300">{staleCount}명</b></span>}

@@ -202,8 +202,8 @@ export const App: React.FC = () => {
         {/* Apple-Style Executive 3-Segment Controller */}
         <section className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            {/* Primary 3-Segment Tab Bar */}
-            <div className="inline-flex p-1.5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-inner backdrop-blur-md overflow-x-auto max-w-full">
+            {/* Primary 3-Segment Tab Bar - Neo-Tactile CNC Track */}
+            <div className="inline-flex p-1.5 rounded-2xl bg-slate-950/80 border border-slate-800/80 shadow-[inset_0_2px_6px_rgba(0,0,0,0.7),0_1px_0_rgba(255,255,255,0.06)] ring-1 ring-white/5 backdrop-blur-xl overflow-x-auto max-w-full">
               <button
                 type="button"
                 data-testid="segment-command"
@@ -211,13 +211,13 @@ export const App: React.FC = () => {
                   setActiveSegment('command');
                   setActiveView('command');
                 }}
-                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap shrink-0 active:scale-[0.98] ${
                   activeSegment === 'command'
-                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-white/10'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    ? 'bg-gradient-to-b from-indigo-500 via-indigo-600 to-indigo-700 text-white shadow-[0_2px_10px_rgba(79,70,229,0.4),inset_0_1px_0_rgba(255,255,255,0.35)] border-t border-white/20 ring-1 ring-white/10'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
                 }`}
               >
-                <LayoutDashboard className="w-4 h-4 text-amber-400 shrink-0" />
+                <LayoutDashboard className="w-4 h-4 text-amber-300 shrink-0" />
                 <span className="hidden sm:inline">🚀 오늘의 경영 사령탑</span>
                 <span className="sm:hidden">🚀 사령탑</span>
               </button>
@@ -231,13 +231,13 @@ export const App: React.FC = () => {
                     setActiveView('company');
                   }
                 }}
-                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap shrink-0 active:scale-[0.98] ${
                   activeSegment === 'explore'
-                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-white/10'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    ? 'bg-gradient-to-b from-indigo-500 via-indigo-600 to-indigo-700 text-white shadow-[0_2px_10px_rgba(79,70,229,0.4),inset_0_1px_0_rgba(255,255,255,0.35)] border-t border-white/20 ring-1 ring-white/10'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
                 }`}
               >
-                <Globe className="w-4 h-4 text-sky-400 shrink-0" />
+                <Globe className="w-4 h-4 text-sky-300 shrink-0" />
                 <span className="hidden sm:inline">🌐 인맥 맵 탐색</span>
                 <span className="sm:hidden">🌐 인맥 맵</span>
               </button>
@@ -251,13 +251,13 @@ export const App: React.FC = () => {
                     setActiveView('deals');
                   }
                 }}
-                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap shrink-0 active:scale-[0.98] ${
                   activeSegment === 'business'
-                    ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-white/10'
-                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                    ? 'bg-gradient-to-b from-indigo-500 via-indigo-600 to-indigo-700 text-white shadow-[0_2px_10px_rgba(79,70,229,0.4),inset_0_1px_0_rgba(255,255,255,0.35)] border-t border-white/20 ring-1 ring-white/10'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
                 }`}
               >
-                <Briefcase className="w-4 h-4 text-emerald-400 shrink-0" />
+                <Briefcase className="w-4 h-4 text-emerald-300 shrink-0" />
                 <span className="hidden sm:inline">💼 전략 비즈니스 워룸</span>
                 <span className="sm:hidden">💼 비즈니스</span>
               </button>
@@ -276,14 +276,14 @@ export const App: React.FC = () => {
             </div>
           </div>
 
-          {/* Secondary Sub-navigation Pills for Explore & Business */}
+          {/* Secondary Sub-navigation Pills for Explore & Business - Neo-Tactile CNC Tracks */}
           {activeSegment === 'explore' && (
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900/60 border border-slate-800/80 overflow-x-auto">
+            <div className="flex items-center gap-1.5 p-1.5 rounded-xl bg-slate-950/70 border border-slate-800/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] overflow-x-auto ring-1 ring-white/5">
               <button
                 onClick={() => setActiveView('company')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
                   activeView === 'company'
-                    ? 'bg-slate-800 text-indigo-400 border border-indigo-500/40 shadow-sm'
+                    ? 'bg-slate-800/90 text-indigo-300 border border-indigo-500/40 shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-white/5'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -292,9 +292,9 @@ export const App: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveView('orgchart')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
                   activeView === 'orgchart'
-                    ? 'bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm'
+                    ? 'bg-slate-800/90 text-amber-300 border border-amber-500/40 shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-white/5'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -303,9 +303,9 @@ export const App: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveView('age')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
                   activeView === 'age'
-                    ? 'bg-slate-800 text-indigo-400 border border-indigo-500/40 shadow-sm'
+                    ? 'bg-slate-800/90 text-indigo-300 border border-indigo-500/40 shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-white/5'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -314,9 +314,9 @@ export const App: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveView('canvas')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
                   activeView === 'canvas'
-                    ? 'bg-slate-800 text-indigo-400 border border-indigo-500/40 shadow-sm'
+                    ? 'bg-slate-800/90 text-indigo-300 border border-indigo-500/40 shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-white/5'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -325,9 +325,9 @@ export const App: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveView('galaxy')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
                   activeView === 'galaxy'
-                    ? 'bg-slate-800 text-purple-400 border border-purple-500/40 shadow-sm'
+                    ? 'bg-slate-800/90 text-purple-300 border border-purple-500/40 shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-white/5'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -336,9 +336,9 @@ export const App: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveView('timeline')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
                   activeView === 'timeline'
-                    ? 'bg-slate-800 text-emerald-400 border border-emerald-500/40 shadow-sm'
+                    ? 'bg-slate-800/90 text-emerald-300 border border-emerald-500/40 shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-white/5'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -349,12 +349,12 @@ export const App: React.FC = () => {
           )}
 
           {activeSegment === 'business' && (
-            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900/60 border border-slate-800/80 overflow-x-auto">
+            <div className="flex items-center gap-1.5 p-1.5 rounded-xl bg-slate-950/70 border border-slate-800/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] overflow-x-auto ring-1 ring-white/5">
               <button
                 onClick={() => setActiveView('deals')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
                   activeView === 'deals'
-                    ? 'bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm'
+                    ? 'bg-slate-800/90 text-amber-300 border border-amber-500/40 shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-white/5'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -363,9 +363,9 @@ export const App: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveView('proximity')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
                   activeView === 'proximity'
-                    ? 'bg-slate-800 text-sky-400 border border-sky-500/40 shadow-sm'
+                    ? 'bg-slate-800/90 text-sky-300 border border-sky-500/40 shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-white/5'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -374,9 +374,9 @@ export const App: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveView('promotion')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
                   activeView === 'promotion'
-                    ? 'bg-slate-800 text-amber-400 border border-amber-500/40 shadow-sm'
+                    ? 'bg-slate-800/90 text-amber-300 border border-amber-500/40 shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-white/5'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -385,9 +385,9 @@ export const App: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveView('audit')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
                   activeView === 'audit'
-                    ? 'bg-slate-800 text-indigo-400 border border-indigo-500/40 shadow-sm'
+                    ? 'bg-slate-800/90 text-indigo-300 border border-indigo-500/40 shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-white/5'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -396,9 +396,9 @@ export const App: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveView('team')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
                   activeView === 'team'
-                    ? 'bg-slate-800 text-sky-400 border border-sky-500/40 shadow-sm'
+                    ? 'bg-slate-800/90 text-sky-300 border border-sky-500/40 shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-white/5'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -407,9 +407,9 @@ export const App: React.FC = () => {
               </button>
               <button
                 onClick={() => setActiveView('referral')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
                   activeView === 'referral'
-                    ? 'bg-slate-800 text-emerald-400 border border-emerald-500/40 shadow-sm'
+                    ? 'bg-slate-800/90 text-emerald-300 border border-emerald-500/40 shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-white/5'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
