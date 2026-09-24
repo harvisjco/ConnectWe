@@ -1,11 +1,12 @@
-const CACHE_NAME = 'connectwe-v1';
+const CACHE_NAME = 'connectwe-v2';
 const APP_SHELL = [
   '/',
-  '/index.html',
   '/manifest.json',
+  '/icon.svg',
+  '/icon-192.png',
 ];
 
-// 설치: 앱 셸 캐싱
+// 설치: 앱 셸 캐싱 및 신속 인스톨
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL))
@@ -13,7 +14,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
-// 활성화: 구 버전 캐시 정리
+// 활성화: 구 버전 캐시(connectwe-v1 등) 전면 파기 및 즉시 제어권 획득
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
@@ -23,39 +24,49 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// 패치: Cache-first 전략 (정적 자산) / Network-first (API)
+// 패치 전략:
+// 1. Navigation / Document (HTML): Network-First (배포 시 최신 번들 해시 즉각 반영, 오프라인 시 캐시 폴백)
+// 2. Static Assets (JS/CSS/Font/Images): Cache-First (단, 스크립트 요청에 text/html 반환 시 절대 캐시 안 함)
 self.addEventListener('fetch', (event) => {
   const { request } = event;
   const url = new URL(request.url);
 
-  // 같은 오리진 정적 자산만 캐시
+  // Cross-origin 요청은 서비스워커 간섭 배제
   if (url.origin !== location.origin) return;
 
-  event.respondWith(
-    caches.match(request).then((cached) => {
-      if (cached) return cached;
-      return fetch(request)
+  // 1. HTML 문서 요청: Network-First (최신 index.html 및 번들 해시 즉각 취득)
+  if (request.mode === 'navigate' || request.destination === 'document') {
+    event.respondWith(
+      fetch(request)
         .then((response) => {
-          // JS/CSS/폰트만 캐시에 저장
-          if (
-            response.ok &&
-            (request.destination === 'script' ||
-              request.destination === 'style' ||
-              request.destination === 'font' ||
-              request.destination === 'document')
-          ) {
+          if (response && response.ok) {
             const clone = response.clone();
-            caches.open(CACHE_NAME).then((c) => c.put(request, clone));
+            caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
           }
           return response;
         })
         .catch(() => {
-          // 오프라인 폴백: HTML 요청이면 캐시된 index.html 반환
-          if (request.destination === 'document') {
-            return caches.match('/index.html');
-          }
-          return new Response('오프라인 상태입니다.', { status: 503 });
-        });
+          return caches.match(request).then((cached) => cached || caches.match('/'));
+        })
+    );
+    return;
+  }
+
+  // 2. 정적 자산 (JS, CSS, 폰트, 이미지): Cache-First
+  event.respondWith(
+    caches.match(request).then((cached) => {
+      if (cached) return cached;
+      return fetch(request).then((response) => {
+        // 성공적 응답이면서, 스크립트 요청에 text/html이 내려오지 않은 정상 자산만 캐시
+        const contentType = response.headers.get('content-type') || '';
+        const isMimeMismatch = request.destination === 'script' && contentType.includes('text/html');
+
+        if (response.ok && !isMimeMismatch) {
+          const clone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
+        }
+        return response;
+      });
     })
   );
 });
