@@ -7,6 +7,7 @@ import {
   submitReferralToHrcoBridge,
   checkRewardMilestoneEvents,
   simulateHrcoMilestoneProgress,
+  normalizeRewardEvent,
   RewardMilestoneSyncEvent
 } from '../../services/hrcoBridgeService';
 import { 
@@ -39,8 +40,10 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
     const channel = new BroadcastChannel('hrco_connectwe_bus');
     
     channel.onmessage = (event) => {
-      if (event.data?.type === 'REWARD_SYNC') {
-        const syncEvent: RewardMilestoneSyncEvent = event.data.event;
+      if (event.data?.type === 'REWARD_SYNC' || event.data?.type === 'REWARD_MILESTONE_UPDATED') {
+        const rawEvent = event.data.event;
+        if (!rawEvent) return;
+        const syncEvent: RewardMilestoneSyncEvent = normalizeRewardEvent(rawEvent);
         setRewardEvents(prev => [syncEvent, ...prev]);
         onShowToast(`🎉 [HRCO 채용 실시간 보상] ${syncEvent.message}`);
         

@@ -97,12 +97,45 @@ export function submitReferralToHrcoBridge(
 }
 
 /**
+ * HRCO와 ConnectWe 간 상이한 이벤트 포맷을 단일 정규화 포맷으로 변환하는 어댑터
+ */
+export function normalizeRewardEvent(raw: any): RewardMilestoneSyncEvent {
+  if (raw.milestone && raw.rewardAmount) {
+    return raw as RewardMilestoneSyncEvent;
+  }
+  // HRCO 포맷(stage, amount, timestamp, note) 대응
+  const stageToMilestone: Record<string, { milestone: 'coffee_chat' | 'interview_pass' | 'final_hire'; label: string }> = {
+    coffee_chat_approved: { milestone: 'coffee_chat', label: '커피챗 수락' },
+    coffee_chat_pending: { milestone: 'coffee_chat', label: '커피챗 검토' },
+    interview_scheduled: { milestone: 'interview_pass', label: '인터뷰 진행' },
+    hire_placed: { milestone: 'final_hire', label: '최종 합격' },
+    probation_cleared: { milestone: 'final_hire', label: '수습 통과' }
+  };
+  const mapped = stageToMilestone[raw.stage] || { milestone: 'coffee_chat', label: raw.stage || '단계 갱신' };
+  return {
+    id: raw.id || `rwd-${Date.now()}`,
+    submissionId: raw.submissionId || '',
+    candidateName: raw.candidateName || '후보자',
+    clientCompany: raw.clientCompany || '채용 의뢰사',
+    positionTitle: raw.positionTitle || '지정 포지션',
+    milestone: mapped.milestone,
+    milestoneLabel: mapped.label,
+    rewardAmount: raw.amount || raw.rewardAmount || 0,
+    status: 'CONFIRMED',
+    syncedAt: (raw.timestamp || raw.syncedAt || new Date().toISOString()).slice(0, 10),
+    message: raw.note || raw.message || `[HRCO 채용 전형] ${raw.candidateName} 님 채용 전형 업데이트`
+  };
+}
+
+/**
  * HRCO로부터 단계별 리워드 정산 이벤트 목록 조회
  */
 export function checkRewardMilestoneEvents(): RewardMilestoneSyncEvent[] {
   try {
     const raw = localStorage.getItem(CONNECTWE_REWARD_EVENTS_KEY);
-    return raw ? JSON.parse(raw) : [];
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.map(normalizeRewardEvent) : [];
   } catch {
     return [];
   }
@@ -119,7 +152,9 @@ export function recordRewardMilestoneEvent(event: RewardMilestoneSyncEvent): voi
 
     if (typeof BroadcastChannel !== 'undefined') {
       const channel = new BroadcastChannel('hrco_connectwe_bus');
+      // ConnectWe 및 HRCO 상호 호환을 위해 양대 채널 규격 브로드캐스트
       channel.postMessage({ type: 'REWARD_SYNC', event });
+      channel.postMessage({ type: 'REWARD_MILESTONE_UPDATED', event });
       channel.close();
     }
   } catch (err) {

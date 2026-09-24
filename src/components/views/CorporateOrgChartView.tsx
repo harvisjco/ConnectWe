@@ -103,13 +103,21 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
       `기준 연도: ${selectedYear}년 | 종목코드: ${orgChart.stockCode || 'KOSPI'} | 산업군: ${orgChart.industry || '주요 산업'}`,
       `총 공시 임원: ${orgChart.stats.totalExecutives}명 (등기: ${orgChart.stats.registeredCount}명 / 미등기: ${orgChart.stats.unregisteredCount}명)`,
       `내 인맥 연결: 1촌 직통 ${orgChart.stats.firstDegreeCount}명, 2촌 다리 ${orgChart.stats.secondDegreeCount}명`,
+      `조직 편제 요약: ${currentYearInfo?.keyChanges?.join(' · ') || '정기 주총 및 사업보고서 편제'}`,
       `----------------------------------------`,
       `1. 최고 경영진 (Board & CEO):`,
-      ...orgChart.hierarchy.ceos.map(c => `  - ${c.name} (${c.position}${c.chargeJob ? ' / ' + c.chargeJob : ''})${c.networkMatch?.degree === 1 ? ' [🤝 1촌 직통]' : ''}`),
+      ...orgChart.hierarchy.chairpersons.map(c => `  - [회장단] ${c.name} (${c.position}${c.chargeJob ? ' / ' + c.chargeJob : ''})${c.networkMatch?.degree === 1 ? ' [🤝 1촌 직통]' : c.networkMatch?.degree === 2 ? ' [🔗 2촌 연결]' : ''}`),
+      ...orgChart.hierarchy.ceos.map(c => `  - [대표이사] ${c.name} (${c.position}${c.chargeJob ? ' / ' + c.chargeJob : ''})${c.networkMatch?.degree === 1 ? ' [🤝 1촌 직통]' : c.networkMatch?.degree === 2 ? ' [🔗 2촌 연결]' : ''}`),
       `2. 핵심 C-Level & 사업부문장:`,
-      ...orgChart.hierarchy.cLevels.slice(0, 10).map(c => `  - ${c.name} (${c.position}${c.chargeJob ? ' / ' + c.chargeJob : ''})`),
+      ...orgChart.hierarchy.cLevels.slice(0, 10).map(c => `  - ${c.name} (${c.position}${c.chargeJob ? ' / ' + c.chargeJob : ''})${c.networkMatch?.degree === 1 ? ' [🤝 1촌]' : ''}`),
       `3. 주요 본부장 & 실장:`,
-      ...orgChart.hierarchy.directors.slice(0, 15).map(c => `  - ${c.name} (${c.position}${c.chargeJob ? ' - ' + c.chargeJob : ''})`)
+      ...orgChart.hierarchy.directors.slice(0, 12).map(c => `  - ${c.name} (${c.position}${c.chargeJob ? ' - ' + c.chargeJob : ''})`),
+      `4. 부서 리더 및 담당임원 (총 ${orgChart.hierarchy.leaders.length}명 중 주요 10명):`,
+      ...orgChart.hierarchy.leaders.slice(0, 10).map(c => `  - ${c.name} (${c.position}${c.chargeJob ? ' - ' + c.chargeJob : ''})`),
+      `5. 거버넌스 사외이사 & 감사위원회:`,
+      ...orgChart.hierarchy.auditors.map(c => `  - ${c.name} (${c.position})`),
+      `----------------------------------------`,
+      `출처: 금융감독원 전자공시시스템(DART) 사업보고서 공시 팩트 기반 (GoodPartner x ConnectWe Intelligence)`
     ];
     navigator.clipboard.writeText(lines.join('\n'));
     setIsCopiedReport(true);
@@ -230,7 +238,10 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
         </div>
 
         {node.chargeJob && (
-          <p className="text-[11px] text-slate-400 mt-1 line-clamp-1">
+          <p 
+            title={node.chargeJob}
+            className="text-[11px] text-slate-400 mt-1 line-clamp-1 group-hover:text-slate-300 transition-colors"
+          >
             {node.chargeJob}
           </p>
         )}
@@ -249,6 +260,13 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
               <Phone className="w-2.5 h-2.5 text-amber-400" />
               <MessageSquare className="w-2.5 h-2.5 text-amber-400" />
             </div>
+          </div>
+        )}
+
+        {!isFirst && !isSecond && (
+          <div className="mt-2 pt-2 border-t border-slate-800/80 text-[10px] text-slate-500 group-hover:text-indigo-400 flex items-center justify-between font-medium transition-colors">
+            <span>🏛️ DART 공시 임원</span>
+            <span className="group-hover:translate-x-0.5 transition-transform">프로필 열람 →</span>
           </div>
         )}
       </div>
