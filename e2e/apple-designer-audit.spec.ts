@@ -1,4 +1,4 @@
-﻿import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 test.describe('Apple Chief Designer Deep Precision Audit', () => {
   test.setTimeout(60000);
@@ -126,6 +126,21 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
       await page.screenshot({ path: 'e2e/screenshots/audit-09-modal-digest.png' });
       // Close modal using close button
       const closeBtn = page.locator('button:has-text("닫기"), button[aria-label="닫기"]').first();
+      if (await closeBtn.isVisible()) {
+        await closeBtn.click();
+      } else {
+        await page.keyboard.press('Escape');
+      }
+      await page.waitForTimeout(400);
+    }
+
+    // Audit 9b: Modal Inspection (Cloud Sync Vault)
+    const syncBtn = page.locator('button:has-text("Supabase Live")');
+    if (await syncBtn.isVisible()) {
+      await syncBtn.click();
+      await page.waitForTimeout(500);
+      await page.screenshot({ path: 'e2e/screenshots/audit-09b-modal-cloudsync.png' });
+      const closeBtn = page.locator('button[aria-label="닫기"], button:has-text("닫기")').first();
       if (await closeBtn.isVisible()) {
         await closeBtn.click();
       } else {

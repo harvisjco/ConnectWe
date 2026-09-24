@@ -186,9 +186,9 @@ export const Header: React.FC<HeaderProps> = ({
                 <button
                   onClick={onOpenCloudSyncModal}
                   title="Supabase PostgreSQL E2EE Cloud Live 연동 중"
-                  className="inline-flex items-center gap-1.5 text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30 font-medium hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95"
+                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 min-h-[32px] rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30 font-medium hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95 shadow-2xs"
                 >
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                   <span>Supabase Live</span>
                 </button>
               </div>
@@ -287,44 +287,44 @@ export const Header: React.FC<HeaderProps> = ({
               <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isToolsOpen ? 'rotate-180' : ''}`} />
             </button>
 
-            {/* Dropdown Menu Popover - visionOS Spatial Glass */}
+            {/* Dropdown Menu Popover - Clean Light Tech & Spatial Glass */}
             {isToolsOpen && (
-              <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-slate-900/95 border border-slate-700/80 shadow-[0_20px_50px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-2xl p-2 z-50 space-y-2 ring-1 ring-white/10 animate-in fade-in zoom-in-95 duration-150">
+              <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-white/95 dark:bg-slate-900/95 border border-slate-200 dark:border-slate-700/80 shadow-2xl backdrop-blur-2xl p-2.5 z-50 space-y-2 ring-1 ring-black/5 dark:ring-white/10 animate-in fade-in zoom-in-95 duration-150">
                 {/* Mobile KPI Summary in Popover */}
-                <div className="lg:hidden p-2.5 rounded-xl bg-slate-950/80 border border-slate-800/80 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] text-xs flex items-center justify-between text-slate-300">
-                  <span>총 <b className="text-white">{people.length}명</b></span>
-                  <span>DART <b className="text-emerald-300">{dartFactCount}명</b></span>
-                  {staleCount > 0 && <span>미소통 <b className="text-amber-300">{staleCount}명</b></span>}
+                <div className="lg:hidden p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 text-xs flex items-center justify-between text-slate-700 dark:text-slate-300">
+                  <span>총 <b className="text-slate-900 dark:text-white">{people.length}명</b></span>
+                  <span>DART <b className="text-emerald-700 dark:text-emerald-300">{dartFactCount}명</b></span>
+                  {staleCount > 0 && <span>미소통 <b className="text-amber-700 dark:text-amber-300">{staleCount}명</b></span>}
                 </div>
 
                 {/* Section 1: Executive Analytics */}
                 <div>
-                  <div className="px-2 py-1 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                    경영 사령탑 & 코파일럿
+                  <div className="px-2 py-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    경영 사령탑 &amp; 코파일럿
                   </div>
                   <div className="space-y-0.5">
                     <button
                       onClick={() => { setIsToolsOpen(false); onOpenDashboard(); }}
-                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                      className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                     >
-                      <BarChart2 className="w-4 h-4 text-purple-400" />
+                      <BarChart2 className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                       <span>인맥 포트폴리오 대시보드</span>
                     </button>
                     {onOpenCopilot && (
                       <button
                         onClick={() => { setIsToolsOpen(false); onOpenCopilot(); }}
-                        className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                        className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                       >
-                        <Bot className="w-4 h-4 text-indigo-400" />
+                        <Bot className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                         <span>자연어 인맥 코파일럿</span>
                       </button>
                     )}
                     {onOpenCalendarModal && (
                       <button
                         onClick={() => { setIsToolsOpen(false); onOpenCalendarModal(); }}
-                        className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                        className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                       >
-                        <Calendar className="w-4 h-4 text-sky-400" />
+                        <Calendar className="w-4 h-4 text-sky-600 dark:text-sky-400" />
                         <span>캘린더 미팅 레이더</span>
                       </button>
                     )}
@@ -332,128 +332,128 @@ export const Header: React.FC<HeaderProps> = ({
                 </div>
 
                 {/* Section 2: Intelligence & Collection */}
-                <div className="pt-1 border-t border-slate-800">
-                  <div className="px-2 py-1 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                    팩트 검증 & 데이터 수집
+                <div className="pt-1 border-t border-slate-100 dark:border-slate-800">
+                  <div className="px-2 py-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    팩트 검증 &amp; 데이터 수집
                   </div>
                   <div className="space-y-0.5">
                     <button
                       onClick={() => { setIsToolsOpen(false); handleBatchDartCheck(); }}
-                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                      className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                     >
-                      <Sparkles className="w-4 h-4 text-emerald-400" />
+                      <Sparkles className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
                       <span>DART 상장공시 일괄 스캔</span>
                     </button>
                     {onOpenCardScanner && (
                       <button
                         onClick={() => { setIsToolsOpen(false); onOpenCardScanner(); }}
-                        className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                        className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                       >
-                        <Camera className="w-4 h-4 text-teal-400" />
+                        <Camera className="w-4 h-4 text-teal-600 dark:text-teal-400" />
                         <span>명함 1초 OCR 스캔</span>
                       </button>
                     )}
                     {onOpenDisclosureAlertModal && (
                       <button
                         onClick={() => { setIsToolsOpen(false); onOpenDisclosureAlertModal(); }}
-                        className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                        className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                       >
-                        <Bell className="w-4 h-4 text-amber-400" />
+                        <Bell className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                         <span>DART 공시 변동 실시간 알림</span>
                       </button>
                     )}
                     <button
                       onClick={() => { setIsToolsOpen(false); handleDeviceContacts(); }}
-                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                      className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                     >
-                      <Smartphone className="w-4 h-4 text-sky-400" />
+                      <Smartphone className="w-4 h-4 text-sky-600 dark:text-sky-400" />
                       <span>스마트폰 주소록 직접 연동</span>
                     </button>
                     <button
                       onClick={() => { setIsToolsOpen(false); onOpenImportModal(); }}
-                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                      className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                     >
-                      <UploadCloud className="w-4 h-4 text-slate-400" />
+                      <UploadCloud className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                       <span>CSV/vCard 대량 가져오기</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Section 3: Security & Sync */}
-                <div className="pt-1 border-t border-slate-800">
-                  <div className="px-2 py-1 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                    보안 & 클라우드
+                <div className="pt-1 border-t border-slate-100 dark:border-slate-800">
+                  <div className="px-2 py-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
+                    보안 &amp; 클라우드
                   </div>
                   <div className="space-y-0.5">
                     <button
                       onClick={() => { setIsToolsOpen(false); onOpenEncryptionModal(); }}
-                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                      className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                     >
-                      <Lock className="w-4 h-4 text-amber-400" />
+                      <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                       <span>AES-256 데이터 암호화</span>
                     </button>
                     {onOpenCloudSyncModal && (
                       <button
                         onClick={() => { setIsToolsOpen(false); onOpenCloudSyncModal(); }}
-                        className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                        className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                       >
-                        <Cloud className="w-4 h-4 text-sky-400" />
+                        <Cloud className="w-4 h-4 text-sky-600 dark:text-sky-400" />
                         <span>E2EE 클라우드 동기화 볼트</span>
                       </button>
                     )}
                     <button
                       onClick={() => { setIsToolsOpen(false); onOpenSettingsModal(); }}
-                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                      className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                     >
-                      <Settings className="w-4 h-4 text-indigo-400" />
+                      <Settings className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                       <span>내 프로필 및 환경설정</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Section 4: Export & Maintenance */}
-                <div className="pt-1 border-t border-slate-800">
-                  <div className="px-2 py-1 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                <div className="pt-1 border-t border-slate-100 dark:border-slate-800">
+                  <div className="px-2 py-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                     내보내기 및 데이터 관리
                   </div>
-                  <div className="grid grid-cols-2 gap-1 pt-1">
+                  <div className="grid grid-cols-2 gap-1.5 pt-1">
                     <button
                       onClick={() => { setIsToolsOpen(false); handleExportVcf(); }}
-                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                      className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                       title="스마트폰 주소록 .vcf 파일 다운로드"
                     >
-                      <FileDown className="w-3.5 h-3.5 text-indigo-400" />
+                      <FileDown className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                       <span>.vcf 내보내기</span>
                     </button>
                     <button
                       onClick={() => { setIsToolsOpen(false); handleExportCsv(); }}
-                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                      className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                       title="UTF-8 with BOM 호환 CSV 다운로드"
                     >
-                      <Download className="w-3.5 h-3.5 text-emerald-400" />
+                      <Download className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
                       <span>CSV 내보내기</span>
                     </button>
                     <button
                       onClick={() => { setIsToolsOpen(false); exportBackupJson(); }}
-                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                      className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                       title="전체 데이터 백업 JSON 다운로드"
                     >
-                      <FileDown className="w-3.5 h-3.5 text-sky-400" />
+                      <FileDown className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
                       <span>백업 JSON</span>
                     </button>
                     <button
                       onClick={() => { setIsToolsOpen(false); fileInputRef.current?.click(); }}
-                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                      className="flex items-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
                       title="백업 JSON 파일 복원"
                     >
-                      <UploadCloud className="w-3.5 h-3.5 text-amber-400" />
+                      <UploadCloud className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                       <span>JSON 복원</span>
                     </button>
                   </div>
-                  <div className="pt-1 mt-1 border-t border-slate-800/60">
+                  <div className="pt-1 mt-1 border-t border-slate-100 dark:border-slate-800/60">
                     <button
                       onClick={() => { setIsToolsOpen(false); handleReset(); }}
-                      className="w-full flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium text-rose-400 hover:bg-rose-950/30 hover:text-rose-300 transition-colors"
+                      className="w-full flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
                       <span>기본 시드 상태 리셋</span>
