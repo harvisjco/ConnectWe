@@ -186,7 +186,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-6 py-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-6 py-6 pb-28 space-y-6">
         
         {/* GraphRAG Search Interface */}
         <section>
@@ -203,7 +203,7 @@ export const App: React.FC = () => {
         <section className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             {/* Primary 3-Segment Tab Bar */}
-            <div className="inline-flex p-1.5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-inner backdrop-blur-md">
+            <div className="inline-flex p-1.5 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-inner backdrop-blur-md overflow-x-auto max-w-full">
               <button
                 type="button"
                 data-testid="segment-command"
@@ -211,14 +211,15 @@ export const App: React.FC = () => {
                   setActiveSegment('command');
                   setActiveView('command');
                 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap shrink-0 ${
                   activeSegment === 'command'
                     ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-white/10'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                 }`}
               >
-                <LayoutDashboard className="w-4 h-4 text-amber-400" />
-                <span>🚀 오늘의 경영 사령탑</span>
+                <LayoutDashboard className="w-4 h-4 text-amber-400 shrink-0" />
+                <span className="hidden sm:inline">🚀 오늘의 경영 사령탑</span>
+                <span className="sm:hidden">🚀 사령탑</span>
               </button>
 
               <button
@@ -230,14 +231,15 @@ export const App: React.FC = () => {
                     setActiveView('company');
                   }
                 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap shrink-0 ${
                   activeSegment === 'explore'
                     ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-white/10'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                 }`}
               >
-                <Globe className="w-4 h-4 text-sky-400" />
-                <span>🌐 인맥 맵 탐색</span>
+                <Globe className="w-4 h-4 text-sky-400 shrink-0" />
+                <span className="hidden sm:inline">🌐 인맥 맵 탐색</span>
+                <span className="sm:hidden">🌐 인맥 맵</span>
               </button>
 
               <button
@@ -249,14 +251,15 @@ export const App: React.FC = () => {
                     setActiveView('deals');
                   }
                 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 ${
+                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap shrink-0 ${
                   activeSegment === 'business'
                     ? 'bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-lg shadow-indigo-600/30 ring-1 ring-white/10'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
                 }`}
               >
-                <Briefcase className="w-4 h-4 text-emerald-400" />
-                <span>💼 전략 비즈니스 워룸</span>
+                <Briefcase className="w-4 h-4 text-emerald-400 shrink-0" />
+                <span className="hidden sm:inline">💼 전략 비즈니스 워룸</span>
+                <span className="sm:hidden">💼 비즈니스</span>
               </button>
             </div>
 

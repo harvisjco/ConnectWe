@@ -124,7 +124,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
               <span className="text-xs font-bold text-indigo-300 tracking-wider uppercase font-mono">
                 Executive Morning Briefing
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold font-mono">
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold font-mono">
                 AI Ready
               </span>
             </div>
@@ -168,7 +168,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                 <Compass className="w-4 h-4" />
                 <span>오늘의 현장 레이더</span>
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800 font-mono">
+              <span className="text-[11px] px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800 font-mono">
                 {activeCluster.cluster.shortName}
               </span>
             </div>
@@ -195,11 +195,11 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                       <span>{p.name}</span>
                       <span className="text-sky-400 text-[11px]">({p.currentTitle})</span>
                     </div>
-                    <div className="text-[10px] text-slate-500 truncate">{p.currentCompany}</div>
+                    <div className="text-[11px] text-slate-500 truncate">{p.currentCompany}</div>
                   </div>
                   <button
                     onClick={() => handleCopyTeaInvite(p)}
-                    className="p-1.5 rounded-lg bg-sky-950 text-sky-300 border border-sky-500/30 hover:bg-sky-900 shrink-0 text-[11px] font-bold"
+                    className="w-8 h-8 rounded-lg bg-sky-950 text-sky-300 border border-sky-500/30 hover:bg-sky-900 shrink-0 text-xs font-bold flex items-center justify-center transition-all active:scale-95"
                     title="티타임 초대장 복사"
                   >
                     {copiedKey === `tea-${p.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Coffee className="w-3.5 h-3.5" />}
@@ -227,7 +227,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                 <span>DART 영전 조기 감지</span>
               </span>
               {uncelebratedPromos.length > 0 && (
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold font-mono">
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold font-mono">
                   {uncelebratedPromos.length}건 미축하
                 </span>
               )}
@@ -299,7 +299,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                 <Clock className="w-4 h-4" />
                 <span>소통 골든타임 넛지</span>
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 font-mono">
+              <span className="text-[11px] px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 font-mono">
                 {cadenceAlerts.length}명 관리 요망
               </span>
             </div>
@@ -324,13 +324,13 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                   >
                     <div className="font-bold text-slate-200 truncate flex items-center gap-1">
                       <span>{alert.person.name}</span>
-                      <span className="text-rose-400 text-[10px] font-mono">({alert.daysSinceLastContact}일)</span>
+                      <span className="text-rose-400 text-[11px] font-mono">({alert.daysSinceLastContact}일)</span>
                     </div>
-                    <div className="text-[10px] text-slate-500 truncate">{alert.person.currentCompany}</div>
+                    <div className="text-[11px] text-slate-500 truncate">{alert.person.currentCompany}</div>
                   </div>
                   <button
                     onClick={() => handleCopyCadencePing(alert.person, alert.daysSinceLastContact)}
-                    className="p-1.5 rounded-lg bg-rose-950 text-rose-300 border border-rose-500/30 hover:bg-rose-900 shrink-0 text-[11px] font-bold"
+                    className="w-8 h-8 rounded-lg bg-rose-950 text-rose-300 border border-rose-500/30 hover:bg-rose-900 shrink-0 text-xs font-bold flex items-center justify-center transition-all active:scale-95"
                     title="안부 핑 복사"
                   >
                     {copiedKey === `cadence-${alert.person.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <MessageCircle className="w-3.5 h-3.5" />}
@@ -358,7 +358,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                 <span>최우선 비즈니스 딜</span>
               </span>
               {activeFocusDeal && (
-                <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">
+                <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800 font-mono">
                   건전도 {activeFocusDeal.healthScore}%
                 </span>
               )}
@@ -377,7 +377,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
 
                 {/* Health Progress Bar */}
                 <div className="space-y-1">
-                  <div className="flex items-center justify-between text-[10px] text-slate-400">
+                  <div className="flex items-center justify-between text-[11px] text-slate-400">
                     <span>인맥 침투 건전도</span>
                     <span className="font-mono text-emerald-400 font-bold">{activeFocusDeal.healthScore}%</span>
                   </div>
@@ -433,7 +433,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
               <Zap className="w-4 h-4 text-amber-400" />
               <span>알파 슈퍼 커넥터 TOP 3</span>
             </h3>
-            <span className="text-[10px] text-slate-400 font-mono">Centrality Metric</span>
+            <span className="text-[11px] text-slate-400 font-mono">Centrality Metric</span>
           </div>
 
           <div className="space-y-2">
@@ -451,14 +451,14 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                       <ShieldCheck className="w-3 h-3 text-emerald-400" />
                     )}
                   </div>
-                  <div className="text-[10px] text-slate-500 mt-0.5">{person.currentCompany}</div>
+                  <div className="text-[11px] text-slate-500 mt-0.5">{person.currentCompany}</div>
                 </div>
 
                 <div className="text-right shrink-0">
                   <div className="text-xs font-bold text-amber-400 font-mono">
                     ⚡ {powerScore}점
                   </div>
-                  <div className="text-[9px] text-slate-500">
+                  <div className="text-[11px] text-slate-500">
                     {tier === 'ALPHA_HUB' ? '👑 알파 허브' : '핵심 커넥터'}
                   </div>
                 </div>
@@ -475,7 +475,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                 <Building2 className="w-4 h-4 text-indigo-400" />
                 <span>20대 대기업 사각지대(Blind Spot) 즉시 돌파 파이프라인</span>
               </h3>
-              <span className="text-[10px] px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 font-mono font-bold">
+              <span className="text-[11px] px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-800 font-mono font-bold">
                 D등급 집중 관리
               </span>
             </div>

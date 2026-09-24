@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Person } from '../../types/network';
 import { exportPeopleToVcf } from '../../services/vcardExporter';
 import { exportBackupJson, restoreBackupFromJson, resetStorage } from '../../services/storageService';
@@ -7,7 +7,8 @@ import { pickContactsFromDevice } from '../../services/contactPicker';
 import { 
   Share2, UploadCloud, Download, ShieldCheck, Clock, 
   Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
-  BarChart2, Lock, Settings, Cloud, Bot, Camera, Calendar, Bell
+  BarChart2, Lock, Settings, Cloud, Bot, Camera, Calendar, Bell,
+  MoreHorizontal, ChevronDown
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -44,6 +45,23 @@ export const Header: React.FC<HeaderProps> = ({
   onShowToast
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const toolsMenuRef = useRef<HTMLDivElement | null>(null);
+  const [isToolsOpen, setIsToolsOpen] = useState(false);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (toolsMenuRef.current && !toolsMenuRef.current.contains(e.target as Node)) {
+        setIsToolsOpen(false);
+      }
+    };
+    if (isToolsOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isToolsOpen]);
 
   const dartFactCount = people.filter(p => p.sourceType === 'DART_FACT' || p.dartInfo?.isPublicDirector).length;
   const staleCount = people.filter(p => p.isStale).length;
@@ -145,248 +163,290 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 px-6 py-4">
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-        {/* Brand Logo & Slogan */}
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-sky-400 flex items-center justify-center shadow-lg shadow-indigo-500/25 ring-1 ring-white/20">
-            <Share2 className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h1 className="text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">
-                ConnectWe
-              </h1>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold tracking-wide">
-                Production-Ready
-              </span>
-              <button
-                onClick={onOpenCloudSyncModal}
-                title="Supabase PostgreSQL E2EE Cloud Live 연동 중"
-                className="hidden sm:inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-medium hover:bg-emerald-500/20 transition-colors cursor-pointer"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                <span>Supabase Live</span>
-              </button>
+    <header className="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 px-4 sm:px-6 py-3">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
+        {/* Zone 1: Brand & Slogan */}
+        <div className="flex items-center justify-between md:justify-start gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-sky-400 flex items-center justify-center shadow-lg shadow-indigo-500/25 ring-1 ring-white/20 shrink-0">
+              <Share2 className="w-5 h-5 text-white" />
             </div>
-            <p className="text-xs text-slate-400">
-              리멤버 · 스마트폰 주소록 · DART 8,500+ 상장사 실공시 팩트 융합 인맥 허브
-            </p>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 className="text-lg sm:text-xl font-bold tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent whitespace-nowrap">
+                  ConnectWe
+                </h1>
+                <span className="hidden sm:inline-block text-[11px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold tracking-wide whitespace-nowrap">
+                  Production-Ready
+                </span>
+                <button
+                  onClick={onOpenCloudSyncModal}
+                  title="Supabase PostgreSQL E2EE Cloud Live 연동 중"
+                  className="inline-flex items-center gap-1.5 text-[11px] px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-medium hover:bg-emerald-500/20 transition-colors cursor-pointer whitespace-nowrap"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Supabase Live</span>
+                </button>
+              </div>
+              <p className="hidden sm:block text-[11px] text-slate-400 whitespace-nowrap truncate max-w-xs md:max-w-none">
+                리멤버 · 스마트폰 주소록 · DART 8,500+ 상장사 실공시 팩트 융합 인맥 허브
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Real-time KPI Stats Bar */}
-        <div className="flex items-center gap-2.5 overflow-x-auto pb-1 lg:pb-0 w-full lg:w-auto">
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-800/80 border border-slate-700/60 text-xs">
+        {/* Zone 2: Executive Metric Capsule (Desktop & Tablet) */}
+        <div className="hidden lg:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-slate-800/80 border border-slate-700/60 text-xs shadow-inner whitespace-nowrap">
+          <div className="flex items-center gap-1.5 text-slate-300">
             <Users className="w-3.5 h-3.5 text-indigo-400" />
-            <span className="text-slate-400">총 인맥:</span>
+            <span className="text-slate-400">총 인맥</span>
             <span className="font-bold text-white">{people.length}명</span>
           </div>
-
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-950/40 border border-emerald-500/30 text-xs">
+          <span className="text-slate-600">·</span>
+          <div className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-            <span className="text-emerald-400 font-medium">DART FACT:</span>
+            <span className="text-emerald-400 font-medium">DART FACT</span>
             <span className="font-bold text-emerald-300">{dartFactCount}명</span>
           </div>
+          {staleCount > 0 && (
+            <>
+              <span className="text-slate-600">·</span>
+              <div className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-amber-400" />
+                <span className="text-amber-400 font-medium">미소통</span>
+                <span className="font-bold text-amber-300">{staleCount}명</span>
+              </div>
+            </>
+          )}
+        </div>
 
-          {/* Daily Intelligence Digest Trigger Button */}
+        {/* Zone 3: Core CTAs & Quick Tools Dropdown */}
+        <div className="flex items-center justify-end gap-2 shrink-0">
+          {/* Daily Intelligence Digest CTA */}
           <button
             onClick={onOpenDigestModal}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-950/60 to-purple-950/60 border border-indigo-500/40 hover:border-indigo-400 text-xs font-semibold text-indigo-300 hover:text-white transition-all active:scale-95 shadow-sm"
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-indigo-950/80 to-purple-950/80 border border-indigo-500/40 hover:border-indigo-400 text-xs font-semibold text-indigo-200 hover:text-white transition-all active:scale-95 shadow-sm whitespace-nowrap"
+            title="오늘의 인맥 지능 다이제스트"
           >
             <Sparkles className="w-3.5 h-3.5 text-indigo-400 animate-pulse" />
-            <span>오늘의 다이제스트</span>
+            <span>다이제스트</span>
             {staleCount > 0 && (
               <span className="w-2 h-2 rounded-full bg-pink-500" />
             )}
           </button>
 
-          {staleCount > 0 && (
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-950/40 border border-amber-500/30 text-xs">
-              <Clock className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-amber-400 font-medium">미소통:</span>
-              <span className="font-bold text-amber-300">{staleCount}명</span>
-            </div>
-          )}
+          {/* Add Person CTA */}
+          <button
+            onClick={onOpenAddModal}
+            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 transition-all text-xs font-semibold text-white shadow-md shadow-indigo-600/30 whitespace-nowrap"
+            title="새 인맥 직접 등록"
+          >
+            <UserPlus className="w-3.5 h-3.5" />
+            <span>+ 인맥 등록</span>
+          </button>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-1.5 ml-auto">
-            {/* 인맥 대시보드 */}
+          {/* Quick Tools Dropdown Menu */}
+          <div className="relative" ref={toolsMenuRef}>
             <button
-              onClick={onOpenDashboard}
-              title="인맥 포트폴리오 통계 대시보드"
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all active:scale-95"
+              onClick={() => setIsToolsOpen(prev => !prev)}
+              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold transition-all whitespace-nowrap active:scale-95 ${
+                isToolsOpen
+                  ? 'bg-slate-700 text-white border-indigo-500/50 shadow-md ring-2 ring-indigo-500/20'
+                  : 'bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border-slate-700'
+              }`}
+              title="도구 모음 (분석, 스캔, 암호화, 동기화, 내보내기)"
             >
-              <BarChart2 className="w-3.5 h-3.5 text-purple-400" />
-              <span>대시보드</span>
+              <MoreHorizontal className="w-4 h-4 text-slate-300" />
+              <span className="hidden sm:inline">도구 모음</span>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isToolsOpen ? 'rotate-180' : ''}`} />
             </button>
 
-            {/* 암호화 설정 */}
-            <button
-              onClick={onOpenEncryptionModal}
-              title="AES-256-GCM 로컬 데이터 암호화 설정"
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
-            >
-              <Lock className="w-3.5 h-3.5 text-amber-400" />
-            </button>
+            {/* Dropdown Menu Popover */}
+            {isToolsOpen && (
+              <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-slate-900 border border-slate-700 shadow-2xl shadow-black/80 backdrop-blur-xl p-2 z-50 space-y-2 animate-in fade-in zoom-in-95 duration-150">
+                {/* Mobile KPI Summary in Popover */}
+                <div className="lg:hidden p-2 rounded-xl bg-slate-800/80 border border-slate-700 text-xs flex items-center justify-between text-slate-300">
+                  <span>총 <b className="text-white">{people.length}명</b></span>
+                  <span>DART <b className="text-emerald-300">{dartFactCount}명</b></span>
+                  {staleCount > 0 && <span>미소통 <b className="text-amber-300">{staleCount}명</b></span>}
+                </div>
 
-            {/* E2EE 클라우드 동기화 볼트 */}
-            <button
-              onClick={onOpenCloudSyncModal}
-              title="E2EE 클라우드 동기화 볼트 (Multi-device Sync)"
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
-            >
-              <Cloud className="w-3.5 h-3.5 text-sky-400" />
-            </button>
+                {/* Section 1: Executive Analytics */}
+                <div>
+                  <div className="px-2 py-1 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                    경영 사령탑 & 코파일럿
+                  </div>
+                  <div className="space-y-0.5">
+                    <button
+                      onClick={() => { setIsToolsOpen(false); onOpenDashboard(); }}
+                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                    >
+                      <BarChart2 className="w-4 h-4 text-purple-400" />
+                      <span>인맥 포트폴리오 대시보드</span>
+                    </button>
+                    {onOpenCopilot && (
+                      <button
+                        onClick={() => { setIsToolsOpen(false); onOpenCopilot(); }}
+                        className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                      >
+                        <Bot className="w-4 h-4 text-indigo-400" />
+                        <span>자연어 인맥 코파일럿</span>
+                      </button>
+                    )}
+                    {onOpenCalendarModal && (
+                      <button
+                        onClick={() => { setIsToolsOpen(false); onOpenCalendarModal(); }}
+                        className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                      >
+                        <Calendar className="w-4 h-4 text-sky-400" />
+                        <span>캘린더 미팅 레이더</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
 
-            {/* 환경설정 및 내 프로필 */}
-            <button
-              onClick={onOpenSettingsModal}
-              title="내 프로필 및 시스템 환경설정 (DART API키 / PII 마스킹)"
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
-            >
-              <Settings className="w-3.5 h-3.5 text-indigo-400" />
-            </button>
+                {/* Section 2: Intelligence & Collection */}
+                <div className="pt-1 border-t border-slate-800">
+                  <div className="px-2 py-1 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                    팩트 검증 & 데이터 수집
+                  </div>
+                  <div className="space-y-0.5">
+                    <button
+                      onClick={() => { setIsToolsOpen(false); handleBatchDartCheck(); }}
+                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                    >
+                      <Sparkles className="w-4 h-4 text-emerald-400" />
+                      <span>DART 상장공시 일괄 스캔</span>
+                    </button>
+                    {onOpenCardScanner && (
+                      <button
+                        onClick={() => { setIsToolsOpen(false); onOpenCardScanner(); }}
+                        className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                      >
+                        <Camera className="w-4 h-4 text-teal-400" />
+                        <span>명함 1초 OCR 스캔</span>
+                      </button>
+                    )}
+                    {onOpenDisclosureAlertModal && (
+                      <button
+                        onClick={() => { setIsToolsOpen(false); onOpenDisclosureAlertModal(); }}
+                        className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                      >
+                        <Bell className="w-4 h-4 text-amber-400" />
+                        <span>DART 공시 변동 실시간 알림</span>
+                      </button>
+                    )}
+                    <button
+                      onClick={() => { setIsToolsOpen(false); handleDeviceContacts(); }}
+                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                    >
+                      <Smartphone className="w-4 h-4 text-sky-400" />
+                      <span>스마트폰 주소록 직접 연동</span>
+                    </button>
+                    <button
+                      onClick={() => { setIsToolsOpen(false); onOpenImportModal(); }}
+                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                    >
+                      <UploadCloud className="w-4 h-4 text-slate-400" />
+                      <span>CSV/vCard 대량 가져오기</span>
+                    </button>
+                  </div>
+                </div>
 
-            {/* AI 인맥 코파일럿 */}
-            <button
-              onClick={onOpenCopilot}
-              title="자연어 인맥 코파일럿 (AI Copilot Chat)"
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white text-xs font-bold transition-all shadow-md shadow-indigo-600/20 active:scale-95"
-            >
-              <Bot className="w-3.5 h-3.5" />
-              <span>AI 코파일럿</span>
-            </button>
+                {/* Section 3: Security & Sync */}
+                <div className="pt-1 border-t border-slate-800">
+                  <div className="px-2 py-1 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                    보안 & 클라우드
+                  </div>
+                  <div className="space-y-0.5">
+                    <button
+                      onClick={() => { setIsToolsOpen(false); onOpenEncryptionModal(); }}
+                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                    >
+                      <Lock className="w-4 h-4 text-amber-400" />
+                      <span>AES-256 데이터 암호화</span>
+                    </button>
+                    {onOpenCloudSyncModal && (
+                      <button
+                        onClick={() => { setIsToolsOpen(false); onOpenCloudSyncModal(); }}
+                        className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                      >
+                        <Cloud className="w-4 h-4 text-sky-400" />
+                        <span>E2EE 클라우드 동기화 볼트</span>
+                      </button>
+                    )}
+                    <button
+                      onClick={() => { setIsToolsOpen(false); onOpenSettingsModal(); }}
+                      className="w-full flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-200 hover:bg-slate-800 hover:text-white transition-colors"
+                    >
+                      <Settings className="w-4 h-4 text-indigo-400" />
+                      <span>내 프로필 및 환경설정</span>
+                    </button>
+                  </div>
+                </div>
 
-            {/* DART Scan */}
-            <button
-              onClick={handleBatchDartCheck}
-              title="8,500+ DART 상장사 공시 임원 일괄 교차 검증"
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-emerald-950/60 hover:bg-emerald-900/60 text-emerald-300 border border-emerald-500/40 text-xs font-semibold transition-all active:scale-95"
-            >
-              <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-              <span>DART 스캔</span>
-            </button>
-
-            {/* DART 공시 변동 알림 봇 */}
-            {onOpenDisclosureAlertModal && (
-              <button
-                onClick={onOpenDisclosureAlertModal}
-                title="내 인맥 소속 상장사 최신 공시 변동 알림"
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-amber-950/60 hover:bg-amber-900/60 text-amber-300 border border-amber-500/40 text-xs font-semibold transition-all active:scale-95"
-              >
-                <Bell className="w-3.5 h-3.5 text-amber-400" />
-                <span>공시 알림</span>
-              </button>
+                {/* Section 4: Export & Maintenance */}
+                <div className="pt-1 border-t border-slate-800">
+                  <div className="px-2 py-1 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                    내보내기 및 데이터 관리
+                  </div>
+                  <div className="grid grid-cols-2 gap-1 pt-1">
+                    <button
+                      onClick={() => { setIsToolsOpen(false); handleExportVcf(); }}
+                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                      title="스마트폰 주소록 .vcf 파일 다운로드"
+                    >
+                      <FileDown className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>.vcf 내보내기</span>
+                    </button>
+                    <button
+                      onClick={() => { setIsToolsOpen(false); handleExportCsv(); }}
+                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                      title="UTF-8 with BOM 호환 CSV 다운로드"
+                    >
+                      <Download className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>CSV 내보내기</span>
+                    </button>
+                    <button
+                      onClick={() => { setIsToolsOpen(false); exportBackupJson(); }}
+                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                      title="전체 데이터 백업 JSON 다운로드"
+                    >
+                      <FileDown className="w-3.5 h-3.5 text-sky-400" />
+                      <span>백업 JSON</span>
+                    </button>
+                    <button
+                      onClick={() => { setIsToolsOpen(false); fileInputRef.current?.click(); }}
+                      className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:bg-slate-800 hover:text-white transition-colors"
+                      title="백업 JSON 파일 복원"
+                    >
+                      <UploadCloud className="w-3.5 h-3.5 text-amber-400" />
+                      <span>JSON 복원</span>
+                    </button>
+                  </div>
+                  <div className="pt-1 mt-1 border-t border-slate-800/60">
+                    <button
+                      onClick={() => { setIsToolsOpen(false); handleReset(); }}
+                      className="w-full flex items-center justify-center gap-1.5 px-2 py-1.5 rounded-lg text-xs font-medium text-rose-400 hover:bg-rose-950/30 hover:text-rose-300 transition-colors"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>기본 시드 상태 리셋</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             )}
-
-            {/* Add Person */}
-            <button
-              onClick={onOpenAddModal}
-              className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 active:scale-95 transition-all text-xs font-semibold text-white shadow-md shadow-indigo-600/30"
-            >
-              <UserPlus className="w-3.5 h-3.5" />
-              <span>인맥 등록</span>
-            </button>
-
-            {/* 명함 1초 OCR 스캔 */}
-            {onOpenCardScanner && (
-              <button
-                onClick={onOpenCardScanner}
-                title="종이 명함 촬영 OCR 및 DART 임원 자동 결합"
-                className="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white active:scale-95 transition-all text-xs font-bold shadow-md shadow-emerald-600/20"
-              >
-                <Camera className="w-3.5 h-3.5" />
-                <span>명함 스캔</span>
-              </button>
-            )}
-
-            {/* 캘린더 미팅 레이더 */}
-            {onOpenCalendarModal && (
-              <button
-                onClick={onOpenCalendarModal}
-                title="캘린더(.ics) 연동 및 실시간 미팅 레이더"
-                className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
-              >
-                <Calendar className="w-3.5 h-3.5 text-sky-400" />
-                <span>캘린더</span>
-              </button>
-            )}
-
-            {/* Mobile Contact Picker */}
-            <button
-              onClick={handleDeviceContacts}
-              title="스마트폰 주소록 직접 선택 동기화 (Contact Picker API)"
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
-            >
-              <Smartphone className="w-3.5 h-3.5 text-sky-400" />
-              <span>폰 주소록</span>
-            </button>
-
-            {/* Import Contacts */}
-            <button
-              onClick={onOpenImportModal}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
-            >
-              <UploadCloud className="w-3.5 h-3.5" />
-              <span>가져오기</span>
-            </button>
-
-            {/* vCard (.vcf) Export */}
-            <button
-              onClick={handleExportVcf}
-              title="스마트폰 연락처 파일(.vcf)로 다운로드"
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
-            >
-              <FileDown className="w-3.5 h-3.5 text-indigo-400" />
-              <span>.vcf</span>
-            </button>
-
-            {/* CSV Export */}
-            <button
-              onClick={handleExportCsv}
-              title="UTF-8 with BOM Excel 호환 CSV 다운로드"
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>CSV</span>
-            </button>
-
-            {/* Backup JSON */}
-            <button
-              onClick={exportBackupJson}
-              title="전체 인맥 및 소통 로그 백업 JSON 다운로드"
-              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 text-xs transition-all"
-            >
-              <FileDown className="w-3.5 h-3.5" />
-            </button>
-
-            {/* Restore JSON */}
-            <button
-              onClick={() => fileInputRef.current?.click()}
-              title="백업 JSON 파일 복원"
-              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white border border-slate-700 text-xs transition-all"
-            >
-              <UploadCloud className="w-3.5 h-3.5 text-amber-400" />
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".json"
-              className="hidden"
-              onChange={handleFileRestore}
-            />
-
-            {/* Reset */}
-            <button
-              onClick={handleReset}
-              title="기본 시드 상태로 초기화"
-              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-rose-400 border border-slate-700 text-xs transition-all"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-            </button>
           </div>
         </div>
+
+        {/* Hidden File Input for Restore */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json"
+          className="hidden"
+          onChange={handleFileRestore}
+        />
       </div>
     </header>
   );
