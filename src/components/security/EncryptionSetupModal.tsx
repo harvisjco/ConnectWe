@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, Lock, Unlock, Eye, EyeOff, ShieldCheck, AlertTriangle, Key } from 'lucide-react';
-import { encryptData, decryptData, deriveKey } from '../../services/cryptoStorage';
+import { encryptData, decryptData } from '../../services/cryptoStorage';
 
 interface EncryptionSetupModalProps {
   onClose: () => void;
@@ -35,12 +35,12 @@ export const EncryptionSetupModal: React.FC<EncryptionSetupModalProps> = ({
     setError('');
 
     try {
-      const raw = localStorage.getItem('connectwe_people') ?? '[]';
-      const key = await deriveKey(password);
-      const encrypted = await encryptData(raw, key);
+      const raw = localStorage.getItem('connectwe_people_v1') ?? localStorage.getItem('connectwe_people') ?? '[]';
+      const encrypted = await encryptData(raw, password);
       localStorage.setItem('connectwe_people_enc', encrypted);
       localStorage.setItem('connectwe_encrypted', '1');
       // 원문 삭제
+      localStorage.removeItem('connectwe_people_v1');
       localStorage.removeItem('connectwe_people');
       setStep('done');
       onShowToast('✅ AES-256-GCM 암호화가 활성화되었습니다. 비밀번호를 반드시 기억해 주세요!');
@@ -59,8 +59,8 @@ export const EncryptionSetupModal: React.FC<EncryptionSetupModalProps> = ({
     try {
       const enc = localStorage.getItem('connectwe_people_enc');
       if (!enc) throw new Error('암호화된 데이터 없음');
-      const key = await deriveKey(password);
-      const raw = await decryptData(enc, key);
+      const raw = await decryptData(enc, password);
+      localStorage.setItem('connectwe_people_v1', raw);
       localStorage.setItem('connectwe_people', raw);
       localStorage.removeItem('connectwe_people_enc');
       localStorage.removeItem('connectwe_encrypted');

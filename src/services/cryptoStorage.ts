@@ -1,14 +1,26 @@
 /**
- * Web Crypto API (AES-GCM 256-bit) 기반 로컬 암호화 스토리지 유틸리티
- * 개인정보보호법(PIPA) 준수: 초민감 개인 연락처 및 메모를 브라우저 로컬스토리지에 안전하게 암호화 보관
+ * Web Crypto API (AES-GCM 256-bit) 기반 엔터프라이즈 암호화 스토리지 유틸리티
+ * 
+ * 보안 하드닝 규격 (NIST SP 800-132 & OWASP 준수):
+ * 1. 동적 무작위 Salt (16바이트 CSPRNG) 매 암호화마다 생성하여 레인보우 테이블 무력화
+ * 2. PBKDF2 (310,000 iterations, SHA-256) 기반 고강도 키 유도
+ * 3. AES-GCM 256-bit 무작위 IV (12바이트) 적용
+ * 4. 바이너리 패키징: [Salt (16B)] + [IV (12B)] + [Ciphertext + AuthTag]
+ * 5. Fail-Safe 원칙: 암호화/복호화 실패 시 평문을 절대 유출하지 않고 명시적 예외 발생
  */
 
-const SALT = new Uint8Array([0x43, 0x6f, 0x6e, 0x6e, 0x65, 0x63, 0x74, 0x57, 0x65, 0x53, 0x61, 0x6c, 0x74, 0x32, 0x30, 0x32]); // "ConnectWeSalt202"
+const SALT_LENGTH = 16; // 128-bit Salt
+const IV_LENGTH = 12;   // 96-bit IV for AES-GCM
+const PBKDF2_ITERATIONS = 310000;
 
 /**
- * 비밀번호로부터 AES-GCM 256bit 암호화 키 유도 (PBKDF2, 310,000 iterations)
+ * 비밀번호와 솔트로부터 AES-GCM 256bit 암호화 키 유도 (PBKDF2)
  */
-export async function deriveKey(passphrase: string): Promise<CryptoKey> {
+export async function deriveKey(passphrase: string, salt: Uint8Array): Promise<CryptoKey> {
+  if (!passphrase || passphrase.trim().length === 0) {
+    throw new Error('[Security] 암호화 마스터 패스프레이즈가 지정되지 않았습니다.');
+  }
+
   const enc = new TextEncoder();
   const baseKey = await crypto.subtle.importKey(
     'raw',
@@ -21,9 +33,9 @@ export async function deriveKey(passphrase: string): Promise<CryptoKey> {
   return crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
-      salt: SALT,
-      iterations: 310000,
-      hash: 'SHA-256'
+      salt: salt as BufferSource,
+      iterations: PBKDF2_ITERATIONS,
+      hash: 'SHA-256',
     },
     baseKey,
     { name: 'AES-GCM', length: 256 },
@@ -33,20 +45,27 @@ export async function deriveKey(passphrase: string): Promise<CryptoKey> {
 }
 
 /**
- * 텍스트 암호화 (IV + 암호문 → Base64)
- * @param plainText 암호화할 평문
- * @param keyOrPassphrase CryptoKey 객체 또는 패스프레이즈 문자열
+ * 텍스트 암호화 (Salt[16B] + IV[12B] + Ciphertext → Base64)
+ * Fail-Safe: 암호화 실패 시 평문을 절대로 반환하지 않음
  */
 export async function encryptData(
   plainText: string,
-  keyOrPassphrase: CryptoKey | string = 'ConnectWe_Default_Local_Key_v1'
+  passphrase: string
 ): Promise<string> {
-  try {
-    const key = typeof keyOrPassphrase === 'string'
-      ? await deriveKey(keyOrPassphrase)
-      : keyOrPassphrase;
+  if (!plainText) return '';
+  if (!passphrase || passphrase.trim().length === 0) {
+    throw new Error('[Security] 암호화에는 최소 1자 이상의 유효한 비밀번호가 필요합니다.');
+  }
 
-    const iv = crypto.getRandomValues(new Uint8Array(12)); // 96-bit IV for AES-GCM
+  try {
+    // 1. 암호학적으로 안전한 동적 무작위 Salt & IV 생성 (CSPRNG)
+    const salt = crypto.getRandomValues(new Uint8Array(SALT_LENGTH));
+    const iv = crypto.getRandomValues(new Uint8Array(IV_LENGTH));
+
+    // 2. 솔트 기반 키 유도
+    const key = await deriveKey(passphrase, salt);
+
+    // 3. AES-GCM 암호화
     const enc = new TextEncoder();
     const encodedData = enc.encode(plainText);
 
@@ -56,47 +75,57 @@ export async function encryptData(
       encodedData
     );
 
-    // IV + Ciphertext 결합
-    const combined = new Uint8Array(iv.length + cipherBuffer.byteLength);
-    combined.set(iv, 0);
-    combined.set(new Uint8Array(cipherBuffer), iv.length);
+    // 4. 단일 바이너리 결합: [Salt: 16B] + [IV: 12B] + [Ciphertext]
+    const combined = new Uint8Array(SALT_LENGTH + IV_LENGTH + cipherBuffer.byteLength);
+    combined.set(salt, 0);
+    combined.set(iv, SALT_LENGTH);
+    combined.set(new Uint8Array(cipherBuffer), SALT_LENGTH + IV_LENGTH);
 
-    // Base64 변환
+    // 5. 안전한 Base64 인코딩
     let binary = '';
-    const bytes = new Uint8Array(combined);
-    for (let i = 0; i < bytes.byteLength; i++) {
-      binary += String.fromCharCode(bytes[i]);
+    for (let i = 0; i < combined.byteLength; i++) {
+      binary += String.fromCharCode(combined[i]);
     }
     return btoa(binary);
   } catch (err) {
-    console.error('Encryption failed:', err);
-    return plainText; // 폴백
+    console.error('[Security] AES-256-GCM encryption failed:', err);
+    throw new Error(`[Security] 데이터 암호화 실패: ${err instanceof Error ? err.message : String(err)}`);
   }
 }
 
 /**
- * 텍스트 복호화 (Base64 → IV + 암호문 → 평문)
- * @param cipherBase64 복호화할 Base64 문자열
- * @param keyOrPassphrase CryptoKey 객체 또는 패스프레이즈 문자열
+ * 텍스트 복호화 (Base64 → Salt[16B] + IV[12B] + Ciphertext → 평문)
  */
 export async function decryptData(
   cipherBase64: string,
-  keyOrPassphrase: CryptoKey | string = 'ConnectWe_Default_Local_Key_v1'
+  passphrase: string
 ): Promise<string> {
-  try {
-    const key = typeof keyOrPassphrase === 'string'
-      ? await deriveKey(keyOrPassphrase)
-      : keyOrPassphrase;
+  if (!cipherBase64) return '';
+  if (!passphrase || passphrase.trim().length === 0) {
+    throw new Error('[Security] 복호화를 위한 비밀번호가 입력되지 않았습니다.');
+  }
 
+  try {
     const binary = atob(cipherBase64);
     const bytes = new Uint8Array(binary.length);
     for (let i = 0; i < binary.length; i++) {
       bytes[i] = binary.charCodeAt(i);
     }
 
-    const iv = bytes.slice(0, 12);
-    const ciphertext = bytes.slice(12);
+    // 최소 헤더 크기 검증 (Salt 16B + IV 12B = 28B 이상)
+    if (bytes.length < SALT_LENGTH + IV_LENGTH) {
+      throw new Error('암호화 데이터 형식이 올바르지 않습니다.');
+    }
 
+    // 1. 헤더로부터 동적 Salt 및 IV 분리
+    const salt = bytes.slice(0, SALT_LENGTH);
+    const iv = bytes.slice(SALT_LENGTH, SALT_LENGTH + IV_LENGTH);
+    const ciphertext = bytes.slice(SALT_LENGTH + IV_LENGTH);
+
+    // 2. 분리된 솔트로 키 유도
+    const key = await deriveKey(passphrase, salt);
+
+    // 3. 복호화 수행 및 무결성 태그 검증
     const decryptedBuffer = await crypto.subtle.decrypt(
       { name: 'AES-GCM', iv },
       key,
@@ -105,8 +134,7 @@ export async function decryptData(
 
     const dec = new TextDecoder();
     return dec.decode(decryptedBuffer);
-  } catch {
-    // 암호화되지 않은 기존 평문 데이터일 경우 원문 반환
-    return cipherBase64;
+  } catch (err) {
+    throw new Error('복호화 실패: 패스프레이즈가 일치하지 않거나 암호문이 손상되었습니다.');
   }
 }
