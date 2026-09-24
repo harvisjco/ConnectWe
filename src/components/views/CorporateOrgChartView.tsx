@@ -448,122 +448,217 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
           {/* Level 0 & 1: 최고 경영진 */}
           {(orgChart.hierarchy.chairpersons.length > 0 || orgChart.hierarchy.ceos.length > 0) && (
             <div className="p-5 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-indigo-500/30 shadow-xl space-y-3">
-              <div className="flex items-center justify-between border-b border-indigo-500/20 pb-2">
+              <div 
+                onClick={() => toggleSection('leadership')}
+                className="flex items-center justify-between border-b border-indigo-500/20 pb-2 cursor-pointer hover:opacity-90 select-none transition-opacity"
+              >
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-indigo-400" />
                   <h3 className="text-xs font-bold text-indigo-300 uppercase tracking-wider">
                     👑 최고 경영진 (Board of Directors &amp; CEO)
                   </h3>
                 </div>
-                <span className="text-[11px] text-slate-400">
-                  {orgChart.hierarchy.chairpersons.length + orgChart.hierarchy.ceos.length}명
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-slate-400">
+                    {orgChart.hierarchy.chairpersons.length + orgChart.hierarchy.ceos.length}명
+                  </span>
+                  {collapsedSections['leadership'] ? (
+                    <ChevronDown className="w-4 h-4 text-indigo-400" />
+                  ) : (
+                    <ChevronUp className="w-4 h-4 text-slate-400" />
+                  )}
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {filterNodes([...orgChart.hierarchy.chairpersons, ...orgChart.hierarchy.ceos]).map(node => 
-                  renderOrgNodeCard(node)
-                )}
-              </div>
+              {!collapsedSections['leadership'] ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {filterNodes([...orgChart.hierarchy.chairpersons, ...orgChart.hierarchy.ceos]).map(node => 
+                    renderOrgNodeCard(node)
+                  )}
+                </div>
+              ) : (
+                <div 
+                  onClick={() => toggleSection('leadership')}
+                  className="py-2.5 text-center text-xs text-slate-500 hover:text-indigo-300 cursor-pointer bg-slate-950/40 rounded-xl border border-dashed border-slate-800"
+                >
+                  최고 경영진 {orgChart.hierarchy.chairpersons.length + orgChart.hierarchy.ceos.length}명 접힘 (클릭하여 펼치기 ↓)
+                </div>
+              )}
             </div>
           )}
 
           {/* Level 2: C-Level & 부문장 */}
           {orgChart.hierarchy.cLevels.length > 0 && (
             <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3 shadow-lg">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              <div 
+                onClick={() => toggleSection('clevel')}
+                className="flex items-center justify-between border-b border-slate-800 pb-2 cursor-pointer hover:opacity-90 select-none transition-opacity"
+              >
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-purple-400" />
                   <h3 className="text-xs font-bold text-purple-300 uppercase tracking-wider">
                     ⚡ 핵심 사업부문장 &amp; C-Level (부사장 / CTO / CFO / COO)
                   </h3>
                 </div>
-                <span className="text-[11px] text-slate-400 font-mono">
-                  {orgChart.hierarchy.cLevels.length}명
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-slate-400 font-mono">
+                    {orgChart.hierarchy.cLevels.length}명
+                  </span>
+                  {collapsedSections['clevel'] ? (
+                    <ChevronDown className="w-4 h-4 text-purple-400" />
+                  ) : (
+                    <ChevronUp className="w-4 h-4 text-slate-400" />
+                  )}
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                {filterNodes(orgChart.hierarchy.cLevels).map(node => 
-                  renderOrgNodeCard(node)
-                )}
-              </div>
+              {!collapsedSections['clevel'] ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                  {filterNodes(orgChart.hierarchy.cLevels).map(node => 
+                    renderOrgNodeCard(node)
+                  )}
+                </div>
+              ) : (
+                <div 
+                  onClick={() => toggleSection('clevel')}
+                  className="py-2.5 text-center text-xs text-slate-500 hover:text-purple-300 cursor-pointer bg-slate-950/40 rounded-xl border border-dashed border-slate-800"
+                >
+                  C-Level &amp; 부문장 {orgChart.hierarchy.cLevels.length}명 접힘 (클릭하여 펼치기 ↓)
+                </div>
+              )}
             </div>
           )}
 
           {/* Level 3: 본부장 / 실장 / 전무 / 상무 */}
           {orgChart.hierarchy.directors.length > 0 && (
             <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3 shadow-md">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              <div 
+                onClick={() => toggleSection('directors')}
+                className="flex items-center justify-between border-b border-slate-800 pb-2 cursor-pointer hover:opacity-90 select-none transition-opacity"
+              >
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-sky-400" />
                   <h3 className="text-xs font-bold text-sky-300 uppercase tracking-wider">
                     💼 본부장 · 실장 · 총괄 디렉터 (전무 / 상무)
                   </h3>
                 </div>
-                <span className="text-[11px] text-slate-400 font-mono">
-                  {orgChart.hierarchy.directors.length}명
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-slate-400 font-mono">
+                    {orgChart.hierarchy.directors.length}명
+                  </span>
+                  {collapsedSections['directors'] ? (
+                    <ChevronDown className="w-4 h-4 text-sky-400" />
+                  ) : (
+                    <ChevronUp className="w-4 h-4 text-slate-400" />
+                  )}
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                {filterNodes(orgChart.hierarchy.directors).map(node => 
-                  renderOrgNodeCard(node)
-                )}
-              </div>
+              {!collapsedSections['directors'] ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                  {filterNodes(orgChart.hierarchy.directors).map(node => 
+                    renderOrgNodeCard(node)
+                  )}
+                </div>
+              ) : (
+                <div 
+                  onClick={() => toggleSection('directors')}
+                  className="py-2.5 text-center text-xs text-slate-500 hover:text-sky-300 cursor-pointer bg-slate-950/40 rounded-xl border border-dashed border-slate-800"
+                >
+                  본부장·실장 {orgChart.hierarchy.directors.length}명 접힘 (클릭하여 펼치기 ↓)
+                </div>
+              )}
             </div>
           )}
 
           {/* Level 4: 부서 리더 / 이사 */}
           {orgChart.hierarchy.leaders.length > 0 && (
             <div className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800/80 space-y-3">
-              <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+              <div 
+                onClick={() => toggleSection('leaders')}
+                className="flex items-center justify-between border-b border-slate-800 pb-2 cursor-pointer hover:opacity-90 select-none transition-opacity"
+              >
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-slate-400" />
                   <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
                     👥 부서 리더 · 그룹장 · 핵심 담당임원 (이사)
                   </h3>
                 </div>
-                <span className="text-[11px] text-slate-400 font-mono">
-                  {orgChart.hierarchy.leaders.length}명
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] text-slate-400 font-mono">
+                    {orgChart.hierarchy.leaders.length}명
+                  </span>
+                  {collapsedSections['leaders'] ? (
+                    <ChevronDown className="w-4 h-4 text-slate-300" />
+                  ) : (
+                    <ChevronUp className="w-4 h-4 text-slate-400" />
+                  )}
+                </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                {filterNodes(orgChart.hierarchy.leaders).map(node => 
-                  renderOrgNodeCard(node)
-                )}
-              </div>
+              {!collapsedSections['leaders'] ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                  {filterNodes(orgChart.hierarchy.leaders).map(node => 
+                    renderOrgNodeCard(node)
+                  )}
+                </div>
+              ) : (
+                <div 
+                  onClick={() => toggleSection('leaders')}
+                  className="py-2.5 text-center text-xs text-slate-500 hover:text-slate-300 cursor-pointer bg-slate-950/40 rounded-xl border border-dashed border-slate-800"
+                >
+                  부서 리더·담당임원 {orgChart.hierarchy.leaders.length}명 접힘 (클릭하여 펼치기 ↓)
+                </div>
+              )}
             </div>
           )}
 
           {/* 거버넌스: 사외이사 & 감사위원회 */}
           {orgChart.hierarchy.auditors.length > 0 && (
             <div className="p-4 rounded-xl bg-slate-950 border border-slate-800/60 space-y-2">
-              <div className="flex items-center justify-between border-b border-slate-800/50 pb-1.5">
+              <div 
+                onClick={() => toggleSection('auditors')}
+                className="flex items-center justify-between border-b border-slate-800/50 pb-1.5 cursor-pointer hover:opacity-90 select-none transition-opacity"
+              >
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
                   <h3 className="text-[11px] font-bold text-teal-300 uppercase tracking-wider">
                     🛡️ 거버넌스: 사외이사 &amp; 감사위원회
                   </h3>
                 </div>
-                <span className="text-[10px] text-slate-500 font-mono">
-                  {orgChart.hierarchy.auditors.length}명
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-slate-500 font-mono">
+                    {orgChart.hierarchy.auditors.length}명
+                  </span>
+                  {collapsedSections['auditors'] ? (
+                    <ChevronDown className="w-3.5 h-3.5 text-teal-400" />
+                  ) : (
+                    <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
+                  )}
+                </div>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
-                {filterNodes(orgChart.hierarchy.auditors).map(node => (
-                  <div 
-                    key={node.id}
-                    onClick={() => handleNodeClick(node)}
-                    className="p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-teal-500/40 text-xs cursor-pointer transition-all"
-                  >
-                    <div className="font-bold text-slate-200">{node.name}</div>
-                    <div className="text-[10px] text-teal-400">{node.position}</div>
-                  </div>
-                ))}
-              </div>
+              {!collapsedSections['auditors'] ? (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2">
+                  {filterNodes(orgChart.hierarchy.auditors).map(node => (
+                    <div 
+                      key={node.id}
+                      onClick={() => handleNodeClick(node)}
+                      className="p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-teal-500/40 text-xs cursor-pointer transition-all"
+                    >
+                      <div className="font-bold text-slate-200">{node.name}</div>
+                      <div className="text-[10px] text-teal-400">{node.position}</div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div 
+                  onClick={() => toggleSection('auditors')}
+                  className="py-2 text-center text-[11px] text-slate-500 hover:text-teal-300 cursor-pointer bg-slate-900/40 rounded-lg border border-dashed border-slate-800"
+                >
+                  사외이사 &amp; 감사 {orgChart.hierarchy.auditors.length}명 접힘 (클릭하여 펼치기 ↓)
+                </div>
+              )}
             </div>
           )}
         </div>

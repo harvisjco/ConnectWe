@@ -1,12 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Person, ReferralPosition, ReferralSubmission } from '../../types/network';
 import { mockReferralPositions } from '../../data/mockReferralPositions';
 import { calculateMatchesForPosition } from '../../services/referralMatcher';
-import { fetchPositionsFromHrcoBridge, submitReferralToHrcoBridge } from '../../services/hrcoBridgeService';
+import { 
+  fetchPositionsFromHrcoBridge, 
+  submitReferralToHrcoBridge,
+  checkRewardMilestoneEvents,
+  simulateHrcoMilestoneProgress,
+  RewardMilestoneSyncEvent
+} from '../../services/hrcoBridgeService';
 import { 
   Briefcase, Gift, Sparkles, Building2, MapPin, 
   ChevronRight, Send, 
-  ShieldCheck, Clock, RefreshCw
+  ShieldCheck, Clock, RefreshCw, CheckCircle2, DollarSign, Zap
 } from 'lucide-react';
 
 interface ReferralBountyViewProps {
@@ -25,12 +31,40 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
   const [selectedPosition, setSelectedPosition] = useState<ReferralPosition>(bridgeResult.positions[0] || mockReferralPositions[0]);
   const [isLiveBridge, setIsLiveBridge] = useState(bridgeResult.isLiveFromHrco);
   const [activeTab, setActiveTab] = useState<'positions' | 'submissions'>('positions');
+  const [rewardEvents, setRewardEvents] = useState<RewardMilestoneSyncEvent[]>(() => checkRewardMilestoneEvents());
+
+  // HRCO 실시간 IPC 브로드캐스트 채널 리스너
+  useEffect(() => {
+    if (typeof BroadcastChannel === 'undefined') return;
+    const channel = new BroadcastChannel('hrco_connectwe_bus');
+    
+    channel.onmessage = (event) => {
+      if (event.data?.type === 'REWARD_SYNC') {
+        const syncEvent: RewardMilestoneSyncEvent = event.data.event;
+        setRewardEvents(prev => [syncEvent, ...prev]);
+        onShowToast(`🎉 [HRCO 채용 실시간 보상] ${syncEvent.message}`);
+        
+        // 제출 목록 리로드
+        try {
+          const saved = localStorage.getItem('connectwe_referral_submissions');
+          if (saved) setSubmissions(JSON.parse(saved));
+        } catch (e) {
+          console.warn(e);
+        }
+      }
+    };
+
+    return () => {
+      channel.close();
+    };
+  }, [onShowToast]);
   
   const handleRefreshBridge = () => {
     const fresh = fetchPositionsFromHrcoBridge();
     setPositions(fresh.positions);
     setIsLiveBridge(fresh.isLiveFromHrco);
-    onShowToast(`HRCO GoodPartner 실시간 포지션 피드 갱신 완료 (${fresh.positions.length}건)`);
+    setRewardEvents(checkRewardMilestoneEvents());
+    onShowToast(`HRCO GoodPartner 실시간 포지션 및 정산 피드 갱신 완료 (${fresh.positions.length}건)`);
   };
 
   // 추천 제출 내역 관리 (로컬스토리지 연동)
@@ -100,6 +134,28 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
     return `${val.toLocaleString()}원`;
   };
 
+  // 누적 확정 리워드 계산
+  const totalEarnedReward = submissions.reduce((sum, s) => sum + (s.earnedRewards?.totalAmount || 0), 0);
+  const activeSubmissionsCount = submissions.filter(
+    s => s.status !== 'hired_placed' && s.status !== 'completed' && s.status !== 'rejected' && s.status !== 'declined_by_candidate'
+  ).length;
+
+  // HRCO 마일스톤 단계 진척 핸들러 (ConnectWe 시연/테스트)
+  const handleSimulateMilestone = (sub: ReferralSubmission, milestone: 'coffee_chat' | 'interview_pass' | 'final_hire') => {
+    const event = simulateHrcoMilestoneProgress(sub, milestone);
+    
+    // 로컬 submissions 갱신
+    try {
+      const saved = localStorage.getItem('connectwe_referral_submissions');
+      if (saved) setSubmissions(JSON.parse(saved));
+    } catch (e) {
+      console.warn(e);
+    }
+
+    setRewardEvents(prev => [event, ...prev]);
+    onShowToast(event.message);
+  };
+
   return (
     <div className="space-y-6">
       {/* 상단 탭 및 바운티 통계 배너 */}
@@ -145,6 +201,58 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
         </div>
       </div>
 
+      {/* 실시간 리워드 적립 & HRCO 브릿지 상태 3대 KPI 바 */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div className="p-4 rounded-xl bg-slate-900/90 border border-emerald-500/30 shadow-lg flex items-center justify-between">
+          <div className="space-y-0.5">
+            <span className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
+              <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
+              <span>누적 확정 정산 리워드</span>
+            </span>
+            <div className="text-xl font-black text-emerald-300 font-mono">
+              {formatMoney(totalEarnedReward)}
+            </div>
+          </div>
+          <span className="text-[10px] px-2 py-1 rounded-lg bg-emerald-950/80 border border-emerald-500/30 text-emerald-300 font-bold">
+            정산 대기 0원
+          </span>
+        </div>
+
+        <div className="p-4 rounded-xl bg-slate-900/90 border border-indigo-500/30 shadow-lg flex items-center justify-between">
+          <div className="space-y-0.5">
+            <span className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
+              <Zap className="w-3.5 h-3.5 text-indigo-400" />
+              <span>진행 중 채용 파이프라인</span>
+            </span>
+            <div className="text-xl font-black text-indigo-300 font-mono">
+              {activeSubmissionsCount}건
+            </div>
+          </div>
+          <span className="text-[10px] px-2 py-1 rounded-lg bg-indigo-950/80 border border-indigo-500/30 text-indigo-300 font-bold">
+            총 {submissions.length}건 추천
+          </span>
+        </div>
+
+        <div className="p-4 rounded-xl bg-slate-900/90 border border-purple-500/30 shadow-lg flex items-center justify-between">
+          <div className="space-y-0.5">
+            <span className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+              <span>단계별 보상 체계</span>
+            </span>
+            <div className="text-xs text-slate-200 font-semibold space-x-1">
+              <span>☕ 5만</span>
+              <span className="text-slate-500">·</span>
+              <span>🎤 20만</span>
+              <span className="text-slate-500">·</span>
+              <span className="text-purple-300 font-bold">🎉 최대 1,000만</span>
+            </div>
+          </div>
+          <span className="text-[10px] px-2 py-1 rounded-lg bg-purple-950/80 border border-purple-500/30 text-purple-300 font-bold">
+            3단계 마일스톤
+          </span>
+        </div>
+      </div>
+
       {/* HRCO GoodPartner Bridge Sync Bar */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-indigo-950/40 via-purple-950/20 to-slate-900 border border-indigo-800/40 text-xs">
         <div className="flex items-center gap-2.5">
@@ -163,7 +271,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
               </span>
             </div>
             <p className="text-[11px] text-slate-400">
-              추천 수락 시 HRCO 채용 관리자 파이프라인으로 지인 이력이 안전하게 직결됩니다.
+              추천 수락 시 HRCO 채용 관리자 파이프라인으로 지인 이력이 안전하게 직결되며, 마일스톤 도달 시 리워드가 자동 정산됩니다.
             </p>
           </div>
         </div>
@@ -406,30 +514,102 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
             </div>
           ) : (
             <div className="divide-y divide-slate-800">
-              {submissions.map((sub) => (
-                <div key={sub.id} className="py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-white text-sm">{sub.candidateName}</span>
-                      <span className="text-xs text-slate-400">({sub.candidateCompany} · {sub.candidateTitle})</span>
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
-                      <span className="text-xs font-semibold text-indigo-400">{sub.clientCompany}</span>
+              {submissions.map((sub) => {
+                const totalPaid = sub.earnedRewards?.totalAmount || 0;
+                return (
+                  <div key={sub.id} className="py-4.5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div className="space-y-1.5">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-bold text-white text-sm">{sub.candidateName}</span>
+                        <span className="text-xs text-slate-400">({sub.candidateCompany} · {sub.candidateTitle})</span>
+                        <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
+                        <span className="text-xs font-semibold text-indigo-400">{sub.clientCompany}</span>
+                        {totalPaid > 0 && (
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 font-bold border border-emerald-500/40">
+                            💰 {formatMoney(totalPaid)} 정산됨
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-300 font-medium">{sub.positionTitle}</p>
+                      <p className="text-[11px] text-slate-500 italic line-clamp-1">"{sub.recommendationNote}"</p>
                     </div>
-                    <p className="text-xs text-slate-300 font-medium">{sub.positionTitle}</p>
-                    <p className="text-[11px] text-slate-500 italic">"{sub.recommendationNote}"</p>
-                  </div>
 
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold">
-                      {sub.status === 'invitation_sent' && '✉️ 비공개 타진 전달완료'}
-                      {sub.status === 'coffee_chat_accepted' && '☕ 커피챗 성사 (리워드 지급)'}
-                      {sub.status === 'interviewing' && '🎤 1차 면접 진행 중'}
-                      {sub.status === 'hired_placed' && '🎉 최종 입사 (바운티 정산)'}
-                    </span>
-                    <span className="text-xs text-slate-400 font-mono">{sub.submittedAt}</span>
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5">
+                      <span className="text-xs px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold">
+                        {sub.status === 'invitation_sent' && '✉️ 비공개 타진 전달완료'}
+                        {sub.status === 'coffee_chat_accepted' && '☕ 커피챗 수락 (+5만)'}
+                        {sub.status === 'interviewing' && '🎤 1차 면접 패스 (+20만)'}
+                        {sub.status === 'hired_placed' && '🎉 최종 입사 확정 (+500만)'}
+                      </span>
+
+                      {/* HRCO 채용 단계 진척 시뮬레이터 버튼 (양방향 피드백 테스트) */}
+                      <div className="flex items-center gap-1.5">
+                        {!sub.earnedRewards?.coffeeChatPaid && (
+                          <button
+                            onClick={() => handleSimulateMilestone(sub, 'coffee_chat')}
+                            className="text-[11px] px-2.5 py-1 rounded-lg bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40 font-semibold transition-all"
+                            title="HRCO: 커피챗 수락 시뮬레이션"
+                          >
+                            ☕ 커피챗 수락 (+5만)
+                          </button>
+                        )}
+
+                        {sub.earnedRewards?.coffeeChatPaid && !sub.earnedRewards?.interviewPaid && (
+                          <button
+                            onClick={() => handleSimulateMilestone(sub, 'interview_pass')}
+                            className="text-[11px] px-2.5 py-1 rounded-lg bg-purple-950/80 hover:bg-purple-900 text-purple-300 border border-purple-500/40 font-semibold transition-all"
+                            title="HRCO: 1차 면접 합격 시뮬레이션"
+                          >
+                            🎤 1차 면접 합격 (+20만)
+                          </button>
+                        )}
+
+                        {sub.earnedRewards?.interviewPaid && !sub.earnedRewards?.hirePaid && (
+                          <button
+                            onClick={() => handleSimulateMilestone(sub, 'final_hire')}
+                            className="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/40 font-bold transition-all animate-pulse"
+                            title="HRCO: 최종 입사 확정 바운티 수령 시뮬레이션"
+                          >
+                            🎉 최종 입사 (+500만)
+                          </button>
+                        )}
+
+                        {sub.earnedRewards?.hirePaid && (
+                          <span className="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-900/40 text-emerald-400 font-bold border border-emerald-600/40 flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-400" />
+                            <span>전체 바운티 지급 완료</span>
+                          </span>
+                        )}
+                      </div>
+
+                      <span className="text-xs text-slate-500 font-mono hidden sm:inline">{sub.submittedAt}</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
+            </div>
+          )}
+
+          {/* HRCO 실시간 정산 이벤트 로그 (타임라인) */}
+          {rewardEvents.length > 0 && (
+            <div className="mt-6 pt-4 border-t border-slate-800 space-y-2">
+              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                <span>HRCO GoodPartner 실시간 바운티 정산 히스토리 ({rewardEvents.length}건)</span>
+              </h4>
+              <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                {rewardEvents.map((evt) => (
+                  <div key={evt.id} className="p-2.5 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between text-xs">
+                    <div className="flex items-center gap-2">
+                      <span className="text-emerald-400 font-bold font-mono">+{formatMoney(evt.rewardAmount)}</span>
+                      <span className="text-slate-200 font-semibold">{evt.candidateName}</span>
+                      <span className="text-slate-500">·</span>
+                      <span className="text-slate-400">{evt.clientCompany} ({evt.milestoneLabel})</span>
+                    </div>
+                    <span className="text-[10px] text-slate-500 font-mono">{evt.syncedAt}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </div>
