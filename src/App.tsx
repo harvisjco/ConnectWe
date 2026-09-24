@@ -18,6 +18,7 @@ import { TeamNetworkView } from './components/views/TeamNetworkView';
 import { ReferralBountyView } from './components/views/ReferralBountyView';
 import { DealPipelineView } from './components/views/DealPipelineView';
 import { GeoProximityRadarView } from './components/views/GeoProximityRadarView';
+import { PromotionCadenceView } from './components/views/PromotionCadenceView';
 import { AgeSpectrumView } from './components/views/AgeSpectrumView';
 import { NetworkCanvasView } from './components/views/NetworkCanvasView';
 import { InteractionTimelineView } from './components/views/InteractionTimelineView';
@@ -40,12 +41,12 @@ import { MeetingDebriefModal } from './components/radar/MeetingDebriefModal';
 import { FollowUpComposerModal } from './components/radar/FollowUpComposerModal';
 import { DebriefResult } from './services/meetingDebriefService';
 
-import { Building2, Calendar, Share2, CheckCircle2, Clock, Sparkles, Orbit, Users, Gift, Briefcase, Compass } from 'lucide-react';
+import { Building2, Calendar, Share2, CheckCircle2, Clock, Sparkles, Orbit, Users, Gift, Briefcase, Compass, Award } from 'lucide-react';
 
 export const App: React.FC = () => {
   // 로컬 스토리지 기반 오프라인 퍼스트 상태
   const [people, setPeople] = useState<Person[]>(() => loadPeopleFromStorage());
-  const [activeView, setActiveView] = useState<'company' | 'orgchart' | 'age' | 'canvas' | 'galaxy' | 'timeline' | 'team' | 'referral' | 'deals' | 'proximity'>('company');
+  const [activeView, setActiveView] = useState<'company' | 'orgchart' | 'age' | 'canvas' | 'galaxy' | 'timeline' | 'team' | 'referral' | 'deals' | 'proximity' | 'promotion'>('company');
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
   // 실시간 미팅 레이더 캘린더 상태
@@ -299,6 +300,18 @@ export const App: React.FC = () => {
               <Compass className="w-4 h-4 text-sky-400" />
               <span>🗺️ 거점별 레이더</span>
             </button>
+
+            <button
+              onClick={() => setActiveView('promotion')}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
+                activeView === 'promotion'
+                  ? 'bg-amber-600 text-white shadow-md shadow-amber-600/30'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Award className="w-4 h-4 text-amber-400" />
+              <span>🎉 영전·케어</span>
+            </button>
           </div>
 
           <div className="text-xs text-slate-400 hidden sm:block">
@@ -388,6 +401,15 @@ export const App: React.FC = () => {
             <GeoProximityRadarView
               people={people}
               onSelectPerson={setSelectedPerson}
+              onShowToast={showToast}
+            />
+          )}
+
+          {activeView === 'promotion' && (
+            <PromotionCadenceView
+              people={people}
+              onSelectPerson={setSelectedPerson}
+              onOpenDossier={(target) => setDossierTargetPerson(target)}
               onShowToast={showToast}
             />
           )}
