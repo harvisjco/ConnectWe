@@ -1,31 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Person, ActivityLog, ActivityLogType } from '../../types/network';
 import { crossCheckPersonWithDart, getDartReportUrl } from '../../services/dartFactEngine';
 import { loadActivityLogs, recordCommunication } from '../../services/storageService';
 import { exportPeopleToVcf } from '../../services/vcardExporter';
+import { calculatePersonPowerMetric } from '../../services/centralityEngine';
 import { 
   X, Phone, Mail, Briefcase, GraduationCap, 
   Calendar, ShieldCheck, Clock, Edit3, Check, 
   Tag, ExternalLink, Download, Trash2, Plus, MessageSquare, 
-  Sparkles, GitFork
+  Sparkles, GitFork, Mic, Send, Zap
 } from 'lucide-react';
 
 interface PersonInspectorDrawerProps {
   person: Person | null;
+  allPeople?: Person[];
   onClose: () => void;
   onUpdatePerson: (updated: Person) => void;
   onDeletePerson: (personId: string) => void;
   onOpenBridgeModal?: (person: Person) => void;
   onOpenDossier?: (person: Person) => void;
+  onOpenDebrief?: (person: Person) => void;
+  onOpenFollowUp?: (person: Person) => void;
 }
 
 export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
   person,
+  allPeople = [],
   onClose,
   onUpdatePerson,
   onDeletePerson,
   onOpenBridgeModal,
-  onOpenDossier
+  onOpenDossier,
+  onOpenDebrief,
+  onOpenFollowUp
 }) => {
   const [isEditingMemo, setIsEditingMemo] = useState(false);
   const [memoText, setMemoText] = useState(person?.memo || '');
@@ -53,6 +60,11 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
       setActivityLogs(allLogs.filter(l => l.personId === person.id));
     }
   }, [person]);
+
+  const powerMetric = useMemo(() => {
+    if (!person) return null;
+    return calculatePersonPowerMetric(person, allPeople);
+  }, [person, allPeople]);
 
   if (!person) return null;
 
@@ -145,6 +157,16 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
                   <Clock className="w-3 h-3" /> 6M+ 미소통
                 </span>
               )}
+
+              {powerMetric && (
+                <span 
+                  title={`허브 분석: ${powerMetric.tierLabel} (사내 인맥 ${powerMetric.sameCompanyCount}명, 알럼나이 ${powerMetric.alumniReachCount}명 연결)`}
+                  className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30 flex items-center gap-1 cursor-help"
+                >
+                  <Zap className="w-3 h-3 text-amber-400" />
+                  <span>파워 {powerMetric.powerScore}점</span>
+                </span>
+              )}
             </div>
 
             <p className="text-sm font-medium text-slate-300">
@@ -211,6 +233,30 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
               <Sparkles className="w-4 h-4 text-indigo-400 animate-pulse" />
               <span>미팅 전 1-Page AI 전략 브리핑 (Executive Dossier)</span>
             </button>
+
+            {/* 미팅 직후 빠른 회고 & AI 액션 아이템 추출 */}
+            {onOpenDebrief && (
+              <button
+                type="button"
+                onClick={() => onOpenDebrief(person)}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-rose-950/40 hover:bg-rose-900/40 text-rose-300 border border-rose-500/40 text-xs font-bold transition-all active:scale-95"
+              >
+                <Mic className="w-4 h-4 text-rose-400" />
+                <span>미팅 직후 빠른 회고 &amp; AI 액션 추출 (음성/텍스트)</span>
+              </button>
+            )}
+
+            {/* 미팅 후 24시간 감사 & 팔로업 시퀀스 */}
+            {onOpenFollowUp && (
+              <button
+                type="button"
+                onClick={() => onOpenFollowUp(person)}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-sky-950/40 hover:bg-sky-900/40 text-sky-300 border border-sky-500/40 text-xs font-bold transition-all active:scale-95"
+              >
+                <Send className="w-4 h-4 text-sky-400" />
+                <span>미팅 후 24시간 감사 &amp; 팔로업 시퀀스 작성</span>
+              </button>
+            )}
 
             <button
               type="button"

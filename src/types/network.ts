@@ -74,6 +74,7 @@ export interface Person {
   lastContactDate?: string;
   isStale: boolean; // 6개월 이상 소통 단절
   memo?: string;
+  activityLogs?: ActivityLog[];
   address?: string;
   website?: string;
 }

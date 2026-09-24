@@ -1,41 +1,12 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { Person } from '../../types/network';
-import { X, TrendingUp, Users, Shield, GitFork, AlertTriangle } from 'lucide-react';
+import { getTopSuperConnectors } from '../../services/centralityEngine';
+import { X, TrendingUp, Users, Shield, AlertTriangle, Zap, Sparkles } from 'lucide-react';
 
 interface NetworkDashboardProps {
   people: Person[];
   onClose: () => void;
   onSelectPerson: (person: Person) => void;
-}
-
-// 연결 중심성 계산 (단순 degree centrality)
-function computeBridgePeople(people: Person[]): { person: Person; score: number }[] {
-  const companyMap = new Map<string, string[]>();
-  for (const p of people) {
-    if (!p.currentCompany) continue;
-    const arr = companyMap.get(p.currentCompany) ?? [];
-    arr.push(p.id);
-    companyMap.set(p.currentCompany, arr);
-  }
-
-  const scores: { person: Person; score: number }[] = people
-    .filter((p) => p.closeness !== 1)
-    .map((p) => {
-      let score = 0;
-      // 같은 회사 인원 수 = 연결 수
-      score += (companyMap.get(p.currentCompany)?.length ?? 1) - 1;
-      // 경력 이력 다양성
-      score += p.careers.length * 1.5;
-      // DART 검증 가산
-      if (p.dartInfo) score += 3;
-      // 친밀도 가산
-      if (p.closeness === 2) score += 4;
-      return { person: p, score };
-    })
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 5);
-
-  return scores;
 }
 
 // Canvas 도넛 차트 그리기
@@ -143,7 +114,7 @@ export const NetworkDashboard: React.FC<NetworkDashboardProps> = ({
   }, [people]);
 
   const dartVerified = useMemo(() => people.filter((p) => p.dartInfo).length, [people]);
-  const bridgePeople = useMemo(() => computeBridgePeople(people), [people]);
+  const superConnectors = useMemo(() => getTopSuperConnectors(people, 5), [people]);
   const total = people.filter((p) => p.closeness !== 1).length;
 
   useEffect(() => {
@@ -244,28 +215,46 @@ export const NetworkDashboard: React.FC<NetworkDashboardProps> = ({
             </div>
           </div>
 
-          {/* 핵심 브리지 인맥 Top 5 */}
+          {/* 핵심 슈퍼 커넥터 (Super Connector) Top 5 */}
           <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 space-y-3">
-            <div className="flex items-center gap-2">
-              <GitFork className="w-4 h-4 text-purple-400" />
-              <h3 className="text-sm font-semibold text-slate-200">핵심 브리지 인맥 Top 5</h3>
-              <span className="text-[10px] text-slate-500">연결 중심성 기준</span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Zap className="w-4 h-4 text-amber-400" />
+                <h3 className="text-sm font-semibold text-slate-200">네트워크 슈퍼 커넥터 (Super Connector) Top 5</h3>
+              </div>
+              <span className="text-[10px] text-slate-400">매개 중심성 &amp; DART 임원 파워 지수 기준</span>
             </div>
+
             <div className="space-y-2">
-              {bridgePeople.map(({ person, score }, i) => (
+              {superConnectors.map(({ person, powerScore, tierLabel, sameCompanyCount, alumniReachCount }, i) => (
                 <button
                   key={person.id}
                   onClick={() => { onSelectPerson(person); onClose(); }}
-                  className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-slate-800 hover:bg-slate-750 border border-slate-700 hover:border-indigo-500/50 transition-all text-left group"
+                  className="w-full flex items-center gap-3 p-3 rounded-xl bg-slate-850 hover:bg-slate-750 border border-slate-700/80 hover:border-indigo-500/50 transition-all text-left group"
                 >
-                  <span className="text-lg font-bold text-slate-600 w-5 text-center">#{i + 1}</span>
+                  <span className="text-base font-bold text-slate-500 w-6 text-center">#{i + 1}</span>
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-semibold text-white group-hover:text-indigo-300 transition-colors truncate">{person.name}</div>
-                    <div className="text-[11px] text-slate-400 truncate">{person.currentCompany} · {person.currentTitle}</div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-white group-hover:text-indigo-300 transition-colors truncate">
+                        {person.name}
+                      </span>
+                      <span className="text-[10px] text-purple-300 px-1.5 py-0.2 rounded bg-purple-950/60 border border-purple-500/30">
+                        {tierLabel.split(' ')[1]}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-400 truncate mt-0.5">
+                      {person.currentCompany} · {person.currentTitle}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    {person.dartInfo && <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400">DART</span>}
-                    <span className="text-[11px] font-mono text-purple-400">연결도 {Math.round(score)}</span>
+
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="text-right text-[11px] text-slate-400 hidden sm:block">
+                      <span>사내 {sameCompanyCount}명 · 알럼나이 {alumniReachCount}명</span>
+                    </div>
+                    <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-950/80 border border-indigo-500/40 text-indigo-300 font-mono text-xs font-bold">
+                      <Sparkles className="w-3 h-3 text-amber-400" />
+                      <span>{powerScore}점</span>
+                    </div>
                   </div>
                 </button>
               ))}

@@ -3,19 +3,21 @@ import { CalendarMeeting } from '../../services/calendarRadarService';
 import { Person } from '../../types/network';
 import { 
   Calendar, FileText, ChevronRight, Sparkles, 
-  Clock, ShieldCheck, X
+  Clock, ShieldCheck, X, Mic
 } from 'lucide-react';
 
 interface MeetingRadarBannerProps {
   imminentMeeting: CalendarMeeting | null;
   onOpenDossier: (person: Person) => void;
   onOpenCalendarModal: () => void;
+  onOpenDebrief?: (person: Person) => void;
 }
 
 export const MeetingRadarBanner: React.FC<MeetingRadarBannerProps> = ({
   imminentMeeting,
   onOpenDossier,
-  onOpenCalendarModal
+  onOpenCalendarModal,
+  onOpenDebrief
 }) => {
   const [isDismissed, setIsDismissed] = useState(false);
 
@@ -91,20 +93,33 @@ export const MeetingRadarBanner: React.FC<MeetingRadarBannerProps> = ({
         {/* Right: Actions */}
         <div className="flex items-center gap-2 flex-shrink-0 ml-auto">
           {matchedPerson ? (
-            <button
-              onClick={() => onOpenDossier(matchedPerson)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-all shadow-md shadow-indigo-600/30 active:scale-95 text-xs group"
-              title="미팅 10분 전 AI 브리핑 열기"
-            >
-              <FileText className="w-3.5 h-3.5 text-indigo-200 group-hover:text-white" />
-              <span>
-                [{matchedPerson.name} {matchedPerson.currentTitle}] 1-Page AI 브리핑
-              </span>
-              {matchedPerson.sourceType === 'DART_FACT' && (
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-300 ml-0.5" />
+            <>
+              <button
+                onClick={() => onOpenDossier(matchedPerson)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-all shadow-md shadow-indigo-600/30 active:scale-95 text-xs group"
+                title="미팅 10분 전 AI 브리핑 열기"
+              >
+                <FileText className="w-3.5 h-3.5 text-indigo-200 group-hover:text-white" />
+                <span>
+                  [{matchedPerson.name} {matchedPerson.currentTitle}] 1-Page AI 브리핑
+                </span>
+                {matchedPerson.sourceType === 'DART_FACT' && (
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-300 ml-0.5" />
+                )}
+                <Sparkles className="w-3 h-3 text-indigo-200 ml-0.5" />
+              </button>
+
+              {onOpenDebrief && (
+                <button
+                  onClick={() => onOpenDebrief(matchedPerson)}
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-rose-950/80 hover:bg-rose-900 border border-rose-500/40 text-rose-300 font-bold transition-all text-xs active:scale-95 shadow-md shadow-rose-950/40"
+                  title="미팅 직후 빠른 회고 & AI 액션 추출"
+                >
+                  <Mic className="w-3.5 h-3.5 text-rose-400" />
+                  <span>회고</span>
+                </button>
               )}
-              <Sparkles className="w-3 h-3 text-indigo-200 ml-0.5" />
-            </button>
+            </>
           ) : (
             <button
               onClick={onOpenCalendarModal}

@@ -34,6 +34,9 @@ import { UserSettingsModal } from './components/settings/UserSettingsModal';
 import { CloudSyncModal } from './components/settings/CloudSyncModal';
 import { CardScannerModal } from './components/ocr/CardScannerModal';
 import { CalendarImportModal } from './components/radar/CalendarImportModal';
+import { MeetingDebriefModal } from './components/radar/MeetingDebriefModal';
+import { FollowUpComposerModal } from './components/radar/FollowUpComposerModal';
+import { DebriefResult } from './services/meetingDebriefService';
 
 import { Building2, Calendar, Share2, CheckCircle2, Clock, Sparkles, Orbit, Users, Gift } from 'lucide-react';
 
@@ -48,6 +51,11 @@ export const App: React.FC = () => {
   const [isCardScannerOpen, setIsCardScannerOpen] = useState(false);
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
   const [isDisclosureAlertOpen, setIsDisclosureAlertOpen] = useState(false);
+
+  // 미팅 직후 회고 및 24h 팔로업 상태
+  const [debriefTargetPerson, setDebriefTargetPerson] = useState<Person | null>(null);
+  const [followUpTargetPerson, setFollowUpTargetPerson] = useState<Person | null>(null);
+  const [debriefResultForFollowUp, setDebriefResultForFollowUp] = useState<DebriefResult | undefined>(undefined);
 
   // Search & GraphRAG State
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -132,6 +140,7 @@ export const App: React.FC = () => {
         imminentMeeting={imminentMeeting}
         onOpenDossier={(target) => setDossierTargetPerson(target)}
         onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
+        onOpenDebrief={(target) => setDebriefTargetPerson(target)}
       />
 
       {/* Top Header */}
@@ -345,11 +354,17 @@ export const App: React.FC = () => {
       {/* Apple-styled Deep Inspector Drawer */}
       <PersonInspectorDrawer
         person={selectedPerson}
+        allPeople={people}
         onClose={() => setSelectedPerson(null)}
         onUpdatePerson={handleUpdatePerson}
         onDeletePerson={handleDeletePerson}
         onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
         onOpenDossier={(target) => setDossierTargetPerson(target)}
+        onOpenDebrief={(target) => setDebriefTargetPerson(target)}
+        onOpenFollowUp={(target) => {
+          setFollowUpTargetPerson(target);
+          setDebriefResultForFollowUp(undefined);
+        }}
       />
 
       {/* Multi-source Ingestion Modal */}
@@ -466,6 +481,31 @@ export const App: React.FC = () => {
           onUpdateMeetings={setMeetings}
           onOpenDossier={(target) => setDossierTargetPerson(target)}
           onClose={() => setIsCalendarModalOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* Meeting Debrief Modal (1분 음성/텍스트 회고 & AI 액션 아이템 추출) */}
+      {debriefTargetPerson && (
+        <MeetingDebriefModal
+          person={debriefTargetPerson}
+          onUpdatePerson={handleUpdatePerson}
+          onOpenFollowUpComposer={(p, debrief) => {
+            setDebriefTargetPerson(null);
+            setFollowUpTargetPerson(p);
+            setDebriefResultForFollowUp(debrief);
+          }}
+          onClose={() => setDebriefTargetPerson(null)}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* 24-Hour Follow-Up Sequence Composer Modal */}
+      {followUpTargetPerson && (
+        <FollowUpComposerModal
+          person={followUpTargetPerson}
+          debrief={debriefResultForFollowUp}
+          onClose={() => setFollowUpTargetPerson(null)}
           onShowToast={showToast}
         />
       )}
