@@ -1,14 +1,19 @@
-import { test, expect } from '@playwright/test';
+癤퓁mport { test, expect } from '@playwright/test';
 
-test.describe('Apple Chief Designer Precision Audit', () => {
-  test('Capture Full Visual States and Measure Apple HIG Compliance', async ({ page }) => {
+test.describe('Clean Tech Portal & Apple Visual Design Precision Audit', () => {
+  test('Capture Full Visual States in Default Light Mode and Measure HIG Compliance', async ({ page }) => {
     // 1. Desktop 1440x900 Viewport
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
 
-    // Screenshot 1: Command Center Home
+    // Verify Default Theme is Light
+    const htmlClasses = await page.locator('html').getAttribute('class');
+    console.log('HTML Root Classes (Default Theme):', htmlClasses);
+    expect(htmlClasses).toContain('light');
+
+    // Screenshot 1: Command Center Home (Clean Light Mode)
     await page.screenshot({ path: 'e2e/screenshots/01-command-center-desktop.png', fullPage: true });
 
     // Apple HIG Metrics Check: Tiny font sizes (< 11px)
@@ -33,7 +38,7 @@ test.describe('Apple Chief Designer Precision Audit', () => {
       return tiny;
     });
 
-    // Apple HIG Metrics Check: Small touch targets (< 36px height)
+    // Apple HIG Metrics Check: Small touch targets (< 32px height/width)
     const smallTouchTargets = await page.evaluate(() => {
       const buttons = Array.from(document.querySelectorAll('button, a[href], input, select'));
       const small: { text: string; width: number; height: number; classes: string }[] = [];
@@ -51,7 +56,7 @@ test.describe('Apple Chief Designer Precision Audit', () => {
       return small;
     });
 
-    // Header buttons inspection (Toolbar cognitive load)
+    // Header buttons inspection
     const headerButtonCount = await page.evaluate(() => {
       const header = document.querySelector('header');
       if (!header) return 0;
@@ -61,53 +66,17 @@ test.describe('Apple Chief Designer Precision Audit', () => {
     console.log('--- HIG AUDIT DATA ---');
     console.log('Header buttons count:', headerButtonCount);
     console.log('Tiny font count (< 11px):', tinyFontElements.length);
-    console.log('Sample tiny fonts:', JSON.stringify(tinyFontElements.slice(0, 5), null, 2));
     console.log('Small touch targets (< 32px):', smallTouchTargets.length);
-    console.log('Sample small targets:', JSON.stringify(smallTouchTargets.slice(0, 5), null, 2));
 
-    // Screenshot 2: Explore Segment
+    // Screenshot 2: Explore Segment (Alumni View)
     await page.locator('[data-testid="segment-explore"]').click();
     await page.waitForTimeout(600);
     await page.screenshot({ path: 'e2e/screenshots/02-explore-company-desktop.png', fullPage: true });
 
-    // OrgChart View
-    const orgChartBtn = page.locator('button:has-text("??? DART 기업 조직도")');
-    if (await orgChartBtn.isVisible()) {
-      await orgChartBtn.click();
-      await page.waitForTimeout(600);
-      await page.screenshot({ path: 'e2e/screenshots/03-explore-orgchart-desktop.png', fullPage: true });
-    }
-
-    // Screenshot 4: Business Segment (Deals)
+    // Screenshot 3: Business Segment (Deals Pipeline)
     await page.locator('[data-testid="segment-business"]').click();
     await page.waitForTimeout(600);
     await page.screenshot({ path: 'e2e/screenshots/04-business-deals-desktop.png', fullPage: true });
-
-    // Proximity Radar View
-    const proxBtn = page.locator('button:has-text("??? 거점별 레이더")');
-    if (await proxBtn.isVisible()) {
-      await proxBtn.click();
-      await page.waitForTimeout(600);
-      await page.screenshot({ path: 'e2e/screenshots/05-business-proximity-desktop.png', fullPage: true });
-    }
-
-    // Promotion View
-    const promoBtn = page.locator('button:has-text("?? 영전·케어 골든타임")');
-    if (await promoBtn.isVisible()) {
-      await promoBtn.click();
-      await page.waitForTimeout(600);
-      await page.screenshot({ path: 'e2e/screenshots/06-business-promotion-desktop.png', fullPage: true });
-    }
-
-    // Daily Digest Modal Inspection
-    const digestBtn = page.locator('button:has-text("오늘의 다이제스트")');
-    if (await digestBtn.isVisible()) {
-      await digestBtn.click();
-      await page.waitForTimeout(500);
-      await page.screenshot({ path: 'e2e/screenshots/07-daily-digest-modal.png' });
-      await page.keyboard.press('Escape');
-      await page.waitForTimeout(300);
-    }
 
     // 2. Mobile Viewport (iPhone 14 Pro: 393 x 852)
     await page.setViewportSize({ width: 393, height: 852 });
@@ -124,7 +93,9 @@ test.describe('Apple Chief Designer Precision Audit', () => {
       };
     });
     console.log('Mobile overflow status:', mobileOverflow);
+    expect(mobileOverflow.hasHorizontalScroll).toBe(false);
 
+    // Screenshot 4: Mobile Command Center
     await page.screenshot({ path: 'e2e/screenshots/08-mobile-command-center.png', fullPage: true });
 
     // Switch to Explore on Mobile

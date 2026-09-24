@@ -22,12 +22,12 @@ interface DealPipelineViewProps {
 }
 
 const STAGES: { id: DealStage; label: string; color: string }[] = [
-  { id: 'PROSPECT', label: '1. 타깃 발굴', color: 'border-slate-700 bg-slate-900/60' },
-  { id: 'WARM_CONTACT', label: '2. 1·2촌 접촉', color: 'border-indigo-500/40 bg-indigo-950/20' },
-  { id: 'MEETING_HELD', label: '3. 미팅 완료', color: 'border-purple-500/40 bg-purple-950/20' },
-  { id: 'PROPOSAL', label: '4. 제안서 송부', color: 'border-sky-500/40 bg-sky-950/20' },
-  { id: 'NEGOTIATION', label: '5. 조건 협상', color: 'border-amber-500/40 bg-amber-950/20' },
-  { id: 'WON', label: '6. 수주 성공 🏆', color: 'border-emerald-500/40 bg-emerald-950/20' },
+  { id: 'PROSPECT', label: '1. 타깃 발굴', color: 'border-slate-200 dark:border-slate-700 bg-slate-100/60 dark:bg-slate-900/60' },
+  { id: 'WARM_CONTACT', label: '2. 1·2촌 접촉', color: 'border-blue-200 dark:border-indigo-500/40 bg-blue-50/40 dark:bg-indigo-950/20' },
+  { id: 'MEETING_HELD', label: '3. 미팅 완료', color: 'border-purple-200 dark:border-purple-500/40 bg-purple-50/40 dark:bg-purple-950/20' },
+  { id: 'PROPOSAL', label: '4. 제안서 송부', color: 'border-sky-200 dark:border-sky-500/40 bg-sky-50/40 dark:bg-sky-950/20' },
+  { id: 'NEGOTIATION', label: '5. 조건 협상', color: 'border-amber-200 dark:border-amber-500/40 bg-amber-50/40 dark:bg-amber-950/20' },
+  { id: 'WON', label: '6. 수주 성공 🏆', color: 'border-emerald-200 dark:border-emerald-500/40 bg-emerald-50/40 dark:bg-emerald-950/20' },
 ];
 
 export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
@@ -143,19 +143,19 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
   return (
     <div className="space-y-4">
       {/* 1. Header & Control Bar */}
-      <div className="p-4 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xl">
+      <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs">
         <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-indigo-950/80 border border-indigo-500/40 text-indigo-400">
+          <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-indigo-950/80 border border-blue-200 dark:border-indigo-500/40 text-blue-600 dark:text-indigo-400">
             <Briefcase className="w-6 h-6" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-white">전략 비즈니스 딜 &amp; 인맥 어카운트 워룸</h2>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold">
+              <h2 className="text-base font-bold text-slate-900 dark:text-white">전략 비즈니스 딜 &amp; 인맥 어카운트 워룸</h2>
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30 font-semibold">
                 C-Level Deal Pipeline
               </span>
             </div>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
               비즈니스 딜별 의사결정권자(Key Decision Maker)와 내부 지지자(Champion)를 내 인맥과 매핑하여 침투 성공률을 극대화합니다.
             </p>
           </div>
@@ -164,9 +164,9 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
         <div className="flex items-center gap-2">
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow-lg shadow-indigo-600/30 transition-all active:scale-95"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-black dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-bold text-xs shadow-xs transition-all active:scale-95"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="w-4 h-4 text-white" />
             <span>신규 딜 생성</span>
           </button>
         </div>
@@ -182,9 +182,9 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
               key={stage.id}
               className={`rounded-2xl border p-3 flex flex-col min-h-[480px] space-y-3 ${stage.color}`}
             >
-              <div className="flex items-center justify-between pb-2 border-b border-slate-800 text-xs">
-                <span className="font-bold text-slate-200">{stage.label}</span>
-                <span className="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[10px] font-mono">
+              <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800 text-xs">
+                <span className="font-bold text-slate-800 dark:text-slate-200">{stage.label}</span>
+                <span className="px-1.5 py-0.5 rounded-full bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[10px] font-mono border border-slate-200 dark:border-slate-700">
                   {stageDeals.length}
                 </span>
               </div>
@@ -194,30 +194,30 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
                 {stageDeals.map(deal => (
                   <div
                     key={deal.id}
-                    className="p-3.5 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 transition-all space-y-3 shadow-md"
+                    className="p-3.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-indigo-500/50 transition-all space-y-3 shadow-xs"
                   >
                     <div className="space-y-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-indigo-300 font-bold">
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-bold border border-blue-200 dark:bg-slate-800 dark:text-indigo-300 dark:border-transparent">
                           {deal.targetCompany}
                         </span>
                         <div className="flex items-center gap-1">
                           <button
                             onClick={() => handleDeleteDeal(deal.id)}
-                            className="text-slate-600 hover:text-rose-400 p-0.5"
+                            className="text-slate-400 hover:text-rose-500 p-0.5"
                           >
                             <Trash2 className="w-3 h-3" />
                           </button>
                         </div>
                       </div>
 
-                      <h4 className="text-xs font-bold text-white leading-snug">
+                      <h4 className="text-xs font-bold text-slate-900 dark:text-white leading-snug">
                         {deal.title}
                       </h4>
                     </div>
 
                     {deal.dealSize && (
-                      <div className="flex items-center gap-1 text-[11px] text-emerald-400 font-medium font-mono">
+                      <div className="flex items-center gap-1 text-[11px] text-emerald-600 dark:text-emerald-400 font-medium font-mono">
                         <DollarSign className="w-3 h-3 text-emerald-500" />
                         <span>{deal.dealSize}</span>
                       </div>
@@ -226,24 +226,24 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
                     {/* Health Score Bar */}
                     <div className="space-y-1">
                       <div className="flex items-center justify-between text-[10px]">
-                        <span className="text-slate-400">인맥 침투 건전도</span>
-                        <span className="font-bold text-indigo-300 font-mono">{deal.healthScore}%</span>
+                        <span className="text-slate-500 dark:text-slate-400">인맥 침투 건전도</span>
+                        <span className="font-bold text-blue-600 dark:text-indigo-300 font-mono">{deal.healthScore}%</span>
                       </div>
-                      <div className="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
+                      <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">
                         <div 
-                          className="h-full bg-gradient-to-r from-indigo-500 to-emerald-400 rounded-full transition-all"
+                          className="h-full bg-gradient-to-r from-blue-600 to-emerald-500 dark:from-indigo-500 dark:to-emerald-400 rounded-full transition-all"
                           style={{ width: `${deal.healthScore}%` }}
                         />
                       </div>
                     </div>
 
                     {/* Keyman Stakeholders Mapping */}
-                    <div className="space-y-1.5 pt-2 border-t border-slate-800/80">
-                      <div className="flex items-center justify-between text-[10px] text-slate-400">
+                    <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800/80">
+                      <div className="flex items-center justify-between text-[10px] text-slate-500 dark:text-slate-400">
                         <span>매핑된 키맨 ({deal.stakeholders.length})</span>
                         <button
                           onClick={() => setActiveDealForAddStakeholder(deal)}
-                          className="text-indigo-400 hover:text-white font-bold"
+                          className="text-blue-600 dark:text-indigo-400 hover:text-blue-700 font-bold"
                         >
                           + 키맨 추가
                         </button>

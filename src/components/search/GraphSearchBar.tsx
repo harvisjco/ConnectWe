@@ -38,11 +38,10 @@ export const GraphSearchBar: React.FC<GraphSearchBarProps> = ({
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-3">
-      {/* Search Input Box - Neo-Tactile Debossed Field */}
+      {/* Search Input Box - Naver Cloud & Apple Clean Style */}
       <form onSubmit={handleSubmit} className="relative group">
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/15 via-sky-500/15 to-purple-500/15 rounded-2xl blur-lg group-hover:blur-xl transition-all duration-300 opacity-70 pointer-events-none"></div>
-        <div className="relative flex items-center bg-slate-950/80 border border-slate-800/80 focus-within:border-indigo-500/60 rounded-2xl shadow-[inset_0_2px_6px_rgba(0,0,0,0.7),0_1px_0_rgba(255,255,255,0.06)] focus-within:shadow-[inset_0_2px_6px_rgba(0,0,0,0.7),0_0_25px_rgba(99,102,241,0.25)] ring-1 ring-white/5 px-4 py-3 transition-all duration-200">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-500/10 text-indigo-400 mr-3 shadow-[inset_0_1px_2px_rgba(0,0,0,0.4)] shrink-0">
+        <div className="relative flex items-center bg-white dark:bg-slate-950/80 border border-slate-200/90 dark:border-slate-800/80 focus-within:border-blue-500 dark:focus-within:border-indigo-500/60 rounded-2xl shadow-xs dark:shadow-[inset_0_2px_6px_rgba(0,0,0,0.7)] px-4 py-3 transition-all duration-200">
+          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 dark:bg-indigo-500/10 text-blue-600 dark:text-indigo-400 mr-3 shrink-0">
             <Sparkles className="w-4 h-4 animate-pulse" />
           </div>
 
@@ -51,14 +50,14 @@ export const GraphSearchBar: React.FC<GraphSearchBarProps> = ({
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
             placeholder='자연어로 질의하세요: "과거 네이버 거쳐간 40대 임원", "카이스트 AI 연구원", "소통 단절된 1촌"...'
-            className="w-full bg-transparent text-sm md:text-base text-slate-100 placeholder-slate-500 focus:outline-none font-normal"
+            className="w-full bg-transparent text-sm md:text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none font-normal"
           />
 
           {query && (
             <button
               type="button"
               onClick={onResetSearch}
-              className="p-1.5 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-slate-200 transition-colors mr-1 active:scale-95"
+              className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors mr-1 active:scale-95"
             >
               <X className="w-4 h-4" />
             </button>
@@ -66,25 +65,25 @@ export const GraphSearchBar: React.FC<GraphSearchBarProps> = ({
 
           <button
             type="submit"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-gradient-to-b from-indigo-500 to-indigo-600 hover:from-indigo-400 hover:to-indigo-500 active:scale-[0.98] transition-all text-xs md:text-sm font-semibold text-white shadow-[0_4px_14px_rgba(79,70,229,0.4),inset_0_1px_0_rgba(255,255,255,0.3)] border-t border-white/20 ring-1 ring-white/10 flex-shrink-0"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-black dark:bg-gradient-to-b dark:from-indigo-500 dark:to-indigo-600 dark:hover:from-indigo-400 active:scale-[0.98] transition-all text-xs md:text-sm font-semibold text-white shadow-xs dark:shadow-[0_4px_14px_rgba(79,70,229,0.4)] border border-slate-800 dark:border-white/20 flex-shrink-0"
           >
-            <Search className="w-4 h-4" />
+            <Search className="w-4 h-4 text-white" />
             <span className="hidden sm:inline">GraphRAG 탐색</span>
           </button>
         </div>
       </form>
 
-      {/* Recommended Prompt Chips - Tactile Floating Pills */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs text-slate-400 scrollbar-none">
+      {/* Recommended Prompt Chips - Clean Minimal Pills */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs text-slate-500 dark:text-slate-400 scrollbar-none">
         <span className="text-[11px] font-medium text-slate-500 whitespace-nowrap flex items-center gap-1">
-          <Tag className="w-3 h-3" /> 추천 질문:
+          <Tag className="w-3 h-3 text-slate-400" /> 추천 질문:
         </span>
         {PRESET_QUERIES.map((preset, idx) => (
           <button
             key={idx}
             type="button"
             onClick={() => handleChipClick(preset)}
-            className="px-3 py-1 rounded-full bg-slate-900/90 hover:bg-slate-800 border border-slate-800 hover:border-indigo-500/40 text-slate-300 hover:text-white transition-all whitespace-nowrap text-xs shadow-[0_2px_6px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.06)] ring-1 ring-white/5 active:scale-95"
+            className="px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-900/90 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-indigo-500/40 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-all whitespace-nowrap text-xs shadow-2xs active:scale-95"
           >
             {preset}
           </button>

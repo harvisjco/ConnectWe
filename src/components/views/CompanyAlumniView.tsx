@@ -46,13 +46,13 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
   return (
     <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px]">
       {/* Left Column: Company Directory & Alumni Counts */}
-      <div className="lg:col-span-4 bg-slate-900/60 border border-slate-800 rounded-2xl p-4 flex flex-col h-full space-y-3">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+      <div className="lg:col-span-4 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex flex-col h-full space-y-3 shadow-xs">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
           <div className="flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-indigo-400" />
-            <h3 className="text-sm font-bold text-white tracking-tight">기업 & 알럼나이 허브</h3>
+            <Building2 className="w-4 h-4 text-blue-600 dark:text-indigo-400" />
+            <h3 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">기업 & 알럼나이 허브</h3>
           </div>
-          <span className="text-xs text-slate-400 font-medium">{companies.length}개 법인</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">{companies.length}개 법인</span>
         </div>
 
         <div className="space-y-1.5 overflow-y-auto flex-1 pr-1">
@@ -64,25 +64,25 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
                 onClick={() => setSelectedCompany(comp.name)}
                 className={`w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between group ${
                   isSelected
-                    ? 'bg-indigo-600/15 border-indigo-500/50 shadow-sm'
-                    : 'bg-slate-800/40 hover:bg-slate-800/80 border-slate-800/80 hover:border-slate-700'
+                    ? 'bg-blue-50 dark:bg-indigo-600/15 border-blue-300 dark:border-indigo-500/50 shadow-xs'
+                    : 'bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/40 dark:hover:bg-slate-800/80 border-slate-200/80 hover:border-slate-300 dark:border-slate-800/80 dark:hover:border-slate-700'
                 }`}
               >
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className={`text-xs font-bold ${isSelected ? 'text-indigo-300' : 'text-slate-200 group-hover:text-white'}`}>
+                    <span className={`text-xs font-bold ${isSelected ? 'text-blue-700 dark:text-indigo-300' : 'text-slate-800 dark:text-slate-200 group-hover:text-slate-900 dark:group-hover:text-white'}`}>
                       {comp.name}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-400">
+                  <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-500 dark:text-slate-400">
                     <span>현직 {comp.currentCount}명</span>
                     <span>·</span>
-                    <span className="text-amber-400 font-medium">전직 알럼나이 {comp.alumniCount}명</span>
+                    <span className="text-amber-600 dark:text-amber-400 font-medium">전직 알럼나이 {comp.alumniCount}명</span>
                   </div>
                 </div>
 
                 <div className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all ${
-                  isSelected ? 'bg-indigo-500 text-white' : 'text-slate-500 group-hover:text-slate-300'
+                  isSelected ? 'bg-blue-600 dark:bg-indigo-500 text-white' : 'text-slate-400 dark:text-slate-500 group-hover:text-slate-600 dark:group-hover:text-slate-300'
                 }`}>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </div>
@@ -97,7 +97,7 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
         {selectedCompany ? (
           <>
             {/* Header Card */}
-            <div className="bg-gradient-to-r from-slate-900 via-indigo-950/20 to-slate-900 border border-slate-800 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="bg-white dark:bg-gradient-to-r dark:from-slate-900 dark:via-indigo-950/20 dark:to-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
               <div className="space-y-1">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-xl bg-indigo-500/20 text-indigo-400">
@@ -141,36 +141,36 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
                     <div
                       key={p.id}
                       onClick={() => onSelectPerson(p)}
-                      className="p-4 rounded-xl bg-slate-900/80 hover:bg-slate-800/80 border border-slate-800 hover:border-indigo-500/50 transition-all cursor-pointer group shadow-sm flex flex-col justify-between"
+                      className="p-4 rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-900/80 dark:hover:bg-slate-800/80 border border-slate-200 hover:border-blue-400 dark:border-slate-800 dark:hover:border-indigo-500/50 transition-all cursor-pointer group shadow-xs flex flex-col justify-between"
                     >
                       <div className="space-y-1.5">
                         <div className="flex items-start justify-between">
                           <div>
-                            <span className="font-bold text-sm text-white group-hover:text-indigo-300 transition-colors">
+                            <span className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-indigo-300 transition-colors">
                               {p.name}
                             </span>
-                            <span className="text-xs text-slate-400 block">
+                            <span className="text-xs text-slate-500 dark:text-slate-400 block">
                               {p.currentTitle} {p.currentDepartment ? `· ${p.currentDepartment}` : ''}
                             </span>
                           </div>
                           {p.sourceType === 'DART_FACT' && (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold flex items-center gap-0.5">
+                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 font-semibold flex items-center gap-0.5">
                               <ShieldCheck className="w-2.5 h-2.5" /> DART
                             </span>
                           )}
                         </div>
 
-                        <div className="flex items-center gap-2 text-[11px] text-slate-400">
-                          <span className="px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+                        <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                          <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">
                             {p.primaryDomain}
                           </span>
                           <span>{p.estimatedAgeGroup}</span>
                         </div>
                       </div>
 
-                      <div className="mt-3 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+                      <div className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
                         <span>{p.mobile}</span>
-                        <span className="group-hover:text-indigo-400 flex items-center gap-1 font-medium transition-colors">
+                        <span className="text-blue-600 dark:text-indigo-400 group-hover:text-blue-700 dark:group-hover:text-indigo-300 flex items-center gap-1 font-semibold transition-colors">
                           프로필 보기 <ArrowRight className="w-3 h-3" />
                         </span>
                       </div>
@@ -205,41 +205,41 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
                       <div
                         key={p.id}
                         onClick={() => onSelectPerson(p)}
-                        className="p-4 rounded-xl bg-gradient-to-br from-amber-950/20 via-slate-900 to-slate-900 hover:from-amber-950/30 hover:to-slate-800/80 border border-amber-500/30 hover:border-amber-400/60 transition-all cursor-pointer group shadow-sm flex flex-col justify-between"
+                        className="p-4 rounded-xl bg-white hover:bg-amber-50/40 dark:bg-gradient-to-br dark:from-amber-950/20 dark:via-slate-900 dark:to-slate-900 dark:hover:from-amber-950/30 dark:hover:to-slate-800/80 border border-amber-200/80 dark:border-amber-500/30 hover:border-amber-400 transition-all cursor-pointer group shadow-xs flex flex-col justify-between"
                       >
                         <div className="space-y-1.5">
                           <div className="flex items-start justify-between">
                             <div>
                               <div className="flex items-center gap-1.5">
-                                <span className="font-bold text-sm text-white group-hover:text-amber-300 transition-colors">
+                                <span className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors">
                                   {p.name}
                                 </span>
-                                <span className="px-1.5 py-0.5 rounded text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold">
+                                <span className="px-1.5 py-0.5 rounded text-[10px] bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30 font-semibold">
                                   알럼나이
                                 </span>
                               </div>
-                              <span className="text-xs text-indigo-400 font-medium block mt-0.5">
+                              <span className="text-xs text-blue-600 dark:text-indigo-400 font-semibold block mt-0.5">
                                 (현) {p.currentCompany} · {p.currentTitle}
                               </span>
                             </div>
                             {p.sourceType === 'DART_FACT' && (
-                              <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 font-semibold flex items-center gap-0.5">
+                              <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 font-semibold flex items-center gap-0.5">
                                 <ShieldCheck className="w-2.5 h-2.5" /> DART
                               </span>
                             )}
                           </div>
 
                           {pastCareer && (
-                            <div className="p-2 rounded-lg bg-slate-950/60 border border-slate-800 text-[11px] text-slate-300 flex items-center gap-1.5">
-                              <Briefcase className="w-3 h-3 text-amber-400 flex-shrink-0" />
+                            <div className="p-2 rounded-lg bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 text-[11px] text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+                              <Briefcase className="w-3 h-3 text-amber-500 dark:text-amber-400 flex-shrink-0" />
                               <span>(과거) {pastCareer.companyName} {pastCareer.title} ({pastCareer.startYear}~{pastCareer.endYear || ''})</span>
                             </div>
                           )}
                         </div>
 
-                        <div className="mt-3 pt-2 border-t border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500">
+                        <div className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
                           <span>{p.primaryDomain}</span>
-                          <span className="group-hover:text-amber-400 flex items-center gap-1 font-medium transition-colors">
+                          <span className="text-amber-700 dark:text-amber-400 group-hover:text-amber-800 flex items-center gap-1 font-semibold transition-colors">
                             상세 관계도 <ArrowRight className="w-3 h-3" />
                           </span>
                         </div>
