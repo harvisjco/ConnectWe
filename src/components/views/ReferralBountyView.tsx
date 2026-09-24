@@ -13,8 +13,9 @@ import {
 import { 
   Briefcase, Gift, Sparkles, Building2, MapPin, 
   ChevronRight, Send, 
-  ShieldCheck, Clock, RefreshCw, CheckCircle2, DollarSign, Zap
+  ShieldCheck, Clock, RefreshCw, CheckCircle2, DollarSign, Zap, ArrowUpRight
 } from 'lucide-react';
+import { BountyWithdrawalModal } from '../bounty/BountyWithdrawalModal';
 
 interface ReferralBountyViewProps {
   people: Person[];
@@ -33,6 +34,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
   const [isLiveBridge, setIsLiveBridge] = useState(bridgeResult.isLiveFromHrco);
   const [activeTab, setActiveTab] = useState<'positions' | 'submissions'>('positions');
   const [rewardEvents, setRewardEvents] = useState<RewardMilestoneSyncEvent[]>(() => checkRewardMilestoneEvents());
+  const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] = useState(false);
 
   // HRCO 실시간 IPC 브로드캐스트 채널 리스너
   useEffect(() => {
@@ -216,9 +218,19 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
               {formatMoney(totalEarnedReward)}
             </div>
           </div>
-          <span className="text-[10px] px-2 py-1 rounded-lg bg-emerald-950/80 border border-emerald-500/30 text-emerald-300 font-bold">
-            정산 대기 0원
-          </span>
+          <div className="flex flex-col items-end gap-1.5">
+            <button
+              onClick={() => setIsWithdrawalModalOpen(true)}
+              className="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] shadow-md shadow-emerald-600/30 flex items-center gap-1 transition-all hover:scale-102"
+              title="세무 3.3% 원천징수 공제 후 등록 계좌로 출금 신청"
+            >
+              <span>계좌 출금 신청</span>
+              <ArrowUpRight className="w-3 h-3" />
+            </button>
+            <span className="text-[10px] text-emerald-400/80 font-mono">
+              익일 영업일 입금
+            </span>
+          </div>
         </div>
 
         <div className="p-4 rounded-xl bg-slate-900/90 border border-indigo-500/30 shadow-lg flex items-center justify-between">
@@ -674,6 +686,17 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
             </div>
           </div>
         </div>
+      )}
+
+      {/* 리워드 계좌 출금 신청 모달 */}
+      {isWithdrawalModalOpen && (
+        <BountyWithdrawalModal
+          totalAvailableReward={totalEarnedReward}
+          onClose={() => setIsWithdrawalModalOpen(false)}
+          onConfirmWithdrawal={(_amount, netAmount, bankInfo) => {
+            onShowToast(`🎉 [출금 신청 완료] 세무 3.3% 공제 후 실수령액 ${netAmount.toLocaleString()}원이 ${bankInfo} 계좌로 익일 입금 접수되었습니다.`);
+          }}
+        />
       )}
     </div>
   );

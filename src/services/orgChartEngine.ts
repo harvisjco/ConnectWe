@@ -235,6 +235,23 @@ export function buildCorporateOrgChart(
       }
     }
 
+    // DART 전자공시 원문 링크 (rceptNo 기반)
+    const dartUrl = e.rceptNo 
+      ? `https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${e.rceptNo}`
+      : `https://dart.fss.or.kr/`;
+
+    // 연도별 시계열 변동(Diff) 산출: 재직기간 및 최근 선임 여부 기반
+    let diffStatus: OrgNode['diffStatus'] = 'RETAINED';
+    const sYears = (e.serviceYears || '').toLowerCase();
+    const isRecent = sYears.includes('1년 미만') || sYears.includes('0년') || sYears.includes('개월') || (e.disclosureDate && e.disclosureDate.startsWith('2026'));
+    const isPromoted = /승진|승격|신규보임|부문장선임/i.test(e.chargeJob || '');
+
+    if (isRecent) {
+      diffStatus = 'NEW';
+    } else if (isPromoted) {
+      diffStatus = 'PROMOTED';
+    }
+
     return {
       id: String(e.id || `node-${e.corpCode}-${e.name}`),
       corpCode: e.corpCode,
@@ -252,6 +269,8 @@ export function buildCorporateOrgChart(
       termEndDate: e.termEndDate,
       disclosureDate: e.disclosureDate,
       rceptNo: e.rceptNo,
+      dartUrl,
+      diffStatus,
       networkMatch,
       reports: []
     };

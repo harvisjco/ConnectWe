@@ -1,4 +1,4 @@
-﻿import { Person } from './network';
+import { Person } from './network';
 
 export type HierarchyLevel = 
   | 'CHAIR'          // 이사회 의장 / Founder / 회장
@@ -26,6 +26,10 @@ export interface OrgNode {
   termEndDate?: string;
   disclosureDate?: string;
   rceptNo?: string;
+  dartUrl?: string; // DART 전자공시 보고서 원문 링크
+
+  // 연도별 시계열 변동 (Diff Tracker)
+  diffStatus?: 'NEW' | 'PROMOTED' | 'RETAINED';
 
   // 내 인맥 연결성 (Network Overlay)
   networkMatch?: {

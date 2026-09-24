@@ -10,7 +10,8 @@ import {
   Building2, Search, Sparkles, 
   Share2, Award, UserCheck, 
   Calendar, ShieldCheck, Phone, MessageSquare,
-  ChevronDown, ChevronUp, Copy, Printer, Check, Eye, EyeOff, Layers
+  ChevronDown, ChevronUp, Copy, Printer, Check, Eye, EyeOff, Layers,
+  ExternalLink, GitCompare, TrendingUp, UserPlus, ArrowDown
 } from 'lucide-react';
 
 interface CorporateOrgChartViewProps {
@@ -18,13 +19,15 @@ interface CorporateOrgChartViewProps {
   onSelectPerson: (person: Person) => void;
   onOpenWarmIntro?: (target: Person, bridge?: Person) => void;
   onOpenDossier?: (target: Person) => void;
+  onOpenTargetBounty?: (corpName: string, domain?: string) => void;
 }
 
 export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
   people,
   onSelectPerson,
   onOpenWarmIntro,
-  onOpenDossier
+  onOpenDossier,
+  onOpenTargetBounty
 }) => {
   const corporations = useMemo(() => getAvailableCorporations(), []);
 
@@ -39,6 +42,7 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
   const [domainFilter, setDomainFilter] = useState<string>('all');
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
   const [isCopiedReport, setIsCopiedReport] = useState<boolean>(false);
+  const [diffMode, setDiffMode] = useState<boolean>(false);
 
   // 섹션 접기/펼치기 토글
   const toggleSection = (key: string) => {
@@ -206,21 +210,50 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
                 💰 {node.remuneration}
               </span>
             )}
+
+            {/* Diff 모드 배지 */}
+            {diffMode && node.diffStatus === 'NEW' && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/50 flex items-center gap-0.5 animate-pulse">
+                <UserPlus className="w-2.5 h-2.5" />
+                <span>신규선임</span>
+              </span>
+            )}
+            {diffMode && node.diffStatus === 'PROMOTED' && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold border border-sky-500/50 flex items-center gap-0.5">
+                <TrendingUp className="w-2.5 h-2.5" />
+                <span>승진·보직</span>
+              </span>
+            )}
           </div>
 
-          {isFirst && (
-            <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black animate-pulse shadow-sm">
-              <UserCheck className="w-3 h-3" />
-              <span>1촌 직통</span>
-            </span>
-          )}
+          <div className="flex items-center gap-1.5">
+            {node.dartUrl && (
+              <a
+                href={node.dartUrl}
+                target="_blank"
+                rel="noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                title="금융감독원 DART 공시 원문 보기"
+                className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-indigo-300 transition-colors"
+              >
+                <ExternalLink className="w-3 h-3" />
+              </a>
+            )}
 
-          {isSecond && (
-            <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 font-bold">
-              <Share2 className="w-2.5 h-2.5 text-emerald-400" />
-              <span>2촌 다리 ({node.networkMatch?.trustScore}%)</span>
-            </span>
-          )}
+            {isFirst && (
+              <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black animate-pulse shadow-sm">
+                <UserCheck className="w-3 h-3" />
+                <span>1촌 직통</span>
+              </span>
+            )}
+
+            {isSecond && (
+              <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 font-bold">
+                <Share2 className="w-2.5 h-2.5 text-emerald-400" />
+                <span>2촌 다리 ({node.networkMatch?.trustScore}%)</span>
+              </span>
+            )}
+          </div>
         </div>
 
         <div className="flex items-baseline justify-between">
@@ -244,6 +277,24 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
           >
             {node.chargeJob}
           </p>
+        )}
+
+        {/* 연계 채용 포지션 타겟 스카우팅 액션 바 */}
+        {onOpenTargetBounty && (isFirst || isSecond) && (
+          <div className="mt-2 pt-1.5 flex items-center justify-between text-[10px]">
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onOpenTargetBounty(node.corpName, node.chargeJob);
+              }}
+              className="px-2 py-0.5 rounded-md bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/30 flex items-center gap-1 font-semibold transition-all hover:scale-102"
+              title="이 임원의 소속/도메인과 연계된 HRCO 채용 오픈 포지션 타진"
+            >
+              <span>⚡ 연계 채용 타진</span>
+              <span className="text-[9px] text-indigo-400 font-normal">(바운티)</span>
+            </button>
+            <span className="text-[10px] text-slate-500">최대 500만원</span>
+          </div>
         )}
 
         {isSecond && node.networkMatch?.bridgePerson && (
@@ -272,6 +323,17 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
       </div>
     );
   };
+
+  const renderHierarchyConnector = (label: string) => (
+    <div className="flex flex-col items-center justify-center -my-3 select-none relative z-10">
+      <div className="w-0.5 h-3 bg-gradient-to-b from-indigo-500/70 to-purple-500/70" />
+      <div className="px-2.5 py-0.5 rounded-full bg-slate-950 border border-indigo-500/40 text-[9px] text-indigo-300 font-mono flex items-center gap-1 shadow-sm">
+        <ArrowDown className="w-2.5 h-2.5 text-indigo-400" />
+        <span>{label}</span>
+      </div>
+      <div className="w-0.5 h-3 bg-gradient-to-b from-purple-500/70 to-indigo-500/70" />
+    </div>
+  );
 
   return (
     <div className="space-y-4">
@@ -428,6 +490,20 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
               <Printer className="w-3.5 h-3.5 text-slate-400" />
             </button>
 
+            {/* 인사 변동 Diff 비교 토글 */}
+            <button
+              onClick={() => setDiffMode(!diffMode)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                diffMode
+                  ? 'bg-purple-600 text-white shadow-md shadow-purple-600/30 ring-1 ring-purple-400'
+                  : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700'
+              }`}
+              title="최근 정기인사 신규선임 및 승진/보직변경 임원 하이라이트"
+            >
+              <GitCompare className="w-3.5 h-3.5" />
+              <span>변동 비교(Diff)</span>
+            </button>
+
             {/* 내 인맥 필터 */}
             <button
               onClick={() => setOnlyConnectedFilter(!onlyConnectedFilter)}
@@ -505,6 +581,9 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
             </div>
           )}
 
+          {/* 수직 계층 연결선: 최고경영진 ➔ C-Level */}
+          {orgChart.hierarchy.cLevels.length > 0 && renderHierarchyConnector('핵심 사업총괄 보고라인')}
+
           {/* Level 2: C-Level & 부문장 */}
           {orgChart.hierarchy.cLevels.length > 0 && (
             <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3 shadow-lg">
@@ -547,6 +626,9 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
             </div>
           )}
 
+          {/* 수직 계층 연결선: C-Level ➔ 본부장/실장 */}
+          {orgChart.hierarchy.directors.length > 0 && renderHierarchyConnector('부문별 본부 지휘라인')}
+
           {/* Level 3: 본부장 / 실장 / 전무 / 상무 */}
           {orgChart.hierarchy.directors.length > 0 && (
             <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3 shadow-md">
@@ -588,6 +670,9 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
               )}
             </div>
           )}
+
+          {/* 수직 계층 연결선: 본부장 ➔ 부서 리더/이사 */}
+          {orgChart.hierarchy.leaders.length > 0 && renderHierarchyConnector('실무 리더십 지휘라인')}
 
           {/* Level 4: 부서 리더 / 이사 */}
           {orgChart.hierarchy.leaders.length > 0 && (

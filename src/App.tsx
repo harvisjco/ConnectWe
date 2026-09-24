@@ -12,18 +12,22 @@ import {
 import { Header } from './components/common/Header';
 import { MeetingRadarBanner } from './components/radar/MeetingRadarBanner';
 import { GraphSearchBar } from './components/search/GraphSearchBar';
-import { CompanyAlumniView } from './components/views/CompanyAlumniView';
-import { CorporateOrgChartView } from './components/views/CorporateOrgChartView';
-import { TeamNetworkView } from './components/views/TeamNetworkView';
-import { ReferralBountyView } from './components/views/ReferralBountyView';
-import { DealPipelineView } from './components/views/DealPipelineView';
-import { GeoProximityRadarView } from './components/views/GeoProximityRadarView';
-import { PromotionCadenceView } from './components/views/PromotionCadenceView';
-import { NetworkAuditReportView } from './components/views/NetworkAuditReportView';
-import { AgeSpectrumView } from './components/views/AgeSpectrumView';
-import { NetworkCanvasView } from './components/views/NetworkCanvasView';
-import { InteractionTimelineView } from './components/views/InteractionTimelineView';
-import { CosmicGalaxy3DView } from './components/views/CosmicGalaxy3DView';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
+import { ViewLoadingSkeleton } from './components/common/ViewLoadingSkeleton';
+
+// 11대 멀티 디멘션 뷰 비동기 코드 스플리팅 (Code Splitting via React.lazy)
+const CompanyAlumniView = React.lazy(() => import('./components/views/CompanyAlumniView').then(m => ({ default: m.CompanyAlumniView })));
+const CorporateOrgChartView = React.lazy(() => import('./components/views/CorporateOrgChartView').then(m => ({ default: m.CorporateOrgChartView })));
+const TeamNetworkView = React.lazy(() => import('./components/views/TeamNetworkView').then(m => ({ default: m.TeamNetworkView })));
+const ReferralBountyView = React.lazy(() => import('./components/views/ReferralBountyView').then(m => ({ default: m.ReferralBountyView })));
+const DealPipelineView = React.lazy(() => import('./components/views/DealPipelineView').then(m => ({ default: m.DealPipelineView })));
+const GeoProximityRadarView = React.lazy(() => import('./components/views/GeoProximityRadarView').then(m => ({ default: m.GeoProximityRadarView })));
+const PromotionCadenceView = React.lazy(() => import('./components/views/PromotionCadenceView').then(m => ({ default: m.PromotionCadenceView })));
+const NetworkAuditReportView = React.lazy(() => import('./components/views/NetworkAuditReportView').then(m => ({ default: m.NetworkAuditReportView })));
+const AgeSpectrumView = React.lazy(() => import('./components/views/AgeSpectrumView').then(m => ({ default: m.AgeSpectrumView })));
+const NetworkCanvasView = React.lazy(() => import('./components/views/NetworkCanvasView').then(m => ({ default: m.NetworkCanvasView })));
+const InteractionTimelineView = React.lazy(() => import('./components/views/InteractionTimelineView').then(m => ({ default: m.InteractionTimelineView })));
+const CosmicGalaxy3DView = React.lazy(() => import('./components/views/CosmicGalaxy3DView').then(m => ({ default: m.CosmicGalaxy3DView })));
 import { PersonInspectorDrawer } from './components/inspector/PersonInspectorDrawer';
 import { ExecutiveDossierModal } from './components/inspector/ExecutiveDossierModal';
 import { RelationshipCopilotDrawer } from './components/copilot/RelationshipCopilotDrawer';
@@ -337,105 +341,114 @@ export const App: React.FC = () => {
         </section>
 
         {/* Dynamic Multi-dimensional Views */}
-        <section className="animate-in fade-in duration-200">
-          {activeView === 'company' && (
-            <CompanyAlumniView
-              people={displayPeople}
-              onSelectPerson={setSelectedPerson}
-            />
-          )}
+        {/* Dynamic Multi-dimensional Views with Code Splitting & Error Isolation */}
+        <section className="animate-in fade-in duration-200 min-h-[520px]">
+          <ErrorBoundary fallbackTitle="선택된 뷰 컴포넌트 런타임 오류 방어">
+            <React.Suspense fallback={<ViewLoadingSkeleton />}>
+              {activeView === 'company' && (
+                <CompanyAlumniView
+                  people={displayPeople}
+                  onSelectPerson={setSelectedPerson}
+                />
+              )}
 
-          {activeView === 'orgchart' && (
-            <CorporateOrgChartView
-              people={people}
-              onSelectPerson={setSelectedPerson}
-              onOpenWarmIntro={(target) => setBridgeTargetPerson(target)}
-              onOpenDossier={(target) => setDossierTargetPerson(target)}
-            />
-          )}
+              {activeView === 'orgchart' && (
+                <CorporateOrgChartView
+                  people={people}
+                  onSelectPerson={setSelectedPerson}
+                  onOpenWarmIntro={(target) => setBridgeTargetPerson(target)}
+                  onOpenDossier={(target) => setDossierTargetPerson(target)}
+                  onOpenTargetBounty={(corpName) => {
+                    setActiveView('referral');
+                    showToast(`🎯 [${corpName}] 연계 채용 오픈 포지션 및 바운티 탐색으로 전환되었습니다.`);
+                  }}
+                />
+              )}
 
-          {activeView === 'age' && (
-            <AgeSpectrumView
-              people={displayPeople}
-              onSelectPerson={setSelectedPerson}
-            />
-          )}
+              {activeView === 'age' && (
+                <AgeSpectrumView
+                  people={displayPeople}
+                  onSelectPerson={setSelectedPerson}
+                />
+              )}
 
-          {activeView === 'canvas' && (
-            <NetworkCanvasView
-              people={displayPeople}
-              highlightNodeIds={highlightNodeIds}
-              onSelectPerson={setSelectedPerson}
-            />
-          )}
+              {activeView === 'canvas' && (
+                <NetworkCanvasView
+                  people={displayPeople}
+                  highlightNodeIds={highlightNodeIds}
+                  onSelectPerson={setSelectedPerson}
+                />
+              )}
 
-          {activeView === 'galaxy' && (
-            <CosmicGalaxy3DView
-              people={displayPeople}
-              onSelectPerson={setSelectedPerson}
-            />
-          )}
+              {activeView === 'galaxy' && (
+                <CosmicGalaxy3DView
+                  people={displayPeople}
+                  onSelectPerson={setSelectedPerson}
+                />
+              )}
 
-          {activeView === 'timeline' && (
-            <InteractionTimelineView
-              people={people}
-              onSelectPerson={setSelectedPerson}
-              onOpenDossier={(target) => setDossierTargetPerson(target)}
-              onShowToast={showToast}
-            />
-          )}
+              {activeView === 'timeline' && (
+                <InteractionTimelineView
+                  people={people}
+                  onSelectPerson={setSelectedPerson}
+                  onOpenDossier={(target) => setDossierTargetPerson(target)}
+                  onShowToast={showToast}
+                />
+              )}
 
-          {activeView === 'team' && (
-            <TeamNetworkView
-              people={people}
-              onShowToast={showToast}
-            />
-          )}
+              {activeView === 'team' && (
+                <TeamNetworkView
+                  people={people}
+                  onShowToast={showToast}
+                />
+              )}
 
-          {activeView === 'referral' && (
-            <ReferralBountyView
-              people={people}
-              onSelectPerson={setSelectedPerson}
-              onShowToast={showToast}
-            />
-          )}
+              {activeView === 'referral' && (
+                <ReferralBountyView
+                  people={people}
+                  onSelectPerson={setSelectedPerson}
+                  onShowToast={showToast}
+                />
+              )}
 
-          {activeView === 'deals' && (
-            <DealPipelineView
-              people={people}
-              onSelectPerson={setSelectedPerson}
-              onOpenDossier={(target) => setDossierTargetPerson(target)}
-              onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
-              onShowToast={showToast}
-            />
-          )}
+              {activeView === 'deals' && (
+                <DealPipelineView
+                  people={people}
+                  onSelectPerson={setSelectedPerson}
+                  onOpenDossier={(target) => setDossierTargetPerson(target)}
+                  onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
+                  onShowToast={showToast}
+                />
+              )}
 
-          {activeView === 'proximity' && (
-            <GeoProximityRadarView
-              people={people}
-              onSelectPerson={setSelectedPerson}
-              onShowToast={showToast}
-            />
-          )}
+              {activeView === 'proximity' && (
+                <GeoProximityRadarView
+                  people={people}
+                  onSelectPerson={setSelectedPerson}
+                  onShowToast={showToast}
+                />
+              )}
 
-          {activeView === 'promotion' && (
-            <PromotionCadenceView
-              people={people}
-              onSelectPerson={setSelectedPerson}
-              onOpenDossier={(target) => setDossierTargetPerson(target)}
-              onShowToast={showToast}
-            />
-          )}
+              {activeView === 'promotion' && (
+                <PromotionCadenceView
+                  people={people}
+                  onSelectPerson={setSelectedPerson}
+                  onOpenDossier={(target) => setDossierTargetPerson(target)}
+                  onShowToast={showToast}
+                />
+              )}
 
-          {activeView === 'audit' && (
-            <NetworkAuditReportView
-              people={people}
-              onSelectPerson={setSelectedPerson}
-              onOpenDossier={(target) => setDossierTargetPerson(target)}
-              onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
-              onShowToast={showToast}
-            />
-          )}
+              {activeView === 'audit' && (
+                <NetworkAuditReportView
+                  people={people}
+                  onSelectPerson={setSelectedPerson}
+                  onOpenDossier={(target) => setDossierTargetPerson(target)}
+                  onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
+                  onShowToast={showToast}
+                />
+              )}
+            </React.Suspense>
+          </ErrorBoundary>
         </section>
 
       </main>
