@@ -8,11 +8,13 @@ import {
   Share2, UploadCloud, Download, ShieldCheck, Clock, 
   Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
   BarChart2, Lock, Settings, Cloud, Bot, Camera, Calendar, Bell,
-  MoreHorizontal, ChevronDown
+  MoreHorizontal, ChevronDown, Sun, Moon
 } from 'lucide-react';
 
 interface HeaderProps {
   people: Person[];
+  theme?: 'dark' | 'light';
+  onToggleTheme?: () => void;
   onOpenImportModal: () => void;
   onOpenAddModal: () => void;
   onOpenDigestModal: () => void;
@@ -30,6 +32,8 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ 
   people, 
+  theme = 'dark',
+  onToggleTheme,
   onOpenImportModal, 
   onOpenAddModal,
   onOpenDigestModal,
@@ -244,6 +248,28 @@ export const Header: React.FC<HeaderProps> = ({
             <UserPlus className="w-3.5 h-3.5" />
             <span>+ 인맥 등록</span>
           </button>
+
+          {/* Theme Toggle Button (Dark / Light Neumorphism) */}
+          {onToggleTheme && (
+            <button
+              onClick={onToggleTheme}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold transition-all whitespace-nowrap active:scale-[0.98] bg-slate-800/80 hover:bg-slate-800 text-slate-300 hover:text-white border-slate-700/80 shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] ring-1 ring-white/5 cursor-pointer"
+              title={theme === 'dark' ? '밝은 모드(Light Soft Neumorphism)로 전환' : '다크 모드로 전환'}
+              aria-label="테마 전환"
+            >
+              {theme === 'light' ? (
+                <>
+                  <Sun className="w-4 h-4 text-amber-500" />
+                  <span className="hidden md:inline">밝은 모드</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-4 h-4 text-sky-400" />
+                  <span className="hidden md:inline">다크 모드</span>
+                </>
+              )}
+            </button>
+          )}
 
           {/* Quick Tools Dropdown Menu */}
           <div className="relative" ref={toolsMenuRef}>

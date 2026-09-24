@@ -84,6 +84,33 @@ export const App: React.FC = () => {
   const [dossierTargetPerson, setDossierTargetPerson] = useState<Person | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Theme State (Dark vs Light Soft Neumorphism)
+  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
+    const saved = localStorage.getItem('connectwe_theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return 'dark';
+  });
+
+  // Sync theme with html root class
+  useEffect(() => {
+    if (theme === 'light') {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.remove('light');
+      document.documentElement.classList.add('dark');
+    }
+    localStorage.setItem('connectwe_theme', theme);
+  }, [theme]);
+
+  const handleToggleTheme = () => {
+    setTheme(prev => {
+      const next = prev === 'dark' ? 'light' : 'dark';
+      showToast(next === 'light' ? '밝은 모드(Apple Soft Neumorphism)가 활성화되었습니다.' : '다크 모드가 활성화되었습니다.');
+      return next;
+    });
+  };
+
   // people 상태 변경 시 자동 영속화
   useEffect(() => {
     savePeopleToStorage(people);
@@ -158,7 +185,7 @@ export const App: React.FC = () => {
   const imminentMeeting = getImminentMeeting(meetings);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white">
+    <div className={`min-h-screen flex flex-col font-sans selection:bg-indigo-500 selection:text-white transition-colors duration-300 ${theme === 'dark' ? 'bg-slate-950 text-slate-100' : 'bg-[#f1f4f9] text-slate-800'}`}>
       {/* Real-time Meeting Radar Banner */}
       <MeetingRadarBanner
         imminentMeeting={imminentMeeting}
@@ -170,6 +197,8 @@ export const App: React.FC = () => {
       {/* Top Header */}
       <Header
         people={people}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
         onOpenImportModal={() => setIsImportModalOpen(true)}
         onOpenAddModal={() => setIsAddModalOpen(true)}
         onOpenDigestModal={() => setIsDigestModalOpen(true)}
