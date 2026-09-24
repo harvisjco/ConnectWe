@@ -9,7 +9,8 @@ import { OrgNode } from '../../types/orgChart';
 import { 
   Building2, Search, Sparkles, 
   Share2, Award, UserCheck, 
-  Calendar, ShieldCheck, Phone, MessageSquare
+  Calendar, ShieldCheck, Phone, MessageSquare,
+  ChevronDown, ChevronUp, Copy, Printer, Check, Eye, EyeOff, Layers
 } from 'lucide-react';
 
 interface CorporateOrgChartViewProps {
@@ -35,6 +36,28 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
   const [selectedYear, setSelectedYear] = useState<number>(2026);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [onlyConnectedFilter, setOnlyConnectedFilter] = useState<boolean>(false);
+  const [domainFilter, setDomainFilter] = useState<string>('all');
+  const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
+  const [isCopiedReport, setIsCopiedReport] = useState<boolean>(false);
+
+  // 섹션 접기/펼치기 토글
+  const toggleSection = (key: string) => {
+    setCollapsedSections(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
+  };
+
+  // 전체 펼치기 / 전체 접기
+  const setAllCollapsed = (collapse: boolean) => {
+    setCollapsedSections({
+      leadership: collapse,
+      clevel: collapse,
+      directors: collapse,
+      leaders: collapse,
+      auditors: collapse
+    });
+  };
 
   // 연도별 시계열 스냅샷
   const yearlySnapshots = useMemo(() => {
@@ -60,8 +83,42 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
         const matchJob = (n.chargeJob || '').toLowerCase().includes(q);
         if (!matchName && !matchPos && !matchJob) return false;
       }
+      if (domainFilter !== 'all') {
+        const fullDesc = `${n.position} ${n.chargeJob || ''}`.toLowerCase();
+        if (domainFilter === 'semiconductor' && !/반도체|ds|메모리|파운드리|hbm|hpsp|웨이퍼/i.test(fullDesc)) return false;
+        if (domainFilter === 'mobile_dx' && !/dx|모바일|vd|가전|디스플레이|자동차|모빌리티/i.test(fullDesc)) return false;
+        if (domainFilter === 'ai_sw' && !/ai|sw|소프트웨어|플랫폼|데이터|클라우드|연구소/i.test(fullDesc)) return false;
+        if (domainFilter === 'mgmt' && !/경영|재무|인사|기획|법무|전략|지원|cfo/i.test(fullDesc)) return false;
+        if (domainFilter === 'rnd' && !/개발|연구|r&d|기술|cto|센터장/i.test(fullDesc)) return false;
+      }
       return true;
     });
+  };
+
+  // 텍스트 보고서 클립보드 복사
+  const handleExportTextReport = () => {
+    if (!orgChart) return;
+    const lines: string[] = [
+      `[🏛️ DART 기업 조직도 분석 리포트 - ${selectedCorpName}]`,
+      `기준 연도: ${selectedYear}년 | 종목코드: ${orgChart.stockCode || 'KOSPI'} | 산업군: ${orgChart.industry || '주요 산업'}`,
+      `총 공시 임원: ${orgChart.stats.totalExecutives}명 (등기: ${orgChart.stats.registeredCount}명 / 미등기: ${orgChart.stats.unregisteredCount}명)`,
+      `내 인맥 연결: 1촌 직통 ${orgChart.stats.firstDegreeCount}명, 2촌 다리 ${orgChart.stats.secondDegreeCount}명`,
+      `----------------------------------------`,
+      `1. 최고 경영진 (Board & CEO):`,
+      ...orgChart.hierarchy.ceos.map(c => `  - ${c.name} (${c.position}${c.chargeJob ? ' / ' + c.chargeJob : ''})${c.networkMatch?.degree === 1 ? ' [🤝 1촌 직통]' : ''}`),
+      `2. 핵심 C-Level & 사업부문장:`,
+      ...orgChart.hierarchy.cLevels.slice(0, 10).map(c => `  - ${c.name} (${c.position}${c.chargeJob ? ' / ' + c.chargeJob : ''})`),
+      `3. 주요 본부장 & 실장:`,
+      ...orgChart.hierarchy.directors.slice(0, 15).map(c => `  - ${c.name} (${c.position}${c.chargeJob ? ' - ' + c.chargeJob : ''})`)
+    ];
+    navigator.clipboard.writeText(lines.join('\n'));
+    setIsCopiedReport(true);
+    setTimeout(() => setIsCopiedReport(false), 2500);
+  };
+
+  // 인쇄 실행
+  const handlePrint = () => {
+    window.print();
   };
 
   const handleNodeClick = (node: OrgNode) => {
@@ -274,30 +331,96 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
           </select>
         </div>
 
-        {/* 검색 및 필터 바 */}
+        {/* 2. 부문별 스마트 필터 칩 바 */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs border-t border-slate-800/60 pt-2">
+          <span className="text-[11px] text-slate-400 font-semibold shrink-0 flex items-center gap-1">
+            <Layers className="w-3 h-3 text-indigo-400" />
+            <span>사업 부문:</span>
+          </span>
+          {[
+            { id: 'all', label: '전체 부문' },
+            { id: 'semiconductor', label: '반도체/DS' },
+            { id: 'mobile_dx', label: '모바일·가전/DX' },
+            { id: 'ai_sw', label: 'AI·SW·플랫폼' },
+            { id: 'rnd', label: 'R&D·연구개발' },
+            { id: 'mgmt', label: '경영·기획·재무' }
+          ].map(d => (
+            <button
+              key={d.id}
+              onClick={() => setDomainFilter(d.id)}
+              className={`px-2.5 py-1 rounded-lg shrink-0 font-medium transition-all ${
+                domainFilter === d.id
+                  ? 'bg-purple-600 text-white font-bold shadow-sm'
+                  : 'bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-700'
+              }`}
+            >
+              {d.label}
+            </button>
+          ))}
+        </div>
+
+        {/* 3. 검색 및 접기/내보내기 액션 바 */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-slate-800/80">
           <div className="relative w-full sm:w-72">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
             <input
               type="text"
-              placeholder="임원명 직위 담당업무 검색..."
+              placeholder="임원명, 직위, 담당업무 검색..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
             />
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+          <div className="flex items-center gap-1.5 flex-wrap w-full sm:w-auto justify-end">
+            {/* 전체 펼치기 / 접기 토글 */}
+            <button
+              onClick={() => setAllCollapsed(false)}
+              className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
+              title="모든 계층 펼치기"
+            >
+              <Eye className="w-3 h-3 inline mr-1 text-sky-400" />
+              <span>전체 펼치기</span>
+            </button>
+            <button
+              onClick={() => setAllCollapsed(true)}
+              className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
+              title="모든 계층 접기"
+            >
+              <EyeOff className="w-3 h-3 inline mr-1 text-slate-400" />
+              <span>전체 접기</span>
+            </button>
+
+            {/* 텍스트 보고서 복사 */}
+            <button
+              onClick={handleExportTextReport}
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs font-medium transition-all"
+              title="조직도 텍스트 브리핑 클립보드 복사"
+            >
+              {isCopiedReport ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3 text-indigo-400" />}
+              <span>{isCopiedReport ? '복사됨!' : '보고서 복사'}</span>
+            </button>
+
+            {/* 인쇄 */}
+            <button
+              onClick={handlePrint}
+              className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-700 text-xs transition-all"
+              title="조직도 인쇄 (Print)"
+            >
+              <Printer className="w-3.5 h-3.5 text-slate-400" />
+            </button>
+
+            {/* 내 인맥 필터 */}
             <button
               onClick={() => setOnlyConnectedFilter(!onlyConnectedFilter)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
                 onlyConnectedFilter
                   ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
-                  : 'bg-slate-800 text-slate-300 hover:text-white'
+                  : 'bg-slate-800 text-slate-300 hover:text-white border border-slate-700'
               }`}
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>내 인맥(1·2촌) 연결만 보기 ({orgChart?.stats.firstDegreeCount || 0} / {orgChart?.stats.secondDegreeCount || 0}명)</span>
+              <span>내 인맥({orgChart?.stats.firstDegreeCount || 0} / {orgChart?.stats.secondDegreeCount || 0}명)</span>
             </button>
           </div>
         </div>

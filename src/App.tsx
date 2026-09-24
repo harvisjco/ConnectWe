@@ -16,6 +16,8 @@ import { CompanyAlumniView } from './components/views/CompanyAlumniView';
 import { CorporateOrgChartView } from './components/views/CorporateOrgChartView';
 import { TeamNetworkView } from './components/views/TeamNetworkView';
 import { ReferralBountyView } from './components/views/ReferralBountyView';
+import { DealPipelineView } from './components/views/DealPipelineView';
+import { GeoProximityRadarView } from './components/views/GeoProximityRadarView';
 import { AgeSpectrumView } from './components/views/AgeSpectrumView';
 import { NetworkCanvasView } from './components/views/NetworkCanvasView';
 import { InteractionTimelineView } from './components/views/InteractionTimelineView';
@@ -38,12 +40,12 @@ import { MeetingDebriefModal } from './components/radar/MeetingDebriefModal';
 import { FollowUpComposerModal } from './components/radar/FollowUpComposerModal';
 import { DebriefResult } from './services/meetingDebriefService';
 
-import { Building2, Calendar, Share2, CheckCircle2, Clock, Sparkles, Orbit, Users, Gift } from 'lucide-react';
+import { Building2, Calendar, Share2, CheckCircle2, Clock, Sparkles, Orbit, Users, Gift, Briefcase, Compass } from 'lucide-react';
 
 export const App: React.FC = () => {
   // 로컬 스토리지 기반 오프라인 퍼스트 상태
   const [people, setPeople] = useState<Person[]>(() => loadPeopleFromStorage());
-  const [activeView, setActiveView] = useState<'company' | 'orgchart' | 'age' | 'canvas' | 'galaxy' | 'timeline' | 'team' | 'referral'>('company');
+  const [activeView, setActiveView] = useState<'company' | 'orgchart' | 'age' | 'canvas' | 'galaxy' | 'timeline' | 'team' | 'referral' | 'deals' | 'proximity'>('company');
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
   // 실시간 미팅 레이더 캘린더 상태
@@ -177,10 +179,10 @@ export const App: React.FC = () => {
 
         {/* View Mode Switcher Navigation Tabs */}
         <section className="flex items-center justify-between border-b border-slate-800 pb-3">
-          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-slate-800">
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-slate-800 overflow-x-auto max-w-full">
             <button
               onClick={() => setActiveView('company')}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                 activeView === 'company'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                   : 'text-slate-400 hover:text-slate-200'
@@ -192,7 +194,7 @@ export const App: React.FC = () => {
 
             <button
               onClick={() => setActiveView('orgchart')}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                 activeView === 'orgchart'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                   : 'text-slate-400 hover:text-slate-200'
@@ -204,7 +206,7 @@ export const App: React.FC = () => {
 
             <button
               onClick={() => setActiveView('age')}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                 activeView === 'age'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                   : 'text-slate-400 hover:text-slate-200'
@@ -216,7 +218,7 @@ export const App: React.FC = () => {
 
             <button
               onClick={() => setActiveView('canvas')}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                 activeView === 'canvas'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                   : 'text-slate-400 hover:text-slate-200'
@@ -228,7 +230,7 @@ export const App: React.FC = () => {
 
             <button
               onClick={() => setActiveView('galaxy')}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                 activeView === 'galaxy'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                   : 'text-slate-400 hover:text-slate-200'
@@ -240,7 +242,7 @@ export const App: React.FC = () => {
 
             <button
               onClick={() => setActiveView('timeline')}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                 activeView === 'timeline'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                   : 'text-slate-400 hover:text-slate-200'
@@ -252,7 +254,7 @@ export const App: React.FC = () => {
 
             <button
               onClick={() => setActiveView('team')}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                 activeView === 'team'
                   ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                   : 'text-slate-400 hover:text-slate-200'
@@ -264,7 +266,7 @@ export const App: React.FC = () => {
 
             <button
               onClick={() => setActiveView('referral')}
-              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
                 activeView === 'referral'
                   ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
                   : 'text-slate-400 hover:text-slate-200'
@@ -272,6 +274,30 @@ export const App: React.FC = () => {
             >
               <Gift className="w-4 h-4 text-emerald-400" />
               <span>🎁 바운티</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView('deals')}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
+                activeView === 'deals'
+                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Briefcase className="w-4 h-4 text-amber-400" />
+              <span>💼 전략 딜 워룸</span>
+            </button>
+
+            <button
+              onClick={() => setActiveView('proximity')}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold transition-all whitespace-nowrap shrink-0 ${
+                activeView === 'proximity'
+                  ? 'bg-sky-600 text-white shadow-md shadow-sky-600/30'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Compass className="w-4 h-4 text-sky-400" />
+              <span>🗺️ 거점별 레이더</span>
             </button>
           </div>
 
@@ -342,6 +368,24 @@ export const App: React.FC = () => {
 
           {activeView === 'referral' && (
             <ReferralBountyView
+              people={people}
+              onSelectPerson={setSelectedPerson}
+              onShowToast={showToast}
+            />
+          )}
+
+          {activeView === 'deals' && (
+            <DealPipelineView
+              people={people}
+              onSelectPerson={setSelectedPerson}
+              onOpenDossier={(target) => setDossierTargetPerson(target)}
+              onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
+              onShowToast={showToast}
+            />
+          )}
+
+          {activeView === 'proximity' && (
+            <GeoProximityRadarView
               people={people}
               onSelectPerson={setSelectedPerson}
               onShowToast={showToast}
