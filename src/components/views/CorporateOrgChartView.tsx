@@ -182,15 +182,15 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
     const isFirst = node.networkMatch?.degree === 1;
     const isSecond = node.networkMatch?.degree === 2;
 
-    let borderStyle = 'border-slate-800 bg-slate-900/80 hover:border-slate-700';
+    let borderStyle = 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/80 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs';
     let ringGlow = '';
 
     if (isFirst) {
-      borderStyle = 'border-amber-500/80 bg-gradient-to-br from-amber-950/50 via-slate-900 to-slate-900';
-      ringGlow = 'ring-2 ring-amber-400/80 shadow-lg shadow-amber-500/20';
+      borderStyle = 'border-amber-400 dark:border-amber-500/80 bg-amber-50/40 dark:bg-gradient-to-br dark:from-amber-950/50 dark:via-slate-900 dark:to-slate-900 shadow-xs';
+      ringGlow = 'ring-1 ring-amber-400/80';
     } else if (isSecond) {
-      borderStyle = 'border-emerald-500/80 bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-900';
-      ringGlow = 'ring-2 ring-emerald-400/80 shadow-lg shadow-emerald-500/20';
+      borderStyle = 'border-emerald-400 dark:border-emerald-500/80 bg-emerald-50/40 dark:bg-gradient-to-br dark:from-emerald-950/40 dark:via-slate-900 dark:to-slate-900 shadow-xs';
+      ringGlow = 'ring-1 ring-emerald-400/80';
     }
 
     return (
@@ -201,26 +201,26 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
       >
         <div className="flex items-center justify-between gap-1 mb-2">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="text-[10px] px-1.5 py-0.5 rounded font-bold bg-slate-800 text-slate-300">
+            <span className="text-[11px] px-2 py-0.5 rounded font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
               {node.registrationType || (node.isRegistered ? '등기임원' : '미등기')}
             </span>
 
             {node.remuneration && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950/80 text-emerald-300 font-semibold border border-emerald-500/30">
+              <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 font-semibold border border-emerald-200 dark:border-emerald-500/30">
                 💰 {node.remuneration}
               </span>
             )}
 
             {/* Diff 모드 배지 */}
             {diffMode && node.diffStatus === 'NEW' && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/50 flex items-center gap-0.5 animate-pulse">
-                <UserPlus className="w-2.5 h-2.5" />
+              <span className="text-[11px] px-2 py-0.5 rounded bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 font-bold border border-emerald-200 dark:border-emerald-500/50 flex items-center gap-0.5 animate-pulse">
+                <UserPlus className="w-3 h-3" />
                 <span>신규선임</span>
               </span>
             )}
             {diffMode && node.diffStatus === 'PROMOTED' && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300 font-bold border border-sky-500/50 flex items-center gap-0.5">
-                <TrendingUp className="w-2.5 h-2.5" />
+              <span className="text-[11px] px-2 py-0.5 rounded bg-sky-50 dark:bg-sky-500/20 text-sky-700 dark:text-sky-300 font-bold border border-sky-200 dark:border-sky-500/50 flex items-center gap-0.5">
+                <TrendingUp className="w-3 h-3" />
                 <span>승진·보직</span>
               </span>
             )}
@@ -234,22 +234,22 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
                 rel="noreferrer"
                 onClick={(e) => e.stopPropagation()}
                 title="금융감독원 DART 공시 원문 보기"
-                className="p-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-indigo-300 transition-colors"
+                className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-indigo-300 transition-colors"
               >
-                <ExternalLink className="w-3 h-3" />
+                <ExternalLink className="w-3.5 h-3.5" />
               </a>
             )}
 
             {isFirst && (
-              <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black animate-pulse shadow-sm">
-                <UserCheck className="w-3 h-3" />
+              <span className="flex items-center gap-1 text-[11px] px-2.5 py-0.5 rounded-full bg-amber-500 text-slate-950 font-black animate-pulse shadow-xs">
+                <UserCheck className="w-3.5 h-3.5" />
                 <span>1촌 직통</span>
               </span>
             )}
 
             {isSecond && (
-              <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 font-bold">
-                <Share2 className="w-2.5 h-2.5 text-emerald-400" />
+              <span className="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-500/50 font-bold">
+                <Share2 className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                 <span>2촌 다리 ({node.networkMatch?.trustScore}%)</span>
               </span>
             )}
@@ -258,14 +258,14 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
 
         <div className="flex items-baseline justify-between">
           <div className="flex items-center gap-1.5">
-            <h4 className="text-sm font-bold text-white group-hover:text-indigo-300 transition-colors">
+            <h4 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-indigo-300 transition-colors">
               {node.name}
             </h4>
             {node.age && (
-              <span className="text-[11px] text-slate-400 font-mono">({node.age}세)</span>
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">({node.age}세)</span>
             )}
           </div>
-          <span className="text-xs font-semibold text-indigo-400">
+          <span className="text-xs font-semibold text-blue-600 dark:text-indigo-400">
             {node.position}
           </span>
         </div>
@@ -273,7 +273,7 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
         {node.chargeJob && (
           <p 
             title={node.chargeJob}
-            className="text-[11px] text-slate-400 mt-1 line-clamp-1 group-hover:text-slate-300 transition-colors"
+            className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 line-clamp-1 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition-colors"
           >
             {node.chargeJob}
           </p>
@@ -281,41 +281,41 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
 
         {/* 연계 채용 포지션 타겟 스카우팅 액션 바 */}
         {onOpenTargetBounty && (isFirst || isSecond) && (
-          <div className="mt-2 pt-1.5 flex items-center justify-between text-[10px]">
+          <div className="mt-2 pt-1.5 flex items-center justify-between text-[11px]">
             <button
               onClick={(e) => {
                 e.stopPropagation();
                 onOpenTargetBounty(node.corpName, node.chargeJob);
               }}
-              className="px-2 py-0.5 rounded-md bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/30 flex items-center gap-1 font-semibold transition-all hover:scale-102"
+              className="px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-100 dark:bg-indigo-950/80 dark:hover:bg-indigo-900 text-blue-700 dark:text-indigo-300 border border-blue-200 dark:border-indigo-500/30 flex items-center gap-1 font-semibold transition-all hover:scale-102"
               title="이 임원의 소속/도메인과 연계된 HRCO 채용 오픈 포지션 타진"
             >
               <span>⚡ 연계 채용 타진</span>
-              <span className="text-[9px] text-indigo-400 font-normal">(바운티)</span>
+              <span className="text-[10px] text-blue-500 dark:text-indigo-400 font-normal">(바운티)</span>
             </button>
-            <span className="text-[10px] text-slate-500">최대 500만원</span>
+            <span className="text-[11px] text-slate-500">최대 500만원</span>
           </div>
         )}
 
         {isSecond && node.networkMatch?.bridgePerson && (
-          <div className="mt-2 pt-2 border-t border-emerald-500/20 text-[10px] text-emerald-400 flex items-center justify-between">
+          <div className="mt-2 pt-2 border-t border-emerald-200 dark:border-emerald-500/20 text-[11px] text-emerald-700 dark:text-emerald-400 flex items-center justify-between">
             <span>다리: <strong>{node.networkMatch.bridgePerson.name}</strong> ({node.networkMatch.bridgePerson.currentCompany})</span>
-            <span className="text-emerald-300 underline font-semibold">소개장 작성 →</span>
+            <span className="text-emerald-700 dark:text-emerald-300 underline font-semibold">소개장 작성 →</span>
           </div>
         )}
 
         {isFirst && (
-          <div className="mt-2 pt-2 border-t border-amber-500/30 text-[10px] text-amber-300 flex items-center justify-between font-medium">
+          <div className="mt-2 pt-2 border-t border-amber-200 dark:border-amber-500/30 text-[11px] text-amber-800 dark:text-amber-300 flex items-center justify-between font-medium">
             <span>내 주소록 등록 인맥</span>
             <div className="flex items-center gap-1">
-              <Phone className="w-2.5 h-2.5 text-amber-400" />
-              <MessageSquare className="w-2.5 h-2.5 text-amber-400" />
+              <Phone className="w-3 h-3 text-amber-600 dark:text-amber-400" />
+              <MessageSquare className="w-3 h-3 text-amber-600 dark:text-amber-400" />
             </div>
           </div>
         )}
 
         {!isFirst && !isSecond && (
-          <div className="mt-2 pt-2 border-t border-slate-800/80 text-[10px] text-slate-500 group-hover:text-indigo-400 flex items-center justify-between font-medium transition-colors">
+          <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-800/80 text-[11px] text-slate-500 group-hover:text-blue-600 dark:group-hover:text-indigo-400 flex items-center justify-between font-medium transition-colors">
             <span>🏛️ DART 공시 임원</span>
             <span className="group-hover:translate-x-0.5 transition-transform">프로필 열람 →</span>
           </div>
@@ -541,23 +541,23 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
         <div className="space-y-6">
           {/* Level 0 & 1: 최고 경영진 */}
           {(orgChart.hierarchy.chairpersons.length > 0 || orgChart.hierarchy.ceos.length > 0) && (
-            <div className="p-5 rounded-2xl bg-gradient-to-b from-slate-900 to-slate-950 border border-indigo-500/30 shadow-xl space-y-3">
+            <div className="p-5 rounded-2xl bg-white dark:bg-gradient-to-b dark:from-slate-900 dark:to-slate-950 border border-slate-200 dark:border-indigo-500/30 shadow-xs space-y-3">
               <div 
                 onClick={() => toggleSection('leadership')}
-                className="flex items-center justify-between border-b border-indigo-500/20 pb-2 cursor-pointer hover:opacity-90 select-none transition-opacity"
+                className="flex items-center justify-between border-b border-slate-200 dark:border-indigo-500/20 pb-2 cursor-pointer hover:opacity-90 select-none transition-opacity"
               >
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-indigo-400" />
-                  <h3 className="text-xs font-bold text-indigo-300 uppercase tracking-wider">
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue-600 dark:bg-indigo-400" />
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-indigo-300 uppercase tracking-wider">
                     👑 최고 경영진 (Board of Directors &amp; CEO)
                   </h3>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-slate-400">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400">
                     {orgChart.hierarchy.chairpersons.length + orgChart.hierarchy.ceos.length}명
                   </span>
                   {collapsedSections['leadership'] ? (
-                    <ChevronDown className="w-4 h-4 text-indigo-400" />
+                    <ChevronDown className="w-4 h-4 text-blue-600 dark:text-indigo-400" />
                   ) : (
                     <ChevronUp className="w-4 h-4 text-slate-400" />
                   )}
@@ -573,7 +573,7 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
               ) : (
                 <div 
                   onClick={() => toggleSection('leadership')}
-                  className="py-2.5 text-center text-xs text-slate-500 hover:text-indigo-300 cursor-pointer bg-slate-950/40 rounded-xl border border-dashed border-slate-800"
+                  className="py-2.5 text-center text-xs text-slate-500 hover:text-blue-600 dark:hover:text-indigo-300 cursor-pointer bg-slate-50 dark:bg-slate-950/40 rounded-xl border border-dashed border-slate-200 dark:border-slate-800"
                 >
                   최고 경영진 {orgChart.hierarchy.chairpersons.length + orgChart.hierarchy.ceos.length}명 접힘 (클릭하여 펼치기 ↓)
                 </div>
@@ -586,23 +586,23 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
 
           {/* Level 2: C-Level & 부문장 */}
           {orgChart.hierarchy.cLevels.length > 0 && (
-            <div className="p-5 rounded-2xl bg-slate-900/80 border border-slate-800 space-y-3 shadow-lg">
+            <div className="p-5 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 space-y-3 shadow-xs">
               <div 
                 onClick={() => toggleSection('clevel')}
-                className="flex items-center justify-between border-b border-slate-800 pb-2 cursor-pointer hover:opacity-90 select-none transition-opacity"
+                className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2 cursor-pointer hover:opacity-90 select-none transition-opacity"
               >
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-purple-400" />
-                  <h3 className="text-xs font-bold text-purple-300 uppercase tracking-wider">
+                  <span className="w-2.5 h-2.5 rounded-full bg-purple-600 dark:bg-purple-400" />
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-purple-300 uppercase tracking-wider">
                     ⚡ 핵심 사업부문장 &amp; C-Level (부사장 / CTO / CFO / COO)
                   </h3>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-slate-400 font-mono">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                     {orgChart.hierarchy.cLevels.length}명
                   </span>
                   {collapsedSections['clevel'] ? (
-                    <ChevronDown className="w-4 h-4 text-purple-400" />
+                    <ChevronDown className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                   ) : (
                     <ChevronUp className="w-4 h-4 text-slate-400" />
                   )}
@@ -618,7 +618,7 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
               ) : (
                 <div 
                   onClick={() => toggleSection('clevel')}
-                  className="py-2.5 text-center text-xs text-slate-500 hover:text-purple-300 cursor-pointer bg-slate-950/40 rounded-xl border border-dashed border-slate-800"
+                  className="py-2.5 text-center text-xs text-slate-500 hover:text-purple-600 dark:hover:text-purple-300 cursor-pointer bg-slate-50 dark:bg-slate-950/40 rounded-xl border border-dashed border-slate-200 dark:border-slate-800"
                 >
                   C-Level &amp; 부문장 {orgChart.hierarchy.cLevels.length}명 접힘 (클릭하여 펼치기 ↓)
                 </div>
@@ -631,23 +631,23 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
 
           {/* Level 3: 본부장 / 실장 / 전무 / 상무 */}
           {orgChart.hierarchy.directors.length > 0 && (
-            <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-3 shadow-md">
+            <div className="p-5 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 space-y-3 shadow-xs">
               <div 
                 onClick={() => toggleSection('directors')}
-                className="flex items-center justify-between border-b border-slate-800 pb-2 cursor-pointer hover:opacity-90 select-none transition-opacity"
+                className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2 cursor-pointer hover:opacity-90 select-none transition-opacity"
               >
                 <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-sky-400" />
-                  <h3 className="text-xs font-bold text-sky-300 uppercase tracking-wider">
+                  <span className="w-2.5 h-2.5 rounded-full bg-sky-600 dark:bg-sky-400" />
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-sky-300 uppercase tracking-wider">
                     💼 본부장 · 실장 · 총괄 디렉터 (전무 / 상무)
                   </h3>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-slate-400 font-mono">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                     {orgChart.hierarchy.directors.length}명
                   </span>
                   {collapsedSections['directors'] ? (
-                    <ChevronDown className="w-4 h-4 text-sky-400" />
+                    <ChevronDown className="w-4 h-4 text-sky-600 dark:text-sky-400" />
                   ) : (
                     <ChevronUp className="w-4 h-4 text-slate-400" />
                   )}
@@ -663,9 +663,9 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
               ) : (
                 <div 
                   onClick={() => toggleSection('directors')}
-                  className="py-2.5 text-center text-xs text-slate-500 hover:text-sky-300 cursor-pointer bg-slate-950/40 rounded-xl border border-dashed border-slate-800"
+                  className="py-2.5 text-center text-xs text-slate-500 hover:text-sky-600 dark:hover:text-sky-300 cursor-pointer bg-slate-50 dark:bg-slate-950/40 rounded-xl border border-dashed border-slate-200 dark:border-slate-800"
                 >
-                  본부장·실장 {orgChart.hierarchy.directors.length}명 접힘 (클릭하여 펼치기 ↓)
+                  본부장/실장 {orgChart.hierarchy.directors.length}명 접힘 (클릭하여 펼치기 ↓)
                 </div>
               )}
             </div>
@@ -676,23 +676,23 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
 
           {/* Level 4: 부서 리더 / 이사 */}
           {orgChart.hierarchy.leaders.length > 0 && (
-            <div className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800/80 space-y-3">
+            <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
               <div 
                 onClick={() => toggleSection('leaders')}
-                className="flex items-center justify-between border-b border-slate-800 pb-2 cursor-pointer hover:opacity-90 select-none transition-opacity"
+                className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2 cursor-pointer hover:opacity-90 select-none transition-opacity"
               >
                 <div className="flex items-center gap-2">
                   <span className="w-2.5 h-2.5 rounded-full bg-slate-400" />
-                  <h3 className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                  <h3 className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider">
                     👥 부서 리더 · 그룹장 · 핵심 담당임원 (이사)
                   </h3>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] text-slate-400 font-mono">
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                     {orgChart.hierarchy.leaders.length}명
                   </span>
                   {collapsedSections['leaders'] ? (
-                    <ChevronDown className="w-4 h-4 text-slate-300" />
+                    <ChevronDown className="w-4 h-4 text-slate-600 dark:text-slate-300" />
                   ) : (
                     <ChevronUp className="w-4 h-4 text-slate-400" />
                   )}
@@ -708,7 +708,7 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
               ) : (
                 <div 
                   onClick={() => toggleSection('leaders')}
-                  className="py-2.5 text-center text-xs text-slate-500 hover:text-slate-300 cursor-pointer bg-slate-950/40 rounded-xl border border-dashed border-slate-800"
+                  className="py-2.5 text-center text-xs text-slate-500 hover:text-slate-800 dark:hover:text-slate-300 cursor-pointer bg-slate-50 dark:bg-slate-950/40 rounded-xl border border-dashed border-slate-200 dark:border-slate-800"
                 >
                   부서 리더·담당임원 {orgChart.hierarchy.leaders.length}명 접힘 (클릭하여 펼치기 ↓)
                 </div>
@@ -718,23 +718,23 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
 
           {/* 거버넌스: 사외이사 & 감사위원회 */}
           {orgChart.hierarchy.auditors.length > 0 && (
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800/60 space-y-2">
+            <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-slate-950 border border-slate-200 dark:border-slate-800/60 space-y-2">
               <div 
                 onClick={() => toggleSection('auditors')}
-                className="flex items-center justify-between border-b border-slate-800/50 pb-1.5 cursor-pointer hover:opacity-90 select-none transition-opacity"
+                className="flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800/50 pb-1.5 cursor-pointer hover:opacity-90 select-none transition-opacity"
               >
                 <div className="flex items-center gap-2">
-                  <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
-                  <h3 className="text-[11px] font-bold text-teal-300 uppercase tracking-wider">
+                  <ShieldCheck className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
+                  <h3 className="text-xs font-bold text-teal-800 dark:text-teal-300 uppercase tracking-wider">
                     🛡️ 거버넌스: 사외이사 &amp; 감사위원회
                   </h3>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] text-slate-500 font-mono">
+                  <span className="text-[11px] text-slate-500 font-mono">
                     {orgChart.hierarchy.auditors.length}명
                   </span>
                   {collapsedSections['auditors'] ? (
-                    <ChevronDown className="w-3.5 h-3.5 text-teal-400" />
+                    <ChevronDown className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
                   ) : (
                     <ChevronUp className="w-3.5 h-3.5 text-slate-400" />
                   )}
@@ -747,17 +747,17 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
                     <div 
                       key={node.id}
                       onClick={() => handleNodeClick(node)}
-                      className="p-2 rounded-lg bg-slate-900 border border-slate-800 hover:border-teal-500/40 text-xs cursor-pointer transition-all"
+                      className="p-2.5 rounded-lg bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-teal-500/50 hover:shadow-sm text-xs cursor-pointer transition-all"
                     >
-                      <div className="font-bold text-slate-200">{node.name}</div>
-                      <div className="text-[10px] text-teal-400">{node.position}</div>
+                      <div className="font-bold text-slate-900 dark:text-slate-200">{node.name}</div>
+                      <div className="text-[11px] text-teal-600 dark:text-teal-400 font-medium">{node.position}</div>
                     </div>
                   ))}
                 </div>
               ) : (
                 <div 
                   onClick={() => toggleSection('auditors')}
-                  className="py-2 text-center text-[11px] text-slate-500 hover:text-teal-300 cursor-pointer bg-slate-900/40 rounded-lg border border-dashed border-slate-800"
+                  className="py-2 text-center text-xs text-slate-500 hover:text-teal-700 dark:hover:text-teal-300 cursor-pointer bg-white dark:bg-slate-900/40 rounded-lg border border-dashed border-slate-200 dark:border-slate-800"
                 >
                   사외이사 &amp; 감사 {orgChart.hierarchy.auditors.length}명 접힘 (클릭하여 펼치기 ↓)
                 </div>

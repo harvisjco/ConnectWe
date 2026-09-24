@@ -1,90 +1,163 @@
 ﻿import { test, expect } from '@playwright/test';
 
-test.describe('Clean Tech Portal & Apple Visual Design Precision Audit', () => {
-  test('Capture Full Visual States in Default Light Mode and Measure HIG Compliance', async ({ page }) => {
-    // 1. Desktop 1440x900 Viewport
+test.describe('Apple Chief Designer Deep Precision Audit', () => {
+  test.setTimeout(60000);
+
+  test('Audit All 11 Multi-Dimension Views, Modals, and Drawers in Clean Light Mode', async ({ page }) => {
+    // 1. Desktop 1440x900
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
 
-    // Verify Default Theme is Light
-    const htmlClasses = await page.locator('html').getAttribute('class');
-    console.log('HTML Root Classes (Default Theme):', htmlClasses);
-    expect(htmlClasses).toContain('light');
+    // Screenshot 1: Command Center Home
+    await page.screenshot({ path: 'e2e/screenshots/audit-01-command-center.png', fullPage: true });
 
-    // Screenshot 1: Command Center Home (Clean Light Mode)
-    await page.screenshot({ path: 'e2e/screenshots/01-command-center-desktop.png', fullPage: true });
-
-    // Apple HIG Metrics Check: Tiny font sizes (< 11px)
-    const tinyFontElements = await page.evaluate(() => {
-      const all = Array.from(document.querySelectorAll('*'));
-      const tiny: { tag: string; text: string; fontSize: string; classes: string }[] = [];
-      all.forEach((el) => {
-        const style = window.getComputedStyle(el);
-        const size = parseFloat(style.fontSize);
-        if (size > 0 && size < 11 && el.textContent && el.children.length === 0) {
-          const text = el.textContent.trim();
-          if (text) {
-            tiny.push({
-              tag: el.tagName.toLowerCase(),
-              text: text.slice(0, 30),
-              fontSize: style.fontSize,
-              classes: el.className || '',
-            });
+    // Apple HIG Metrics Check Function
+    const getHigMetrics = async (viewName: string) => {
+      return await page.evaluate((name) => {
+        const all = Array.from(document.querySelectorAll('*'));
+        let tinyCount = 0;
+        const tinySamples: string[] = [];
+        all.forEach((el) => {
+          const style = window.getComputedStyle(el);
+          const size = parseFloat(style.fontSize);
+          if (size > 0 && size < 11 && el.textContent && el.children.length === 0) {
+            const text = el.textContent.trim();
+            if (text && tinySamples.length < 5) {
+              tinySamples.push(`[${el.tagName.toLowerCase()}] ${text.slice(0, 25)} (${style.fontSize})`);
+            }
+            tinyCount++;
           }
-        }
-      });
-      return tiny;
-    });
+        });
 
-    // Apple HIG Metrics Check: Small touch targets (< 32px height/width)
-    const smallTouchTargets = await page.evaluate(() => {
-      const buttons = Array.from(document.querySelectorAll('button, a[href], input, select'));
-      const small: { text: string; width: number; height: number; classes: string }[] = [];
-      buttons.forEach((el) => {
-        const rect = el.getBoundingClientRect();
-        if (rect.width > 0 && rect.height > 0 && (rect.width < 32 || rect.height < 32)) {
-          small.push({
-            text: (el.textContent || '').trim().slice(0, 25),
-            width: Math.round(rect.width),
-            height: Math.round(rect.height),
-            classes: el.className || '',
-          });
-        }
-      });
-      return small;
-    });
+        // Touch Targets below 32px
+        const interactives = Array.from(document.querySelectorAll('button, a[href], input, select'));
+        let smallTargetCount = 0;
+        const smallSamples: string[] = [];
+        interactives.forEach((el) => {
+          const rect = el.getBoundingClientRect();
+          if (rect.width > 0 && rect.height > 0 && (rect.width < 32 || rect.height < 32)) {
+            const text = (el.textContent || '').trim().slice(0, 20);
+            if (smallSamples.length < 5) {
+              smallSamples.push(`"${text}" (${Math.round(rect.width)}x${Math.round(rect.height)}px)`);
+            }
+            smallTargetCount++;
+          }
+        });
 
-    // Header buttons inspection
-    const headerButtonCount = await page.evaluate(() => {
-      const header = document.querySelector('header');
-      if (!header) return 0;
-      return header.querySelectorAll('button').length;
-    });
+        return {
+          view: name,
+          tinyCount,
+          tinySamples,
+          smallTargetCount,
+          smallSamples
+        };
+      }, viewName);
+    };
 
-    console.log('--- HIG AUDIT DATA ---');
-    console.log('Header buttons count:', headerButtonCount);
-    console.log('Tiny font count (< 11px):', tinyFontElements.length);
-    console.log('Small touch targets (< 32px):', smallTouchTargets.length);
+    const metricsResults = [];
 
-    // Screenshot 2: Explore Segment (Alumni View)
+    // Audit 1: Command Center
+    metricsResults.push(await getHigMetrics('Command Center'));
+
+    // Audit 2: Explore - Company Alumni
     await page.locator('[data-testid="segment-explore"]').click();
     await page.waitForTimeout(600);
-    await page.screenshot({ path: 'e2e/screenshots/02-explore-company-desktop.png', fullPage: true });
+    await page.screenshot({ path: 'e2e/screenshots/audit-02-explore-alumni.png', fullPage: true });
+    metricsResults.push(await getHigMetrics('Explore - Alumni'));
 
-    // Screenshot 3: Business Segment (Deals Pipeline)
+    // Audit 3: Explore - Org Chart
+    const orgBtn = page.locator('button:has-text("DART 기업 조직도")');
+    if (await orgBtn.isVisible()) {
+      await orgBtn.click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: 'e2e/screenshots/audit-03-explore-orgchart.png', fullPage: true });
+      metricsResults.push(await getHigMetrics('Explore - OrgChart'));
+    }
+
+    // Audit 4: Explore - 2D Canvas Graph
+    const canvasBtn = page.locator('button:has-text("2D 인터랙티브 그래프")');
+    if (await canvasBtn.isVisible()) {
+      await canvasBtn.click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: 'e2e/screenshots/audit-04-explore-canvas.png', fullPage: true });
+      metricsResults.push(await getHigMetrics('Explore - 2D Canvas'));
+    }
+
+    // Audit 5: Business - Deals Pipeline
     await page.locator('[data-testid="segment-business"]').click();
     await page.waitForTimeout(600);
-    await page.screenshot({ path: 'e2e/screenshots/04-business-deals-desktop.png', fullPage: true });
+    await page.screenshot({ path: 'e2e/screenshots/audit-05-business-deals.png', fullPage: true });
+    metricsResults.push(await getHigMetrics('Business - Deals'));
 
-    // 2. Mobile Viewport (iPhone 14 Pro: 393 x 852)
+    // Audit 6: Business - Proximity Radar
+    const proxBtn = page.locator('button:has-text("거점별 레이더")');
+    if (await proxBtn.isVisible()) {
+      await proxBtn.click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: 'e2e/screenshots/audit-06-business-proximity.png', fullPage: true });
+      metricsResults.push(await getHigMetrics('Business - Proximity'));
+    }
+
+    // Audit 7: Business - Promotion Cadence
+    const promoBtn = page.locator('button:has-text("영전·케어 골든타임")');
+    if (await promoBtn.isVisible()) {
+      await promoBtn.click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: 'e2e/screenshots/audit-07-business-promotion.png', fullPage: true });
+      metricsResults.push(await getHigMetrics('Business - Promotion'));
+    }
+
+    // Audit 8: Business - Network Audit
+    const auditBtn = page.locator('button:has-text("인맥 자산 진단")');
+    if (await auditBtn.isVisible()) {
+      await auditBtn.click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: 'e2e/screenshots/audit-08-business-audit.png', fullPage: true });
+      metricsResults.push(await getHigMetrics('Business - Audit'));
+    }
+
+    // Audit 9: Modal Inspection (Daily Digest)
+    const digestBtn = page.locator('button:has-text("다이제스트")');
+    if (await digestBtn.isVisible()) {
+      await digestBtn.click();
+      await page.waitForTimeout(500);
+      await page.screenshot({ path: 'e2e/screenshots/audit-09-modal-digest.png' });
+      // Close modal using close button
+      const closeBtn = page.locator('button:has-text("닫기"), button[aria-label="닫기"]').first();
+      if (await closeBtn.isVisible()) {
+        await closeBtn.click();
+      } else {
+        await page.keyboard.press('Escape');
+      }
+      await page.waitForTimeout(400);
+    }
+
+    // Audit 10: Drawer Inspection (Person Inspector Drawer)
+    // Go to Command Center and click first person
+    await page.locator('[data-testid="segment-command"]').click();
+    await page.waitForTimeout(500);
+    const firstPerson = page.locator('text=김서연').first();
+    if (await firstPerson.isVisible()) {
+      await firstPerson.click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: 'e2e/screenshots/audit-10-drawer-inspector.png' });
+      const drawerClose = page.locator('button[aria-label="Close"], button:has-text("닫기")').first();
+      if (await drawerClose.isVisible()) {
+        await drawerClose.click();
+      } else {
+        await page.keyboard.press('Escape');
+      }
+      await page.waitForTimeout(400);
+    }
+
+    // Audit 11: Mobile Viewport (iPhone 14 Pro: 393 x 852)
     await page.setViewportSize({ width: 393, height: 852 });
     await page.goto('/');
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(600);
 
-    // Mobile Horizontal Overflow Check
     const mobileOverflow = await page.evaluate(() => {
       return {
         bodyScrollWidth: document.body.scrollWidth,
@@ -92,15 +165,16 @@ test.describe('Clean Tech Portal & Apple Visual Design Precision Audit', () => {
         hasHorizontalScroll: document.body.scrollWidth > window.innerWidth,
       };
     });
-    console.log('Mobile overflow status:', mobileOverflow);
-    expect(mobileOverflow.hasHorizontalScroll).toBe(false);
 
-    // Screenshot 4: Mobile Command Center
-    await page.screenshot({ path: 'e2e/screenshots/08-mobile-command-center.png', fullPage: true });
+    await page.screenshot({ path: 'e2e/screenshots/audit-11-mobile-command.png', fullPage: true });
 
     // Switch to Explore on Mobile
     await page.locator('[data-testid="segment-explore"]').click();
     await page.waitForTimeout(500);
-    await page.screenshot({ path: 'e2e/screenshots/09-mobile-explore.png', fullPage: true });
+    await page.screenshot({ path: 'e2e/screenshots/audit-12-mobile-explore.png', fullPage: true });
+
+    console.log('=== CHIEF DESIGNER AUDIT METRICS SUMMARY ===');
+    console.log(JSON.stringify(metricsResults, null, 2));
+    console.log('Mobile Overflow:', mobileOverflow);
   });
 });

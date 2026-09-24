@@ -154,7 +154,7 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
                             </span>
                           </div>
                           {p.sourceType === 'DART_FACT' && (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 font-semibold flex items-center gap-0.5">
+                            <span className="px-1.5 py-0.5 rounded text-[11px] bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 font-semibold flex items-center gap-0.5">
                               <ShieldCheck className="w-2.5 h-2.5" /> DART
                             </span>
                           )}
@@ -214,7 +214,7 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
                                 <span className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-amber-700 dark:group-hover:text-amber-300 transition-colors">
                                   {p.name}
                                 </span>
-                                <span className="px-1.5 py-0.5 rounded text-[10px] bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30 font-semibold">
+                                <span className="px-1.5 py-0.5 rounded text-[11px] bg-amber-50 dark:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-500/30 font-semibold">
                                   알럼나이
                                 </span>
                               </div>
@@ -223,7 +223,7 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
                               </span>
                             </div>
                             {p.sourceType === 'DART_FACT' && (
-                              <span className="px-1.5 py-0.5 rounded text-[10px] bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 font-semibold flex items-center gap-0.5">
+                              <span className="px-1.5 py-0.5 rounded text-[11px] bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 font-semibold flex items-center gap-0.5">
                                 <ShieldCheck className="w-2.5 h-2.5" /> DART
                               </span>
                             )}
