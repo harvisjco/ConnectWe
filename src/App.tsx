@@ -12,7 +12,6 @@ import {
 
 import { Header } from './components/common/Header';
 import { SidebarLNB, NavViewType } from './components/common/SidebarLNB';
-import { WorkspaceSubNav } from './components/common/WorkspaceSubNav';
 import { MobileBottomBar } from './components/common/MobileBottomBar';
 import { MeetingRadarBanner } from './components/radar/MeetingRadarBanner';
 import { GraphSearchBar } from './components/search/GraphSearchBar';
@@ -33,7 +32,7 @@ const NetworkCanvasView = React.lazy(() => import('./components/views/NetworkCan
 const InteractionTimelineView = React.lazy(() => import('./components/views/InteractionTimelineView').then(m => ({ default: m.InteractionTimelineView })));
 const CosmicGalaxy3DView = React.lazy(() => import('./components/views/CosmicGalaxy3DView').then(m => ({ default: m.CosmicGalaxy3DView })));
 const ExecutiveCommandCenterView = React.lazy(() => import('./components/views/ExecutiveCommandCenterView').then(m => ({ default: m.ExecutiveCommandCenterView })));
-import { PersonInspectorDrawer } from './components/inspector/PersonInspectorDrawer';
+import { PersonInspectorModal } from './components/inspector/PersonInspectorModal';
 import { ExecutiveDossierModal } from './components/inspector/ExecutiveDossierModal';
 import { RelationshipCopilotDrawer } from './components/copilot/RelationshipCopilotDrawer';
 import { ImportDataModal } from './components/import/ImportDataModal';
@@ -107,33 +106,6 @@ export const App: React.FC = () => {
   const [dossierTargetPerson, setDossierTargetPerson] = useState<Person | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Theme State (Default to Light: Clean Modern White Tech Portal)
-  const [theme, setTheme] = useState<'dark' | 'light'>(() => {
-    const saved = localStorage.getItem('connectwe_theme');
-    if (saved === 'light' || saved === 'dark') return saved;
-    return 'light'; // Clean Light Portal is default
-  });
-
-  // Sync theme with html root class
-  useEffect(() => {
-    if (theme === 'light') {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.classList.add('light');
-    } else {
-      document.documentElement.classList.remove('light');
-      document.documentElement.classList.add('dark');
-    }
-    localStorage.setItem('connectwe_theme', theme);
-  }, [theme]);
-
-  const handleToggleTheme = () => {
-    setTheme(prev => {
-      const next = prev === 'dark' ? 'light' : 'dark';
-      showToast(next === 'light' ? '심플한 밝은 모드(Clean Tech Portal)가 활성화되었습니다.' : '다크 모드가 활성화되었습니다.');
-      return next;
-    });
-  };
-
   // people 상태 변경 시 자동 영속화
   useEffect(() => {
     savePeopleToStorage(people);
@@ -203,7 +175,7 @@ export const App: React.FC = () => {
   const imminentMeeting = getImminentMeeting(meetings);
 
   return (
-    <div className={`min-h-screen flex flex-col font-sans selection:bg-blue-600 selection:text-white transition-colors duration-200 ${theme === 'dark' ? 'bg-slate-950 text-slate-100' : 'bg-slate-50 text-slate-800'}`}>
+    <div className="min-h-screen flex flex-col font-sans selection:bg-indigo-600 selection:text-white bg-[#f8fafc] text-slate-800">
       {/* Real-time Meeting Radar Banner */}
       <MeetingRadarBanner
         imminentMeeting={imminentMeeting}
@@ -215,8 +187,6 @@ export const App: React.FC = () => {
       {/* Top Header */}
       <Header
         people={people}
-        theme={theme}
-        onToggleTheme={handleToggleTheme}
         onToggleSidebar={() => setIsMobileSidebarOpen(prev => !prev)}
         onOpenImportModal={() => setIsImportModalOpen(true)}
         onOpenAddModal={() => setIsAddModalOpen(true)}
@@ -260,16 +230,6 @@ export const App: React.FC = () => {
             searchResult={searchResult}
             selectedClusterId={selectedClusterId}
             onSelectCluster={setSelectedClusterId}
-          />
-        </section>
-
-        {/* Standardized Workspace Sub Navigation */}
-        <section>
-          <WorkspaceSubNav
-            activeView={activeView}
-            onNavigateView={handleNavigateView}
-            people={people}
-            displayPeopleCount={displayPeople.length}
           />
         </section>
 
@@ -397,8 +357,8 @@ export const App: React.FC = () => {
       </main>
       </div>
 
-      {/* Apple-styled Deep Inspector Drawer */}
-      <PersonInspectorDrawer
+      {/* Apple-styled Centered Dim Inspector Modal */}
+      <PersonInspectorModal
         person={selectedPerson}
         allPeople={people}
         onClose={() => setSelectedPerson(null)}

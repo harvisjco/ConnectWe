@@ -107,7 +107,7 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
     metricsResults.push(await getHigMetrics('Command Center'));
 
     // Audit 2: Company Alumni
-    const alumniTab = page.locator('[data-testid="tab-company"]');
+    const alumniTab = page.locator('[data-testid="lnb-company"], [data-testid="tab-company"]').first();
     if (await alumniTab.isVisible()) {
       await alumniTab.click();
       await page.waitForTimeout(1200);
@@ -116,7 +116,7 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
     }
 
     // Audit 3: Org Chart
-    const orgTab = page.locator('[data-testid="tab-orgchart"]');
+    const orgTab = page.locator('[data-testid="lnb-orgchart"], [data-testid="tab-orgchart"]').first();
     if (await orgTab.isVisible()) {
       await orgTab.click();
       await page.waitForSelector('text=DART 공시 FACT 기반', { timeout: 8000 }).catch(() => {});
@@ -126,7 +126,7 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
     }
 
     // Audit 4: 2D Canvas Graph
-    const canvasTab = page.locator('[data-testid="tab-canvas"]');
+    const canvasTab = page.locator('[data-testid="lnb-canvas"], [data-testid="tab-canvas"]').first();
     if (await canvasTab.isVisible()) {
       await canvasTab.click();
       await page.waitForTimeout(1200);
@@ -135,7 +135,7 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
     }
 
     // Audit 4b: 3D Cosmic Galaxy
-    const galaxyTab = page.locator('[data-testid="tab-galaxy"]');
+    const galaxyTab = page.locator('[data-testid="lnb-galaxy"], [data-testid="tab-galaxy"]').first();
     if (await galaxyTab.isVisible()) {
       await galaxyTab.click();
       await page.waitForTimeout(1200);
@@ -144,7 +144,7 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
     }
 
     // Audit 4c: Age Spectrum
-    const ageTab = page.locator('[data-testid="tab-age"]');
+    const ageTab = page.locator('[data-testid="lnb-age"], [data-testid="tab-age"]').first();
     if (await ageTab.isVisible()) {
       await ageTab.click();
       await page.waitForTimeout(1200);
@@ -153,7 +153,7 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
     }
 
     // Audit 4d: Timeline
-    const timelineTab = page.locator('[data-testid="tab-timeline"]');
+    const timelineTab = page.locator('[data-testid="lnb-timeline"], [data-testid="tab-timeline"]').first();
     if (await timelineTab.isVisible()) {
       await timelineTab.click();
       await page.waitForTimeout(1200);
@@ -162,7 +162,7 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
     }
 
     // Audit 5: Deals Pipeline
-    const dealsTab = page.locator('[data-testid="tab-deals"]');
+    const dealsTab = page.locator('[data-testid="lnb-deals"], [data-testid="tab-deals"]').first();
     if (await dealsTab.isVisible()) {
       await dealsTab.click();
       await page.waitForTimeout(1200);
@@ -171,7 +171,7 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
     }
 
     // Audit 6: Proximity Radar
-    const proxTab = page.locator('[data-testid="tab-proximity"]');
+    const proxTab = page.locator('[data-testid="lnb-proximity"], [data-testid="tab-proximity"]').first();
     if (await proxTab.isVisible()) {
       await proxTab.click();
       await page.waitForTimeout(1200);
@@ -180,7 +180,7 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
     }
 
     // Audit 7: Promotion Cadence
-    const promoTab = page.locator('[data-testid="tab-promotion"]');
+    const promoTab = page.locator('[data-testid="lnb-promotion"], [data-testid="tab-promotion"]').first();
     if (await promoTab.isVisible()) {
       await promoTab.click();
       await page.waitForTimeout(1200);
@@ -189,7 +189,7 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
     }
 
     // Audit 8: Network Audit
-    const auditTab = page.locator('[data-testid="tab-audit"]');
+    const auditTab = page.locator('[data-testid="lnb-audit"], [data-testid="tab-audit"]').first();
     if (await auditTab.isVisible()) {
       await auditTab.click();
       await page.waitForTimeout(1200);
@@ -198,7 +198,7 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
     }
 
     // Audit 8b: Team Network
-    const teamTab = page.locator('[data-testid="tab-team"]');
+    const teamTab = page.locator('[data-testid="lnb-team"], [data-testid="tab-team"]').first();
     if (await teamTab.isVisible()) {
       await teamTab.click();
       await page.waitForTimeout(1200);
@@ -207,7 +207,7 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
     }
 
     // Audit 8c: Referral Bounty
-    const bountyTab = page.locator('[data-testid="tab-referral"]');
+    const bountyTab = page.locator('[data-testid="lnb-referral"], [data-testid="tab-referral"]').first();
     if (await bountyTab.isVisible()) {
       await bountyTab.click();
       await page.waitForTimeout(1200);
@@ -263,18 +263,18 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
       await page.waitForTimeout(500);
     }
 
-    // Audit 10: Drawer Inspection (Person Inspector Drawer)
+    // Audit 10: Centered Dim Modal Inspection (Person Inspector Modal)
     // Go to Command Center and click first person
-    await page.locator('[data-testid="tab-command"]').click();
+    await page.locator('[data-testid="lnb-command"], [data-testid="tab-command"]').first().click();
     await page.waitForTimeout(500);
     const firstPerson = page.locator('text=김서연').first();
     if (await firstPerson.isVisible()) {
       await firstPerson.click();
       await page.waitForTimeout(600);
-      await page.screenshot({ path: 'e2e/screenshots/audit-10-drawer-inspector.png' });
-      const drawerClose = page.locator('button[aria-label="Close"], button:has-text("닫기")').first();
-      if (await drawerClose.isVisible()) {
-        await drawerClose.click();
+      await page.screenshot({ path: 'e2e/screenshots/audit-10-modal-inspector.png' });
+      const modalClose = page.locator('button:has-text("닫기"), button[title="닫기 (ESC)"]').first();
+      if (await modalClose.isVisible()) {
+        await modalClose.click();
       } else {
         await page.keyboard.press('Escape');
       }
@@ -303,8 +303,13 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
 
     await page.screenshot({ path: 'e2e/screenshots/audit-11-mobile-command.png', fullPage: true });
 
-    // Switch to Company Alumni on Mobile
-    await page.locator('[data-testid="tab-company"]').click();
+    // Switch to Company Alumni on Mobile via Sidebar
+    const sidebarToggle = page.locator('header [aria-label="사이드바 토글"]');
+    if (await sidebarToggle.isVisible()) {
+      await sidebarToggle.click();
+      await page.waitForTimeout(300);
+    }
+    await page.locator('[data-testid="lnb-company"]').filter({ visible: true }).first().click();
     await page.waitForTimeout(500);
     await page.screenshot({ path: 'e2e/screenshots/audit-12-mobile-explore.png', fullPage: true });
 

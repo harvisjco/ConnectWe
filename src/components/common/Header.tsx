@@ -8,13 +8,11 @@ import {
   Share2, UploadCloud, Download, ShieldCheck, Clock, 
   Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
   BarChart2, Lock, Settings, Cloud, Bot, Camera, Calendar, Bell,
-  MoreHorizontal, ChevronDown, Sun, Moon, PanelLeft
+  MoreHorizontal, ChevronDown, PanelLeft
 } from 'lucide-react';
 
 interface HeaderProps {
   people: Person[];
-  theme?: 'dark' | 'light';
-  onToggleTheme?: () => void;
   onToggleSidebar?: () => void;
   onOpenImportModal: () => void;
   onOpenAddModal: () => void;
@@ -33,8 +31,6 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ 
   people, 
-  theme = 'dark',
-  onToggleTheme,
   onToggleSidebar,
   onOpenImportModal, 
   onOpenAddModal,
@@ -277,27 +273,7 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="sm:hidden">등록</span>
           </button>
 
-          {/* Theme Toggle Button (Clean Light vs Dark) */}
-          {onToggleTheme && (
-            <button
-              onClick={onToggleTheme}
-              className="flex items-center justify-center w-8 h-8 sm:w-auto sm:px-3 sm:py-2 min-h-[32px] min-w-[32px] rounded-xl border text-xs font-semibold transition-all whitespace-nowrap active:scale-[0.98] bg-white hover:bg-slate-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-slate-200 dark:border-slate-700/80 shadow-2xs cursor-pointer"
-              title={theme === 'dark' ? '밝은 모드로 전환' : '다크 모드로 전환'}
-              aria-label="테마 전환"
-            >
-              {theme === 'light' ? (
-                <>
-                  <Sun className="w-4 h-4 text-amber-500" />
-                  <span className="hidden md:inline ml-1.5">밝은 모드</span>
-                </>
-              ) : (
-                <>
-                  <Moon className="w-4 h-4 text-sky-400" />
-                  <span className="hidden md:inline ml-1.5">다크 모드</span>
-                </>
-              )}
-            </button>
-          )}
+
 
           {/* Quick Tools Dropdown Menu */}
           <div className="relative" ref={toolsMenuRef}>
