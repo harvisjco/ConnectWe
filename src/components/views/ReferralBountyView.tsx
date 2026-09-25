@@ -163,20 +163,20 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* 상단 탭 및 바운티 통계 배너 */}
+      {/* 상단 탭 및 추천 감사 리워드 통계 배너 */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <Gift className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
             <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-              인맥 기반 헤드헌팅 &amp; 채용 바운티 허브
+              인재 매칭 &amp; 채용 추천 감사 리워드 허브
             </h2>
             <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 font-medium">
               최대 1,000만원 보상
             </span>
           </div>
           <p className="text-xs text-slate-500 dark:text-slate-400">
-            내 지인의 알럼나이 및 DART 팩트 경력을 기반으로 최적 포지션에 비공개 타진하고, 커피챗부터 최종 합격까지 단계별 리워드를 획득하세요.
+            소중한 지인의 커리어 성장을 돕고, 따뜻한 안부 티타임부터 합격 시점까지 신뢰 기반 추천 감사 리워드를 지원받으세요.
           </p>
         </div>
 
@@ -347,7 +347,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
 
                     <div className="flex items-center justify-between pt-2.5 border-t border-slate-800/80">
                       <div className="flex items-center gap-1 text-xs">
-                        <span className="text-slate-400">합격 바운티:</span>
+                        <span className="text-slate-400">합격 추천 리워드:</span>
                         <span className="font-bold text-emerald-400">
                           {formatMoney(pos.rewards.hireSuccessBounty)}
                         </span>
@@ -583,7 +583,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                           <button
                             onClick={() => handleSimulateMilestone(sub, 'final_hire')}
                             className="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/40 font-bold transition-all animate-pulse"
-                            title="HRCO: 최종 입사 확정 바운티 수령 시뮬레이션"
+                            title="HRCO: 최종 입사 확정 리워드 수령 시뮬레이션"
                           >
                             최종 입사 (+500만)
                           </button>
@@ -592,7 +592,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                         {sub.earnedRewards?.hirePaid && (
                           <span className="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-900/40 text-emerald-400 font-bold border border-emerald-600/40 flex items-center gap-1">
                             <CheckCircle2 className="w-3 h-3 text-emerald-400" />
-                            <span>전체 바운티 지급 완료</span>
+                            <span>전체 추천 리워드 지급 완료</span>
                           </span>
                         )}
                       </div>
@@ -610,7 +610,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
             <div className="mt-6 pt-4 border-t border-slate-800 space-y-2">
               <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
                 <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-                <span>HRCO GoodPartner 실시간 바운티 정산 히스토리 ({rewardEvents.length}건)</span>
+                <span>HRCO GoodPartner 실시간 추천 리워드 정산 히스토리 ({rewardEvents.length}건)</span>
               </h4>
               <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
                 {rewardEvents.map((evt) => (
@@ -650,7 +650,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
             <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-700 text-xs space-y-1">
               <div><strong className="text-white">추천 후보자:</strong> {targetCandidate.name} ({targetCandidate.currentCompany} · {targetCandidate.currentTitle})</div>
               <div><strong className="text-white">지원 포지션:</strong> {selectedPosition.clientCompany} - {selectedPosition.title}</div>
-              <div><strong className="text-white">합격 시 수령 바운티:</strong> <span className="text-emerald-400 font-bold">{formatMoney(selectedPosition.rewards.hireSuccessBounty)}</span></div>
+              <div><strong className="text-white">합격 시 추천 리워드:</strong> <span className="text-emerald-400 font-bold">{formatMoney(selectedPosition.rewards.hireSuccessBounty)}</span></div>
             </div>
 
             <div className="space-y-1.5">

@@ -4,11 +4,12 @@ import { crossCheckPersonWithDart, getDartReportUrl } from '../../services/dartF
 import { loadActivityLogs, recordCommunication } from '../../services/storageService';
 import { exportPeopleToVcf } from '../../services/vcardExporter';
 import { calculatePersonPowerMetric } from '../../services/centralityEngine';
+import { identifyTalentCluster } from '../../services/talentClusterEngine';
 import { 
   X, Phone, Mail, Briefcase, GraduationCap, 
   Calendar, ShieldCheck, Clock, Edit3, Check, 
   Tag, ExternalLink, Download, Trash2, Plus, MessageSquare, 
-  Sparkles, GitFork, Mic, Send, Zap
+  Sparkles, GitFork, Mic, Send, Zap, Cpu, Building2, Rocket
 } from 'lucide-react';
 
 interface PersonInspectorDrawerProps {
@@ -65,6 +66,11 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
     if (!person) return null;
     return calculatePersonPowerMetric(person, allPeople);
   }, [person, allPeople]);
+
+  const clusterProfile = useMemo(() => {
+    if (!person) return null;
+    return identifyTalentCluster(person);
+  }, [person]);
 
   if (!person) return null;
 
@@ -141,20 +147,21 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
             <div className="flex items-center gap-2 flex-wrap">
               <h2 className="text-xl font-bold text-white tracking-tight">{person.name}</h2>
               
-              {/* Fact Tagging */}
-              {person.sourceType === 'DART_FACT' ? (
-                <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3" /> DART FACT
-                </span>
-              ) : (
-                <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/30">
-                  SOURCE DATA
+              {/* 5대 인재 클러스터 Superpower Tagging */}
+              {clusterProfile && (
+                <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold flex items-center gap-1 border ${clusterProfile.badgeStyle}`}>
+                  {clusterProfile.id === 'LISTED_EXECUTIVE' && <Building2 className="w-3 h-3" />}
+                  {clusterProfile.id === 'VENTURE_LEADER' && <Rocket className="w-3 h-3" />}
+                  {clusterProfile.id === 'TECH_FELLOW' && <Cpu className="w-3 h-3" />}
+                  {clusterProfile.id === 'INVESTOR_PARTNER' && <Briefcase className="w-3 h-3" />}
+                  {clusterProfile.id === 'CORE_SPECIALIST' && <Sparkles className="w-3 h-3" />}
+                  <span>{clusterProfile.label}</span>
                 </span>
               )}
 
               {person.isStale && (
                 <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/30 flex items-center gap-1">
-                  <Clock className="w-3 h-3" /> 6M+ 미소통
+                  <Clock className="w-3 h-3" /> 소통 환기 권장
                 </span>
               )}
 
@@ -164,7 +171,7 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
                   className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-purple-500/15 text-purple-300 border border-purple-500/30 flex items-center gap-1 cursor-help"
                 >
                   <Zap className="w-3 h-3 text-amber-400" />
-                  <span>파워 {powerMetric.powerScore}점</span>
+                  <span>허브 지수 {powerMetric.powerScore}점</span>
                 </span>
               )}
             </div>
@@ -268,6 +275,38 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
             </button>
           </div>
 
+          {/* 5대 인재 클러스터 고유 강점 (Superpower Edge) 카드 */}
+          {clusterProfile && (
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-indigo-950/40 via-slate-900 to-slate-900 border border-indigo-500/30 space-y-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-indigo-400 text-xs font-bold tracking-wide uppercase">
+                  <Sparkles className="w-4 h-4 text-amber-400" />
+                  <span>인재 고유 역량 &amp; 시너지 강점</span>
+                </div>
+                <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${clusterProfile.badgeStyle}`}>
+                  {clusterProfile.label}
+                </span>
+              </div>
+
+              <p className="text-xs text-slate-300 leading-relaxed">
+                {clusterProfile.description}
+              </p>
+
+              {/* 3대 Superpowers 뱃지 칩 */}
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {clusterProfile.superpowers.map((sp, idx) => (
+                  <span
+                    key={idx}
+                    className="px-2.5 py-1 rounded-lg bg-slate-800/80 text-slate-200 border border-slate-700 text-[11px] font-medium flex items-center gap-1.5"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                    {sp}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* DART Fact Verification Section */}
           <div className="p-4 rounded-2xl bg-gradient-to-br from-emerald-950/40 via-slate-900 to-slate-900 border border-emerald-500/30 space-y-3">
             <div className="flex items-center justify-between">
@@ -341,27 +380,36 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
             )}
           </div>
 
-          {/* Demographic Info */}
-          <div className="bg-slate-800/40 border border-slate-800 rounded-2xl p-4 space-y-2">
+          {/* Demographic & Seniority Info */}
+          <div className="bg-slate-800/40 border border-slate-800 rounded-2xl p-4 space-y-2.5">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-indigo-400" />
-              <span>연령대 및 인구통계</span>
+              <span>전문 경력 단계 및 인적 정보</span>
             </h3>
+
+            {clusterProfile && (
+              <div className="flex items-center justify-between text-xs pb-1.5 border-b border-slate-800/60">
+                <span className="text-slate-400">전문 경력 단계:</span>
+                <span className="font-semibold text-indigo-300">
+                  {clusterProfile.seniorityLevel}
+                </span>
+              </div>
+            )}
+
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-400">생년 / 연령대:</span>
+              <span className="text-slate-400">연령 정보:</span>
               <div className="flex items-center gap-1.5">
                 <span className="font-semibold text-slate-200">
-                  {person.birthYear ? `${person.birthYear}년생 (${new Date().getFullYear() - person.birthYear}세)` : '생년 미확인'}
+                  {person.birthYear ? `${person.birthYear}년생` : (person.estimatedAgeGroup ? `${person.estimatedAgeGroup}대` : '경력 연차 기준')}
                 </span>
-                {person.isAgeEstimated ? (
-                  <span className="px-1.5 py-0.5 rounded text-[11px] bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                    추정 연령 ({person.estimatedAgeGroup})
-                  </span>
-                ) : (
-                  <span className="px-1.5 py-0.5 rounded text-[11px] bg-blue-500/10 text-blue-400 border border-blue-500/20">
-                    실측 팩트 ({person.estimatedAgeGroup})
+                {person.birthYear && (
+                  <span className="text-slate-400 text-[11px]">
+                    (만 {new Date().getFullYear() - person.birthYear}세)
                   </span>
                 )}
+                <span className="px-1.5 py-0.5 rounded text-[10px] bg-slate-800 text-slate-300 border border-slate-700">
+                  {person.isAgeEstimated ? '업력 기반 추정' : '공시 확인'}
+                </span>
               </div>
             </div>
             {person.lastContactDate && (

@@ -10,7 +10,7 @@ import {
 } from '../../services/promotionRadarService';
 import { 
   Award, ShieldCheck, Copy, Check, 
-  Clock, AlertTriangle, MessageCircle, 
+  Clock, MessageCircle, 
   ChevronRight, Building2, Gift, Send, ExternalLink
 } from 'lucide-react';
 
@@ -102,7 +102,7 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
               </span>
             </div>
             <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-              DART 공시 임원의 승진·대표이사 선임을 조기에 감지하여 영전 화환 및 축전을 신속히 보내고, 장기 미소통 핵심 인맥의 소통 골든타임을 방어합니다.
+              DART 공시 임원의 승진·대표이사 선임을 조기에 축하하고, 소통 주기가 도래한 소중한 인맥에 따뜻한 안부를 전할 수 있도록 지원합니다.
             </p>
           </div>
         </div>
@@ -117,8 +117,8 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
           </div>
           <div className="h-7 w-[1px] bg-slate-200" />
           <div className="text-right">
-            <div className="text-[11px] text-slate-500">소통 공백 위험군</div>
-            <div className="text-sm font-bold text-rose-600 font-mono">
+            <div className="text-[11px] text-slate-500">소통 환기 추천</div>
+            <div className="text-sm font-bold text-indigo-600 font-mono">
               {cadenceAlerts.length}명
             </div>
           </div>
@@ -153,7 +153,7 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
           }`}
         >
           <Clock className="w-4 h-4" />
-          <span>소통 골든타임 넛지 ({cadenceAlerts.length})</span>
+          <span>소통 환기 추천 ({cadenceAlerts.length})</span>
         </button>
       </div>
 
@@ -258,8 +258,8 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
         /* Cadence Alerts List */
         <div className="space-y-3">
           <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-between text-xs text-slate-600">
-            <span>60일 이상 소통이 없었던 1·2촌 핵심 인맥입니다. 관계가 느슨해지기 전에 가벼운 안부를 전달하세요.</span>
-            <span className="font-mono text-rose-600 font-bold">{cadenceAlerts.length}명 관리 요망</span>
+            <span>최근 60일 이상 연락을 나누지 못한 소중한 인맥입니다. 편안한 마음으로 가벼운 안부와 응원을 건네보세요.</span>
+            <span className="font-mono text-indigo-600 font-bold">{cadenceAlerts.length}명 소통 권장</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -280,8 +280,8 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
                           ? 'bg-amber-50 text-amber-700 border border-amber-200'
                           : 'bg-slate-50 text-slate-600 border border-slate-200'
                       }`}>
-                        <AlertTriangle className="w-3 h-3" />
-                        {alert.daysSinceLastContact}일간 무연락
+                        <Clock className="w-3 h-3" />
+                        {alert.daysSinceLastContact}일 경과
                       </span>
                       <span className="text-slate-400 font-mono text-[11px]">
                         {alert.person.closeness === 1 ? '1촌(나)' : `${alert.person.closeness}촌`}
@@ -322,12 +322,12 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
                       {isCopied ? (
                         <>
                           <Check className="w-3.5 h-3.5" />
-                          <span>안부 핑 복사 완료</span>
+                          <span>안부 문구 복사 완료</span>
                         </>
                       ) : (
                         <>
                           <MessageCircle className="w-3.5 h-3.5" />
-                          <span>안부 핑 1-Click 복사</span>
+                          <span>정중한 안부 인사 복사</span>
                         </>
                       )}
                     </button>

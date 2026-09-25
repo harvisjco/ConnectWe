@@ -67,7 +67,7 @@ export function calculatePersonPowerMetric(
 
   if (finalScore >= 80) {
     tier = 'ALPHA_HUB';
-    tierLabel = '알파 슈퍼 커넥터 (핵심 허브)';
+    tierLabel = '핵심 네트워크 허브 (Key Connector)';
   } else if (finalScore >= 65) {
     tier = 'CORE_CONNECTOR';
     tierLabel = '핵심 비즈니스 연결자';

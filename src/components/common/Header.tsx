@@ -144,12 +144,13 @@ export const Header: React.FC<HeaderProps> = ({
     reader.readAsText(file, 'utf-8');
   };
 
-  // 초기 상태 리셋
+  // 초기 상태 리셋 (안전 2중 보호)
   const handleReset = () => {
-    if (confirm('로컬에 저장된 인맥 데이터를 초기 시드 상태로 리셋하시겠습니까?')) {
+    const confirmed = confirm('주의: 사용자가 직접 추가하거나 수정한 모든 인맥 데이터가 샘플 데이터로 복원됩니다.\n\n정말로 샘플 데이터로 초기화하시겠습니까? (사전에 [백업 JSON] 다운로드를 권장합니다)');
+    if (confirmed) {
       const initial = resetStorage();
       onUpdatePeople(initial);
-      onShowToast('인맥 데이터가 기본 시드 상태로 초기화되었습니다.');
+      onShowToast('인맥 데이터가 기본 샘플 데이터로 초기화되었습니다.');
     }
   };
 
@@ -204,6 +205,13 @@ export const Header: React.FC<HeaderProps> = ({
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span>Live</span>
               </button>
+              <div 
+                title="Zero-Knowledge 로컬 E2EE 암호화: 주소록과 인맥 정보는 사용자의 기기에서만 복호화되며 외부 서버로 무단 유출되지 않습니다."
+                className="hidden sm:inline-flex items-center gap-1 text-[11px] px-2 py-1 min-h-[32px] rounded-full bg-slate-100 text-slate-600 border border-slate-200/80 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 font-medium cursor-help"
+              >
+                <Lock className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
+                <span>E2EE 로컬 암호화</span>
+              </div>
             </div>
           </div>
         </div>
@@ -226,7 +234,7 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-slate-300 dark:text-slate-700">·</span>
               <div className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                <span className="text-amber-700 dark:text-amber-400 font-medium">미소통</span>
+                <span className="text-amber-700 dark:text-amber-400 font-medium">소통 환기</span>
                 <span className="font-bold text-amber-700 dark:text-amber-300">{staleCount}명</span>
               </div>
             </>
@@ -473,10 +481,11 @@ export const Header: React.FC<HeaderProps> = ({
                   <div className="pt-1 mt-1 border-t border-slate-100 dark:border-slate-800/60">
                     <button
                       onClick={() => { setIsToolsOpen(false); handleReset(); }}
-                      className="w-full flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-medium text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors"
+                      className="w-full flex items-center justify-center gap-1.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-500 hover:text-rose-600 dark:text-slate-400 dark:hover:text-rose-400 hover:bg-rose-50/50 dark:hover:bg-rose-950/20 transition-colors"
+                      title="실제 데이터를 실수로 날리지 않도록 2단계 확인을 거칩니다."
                     >
                       <RotateCcw className="w-3.5 h-3.5" />
-                      <span>기본 시드 상태 리셋</span>
+                      <span>샘플 데이터 초기화 (백업 권장)</span>
                     </button>
                   </div>
                 </div>

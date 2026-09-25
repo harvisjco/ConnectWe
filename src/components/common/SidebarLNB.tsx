@@ -57,7 +57,7 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
 
   const sections: NavSection[] = [
     {
-      title: '인맥 자산 & 인텔리전스',
+      title: '네트워크 인텔리전스',
       tag: 'CORE',
       tagColor: '',
       items: [
@@ -68,7 +68,7 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
           badge: todayBirthdayCount > 0 
             ? { text: `생일 ${todayBirthdayCount}`, variant: 'action-pink' } 
             : staleCoreCount > 0 
-              ? { text: `미소통 ${staleCoreCount}`, variant: 'action-amber' }
+              ? { text: `소통 환기 ${staleCoreCount}`, variant: 'action-amber' }
               : undefined
         },
         {
@@ -107,7 +107,7 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
         },
         {
           id: 'referral',
-          label: '소개 보상 파이프라인',
+          label: '추천 감사 리워드',
           icon: Gift
         },
         {

@@ -36,8 +36,9 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
   // 티타임 제안 카톡 문구 복사
   const handleCopyTeaInvite = (person: Person, clusterName: string) => {
     const inviteMessage = `안녕하세요 ${person.name} ${person.currentTitle}님! 
-오늘 제가 ${clusterName} 쪽에 미팅 일정이 있어 나와있는데, 혹시 오후에 가볍게 15~20분 정도 커피 한 잔 하실 수 있는 여유가 되실까요? 
-최근 소식도 나누고 안부도 전하고 싶습니다. 부담 없이 편하실 때 말씀해 주세요!`;
+이번 주 ${clusterName} 인근에서 업무 일정이 예정되어 있어 인사드립니다. 
+혹시 일정 중 편하신 날짜나 시간에 가볍게 차 한 잔 모실 수 있을지요? 
+바쁘실 텐데 부담 없이 편하실 때 말씀해 주시면 감사하겠습니다!`;
 
     navigator.clipboard.writeText(inviteMessage).then(() => {
       setCopiedPersonId(person.id);
@@ -68,7 +69,7 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
               </span>
             </div>
             <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-              내가 현재 위치한 업무 지구 또는 출장 거점을 선택하면, 반경 내에 상주하는 핵심 인맥과 DART 공시 임원을 즉시 감지하여 당일 번개 티타임을 성사시킵니다.
+              현재 방문 예정이거나 상주하는 비즈니스 거점을 선택하여, 인근에 위치한 소중한 인맥을 확인하고 여유로운 티타임 일정을 정중하게 제안해보세요.
             </p>
           </div>
         </div>
@@ -262,7 +263,7 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
                       ) : (
                         <>
                           <Coffee className="w-3.5 h-3.5 text-indigo-600" />
-                          <span>오늘 티타임 제안</span>
+                          <span>정중한 티타임 제안</span>
                         </>
                       )}
                     </button>
