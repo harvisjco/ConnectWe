@@ -10,6 +10,7 @@ import {
 } from './services/calendarRadarService';
 
 import { Header } from './components/common/Header';
+import { SidebarLNB, NavViewType } from './components/common/SidebarLNB';
 import { MeetingRadarBanner } from './components/radar/MeetingRadarBanner';
 import { GraphSearchBar } from './components/search/GraphSearchBar';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
@@ -53,8 +54,34 @@ export const App: React.FC = () => {
   // 로컬 스토리지 기반 오프라인 퍼스트 상태
   const [people, setPeople] = useState<Person[]>(() => loadPeopleFromStorage());
   const [activeSegment, setActiveSegment] = useState<'command' | 'explore' | 'business'>('command');
-  const [activeView, setActiveView] = useState<'command' | 'company' | 'orgchart' | 'age' | 'canvas' | 'galaxy' | 'timeline' | 'team' | 'referral' | 'deals' | 'proximity' | 'promotion' | 'audit'>('command');
+  const [activeView, setActiveView] = useState<NavViewType>('command');
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
+
+  // LNB 사이드바 상태
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    return localStorage.getItem('connectwe_sidebar_collapsed') === 'true';
+  });
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  // 뷰 변경 핸들러 (LNB와 3-Segment 양방향 동기화)
+  const handleSelectView = (view: NavViewType) => {
+    setActiveView(view);
+    if (view === 'command') {
+      setActiveSegment('command');
+    } else if (['company', 'orgchart', 'age', 'canvas', 'galaxy', 'timeline'].includes(view)) {
+      setActiveSegment('explore');
+    } else {
+      setActiveSegment('business');
+    }
+  };
+
+  const handleToggleSidebarCollapse = () => {
+    setIsSidebarCollapsed(prev => {
+      const next = !prev;
+      localStorage.setItem('connectwe_sidebar_collapsed', String(next));
+      return next;
+    });
+  };
 
   // 실시간 미팅 레이더 캘린더 상태
   const [meetings, setMeetings] = useState<CalendarMeeting[]>(() => loadMeetingsFromStorage(people));
@@ -199,6 +226,7 @@ export const App: React.FC = () => {
         people={people}
         theme={theme}
         onToggleTheme={handleToggleTheme}
+        onToggleSidebar={() => setIsMobileSidebarOpen(prev => !prev)}
         onOpenImportModal={() => setIsImportModalOpen(true)}
         onOpenAddModal={() => setIsAddModalOpen(true)}
         onOpenDigestModal={() => setIsDigestModalOpen(true)}
@@ -214,8 +242,22 @@ export const App: React.FC = () => {
         onShowToast={showToast}
       />
 
-      {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-6 py-6 pb-28 space-y-6">
+      {/* 2-Column Responsive Body Layout with Floating LNB */}
+      <div className="flex-1 max-w-[1600px] w-full mx-auto px-2 sm:px-4 md:px-6 py-4 flex gap-4 md:gap-6 items-start">
+        {/* Left Floating LNB Sidebar */}
+        <SidebarLNB
+          activeView={activeView}
+          onSelectView={handleSelectView}
+          people={people}
+          isCollapsed={isSidebarCollapsed}
+          onToggleCollapse={handleToggleSidebarCollapse}
+          isOpenMobile={isMobileSidebarOpen}
+          onCloseMobile={() => setIsMobileSidebarOpen(false)}
+          onOpenCopilot={() => setIsCopilotOpen(true)}
+        />
+
+        {/* Main Content Area */}
+        <main className="flex-1 min-w-0 pb-28 space-y-6">
         
         {/* GraphRAG Search Interface */}
         <section>
@@ -571,6 +613,7 @@ export const App: React.FC = () => {
         </section>
 
       </main>
+      </div>
 
       {/* Apple-styled Deep Inspector Drawer */}
       <PersonInspectorDrawer

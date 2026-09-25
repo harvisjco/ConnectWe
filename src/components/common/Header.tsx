@@ -8,13 +8,14 @@ import {
   Share2, UploadCloud, Download, ShieldCheck, Clock, 
   Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
   BarChart2, Lock, Settings, Cloud, Bot, Camera, Calendar, Bell,
-  MoreHorizontal, ChevronDown, Sun, Moon
+  MoreHorizontal, ChevronDown, Sun, Moon, PanelLeft
 } from 'lucide-react';
 
 interface HeaderProps {
   people: Person[];
   theme?: 'dark' | 'light';
   onToggleTheme?: () => void;
+  onToggleSidebar?: () => void;
   onOpenImportModal: () => void;
   onOpenAddModal: () => void;
   onOpenDigestModal: () => void;
@@ -34,6 +35,7 @@ export const Header: React.FC<HeaderProps> = ({
   people, 
   theme = 'dark',
   onToggleTheme,
+  onToggleSidebar,
   onOpenImportModal, 
   onOpenAddModal,
   onOpenDigestModal,
@@ -171,7 +173,17 @@ export const Header: React.FC<HeaderProps> = ({
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
         {/* Zone 1: Brand & Slogan */}
         <div className="flex items-center justify-between md:justify-start gap-3">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            {onToggleSidebar && (
+              <button
+                onClick={onToggleSidebar}
+                className="flex items-center justify-center w-8 h-8 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200/80 dark:border-slate-700/60"
+                title="사이드바 내비게이션 토글"
+                aria-label="사이드바 토글"
+              >
+                <PanelLeft className="w-4 h-4" />
+              </button>
+            )}
             <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-slate-900 to-indigo-600 dark:from-indigo-600 dark:via-indigo-500 dark:to-sky-400 flex items-center justify-center shadow-xs dark:shadow-[0_4px_14px_rgba(79,70,229,0.35)] ring-1 ring-black/5 dark:ring-white/20 shrink-0">
               <Share2 className="w-5 h-5 text-white" />
             </div>
