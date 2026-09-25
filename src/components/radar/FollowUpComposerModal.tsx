@@ -52,7 +52,7 @@ export const FollowUpComposerModal: React.FC<FollowUpComposerModalProps> = ({
               <h2 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
                 <span>미팅 후 24시간 감사 &amp; 팔로업 시퀀스</span>
                 {person.sourceType === 'DART_FACT' && (
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-500/40 text-emerald-300 font-bold flex items-center gap-0.5">
+                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-500/40 text-emerald-300 font-bold flex items-center gap-0.5 font-mono">
                     <ShieldCheck className="w-3 h-3" />
                     DART FACT 임원
                   </span>

@@ -171,7 +171,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
             <h2 className="text-lg font-bold text-white tracking-tight">
               인맥 기반 헤드헌팅 &amp; 채용 바운티 허브
             </h2>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30">
+            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 font-mono">
               최대 1,000만원 보상
             </span>
           </div>
@@ -227,7 +227,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
               <span>계좌 출금 신청</span>
               <ArrowUpRight className="w-3 h-3" />
             </button>
-            <span className="text-[10px] text-emerald-400/80 font-mono">
+            <span className="text-[11px] text-emerald-400/80 font-mono">
               익일 영업일 입금
             </span>
           </div>
@@ -243,7 +243,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
               {activeSubmissionsCount}건
             </div>
           </div>
-          <span className="text-[10px] px-2 py-1 rounded-lg bg-indigo-950/80 border border-indigo-500/30 text-indigo-300 font-bold">
+          <span className="text-[11px] px-2 py-1 rounded-lg bg-indigo-950/80 border border-indigo-500/30 text-indigo-300 font-bold">
             총 {submissions.length}건 추천
           </span>
         </div>
@@ -262,7 +262,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
               <span className="text-purple-300 font-bold">🎉 최대 1,000만</span>
             </div>
           </div>
-          <span className="text-[10px] px-2 py-1 rounded-lg bg-purple-950/80 border border-purple-500/30 text-purple-300 font-bold">
+          <span className="text-[11px] px-2 py-1 rounded-lg bg-purple-950/80 border border-purple-500/30 text-purple-300 font-bold">
             3단계 마일스톤
           </span>
         </div>
@@ -277,7 +277,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <span className="font-bold text-white">HRCO GoodPartner 헤드헌팅 ERP 실시간 연동</span>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border ${
                 isLiveBridge 
                   ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' 
                   : 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
@@ -327,7 +327,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                         {pos.clientCompany}
                       </span>
                       {pos.urgentBadge && (
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 font-bold border border-amber-500/30">
+                        <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 font-bold border border-amber-500/30">
                           {pos.urgentBadge}
                         </span>
                       )}
@@ -388,25 +388,25 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                 </span>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <div className="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-center">
-                    <div className="text-[10px] text-slate-400">1단계 커피챗</div>
+                    <div className="text-[11px] text-slate-400">1단계 커피챗</div>
                     <div className="text-xs font-bold text-indigo-300 mt-0.5">
                       {formatMoney(selectedPosition.rewards.coffeeChatReward)}
                     </div>
                   </div>
                   <div className="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-center">
-                    <div className="text-[10px] text-slate-400">2단계 면접진행</div>
+                    <div className="text-[11px] text-slate-400">2단계 면접진행</div>
                     <div className="text-xs font-bold text-sky-300 mt-0.5">
                       {formatMoney(selectedPosition.rewards.interviewReward)}
                     </div>
                   </div>
                   <div className="p-2.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-center">
-                    <div className="text-[10px] text-emerald-400 font-semibold">3단계 최종합격</div>
+                    <div className="text-[11px] text-emerald-400 font-semibold">3단계 최종합격</div>
                     <div className="text-xs font-bold text-emerald-300 mt-0.5">
                       {formatMoney(selectedPosition.rewards.hireSuccessBounty)}
                     </div>
                   </div>
                   <div className="p-2.5 rounded-xl bg-slate-800/60 border border-slate-700/60 text-center">
-                    <div className="text-[10px] text-slate-400">4단계 수습통과</div>
+                    <div className="text-[11px] text-slate-400">4단계 수습통과</div>
                     <div className="text-xs font-bold text-purple-300 mt-0.5">
                       {formatMoney(selectedPosition.rewards.probationBounty || 0)}
                     </div>
@@ -466,7 +466,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                               {p.currentCompany} · {p.currentTitle}
                             </span>
                             {p.dartInfo && (
-                              <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 flex items-center gap-0.5">
+                              <span className="text-[11px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 flex items-center gap-0.5 font-medium">
                                 <ShieldCheck className="w-3 h-3" /> DART
                               </span>
                             )}
@@ -475,7 +475,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                           {/* 매칭 사유 배지 */}
                           <div className="flex flex-wrap gap-1.5">
                             {match.matchReasons.map((reason, idx) => (
-                              <span key={idx} className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-950/60 text-indigo-300 border border-indigo-500/30">
+                              <span key={idx} className="text-[11px] px-2 py-0.5 rounded-full bg-indigo-950/60 text-indigo-300 border border-indigo-500/30">
                                 ✓ {reason}
                               </span>
                             ))}
@@ -485,7 +485,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                         {/* 매칭 스코어 & 추천 액션 */}
                         <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-800">
                           <div className="text-right">
-                            <div className="text-[10px] text-slate-400">적합도</div>
+                            <div className="text-[11px] text-slate-400 font-medium">적합도</div>
                             <div className="text-base font-extrabold text-indigo-400">
                               {match.matchScore}%
                             </div>
@@ -540,7 +540,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                         <ChevronRight className="w-3.5 h-3.5 text-slate-600" />
                         <span className="text-xs font-semibold text-indigo-400">{sub.clientCompany}</span>
                         {totalPaid > 0 && (
-                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 font-bold border border-emerald-500/40">
+                          <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 font-bold border border-emerald-500/40 font-mono">
                             💰 {formatMoney(totalPaid)} 정산됨
                           </span>
                         )}
@@ -621,7 +621,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                       <span className="text-slate-500">·</span>
                       <span className="text-slate-400">{evt.clientCompany} ({evt.milestoneLabel})</span>
                     </div>
-                    <span className="text-[10px] text-slate-500 font-mono">{evt.syncedAt}</span>
+                    <span className="text-[11px] text-slate-500 font-mono">{evt.syncedAt}</span>
                   </div>
                 ))}
               </div>

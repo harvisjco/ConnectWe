@@ -80,7 +80,7 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
             <h2 className="text-base font-bold text-white tracking-tight">
               1-Page Executive Dossier (미팅 전략 브리핑)
             </h2>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30">
+            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30 font-mono">
               미팅 10분 전 브리핑
             </span>
           </div>
@@ -132,7 +132,7 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
 
             {/* 기본 연락 정보 (미팅 직전 빠른 확인용) */}
             <div className="p-3 rounded-xl bg-slate-850 border border-slate-800 text-xs space-y-1 min-w-[200px] print:bg-slate-100 print:border-slate-300">
-              <div className="text-[10px] text-slate-400 print:text-slate-600 uppercase font-bold tracking-wider">
+              <div className="text-[11px] text-slate-400 print:text-slate-600 uppercase font-bold tracking-wider">
                 Direct Contact
               </div>
               <div className="font-mono text-white print:text-black font-semibold">{person.mobile}</div>
@@ -166,7 +166,7 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
               {icebreakers.map((item, idx) => (
                 <div key={idx} className="p-3 rounded-xl bg-slate-850/80 border border-slate-800 print:bg-slate-50 print:border-slate-300 space-y-1">
                   <div className="text-xs font-bold text-white print:text-black flex items-center gap-1.5">
-                    <span className="w-4 h-4 rounded-full bg-indigo-600 text-white text-[10px] flex items-center justify-center font-bold">
+                    <span className="w-4 h-4 rounded-full bg-indigo-600 text-white text-[11px] flex items-center justify-center font-bold">
                       {idx + 1}
                     </span>
                     {item.title}

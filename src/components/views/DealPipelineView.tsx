@@ -263,7 +263,7 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
                                 <span className="text-slate-500 dark:text-slate-400 ml-1 font-normal">({s.title})</span>
                               </div>
                               <div className="flex items-center gap-1 shrink-0 ml-1">
-                                <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${
+                                <span className={`px-1.5 py-0.5 rounded text-[11px] font-bold ${
                                   s.role === 'DECISION_MAKER' 
                                     ? 'bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950 dark:text-rose-300 dark:border-rose-500/30' 
                                     : s.role === 'CHAMPION'
@@ -310,11 +310,11 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
                     </div>
 
                     {/* Stage Selector */}
-                    <div className="pt-2 border-t border-slate-800/80">
+                    <div className="pt-2 border-t border-slate-200 dark:border-slate-800/80">
                       <select
                         value={deal.stage}
                         onChange={(e) => handleStageChange(deal.id, e.target.value as DealStage)}
-                        className="w-full px-2 py-1 rounded bg-slate-800 border border-slate-700 text-slate-200 text-[10px] focus:outline-none"
+                        className="w-full px-2 py-1 rounded bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-[11px] focus:outline-none"
                       >
                         {STAGES.map(s => (
                           <option key={s.id} value={s.id}>{s.label}</option>
@@ -446,13 +446,13 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
                   <div className="flex items-center gap-1 shrink-0">
                     <button
                       onClick={() => handleAddStakeholder(p.id, 'DECISION_MAKER')}
-                      className="px-2 py-1 rounded bg-rose-950/80 hover:bg-rose-900 border border-rose-500/40 text-rose-300 font-bold text-[10px]"
+                      className="px-2.5 py-1 rounded-lg bg-rose-950/80 hover:bg-rose-900 border border-rose-500/40 text-rose-300 font-bold text-[11px]"
                     >
                       의사결정권자
                     </button>
                     <button
                       onClick={() => handleAddStakeholder(p.id, 'CHAMPION')}
-                      className="px-2 py-1 rounded bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 font-bold text-[10px]"
+                      className="px-2.5 py-1 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-500/40 text-emerald-300 font-bold text-[11px]"
                     >
                       챔피언
                     </button>

@@ -252,7 +252,7 @@ export const CosmicGalaxy3DView: React.FC<CosmicGalaxy3DViewProps> = ({
       <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 backdrop-blur shadow-lg text-xs">
         <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
         <span className="font-bold text-white">3D Cosmic Orbit Mode (Three.js)</span>
-        <span className="text-[10px] text-slate-400 hidden sm:inline">· 마우스 드래그 360° 회전 · 휠 줌</span>
+        <span className="text-[11px] text-slate-400 hidden sm:inline">· 마우스 드래그 360° 회전 · 휠 줌</span>
       </div>
 
       {/* 범례 */}
@@ -281,7 +281,7 @@ export const CosmicGalaxy3DView: React.FC<CosmicGalaxy3DViewProps> = ({
         <div className="absolute top-4 right-4 p-4 rounded-xl bg-slate-900/95 border border-indigo-500/50 backdrop-blur shadow-2xl max-w-xs space-y-1 animate-in fade-in duration-150 pointer-events-none">
           <div className="flex items-center justify-between">
             <span className="font-bold text-sm text-white">{hoveredPerson.name}</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300">
+            <span className="text-[11px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-medium">
               클릭하여 상세 정보
             </span>
           </div>
@@ -292,7 +292,7 @@ export const CosmicGalaxy3DView: React.FC<CosmicGalaxy3DViewProps> = ({
             {hoveredPerson.primaryDomain} ({hoveredPerson.estimatedAgeGroup})
           </p>
           {hoveredPerson.dartInfo && (
-            <p className="text-[10px] text-emerald-400">🏛️ DART 상장사 공시 확인</p>
+            <p className="text-[11px] text-emerald-400 font-medium">🏛️ DART 상장사 공시 확인</p>
           )}
         </div>
       )}

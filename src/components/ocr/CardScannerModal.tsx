@@ -208,7 +208,7 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
                   <div>
                     <div className="font-bold text-emerald-300 text-xs flex items-center gap-1.5">
                       <span>금융감독원 DART 상장사 공시 임원 일치 확인</span>
-                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-500/30 text-emerald-200">
+                      <span className="text-[11px] px-1.5 py-0.5 rounded bg-emerald-500/30 text-emerald-200 font-mono">
                         DART FACT
                       </span>
                     </div>

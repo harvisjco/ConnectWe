@@ -472,7 +472,7 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
         </button>
         <span className="text-[11px] font-mono text-slate-400 px-2">{Math.round(scale * 100)}%</span>
         {simRunning && (
-          <span className="flex items-center gap-1 text-[10px] text-emerald-400">
+          <span className="flex items-center gap-1 text-[11px] text-emerald-400 font-medium">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
             시뮬레이션 중
           </span>
@@ -490,7 +490,7 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
           <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-sky-500" /><span>🏢 기업 노드</span></div>
           <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 border-t border-dashed border-amber-400" /><span>⚡ 알럼나이 엣지</span></div>
         </div>
-        <div className="text-[10px] text-slate-500 mt-1">⚡ 버튼: 레이아웃 재계산 · 드래그: 노드 이동</div>
+        <div className="text-[11px] text-slate-400 mt-1">⚡ 버튼: 레이아웃 재계산 · 드래그: 노드 이동</div>
       </div>
 
           {/* 호버 카드 */}
@@ -498,12 +498,12 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
             <div className="absolute top-4 right-4 p-4 rounded-xl bg-slate-900/95 border border-indigo-500/50 backdrop-blur shadow-2xl max-w-xs space-y-1 animate-in fade-in duration-150 pointer-events-none">
               <div className="flex items-center justify-between">
                 <span className="font-bold text-sm text-white">{hoveredNode.rawPerson.name}</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300">클릭하여 상세 정보</span>
+                <span className="text-[11px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-medium">클릭하여 상세 정보</span>
               </div>
               <p className="text-xs text-indigo-400 font-medium">{hoveredNode.rawPerson.currentCompany} · {hoveredNode.rawPerson.currentTitle}</p>
               <p className="text-[11px] text-slate-400">{hoveredNode.rawPerson.primaryDomain} ({hoveredNode.rawPerson.estimatedAgeGroup})</p>
               {hoveredNode.rawPerson.dartInfo && (
-                <p className="text-[10px] text-emerald-400">🏛️ DART 공시 검증 완료</p>
+                <p className="text-[11px] text-emerald-400 font-medium">🏛️ DART 공시 검증 완료</p>
               )}
             </div>
           )}

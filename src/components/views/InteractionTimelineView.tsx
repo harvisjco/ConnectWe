@@ -175,7 +175,7 @@ export const InteractionTimelineView: React.FC<InteractionTimelineViewProps> = (
                       </div>
                     </div>
 
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${
+                    <span className={`text-[11px] px-2 py-0.5 rounded-full font-bold border ${
                       person.isStale
                         ? 'bg-rose-950/60 text-rose-300 border-rose-500/30'
                         : 'bg-emerald-950/60 text-emerald-300 border-emerald-500/30'

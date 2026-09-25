@@ -354,11 +354,11 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
                   {person.birthYear ? `${person.birthYear}년생 (${new Date().getFullYear() - person.birthYear}세)` : '생년 미확인'}
                 </span>
                 {person.isAgeEstimated ? (
-                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  <span className="px-1.5 py-0.5 rounded text-[11px] bg-amber-500/10 text-amber-400 border border-amber-500/20">
                     추정 연령 ({person.estimatedAgeGroup})
                   </span>
                 ) : (
-                  <span className="px-1.5 py-0.5 rounded text-[10px] bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                  <span className="px-1.5 py-0.5 rounded text-[11px] bg-blue-500/10 text-blue-400 border border-blue-500/20">
                     실측 팩트 ({person.estimatedAgeGroup})
                   </span>
                 )}
@@ -384,7 +384,7 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
                 <div key={career.id} className="relative">
                   <div className={`absolute -left-[23px] top-1.5 w-3 h-3 rounded-full border-2 ${
                     career.isCurrent 
-                      ? 'bg-indigo-600 border-indigo-400 ring-4 ring-indigo-500/20' 
+                       ? 'bg-indigo-600 border-indigo-400 ring-4 ring-indigo-500/20' 
                       : career.isAlumniTarget 
                         ? 'bg-amber-500 border-amber-300' 
                         : 'bg-slate-700 border-slate-500'
@@ -396,11 +396,11 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
                         {career.companyName}
                       </span>
                       {career.isCurrent ? (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                        <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                           현직 재직중
                         </span>
                       ) : (
-                        <span className="px-2 py-0.5 rounded text-[10px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                        <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
                           🏛️ 알럼나이 (전직)
                         </span>
                       )}
@@ -587,7 +587,7 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
                         {log.type === 'note' && '📝 메모'}
                         <span>: {log.title}</span>
                       </span>
-                      <span className="text-[10px] text-slate-500 font-mono">{log.loggedAt}</span>
+                      <span className="text-[11px] text-slate-500 font-mono">{log.loggedAt}</span>
                     </div>
                     {log.content && (
                       <p className="text-xs text-slate-400 pl-4">{log.content}</p>

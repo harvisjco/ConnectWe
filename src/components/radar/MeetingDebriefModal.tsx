@@ -227,7 +227,7 @@ export const MeetingDebriefModal: React.FC<MeetingDebriefModalProps> = ({
                     <Sparkles className="w-3.5 h-3.5 text-amber-400" />
                     <span>AI 미팅 브리핑 요약</span>
                   </span>
-                  <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold border ${
+                  <span className={`text-[11px] px-2.5 py-0.5 rounded-full font-bold border ${
                     debriefResult.sentiment === 'POSITIVE'
                       ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
                       : debriefResult.sentiment === 'CRITICAL'

@@ -39,7 +39,7 @@ export const DisclosureAlertModal: React.FC<DisclosureAlertModalProps> = ({
             <div>
               <h3 className="text-base font-bold text-white flex items-center gap-2">
                 <span>DART 기업 공시 실시간 변동 알림 봇</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-500/30 font-semibold">
+                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-950 text-indigo-300 border border-indigo-500/30 font-semibold font-mono">
                   인맥 기업 자동 모니터링
                 </span>
               </h3>
@@ -66,7 +66,7 @@ export const DisclosureAlertModal: React.FC<DisclosureAlertModalProps> = ({
               {/* Top row */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <span className={`text-[10px] px-2 py-0.5 rounded font-bold ${
+                  <span className={`text-[11px] px-2 py-0.5 rounded font-bold ${
                     alert.importance === 'HIGH'
                       ? 'bg-rose-950/80 text-rose-300 border border-rose-500/30'
                       : 'bg-indigo-950/80 text-indigo-300 border border-indigo-500/30'

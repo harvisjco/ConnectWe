@@ -261,7 +261,7 @@ export const ImportDataModal: React.FC<ImportDataModalProps> = ({
                         <td className="p-2.5 text-slate-400">{p.currentTitle}</td>
                         <td className="p-2.5 font-mono text-[11px] text-slate-400">{p.mobile}</td>
                         <td className="p-2.5">
-                          <span className="px-1.5 py-0.5 rounded text-[10px] bg-indigo-500/20 text-indigo-300">
+                          <span className="px-1.5 py-0.5 rounded text-[11px] bg-indigo-500/20 text-indigo-300 font-mono">
                             {p.estimatedAgeGroup}
                           </span>
                         </td>

@@ -122,12 +122,12 @@ export const AgeSpectrumView: React.FC<AgeSpectrumViewProps> = ({ people, onSele
                         {person.name}
                       </span>
                       {person.sourceType === 'DART_FACT' && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-0.5">
-                          <ShieldCheck className="w-2.5 h-2.5" /> DART FACT
+                        <span className="px-1.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 flex items-center gap-0.5">
+                          <ShieldCheck className="w-3 h-3" /> DART FACT
                         </span>
                       )}
                       {person.isAgeEstimated && (
-                        <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                        <span className="px-1.5 py-0.5 rounded text-[11px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20">
                           ⚡ 연차추정
                         </span>
                       )}

@@ -222,7 +222,7 @@ export const NetworkDashboard: React.FC<NetworkDashboardProps> = ({
                 <Zap className="w-4 h-4 text-amber-400" />
                 <h3 className="text-sm font-semibold text-slate-200">네트워크 슈퍼 커넥터 (Super Connector) Top 5</h3>
               </div>
-              <span className="text-[10px] text-slate-400">매개 중심성 &amp; DART 임원 파워 지수 기준</span>
+              <span className="text-[11px] text-slate-400 font-medium">매개 중심성 &amp; DART 임원 파워 지수 기준</span>
             </div>
 
             <div className="space-y-2">
@@ -238,7 +238,7 @@ export const NetworkDashboard: React.FC<NetworkDashboardProps> = ({
                       <span className="text-sm font-bold text-white group-hover:text-indigo-300 transition-colors truncate">
                         {person.name}
                       </span>
-                      <span className="text-[10px] text-purple-300 px-1.5 py-0.2 rounded bg-purple-950/60 border border-purple-500/30">
+                      <span className="text-[11px] text-purple-300 px-1.5 py-0.5 rounded bg-purple-950/60 border border-purple-500/30 font-medium">
                         {tierLabel.split(' ')[1]}
                       </span>
                     </div>
