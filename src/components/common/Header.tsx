@@ -229,7 +229,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Daily Intelligence Digest CTA */}
           <button
             onClick={onOpenDigestModal}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white dark:bg-gradient-to-b dark:from-indigo-950/90 dark:to-purple-950/90 border border-slate-200 dark:border-indigo-500/40 hover:border-slate-300 dark:hover:border-indigo-400 text-xs font-semibold text-slate-700 dark:text-indigo-200 hover:text-slate-900 dark:hover:text-white transition-all active:scale-[0.98] shadow-xs dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3.5 py-2 min-h-[36px] rounded-xl bg-white dark:bg-gradient-to-b dark:from-indigo-950/90 dark:to-purple-950/90 border border-slate-200 dark:border-indigo-500/40 hover:border-slate-300 dark:hover:border-indigo-400 text-xs font-semibold text-slate-700 dark:text-indigo-200 hover:text-slate-900 dark:hover:text-white transition-all active:scale-[0.98] shadow-xs dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] whitespace-nowrap"
             title="오늘의 인맥 지능 다이제스트"
           >
             <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-indigo-400 animate-pulse" />
@@ -242,7 +242,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Add Person CTA - Naver Cloud Console Style Solid Button */}
           <button
             onClick={onOpenAddModal}
-            className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-black dark:bg-gradient-to-b dark:from-indigo-500 dark:to-indigo-600 dark:hover:from-indigo-400 active:scale-[0.98] transition-all text-xs font-semibold text-white shadow-xs dark:shadow-[0_4px_14px_rgba(79,70,229,0.4)] border border-slate-800 dark:border-white/20 whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3.5 py-2 min-h-[36px] rounded-xl bg-slate-900 hover:bg-black dark:bg-gradient-to-b dark:from-indigo-500 dark:to-indigo-600 dark:hover:from-indigo-400 active:scale-[0.98] transition-all text-xs font-semibold text-white shadow-xs dark:shadow-[0_4px_14px_rgba(79,70,229,0.4)] border border-slate-800 dark:border-white/20 whitespace-nowrap"
             title="새 인맥 직접 등록"
           >
             <UserPlus className="w-3.5 h-3.5 text-white" />
@@ -253,7 +253,7 @@ export const Header: React.FC<HeaderProps> = ({
           {onToggleTheme && (
             <button
               onClick={onToggleTheme}
-              className="flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold transition-all whitespace-nowrap active:scale-[0.98] bg-white hover:bg-slate-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-slate-200 dark:border-slate-700/80 shadow-xs dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] cursor-pointer"
+              className="flex items-center gap-1.5 px-3 py-2 min-h-[36px] rounded-xl border text-xs font-semibold transition-all whitespace-nowrap active:scale-[0.98] bg-white hover:bg-slate-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-slate-200 dark:border-slate-700/80 shadow-xs dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] cursor-pointer"
               title={theme === 'dark' ? '밝은 모드(Clean Tech Portal)로 전환' : '다크 모드로 전환'}
               aria-label="테마 전환"
             >
@@ -275,7 +275,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="relative" ref={toolsMenuRef}>
             <button
               onClick={() => setIsToolsOpen(prev => !prev)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-semibold transition-all whitespace-nowrap active:scale-[0.98] ${
+              className={`flex items-center gap-1.5 px-3 py-2 min-h-[36px] rounded-xl border text-xs font-semibold transition-all whitespace-nowrap active:scale-[0.98] ${
                 isToolsOpen
                   ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border-slate-300 dark:border-indigo-500/50 shadow-xs'
                   : 'bg-white hover:bg-slate-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-slate-200 dark:border-slate-700/80 shadow-xs'

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Apple Chief Designer Deep Precision Audit', () => {
-  test.setTimeout(60000);
+  test.setTimeout(120000);
 
   test('Audit All 11 Multi-Dimension Views, Modals, and Drawers in Clean Light Mode', async ({ page }) => {
     // 1. Desktop 1440x900
@@ -85,6 +85,33 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
       metricsResults.push(await getHigMetrics('Explore - 2D Canvas'));
     }
 
+    // Audit 4b: Explore - 3D Cosmic Galaxy
+    const galaxyBtn = page.locator('button:has-text("3D 은하계")');
+    if (await galaxyBtn.isVisible()) {
+      await galaxyBtn.click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: 'e2e/screenshots/audit-04b-explore-galaxy3d.png', fullPage: true });
+      metricsResults.push(await getHigMetrics('Explore - 3D Galaxy'));
+    }
+
+    // Audit 4c: Explore - Age Spectrum
+    const ageBtn = page.locator('button:has-text("나이대별")');
+    if (await ageBtn.isVisible()) {
+      await ageBtn.click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: 'e2e/screenshots/audit-04c-explore-age.png', fullPage: true });
+      metricsResults.push(await getHigMetrics('Explore - Age Spectrum'));
+    }
+
+    // Audit 4d: Explore - Timeline
+    const timelineBtn = page.locator('button:has-text("소통 타임라인")');
+    if (await timelineBtn.isVisible()) {
+      await timelineBtn.click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: 'e2e/screenshots/audit-04d-explore-timeline.png', fullPage: true });
+      metricsResults.push(await getHigMetrics('Explore - Timeline'));
+    }
+
     // Audit 5: Business - Deals Pipeline
     await page.locator('[data-testid="segment-business"]').click();
     await page.waitForTimeout(600);
@@ -118,6 +145,24 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
       metricsResults.push(await getHigMetrics('Business - Audit'));
     }
 
+    // Audit 8b: Business - Team Network
+    const teamBtn = page.locator('button:has-text("팀 인맥")');
+    if (await teamBtn.isVisible()) {
+      await teamBtn.click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: 'e2e/screenshots/audit-08b-business-team.png', fullPage: true });
+      metricsResults.push(await getHigMetrics('Business - Team'));
+    }
+
+    // Audit 8c: Business - Referral Bounty
+    const bountyBtn = page.locator('button:has-text("바운티 탐색")');
+    if (await bountyBtn.isVisible()) {
+      await bountyBtn.click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: 'e2e/screenshots/audit-08c-business-bounty.png', fullPage: true });
+      metricsResults.push(await getHigMetrics('Business - Bounty'));
+    }
+
     // Audit 9: Modal Inspection (Daily Digest)
     const digestBtn = page.locator('button:has-text("다이제스트")');
     if (await digestBtn.isVisible()) {
@@ -147,6 +192,23 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
         await page.keyboard.press('Escape');
       }
       await page.waitForTimeout(400);
+    }
+
+    // Audit 9c: Drawer Inspection (AI Copilot Drawer)
+    const copilotBtn = page.locator('button:has-text("인맥 코파일럿"), button[title*="코파일럿"]').first();
+    if (await copilotBtn.isVisible()) {
+      await copilotBtn.click();
+      await page.waitForTimeout(600);
+      await page.screenshot({ path: 'e2e/screenshots/audit-09c-drawer-copilot.png' });
+      metricsResults.push(await getHigMetrics('Drawer - Copilot'));
+      
+      const closeBtn = page.locator('div.fixed.inset-0.z-50 button:has(svg)').first();
+      if (await closeBtn.isVisible()) {
+        await closeBtn.click();
+      } else {
+        await page.keyboard.press('Escape');
+      }
+      await page.waitForTimeout(500);
     }
 
     // Audit 10: Drawer Inspection (Person Inspector Drawer)
