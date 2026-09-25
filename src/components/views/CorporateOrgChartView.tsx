@@ -256,7 +256,7 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
           </div>
         </div>
 
-        <div className="flex items-baseline justify-between">
+        <div className="mt-2 flex items-baseline justify-between">
           <div className="flex items-center gap-1.5">
             <h4 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-indigo-300 transition-colors">
               {node.name}
@@ -281,7 +281,7 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
 
         {/* 연계 채용 포지션 타겟 스카우팅 액션 바 */}
         {onOpenTargetBounty && (isFirst || isSecond) && (
-          <div className="mt-2 pt-1.5 flex items-center justify-between text-[11px]">
+          <div className="mt-2.5 pt-1.5 flex items-center justify-between text-[11px]">
             <button
               onClick={(e) => {
                 e.stopPropagation();
@@ -291,9 +291,9 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
               title="이 임원의 소속/도메인과 연계된 HRCO 채용 오픈 포지션 타진"
             >
               <span>⚡ 연계 채용 타진</span>
-              <span className="text-[10px] text-blue-500 dark:text-indigo-400 font-normal">(바운티)</span>
+              <span className="text-[11px] text-blue-600 dark:text-indigo-400 font-medium">(바운티)</span>
             </button>
-            <span className="text-[11px] text-slate-500">최대 500만원</span>
+            <span className="text-[11px] text-slate-500 font-medium">최대 500만원</span>
           </div>
         )}
 
@@ -327,8 +327,8 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
   const renderHierarchyConnector = (label: string) => (
     <div className="flex flex-col items-center justify-center -my-3 select-none relative z-10">
       <div className="w-0.5 h-3 bg-gradient-to-b from-indigo-500/70 to-purple-500/70" />
-      <div className="px-2.5 py-0.5 rounded-full bg-slate-950 border border-indigo-500/40 text-[9px] text-indigo-300 font-mono flex items-center gap-1 shadow-sm">
-        <ArrowDown className="w-2.5 h-2.5 text-indigo-400" />
+      <div className="px-2.5 py-0.5 rounded-full bg-white dark:bg-slate-950 border border-indigo-200 dark:border-indigo-500/40 text-[11px] text-indigo-700 dark:text-indigo-300 font-mono flex items-center gap-1 shadow-2xs">
+        <ArrowDown className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
         <span>{label}</span>
       </div>
       <div className="w-0.5 h-3 bg-gradient-to-b from-purple-500/70 to-indigo-500/70" />
@@ -338,32 +338,32 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
   return (
     <div className="space-y-4">
       {/* 1. 상단 컨트롤 패널 */}
-      <div className="p-4 rounded-2xl bg-slate-900/90 border border-slate-800 space-y-4 shadow-xl">
+      <div className="p-5 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
-            <div className="p-2 rounded-xl bg-indigo-950/80 border border-indigo-500/40 text-indigo-400">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 dark:bg-indigo-950/80 dark:border-indigo-500/40 dark:text-indigo-400">
               <Building2 className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-white flex items-center gap-1.5">
+                <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                   <span>{selectedCorpName}</span>
-                  <span className="text-xs text-indigo-400 font-mono">[{orgChart?.stockCode || 'KOSPI'}]</span>
+                  <span className="text-xs text-indigo-600 dark:text-indigo-400 font-mono">[{orgChart?.stockCode || 'KOSPI'}]</span>
                 </h2>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-950/80 border border-emerald-500/40 text-emerald-300 font-semibold">
+                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/80 dark:border-emerald-500/40 dark:text-emerald-300 font-semibold">
                   🏛️ DART 공시 FACT 기반 추정 조직도
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
                 {orgChart?.industry || '주요 상장기업'} · {orgChart?.stats.totalExecutives}명 공시 임원 편제
               </p>
             </div>
           </div>
 
           {/* 연도별 시계열 선택기 */}
-          <div className="flex items-center gap-1 p-1 bg-slate-950 rounded-xl border border-slate-800 self-start md:self-auto">
-            <span className="text-[11px] text-slate-400 px-2 font-semibold flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5 text-indigo-400" />
+          <div className="flex items-center gap-1 p-1 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 self-start md:self-auto">
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 px-2 font-semibold flex items-center gap-1">
+              <Calendar className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
               <span>연도별 조회:</span>
             </span>
             {yearlySnapshots.map(snap => (
@@ -372,8 +372,8 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
                 onClick={() => setSelectedYear(snap.year)}
                 className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
                   selectedYear === snap.year
-                    ? 'bg-indigo-600 text-white shadow-md'
-                    : 'text-slate-400 hover:text-white'
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
                 }`}
               >
                 {snap.year}년
@@ -384,15 +384,15 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
 
         {/* 상위 기업 퀵 칩 */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
-          <span className="text-[11px] text-slate-400 font-semibold shrink-0">주요 기업:</span>
+          <span className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold shrink-0">주요 기업:</span>
           {quickCorps.map(corp => (
             <button
               key={corp}
               onClick={() => setSelectedCorpName(corp)}
               className={`px-2.5 py-1 rounded-lg shrink-0 font-medium transition-all ${
                 selectedCorpName === corp
-                  ? 'bg-indigo-600 text-white font-bold'
-                  : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                  ? 'bg-indigo-600 text-white font-bold shadow-2xs'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
               }`}
             >
               {corp}
@@ -401,7 +401,7 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
           <select
             value={selectedCorpName}
             onChange={(e) => setSelectedCorpName(e.target.value)}
-            className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-200 border border-slate-700 text-xs focus:outline-none focus:border-indigo-500"
+            className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 text-xs focus:outline-none focus:border-indigo-500"
           >
             {corporations.map(c => (
               <option key={c.corpCode} value={c.corpName}>
@@ -412,9 +412,9 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
         </div>
 
         {/* 2. 부문별 스마트 필터 칩 바 */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs border-t border-slate-800/60 pt-2">
-          <span className="text-[11px] text-slate-400 font-semibold shrink-0 flex items-center gap-1">
-            <Layers className="w-3 h-3 text-indigo-400" />
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs border-t border-slate-100 dark:border-slate-800/60 pt-2.5">
+          <span className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold shrink-0 flex items-center gap-1">
+            <Layers className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
             <span>사업 부문:</span>
           </span>
           {[
@@ -428,10 +428,10 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
             <button
               key={d.id}
               onClick={() => setDomainFilter(d.id)}
-              className={`px-2.5 py-1 rounded-lg shrink-0 font-medium transition-all ${
+              className={`px-3 py-1 rounded-lg font-medium whitespace-nowrap transition-all ${
                 domainFilter === d.id
-                  ? 'bg-purple-600 text-white font-bold shadow-sm'
-                  : 'bg-slate-800/80 text-slate-400 hover:text-white hover:bg-slate-700'
+                  ? 'bg-purple-600 text-white font-bold shadow-2xs'
+                  : 'bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 dark:hover:bg-slate-750'
               }`}
             >
               {d.label}
@@ -440,7 +440,7 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
         </div>
 
         {/* 3. 검색 및 접기/내보내기 액션 바 */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-slate-800/80">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-slate-100 dark:border-slate-800/80">
           <div className="relative w-full sm:w-72">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
             <input
@@ -448,7 +448,7 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
               placeholder="임원명, 직위, 담당업무 검색..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
             />
           </div>
 
