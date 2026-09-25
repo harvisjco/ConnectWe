@@ -293,7 +293,7 @@ export const App: React.FC = () => {
                   onSelectPerson={setSelectedPerson}
                   onOpenWarmIntro={(target) => setBridgeTargetPerson(target)}
                   onOpenDossier={(target) => setDossierTargetPerson(target)}
-                  onOpenTargetBounty={(corpName) => {
+                  onOpenReferralReward={(corpName) => {
                     handleNavigateView('referral');
                     showToast(`[${corpName}] 연계 채용 오픈 포지션 및 추천 리워드 탐색으로 전환되었습니다.`);
                   }}

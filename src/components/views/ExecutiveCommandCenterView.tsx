@@ -178,7 +178,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                   <div 
                     onClick={() => onOpenDossier ? onOpenDossier(p) : onSelectPerson(p)}
                     className="min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
-                    title="임원 상세 도시에 열기"
+                    title="미팅 준비 1-Page 브리프 열기"
                   >
                     <div className="font-semibold text-slate-800 dark:text-slate-200 truncate flex items-center gap-1">
                       <span>{p.name}</span>

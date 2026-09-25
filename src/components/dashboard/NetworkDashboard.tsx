@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useMemo } from 'react';
 import { Person } from '../../types/network';
 import { getTopSuperConnectors } from '../../services/centralityEngine';
-import { X, TrendingUp, Users, Shield, AlertTriangle, Zap, Sparkles } from 'lucide-react';
+import { identifyTalentCluster, TalentClusterId } from '../../services/talentClusterEngine';
+import { X, TrendingUp, Users, Shield, AlertTriangle, Zap, Sparkles, Rocket, Cpu, Briefcase, Building2 } from 'lucide-react';
 
 interface NetworkDashboardProps {
   people: Person[];
@@ -117,6 +118,73 @@ export const NetworkDashboard: React.FC<NetworkDashboardProps> = ({
   const superConnectors = useMemo(() => getTopSuperConnectors(people, 5), [people]);
   const total = people.filter((p) => p.closeness !== 1).length;
 
+  // 5대 인재 클러스터 (Superpower Edge) 분포
+  const clusterDist = useMemo(() => {
+    const counts: Record<TalentClusterId, number> = {
+      VENTURE_LEADER: 0,
+      TECH_FELLOW: 0,
+      INVESTOR_PARTNER: 0,
+      LISTED_EXECUTIVE: 0,
+      CORE_SPECIALIST: 0,
+    };
+
+    for (const p of people) {
+      if (p.closeness === 1) continue;
+      const profile = identifyTalentCluster(p);
+      if (counts[profile.id] !== undefined) {
+        counts[profile.id]++;
+      }
+    }
+
+    return [
+      {
+        id: 'VENTURE_LEADER' as TalentClusterId,
+        label: '어자일 벤처 리더',
+        count: counts.VENTURE_LEADER,
+        icon: Rocket,
+        accent: 'text-purple-400 bg-purple-500/10 border-purple-500/30',
+        badge: 'bg-purple-950/60 text-purple-300 border-purple-500/30',
+        superpower: '풀스콥 실행력 & 기동성'
+      },
+      {
+        id: 'TECH_FELLOW' as TalentClusterId,
+        label: '딥테크 R&D 펠로우',
+        count: counts.TECH_FELLOW,
+        icon: Cpu,
+        accent: 'text-sky-400 bg-sky-500/10 border-sky-500/30',
+        badge: 'bg-sky-950/60 text-sky-300 border-sky-500/30',
+        superpower: '원천 기술 & 아키텍처'
+      },
+      {
+        id: 'INVESTOR_PARTNER' as TalentClusterId,
+        label: '전략 투자 파트너',
+        count: counts.INVESTOR_PARTNER,
+        icon: Briefcase,
+        accent: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
+        badge: 'bg-amber-950/60 text-amber-300 border-amber-500/30',
+        superpower: '자본 레버리지 & 거시 통찰'
+      },
+      {
+        id: 'LISTED_EXECUTIVE' as TalentClusterId,
+        label: '상장사 거버넌스 리더',
+        count: counts.LISTED_EXECUTIVE,
+        icon: Building2,
+        accent: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
+        badge: 'bg-emerald-950/60 text-emerald-300 border-emerald-500/30',
+        superpower: 'DART 실공시 공적 책임'
+      },
+      {
+        id: 'CORE_SPECIALIST' as TalentClusterId,
+        label: '프로덕트 스페셜리스트',
+        count: counts.CORE_SPECIALIST,
+        icon: Sparkles,
+        accent: 'text-indigo-400 bg-indigo-500/10 border-indigo-500/30',
+        badge: 'bg-indigo-950/60 text-indigo-300 border-indigo-500/30',
+        superpower: '현장 실무 빌딩 & 실행력'
+      }
+    ];
+  }, [people]);
+
   useEffect(() => {
     if (donutDomainRef.current) drawDonut(donutDomainRef.current, domainDist);
   }, [domainDist]);
@@ -147,6 +215,58 @@ export const NetworkDashboard: React.FC<NetworkDashboardProps> = ({
             <KpiCard icon={<Shield className="w-4 h-4 text-emerald-400" />} label="DART 검증" value={`${dartVerified}명`} sub={`검증률 ${total ? Math.round((dartVerified / total) * 100) : 0}%`} accent="emerald" />
             <KpiCard icon={<TrendingUp className="w-4 h-4 text-amber-400" />} label="최근 30일 소통" value={`${contactStats.d30}명`} sub="활성 인맥" accent="amber" />
             <KpiCard icon={<AlertTriangle className="w-4 h-4 text-rose-400" />} label="소통 환기 필요" value={`${contactStats.stale}명`} sub="180일+ 미소통" accent="rose" />
+          </div>
+
+          {/* 5대 인재 클러스터 (Superpower Edge) 포트폴리오 */}
+          <div className="bg-slate-800/40 border border-slate-700/80 rounded-2xl p-5 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-indigo-400" />
+                <h3 className="text-sm font-bold text-white tracking-tight">
+                  5대 인재 클러스터 고유 강점(Superpower Edge) 포트폴리오
+                </h3>
+              </div>
+              <span className="text-[11px] text-slate-400">
+                상장사 공시부터 스타트업·딥테크까지 각 인재의 특화 가치 동등 조명
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5">
+              {clusterDist.map((item) => {
+                const Icon = item.icon;
+                const ratio = total ? Math.round((item.count / total) * 100) : 0;
+                return (
+                  <div
+                    key={item.id}
+                    className="p-3.5 rounded-xl bg-slate-850 border border-slate-700/70 hover:border-slate-600 transition-all flex flex-col justify-between space-y-2 group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className={`p-1.5 rounded-lg border ${item.accent}`}>
+                        <Icon className="w-3.5 h-3.5" />
+                      </div>
+                      <span className="text-[11px] font-mono font-bold text-slate-400">
+                        {ratio}%
+                      </span>
+                    </div>
+
+                    <div>
+                      <div className="text-xs font-bold text-white group-hover:text-indigo-300 transition-colors">
+                        {item.label}
+                      </div>
+                      <div className="text-lg font-extrabold text-white font-mono mt-0.5">
+                        {item.count}<span className="text-xs font-normal text-slate-400 ml-0.5">명</span>
+                      </div>
+                    </div>
+
+                    <div className="pt-1 border-t border-slate-800">
+                      <span className="text-[10px] text-slate-400 leading-tight block">
+                        {item.superpower}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* 차트 영역 */}
@@ -222,7 +342,7 @@ export const NetworkDashboard: React.FC<NetworkDashboardProps> = ({
                 <Zap className="w-4 h-4 text-amber-400" />
                 <h3 className="text-sm font-semibold text-slate-200">네트워크 슈퍼 커넥터 (Super Connector) Top 5</h3>
               </div>
-              <span className="text-[11px] text-slate-400 font-medium">매개 중심성 &amp; DART 임원 파워 지수 기준</span>
+              <span className="text-[11px] text-slate-400 font-medium">매개 중심성 &amp; 핵심 네트워크 허브 지수 기준</span>
             </div>
 
             <div className="space-y-2">

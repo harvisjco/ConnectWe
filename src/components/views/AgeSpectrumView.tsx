@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Person, AgeGroup } from '../../types/network';
-import { ShieldCheck, ArrowRight, Briefcase, Users, Phone, Calendar } from 'lucide-react';
+import { ArrowRight, Briefcase, Users, Phone, Calendar, Rocket, Cpu, Sparkles, Building2 } from 'lucide-react';
+import { identifyTalentCluster } from '../../services/talentClusterEngine';
 import { ViewHeader } from '../ui';
 
 interface AgeSpectrumViewProps {
@@ -125,7 +126,9 @@ export const AgeSpectrumView: React.FC<AgeSpectrumViewProps> = ({ people, onSele
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredPeople.map(person => (
+          {filteredPeople.map(person => {
+            const cluster = identifyTalentCluster(person);
+            return (
             <div
               key={person.id}
               onClick={() => onSelectPerson(person)}
@@ -139,28 +142,21 @@ export const AgeSpectrumView: React.FC<AgeSpectrumViewProps> = ({ people, onSele
                       <span className="font-bold text-base text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-indigo-300 transition-colors">
                         {person.name}
                       </span>
-                      {person.sourceType === 'DART_FACT' ? (
-                        <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30 flex items-center gap-1 shadow-2xs">
-                          <ShieldCheck className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-                          <span>공시 공인 임원</span>
-                        </span>
-                      ) : (
-                        <span className="px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-50 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700">
-                          혁신 비즈니스 인연
-                        </span>
-                      )}
-                      {person.isAgeEstimated && (
-                        <span className="px-1.5 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20">
-                          경력단계 기반
-                        </span>
-                      )}
+                      <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border flex items-center gap-1 ${cluster.badgeStyle}`}>
+                        {cluster.id === 'LISTED_EXECUTIVE' && <Building2 className="w-2.5 h-2.5" />}
+                        {cluster.id === 'VENTURE_LEADER' && <Rocket className="w-2.5 h-2.5" />}
+                        {cluster.id === 'TECH_FELLOW' && <Cpu className="w-2.5 h-2.5" />}
+                        {cluster.id === 'INVESTOR_PARTNER' && <Briefcase className="w-2.5 h-2.5" />}
+                        {cluster.id === 'CORE_SPECIALIST' && <Sparkles className="w-2.5 h-2.5" />}
+                        <span>{cluster.label}</span>
+                      </span>
                     </div>
 
                     <p className="text-xs font-semibold text-slate-700 dark:text-slate-300 mt-1">
                       {person.currentCompany}
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
-                      {person.currentTitle} {person.currentDepartment ? `(${person.currentDepartment})` : ''}
+                      {person.currentTitle} {person.currentDepartment ? `(${person.currentDepartment})` : ''} · <span className="text-indigo-600 dark:text-indigo-400 font-mono font-medium">{cluster.seniorityLevel}</span>
                     </p>
                   </div>
                 </div>
@@ -200,7 +196,8 @@ export const AgeSpectrumView: React.FC<AgeSpectrumViewProps> = ({ people, onSele
                 </span>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

@@ -276,7 +276,7 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
                                       <button
                                         onClick={() => onOpenBridgeModal(originalPerson)}
                                         className="p-0.5 text-indigo-400 hover:text-indigo-300"
-                                        title="2촌 소개 요청 시퀀스"
+                                        title="2촌 소개 요청 및 정중한 연결 서신"
                                       >
                                         <Send className="w-3 h-3" />
                                       </button>
@@ -346,7 +346,7 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
               </div>
 
               <div className="space-y-1">
-                <label className="text-slate-300 font-semibold">타깃 기업명 *</label>
+                <label className="text-slate-300 font-semibold">협력 파트너 기업명 *</label>
                 <input
                   type="text"
                   placeholder="예: 카카오뱅크 또는 삼성전자"

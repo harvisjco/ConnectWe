@@ -21,7 +21,7 @@ interface CorporateOrgChartViewProps {
   onSelectPerson: (person: Person) => void;
   onOpenWarmIntro?: (target: Person, bridge?: Person) => void;
   onOpenDossier?: (target: Person) => void;
-  onOpenTargetBounty?: (corpName: string, domain?: string) => void;
+  onOpenReferralReward?: (corpName: string, domain?: string) => void;
 }
 
 export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
@@ -29,7 +29,7 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
   onSelectPerson,
   onOpenWarmIntro,
   onOpenDossier,
-  onOpenTargetBounty
+  onOpenReferralReward
 }) => {
   const corporations = useMemo(() => getAvailableCorporations(), []);
 
@@ -280,12 +280,12 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
         )}
 
         {/* 연계 채용 인재 추천 협업 액션 바 */}
-        {onOpenTargetBounty && (isFirst || isSecond) && (
+        {onOpenReferralReward && (isFirst || isSecond) && (
           <div className="mt-2.5 pt-1.5 flex items-center justify-between text-[11px] border-t border-slate-100 dark:border-slate-800/60">
             <button
               onClick={(e) => {
                 e.stopPropagation();
-                onOpenTargetBounty(node.corpName, node.chargeJob);
+                onOpenReferralReward(node.corpName, node.chargeJob);
               }}
               className="px-2.5 py-0.5 rounded-full bg-slate-50 hover:bg-indigo-50 dark:bg-slate-800 dark:hover:bg-indigo-950/50 text-slate-700 dark:text-slate-300 hover:text-indigo-700 dark:hover:text-indigo-300 border border-slate-200/80 hover:border-indigo-200 dark:border-slate-700 flex items-center gap-1 font-medium transition-colors"
               title="이 임원의 전문 도메인과 연계된 추천 협업 포지션 확인"

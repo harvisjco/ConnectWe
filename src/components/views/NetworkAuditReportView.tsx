@@ -51,7 +51,7 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
   // CSV 다운로드
   const handleExportCsv = () => {
     exportPenetrationCsvWithBom(penetrations);
-    onShowToast('CSV BOM 포맷의 타깃 기업 네트워크 커버리지 진단 리포트가 다운로드되었습니다.');
+    onShowToast('CSV BOM 포맷의 핵심 파트너 기업 네트워크 커버리지 진단서가 다운로드되었습니다.');
   };
 
   return (

@@ -32,7 +32,7 @@ export interface NetworkEquitySummary {
   activeRatio90Days: number; // 최근 90일 소통 활성 비율 (%)
 }
 
-// 대한민국 20대 핵심 벤치마크 타깃 기업군
+// 대한민국 20대 핵심 벤치마크 기업군
 const TARGET_BENCHMARK_COMPANIES: { name: string; industry: string; rank: number }[] = [
   { name: '삼성전자', industry: '반도체/전자', rank: 1 },
   { name: 'SK하이닉스', industry: '반도체', rank: 2 },
@@ -229,7 +229,7 @@ export function exportPenetrationCsvWithBom(penetrations: CompanyPenetration[]):
 
   const link = document.createElement('a');
   link.href = url;
-  link.download = `ConnectWe_타깃기업_네트워크커버리지_진단리포트_${new Date().toISOString().split('T')[0]}.csv`;
+  link.download = `ConnectWe_핵심기업_네트워크커버리지_진단보고서_${new Date().toISOString().split('T')[0]}.csv`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);

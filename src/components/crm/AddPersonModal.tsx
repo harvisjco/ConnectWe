@@ -329,7 +329,7 @@ export const AddPersonModal: React.FC<AddPersonModalProps> = ({ onClose, onSave 
             </div>
           </div>
 
-          {/* Alumni Section (핵심: 과거 거쳐간 회사 역추적) */}
+          {/* Alumni Section (핵심: 알럼나이 이전 재직 기업 연결) */}
           <div className="p-4 rounded-2xl bg-amber-950/20 border border-amber-500/20 space-y-3">
             <div className="flex items-center gap-1.5 text-xs font-bold text-amber-300">
               <Sparkles className="w-3.5 h-3.5" />

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Person } from '../../types/network';
-import { Building2, ArrowRight, ShieldCheck, Sparkles, Briefcase } from 'lucide-react';
+import { Building2, ArrowRight, Sparkles, Briefcase, Rocket, Cpu } from 'lucide-react';
+import { identifyTalentCluster } from '../../services/talentClusterEngine';
 import { ViewHeader } from '../ui';
 
 interface CompanyAlumniViewProps {
@@ -151,36 +152,41 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
                 </div>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {activeData.current.map(p => (
-                    <div
-                      key={p.id}
-                      onClick={() => onSelectPerson(p)}
-                      className="p-4 rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-900/80 dark:hover:bg-slate-800/80 border border-slate-200 hover:border-blue-400 dark:border-slate-800 dark:hover:border-indigo-500/50 transition-all cursor-pointer group shadow-xs flex flex-col justify-between"
-                    >
-                      <div className="space-y-1.5">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <span className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-indigo-300 transition-colors">
-                              {p.name}
-                            </span>
-                            <span className="text-xs text-slate-500 dark:text-slate-400 block">
-                              {p.currentTitle} {p.currentDepartment ? `· ${p.currentDepartment}` : ''}
+                  {activeData.current.map(p => {
+                    const cluster = identifyTalentCluster(p);
+                    return (
+                      <div
+                        key={p.id}
+                        onClick={() => onSelectPerson(p)}
+                        className="p-4 rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-900/80 dark:hover:bg-slate-800/80 border border-slate-200 hover:border-blue-400 dark:border-slate-800 dark:hover:border-indigo-500/50 transition-all cursor-pointer group shadow-xs flex flex-col justify-between"
+                      >
+                        <div className="space-y-1.5">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <span className="font-bold text-sm text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-indigo-300 transition-colors">
+                                {p.name}
+                              </span>
+                              <span className="text-xs text-slate-500 dark:text-slate-400 block">
+                                {p.currentTitle} {p.currentDepartment ? `· ${p.currentDepartment}` : ''}
+                              </span>
+                            </div>
+                            <span className={`px-2 py-0.5 rounded text-[11px] font-semibold border flex items-center gap-1 ${cluster.badgeStyle}`}>
+                              {cluster.id === 'LISTED_EXECUTIVE' && <Building2 className="w-2.5 h-2.5" />}
+                              {cluster.id === 'VENTURE_LEADER' && <Rocket className="w-2.5 h-2.5" />}
+                              {cluster.id === 'TECH_FELLOW' && <Cpu className="w-2.5 h-2.5" />}
+                              {cluster.id === 'INVESTOR_PARTNER' && <Briefcase className="w-2.5 h-2.5" />}
+                              {cluster.id === 'CORE_SPECIALIST' && <Sparkles className="w-2.5 h-2.5" />}
+                              <span>{cluster.label}</span>
                             </span>
                           </div>
-                          {p.sourceType === 'DART_FACT' && (
-                            <span className="px-1.5 py-0.5 rounded text-[11px] bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 font-semibold flex items-center gap-0.5">
-                              <ShieldCheck className="w-2.5 h-2.5" /> DART
-                            </span>
-                          )}
-                        </div>
 
-                        <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
-                          <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">
-                            {p.primaryDomain}
-                          </span>
-                          <span>{p.estimatedAgeGroup}</span>
+                          <div className="flex items-center gap-2 text-[11px] text-slate-500 dark:text-slate-400">
+                            <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium">
+                              {p.primaryDomain}
+                            </span>
+                            <span className="font-mono text-indigo-600 dark:text-indigo-400 font-medium">{cluster.seniorityLevel}</span>
+                          </div>
                         </div>
-                      </div>
 
                       <div className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
                         <span>{p.mobile}</span>
@@ -189,7 +195,8 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
                         </span>
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -215,6 +222,7 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {activeData.alumni.map(p => {
                     const pastCareer = p.careers.find(c => !c.isCurrent && c.companyName.toLowerCase().includes(selectedCompany.toLowerCase()));
+                    const cluster = identifyTalentCluster(p);
                     return (
                       <div
                         key={p.id}
@@ -236,11 +244,14 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
                                 (현) {p.currentCompany} · {p.currentTitle}
                               </span>
                             </div>
-                            {p.sourceType === 'DART_FACT' && (
-                              <span className="px-1.5 py-0.5 rounded text-[11px] bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30 font-semibold flex items-center gap-0.5">
-                                <ShieldCheck className="w-2.5 h-2.5" /> DART
-                              </span>
-                            )}
+                            <span className={`px-2 py-0.5 rounded text-[11px] font-semibold border flex items-center gap-1 ${cluster.badgeStyle}`}>
+                              {cluster.id === 'LISTED_EXECUTIVE' && <Building2 className="w-2.5 h-2.5" />}
+                              {cluster.id === 'VENTURE_LEADER' && <Rocket className="w-2.5 h-2.5" />}
+                              {cluster.id === 'TECH_FELLOW' && <Cpu className="w-2.5 h-2.5" />}
+                              {cluster.id === 'INVESTOR_PARTNER' && <Briefcase className="w-2.5 h-2.5" />}
+                              {cluster.id === 'CORE_SPECIALIST' && <Sparkles className="w-2.5 h-2.5" />}
+                              <span>{cluster.label}</span>
+                            </span>
                           </div>
 
                           {pastCareer && (
@@ -252,7 +263,11 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
                         </div>
 
                         <div className="mt-3 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
-                          <span>{p.primaryDomain}</span>
+                          <div className="flex items-center gap-2">
+                            <span>{p.primaryDomain}</span>
+                            <span>·</span>
+                            <span className="font-mono text-amber-600 dark:text-amber-400 font-medium">{cluster.seniorityLevel}</span>
+                          </div>
                           <span className="text-amber-700 dark:text-amber-400 group-hover:text-amber-800 flex items-center gap-1 font-semibold transition-colors">
                             상세 관계도 <ArrowRight className="w-3 h-3" />
                           </span>
