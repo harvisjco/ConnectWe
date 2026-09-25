@@ -182,6 +182,21 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
             {person.currentDepartment && (
               <p className="text-xs text-slate-400">{person.currentDepartment}</p>
             )}
+
+            {/* 5대 인재 클러스터 Superpower Edge Chips */}
+            {clusterProfile && clusterProfile.superpowers.length > 0 && (
+              <div className="flex items-center gap-1.5 flex-wrap pt-1">
+                {clusterProfile.superpowers.map((sp, idx) => (
+                  <span
+                    key={idx}
+                    className="px-2 py-0.5 rounded-md text-[10px] font-medium bg-slate-800/80 text-slate-300 border border-slate-700/60 flex items-center gap-1"
+                  >
+                    <Sparkles className="w-2.5 h-2.5 text-indigo-400" />
+                    <span>{sp}</span>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-1">

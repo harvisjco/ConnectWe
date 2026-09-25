@@ -18,6 +18,56 @@ export interface TalentClusterProfile {
   description: string;
 }
 
+export const TALENT_CLUSTERS: {
+  id: TalentClusterId;
+  label: string;
+  shortTag: string;
+  badgeStyle: string;
+  iconName: string;
+  description: string;
+}[] = [
+  {
+    id: 'VENTURE_LEADER',
+    label: '어자일 벤처 리더',
+    shortTag: 'VENTURE',
+    badgeStyle: 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-500/15 dark:text-purple-300 dark:border-purple-500/30',
+    iconName: 'Rocket',
+    description: '기동성 있는 의사결정과 넓은 업무 스콥을 바탕으로 성장을 주도하는 역동적인 혁신 리더입니다.'
+  },
+  {
+    id: 'TECH_FELLOW',
+    label: '딥테크 R&D 펠로우',
+    shortTag: 'DEEPTECH',
+    badgeStyle: 'bg-sky-50 text-sky-700 border-sky-200 dark:bg-sky-500/15 dark:text-sky-300 dark:border-sky-500/30',
+    iconName: 'Cpu',
+    description: '선도 기술 트렌드를 개척하며 복잡한 공학적 난제를 돌파하는 최고 수준의 기술 인재입니다.'
+  },
+  {
+    id: 'INVESTOR_PARTNER',
+    label: '전략 투자 파트너',
+    shortTag: 'INVESTOR',
+    badgeStyle: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/15 dark:text-amber-300 dark:border-amber-500/30',
+    iconName: 'Briefcase',
+    description: '거시적 시장 트렌드와 자본 생태계를 꿰뚫고 성장 전략 및 딜을 주도하는 금융·투자 전문가입니다.'
+  },
+  {
+    id: 'LISTED_EXECUTIVE',
+    label: '상장사 거버넌스 리더',
+    shortTag: 'DART FACT',
+    badgeStyle: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/15 dark:text-emerald-300 dark:border-emerald-500/30',
+    iconName: 'Building2',
+    description: '금융감독원 전자공시(DART)로 검증된 대규모 조직 관리 및 공적 거버넌스를 이끄는 임원입니다.'
+  },
+  {
+    id: 'CORE_SPECIALIST',
+    label: '핵심 프로덕트 스페셜리스트',
+    shortTag: 'SPECIALIST',
+    badgeStyle: 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-500/15 dark:text-indigo-300 dark:border-indigo-500/30',
+    iconName: 'Sparkles',
+    description: '탁월한 실무 전문성과 실행력으로 프로덕트의 성공을 직접 견인하는 핵심 실무 인재입니다.'
+  }
+];
+
 /**
  * 인물의 공시, 기업 형태, 전문 분야, 직함을 바탕으로 
  * 5대 인재 클러스터 중 가장 돋보이는 고유 강점(Superpower Edge)을 도출합니다.

@@ -1,5 +1,6 @@
 import { Person, GraphQueryResult, AgeGroup } from '../types/network';
 import { calculateSemanticMatches } from './semanticSearch';
+import { identifyTalentCluster } from './talentClusterEngine';
 
 /**
  * GraphRAG 자연어 인맥 질의 처리 인터프리터 (Semantic Vector + Graph Topology Hybrid)
@@ -33,31 +34,44 @@ export function executeGraphRagQuery(query: string, people: Person[]): GraphQuer
   const isKaist = cleanQ.includes('카이스트') || cleanQ.includes('kaist');
   const isSeoulUniv = cleanQ.includes('서울대') || cleanQ.includes('snu');
 
-  // 나이대 의도 탐지
+  // 5대 인재 클러스터 특화 의도
+  const isVentureLeader = cleanQ.includes('벤처') || cleanQ.includes('스타트업') || cleanQ.includes('창업자') || cleanQ.includes('founder') || cleanQ.includes('ceo');
+  const isTechFellow = cleanQ.includes('딥테크') || cleanQ.includes('펠로우') || cleanQ.includes('fellow') || cleanQ.includes('연구원') || cleanQ.includes('scientist');
+  const isInvestorPartner = isVcFinance || cleanQ.includes('엔젤') || cleanQ.includes('심사');
+  const isListedExecutive = cleanQ.includes('상장사') || isDartFact;
+  const isCoreSpecialist = cleanQ.includes('스페셜리스트') || cleanQ.includes('프로덕트') || cleanQ.includes('po') || cleanQ.includes('pm') || cleanQ.includes('테크 리드');
+
+  // 나이대 및 전문 경력 단계 의도 탐지
   let targetAgeGroup: AgeGroup | null = null;
-  if (cleanQ.includes('20대') || cleanQ.includes('주니어')) {
+  if (cleanQ.includes('20대') || cleanQ.includes('주니어') || cleanQ.includes('프론티어')) {
     targetAgeGroup = '20s';
-    filterTags.push('연령: 20대');
+    filterTags.push('경력 단계: 도약기 리더');
   } else if (cleanQ.includes('30대') || cleanQ.includes('실무') || cleanQ.includes('팀장')) {
     targetAgeGroup = '30s';
-    filterTags.push('연령: 30대');
+    filterTags.push('경력 단계: 전략 총괄');
   } else if (cleanQ.includes('40대') || cleanQ.includes('임원') || cleanQ.includes('본부장')) {
     targetAgeGroup = '40s';
-    filterTags.push('연령: 40대');
+    filterTags.push('경력 단계: Executive 15년+');
   } else if (cleanQ.includes('50대') || cleanQ.includes('c-level') || cleanQ.includes('고문')) {
     targetAgeGroup = '50s_plus';
-    filterTags.push('연령: 50대+');
+    filterTags.push('경력 단계: 원로 고문');
   }
 
-  // 태그 추가
+  // 5대 클러스터 태그 추가
+  if (isVentureLeader) filterTags.push('클러스터: 어자일 벤처 리더');
+  if (isTechFellow) filterTags.push('클러스터: 딥테크 펠로우');
+  if (isInvestorPartner) filterTags.push('클러스터: 투자 파트너');
+  if (isListedExecutive) filterTags.push('클러스터: 상장사 임원');
+  if (isCoreSpecialist) filterTags.push('클러스터: 프로덕트 스페셜리스트');
+
+  // 기업 및 학맥 태그 추가
   if (isNaverAlumni) filterTags.push('기업: 네이버(현직/전직)');
   if (isSamsungAlumni) filterTags.push('기업: 삼성(현직/전직)');
   if (isTossKakao) filterTags.push('기업: 토스/카카오');
   if (isAiDomain) filterTags.push('도메인: AI/LLM');
   if (isInfraCloud) filterTags.push('도메인: 클라우드/인프라');
-  if (isVcFinance) filterTags.push('도메인: VC/투자');
   if (isDartFact) filterTags.push('검증: DART 실공시 팩트');
-  if (isStaleIntent) filterTags.push('상태: 6개월 이상 안부 필요');
+  if (isStaleIntent) filterTags.push('상태: 안부 환기 권장');
   if (isKaist) filterTags.push('학맥: KAIST');
   if (isSeoulUniv) filterTags.push('학맥: 서울대학교');
 
@@ -69,8 +83,16 @@ export function executeGraphRagQuery(query: string, people: Person[]): GraphQuer
   // 2. 인맥 필터링 및 엣지 경로 검증
   const matched = people.filter(p => {
     let score = 0;
+    const cluster = identifyTalentCluster(p);
 
-    // 나이대 조건
+    // 5대 인재 클러스터 조건 매칭
+    if (isVentureLeader && cluster.id === 'VENTURE_LEADER') score += 6;
+    if (isTechFellow && cluster.id === 'TECH_FELLOW') score += 6;
+    if (isInvestorPartner && cluster.id === 'INVESTOR_PARTNER') score += 6;
+    if (isListedExecutive && cluster.id === 'LISTED_EXECUTIVE') score += 6;
+    if (isCoreSpecialist && cluster.id === 'CORE_SPECIALIST') score += 6;
+
+    // 나이대 및 전문 경력 단계 조건
     if (targetAgeGroup) {
       if (p.estimatedAgeGroup === targetAgeGroup) score += 3;
       else return false;
@@ -82,7 +104,7 @@ export function executeGraphRagQuery(query: string, people: Person[]): GraphQuer
       else return false;
     }
 
-    // 6개월 미소통(안부 필요) 조건
+    // 안부 환기 권장 조건
     if (isStaleIntent) {
       if (p.isStale) score += 4;
       else return false;
@@ -133,7 +155,7 @@ export function executeGraphRagQuery(query: string, people: Person[]): GraphQuer
     }
 
     // 범용 텍스트 매칭
-    const textCorpus = `${p.name} ${p.currentCompany} ${p.currentDepartment} ${p.currentTitle} ${p.primaryDomain} ${p.memo || ''} ${p.skills.join(' ')}`.toLowerCase();
+    const textCorpus = `${p.name} ${p.currentCompany} ${p.currentDepartment} ${p.currentTitle} ${p.primaryDomain} ${p.memo || ''} ${p.skills.join(' ')} ${cluster.label} ${cluster.superpowers.join(' ')}`.toLowerCase();
     const queryTokens = cleanQ.split(/\s+/);
     const tokenMatchCount = queryTokens.filter(t => textCorpus.includes(t)).length;
     score += tokenMatchCount * 2;
@@ -156,7 +178,18 @@ export function executeGraphRagQuery(query: string, people: Person[]): GraphQuer
     const factCount = matched.filter(m => m.sourceType === 'DART_FACT').length;
     const alumniHighlights = matched.filter(m => m.careers.some(c => !c.isCurrent)).length;
 
+    // 5대 클러스터 포트폴리오 집계
+    const clusterMap: Record<string, number> = {};
+    matched.forEach(p => {
+      const c = identifyTalentCluster(p);
+      clusterMap[c.label] = (clusterMap[c.label] || 0) + 1;
+    });
+    const clusterDistribution = Object.entries(clusterMap)
+      .map(([label, count]) => `${label} ${count}명`)
+      .join(', ');
+
     reasoning = `GraphRAG 지식 경로 탐색 결과, 총 **${matched.length}명**의 관련 인맥 노드가 연결되었습니다. ` +
+      (clusterDistribution ? `인재 클러스터 포트폴리오는 **${clusterDistribution}** 구성입니다. ` : '') +
       (factCount > 0 ? `이 중 **${factCount}명**은 금융감독원 DART 실공시로 검증된 상장사 등기/미등기 임원 팩트입니다. ` : '') +
       (alumniHighlights > 0 ? `과거 주요 빅테크/선도기업을 거쳐간 알럼나이 인력 **${alumniHighlights}명**이 포함되어 있어 2촌 확장 시 높은 레버리지를 기대할 수 있습니다.` : '');
   }

@@ -1,4 +1,5 @@
 import { Person, GraphNode, GraphEdge } from '../types/network';
+import { identifyTalentCluster } from './talentClusterEngine';
 
 export interface NetworkGraphData {
   nodes: GraphNode[];
@@ -69,19 +70,26 @@ export function buildNetworkGraph(people: Person[]): NetworkGraphData {
     const px = compPos.x + Math.cos(pAngle) * pDist;
     const py = compPos.y + Math.sin(pAngle) * pDist;
 
-    // 색상 결정: 팩트 구분
-    let nodeColor = '#3b82f6'; // Blue 기본
-    if (p.sourceType === 'DART_FACT') {
-      nodeColor = '#10b981'; // Emerald (DART FACT)
-    } else if (p.isAgeEstimated) {
-      nodeColor = '#f59e0b'; // Amber (Estimated)
+    // 5대 인재 클러스터 기반 테마 컬러 매핑 (단순 팩트 유무를 넘어 인재의 고유 강점 시각화)
+    const cluster = identifyTalentCluster(p);
+    let nodeColor = '#3b82f6';
+    if (cluster.id === 'VENTURE_LEADER') {
+      nodeColor = '#8b5cf6'; // Violet (어자일 벤처 리더)
+    } else if (cluster.id === 'TECH_FELLOW') {
+      nodeColor = '#06b6d4'; // Cyan (딥테크 펠로우)
+    } else if (cluster.id === 'INVESTOR_PARTNER') {
+      nodeColor = '#f59e0b'; // Amber (투자 파트너)
+    } else if (cluster.id === 'LISTED_EXECUTIVE') {
+      nodeColor = '#2563eb'; // Blue (상장사 임원)
+    } else if (cluster.id === 'CORE_SPECIALIST') {
+      nodeColor = '#10b981'; // Emerald (프로덕트 스페셜리스트)
     }
 
     if (!addedNodeIds.has(personNodeId)) {
       nodes.push({
         id: personNodeId,
         label: p.name,
-        subLabel: `${p.currentTitle} (${p.currentCompany})`,
+        subLabel: `[${cluster.label}] ${p.currentTitle} (${p.currentCompany})`,
         type: 'person',
         closeness: p.closeness,
         x: px,

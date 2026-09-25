@@ -3,6 +3,7 @@ import { Person, GraphQueryResult } from './types/network';
 import { loadPeopleFromStorage, savePeopleToStorage } from './services/storageService';
 import { executeGraphRagQuery } from './services/graphRagEngine';
 import { resolveAndMergePeople } from './services/entityResolver';
+import { identifyTalentCluster } from './services/talentClusterEngine';
 import { 
   CalendarMeeting, 
   loadMeetingsFromStorage, 
@@ -91,6 +92,7 @@ export const App: React.FC = () => {
   // Search & GraphRAG State
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [searchResult, setSearchResult] = useState<GraphQueryResult | null>(null);
+  const [selectedClusterId, setSelectedClusterId] = useState<string | null>(null);
 
   // Modal State
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
@@ -154,6 +156,7 @@ export const App: React.FC = () => {
   const handleResetSearch = () => {
     setSearchQuery('');
     setSearchResult(null);
+    setSelectedClusterId(null);
   };
 
   // 신규 데이터 수집 및 병합(Entity Resolution)
@@ -190,8 +193,11 @@ export const App: React.FC = () => {
     setActiveView(viewKey as any);
   };
 
-  // 현재 표출 대상 인물
-  const displayPeople = searchResult ? searchResult.matchedPeople : people;
+  // 현재 표출 대상 인물 (검색 결과 및 5대 클러스터 퀵 필터 복합 적용)
+  const basePeople = searchResult ? searchResult.matchedPeople : people;
+  const displayPeople = selectedClusterId
+    ? basePeople.filter(p => identifyTalentCluster(p).id === selectedClusterId)
+    : basePeople;
   const highlightNodeIds = searchResult ? searchResult.highlightNodeIds : [];
   const mePerson = people.find(p => p.closeness === 1);
   const imminentMeeting = getImminentMeeting(meetings);
@@ -252,6 +258,8 @@ export const App: React.FC = () => {
             onExecuteSearch={handleExecuteSearch}
             onResetSearch={handleResetSearch}
             searchResult={searchResult}
+            selectedClusterId={selectedClusterId}
+            onSelectCluster={setSelectedClusterId}
           />
         </section>
 

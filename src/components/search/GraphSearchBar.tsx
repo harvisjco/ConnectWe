@@ -1,5 +1,6 @@
-import { Search, Sparkles, X, ShieldCheck, Tag } from 'lucide-react';
+import { Search, Sparkles, X, ShieldCheck, Tag, Building2, Rocket, Cpu, Briefcase, Layers } from 'lucide-react';
 import { GraphQueryResult } from '../../types/network';
+import { TALENT_CLUSTERS } from '../../services/talentClusterEngine';
 
 interface GraphSearchBarProps {
   query: string;
@@ -7,14 +8,16 @@ interface GraphSearchBarProps {
   onExecuteSearch: (q: string) => void;
   onResetSearch: () => void;
   searchResult: GraphQueryResult | null;
+  selectedClusterId?: string | null;
+  onSelectCluster?: (clusterId: string | null) => void;
 }
 
 const PRESET_QUERIES = [
-  '과거 네이버 거쳐간 40대 임원이나 기술 리드',
-  'KAIST 출신 생성형 AI 창업자 또는 연구원',
+  '과거 네이버 거쳐간 시니어 테크 리드 및 임원',
+  'KAIST 출신 생성형 AI 창업자 및 딥테크 펠로우',
   '금융감독원 DART 실공시된 상장사 사내이사',
-  '6개월 이상 안부 연락이 뜸했던 핵심 1촌',
-  'VC/PE 글로벌 투자 파트너 및 심사역'
+  '글로벌 Top-tier VC/PE 투자 파트너 및 심사역',
+  '6개월 이상 안부 연락이 뜸했던 핵심 1촌'
 ];
 
 export const GraphSearchBar: React.FC<GraphSearchBarProps> = ({
@@ -22,7 +25,9 @@ export const GraphSearchBar: React.FC<GraphSearchBarProps> = ({
   onQueryChange,
   onExecuteSearch,
   onResetSearch,
-  searchResult
+  searchResult,
+  selectedClusterId = null,
+  onSelectCluster
 }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -72,6 +77,50 @@ export const GraphSearchBar: React.FC<GraphSearchBarProps> = ({
           </button>
         </div>
       </form>
+
+      {/* 5대 인재 클러스터 One-Touch Filter Bar */}
+      {onSelectCluster && (
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5 text-xs scrollbar-none">
+          <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 whitespace-nowrap mr-1">
+            클러스터:
+          </span>
+          <button
+            type="button"
+            onClick={() => onSelectCluster(null)}
+            className={`px-3 py-1 rounded-full text-xs font-semibold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
+              selectedClusterId === null
+                ? 'bg-slate-900 dark:bg-white text-white dark:text-slate-900 shadow-sm'
+                : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+            }`}
+          >
+            <Layers className="w-3 h-3" />
+            <span>전체 인맥</span>
+          </button>
+
+          {TALENT_CLUSTERS.map((c) => {
+            const isSelected = selectedClusterId === c.id;
+            return (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => onSelectCluster(isSelected ? null : c.id)}
+                className={`px-3 py-1 rounded-full text-xs font-semibold transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 border ${
+                  isSelected
+                    ? `${c.badgeStyle} ring-2 ring-indigo-500/40 shadow-sm font-bold`
+                    : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                }`}
+              >
+                {c.id === 'VENTURE_LEADER' && <Rocket className="w-3 h-3" />}
+                {c.id === 'TECH_FELLOW' && <Cpu className="w-3 h-3" />}
+                {c.id === 'INVESTOR_PARTNER' && <Briefcase className="w-3 h-3" />}
+                {c.id === 'LISTED_EXECUTIVE' && <Building2 className="w-3 h-3" />}
+                {c.id === 'CORE_SPECIALIST' && <Sparkles className="w-3 h-3" />}
+                <span>{c.label}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
 
       {/* Recommended Prompt Chips - Clean Minimal Pills */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs text-slate-500 dark:text-slate-400 scrollbar-none">
