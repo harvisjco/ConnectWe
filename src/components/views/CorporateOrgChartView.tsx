@@ -6,6 +6,7 @@ import {
   getCorpYearlySnapshots 
 } from '../../services/orgChartEngine';
 import { OrgNode } from '../../types/orgChart';
+import { ViewHeader } from '../ui';
 import { 
   Building2, Search, Sparkles, 
   Share2, Award, UserCheck, 
@@ -338,48 +339,38 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
     <div className="space-y-4">
       {/* 1. 상단 컨트롤 패널 */}
       <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 space-y-4 shadow-2xs">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 dark:bg-indigo-950/60 dark:border-indigo-800 dark:text-indigo-400">
-              <Building2 className="w-5 h-5" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                  <span>{selectedCorpName}</span>
-                  <span className="text-xs text-indigo-600 dark:text-indigo-400 font-mono">[{orgChart?.stockCode || 'KOSPI'}]</span>
-                </h2>
-                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 font-medium">
-                  DART 공시 FACT 기반
-                </span>
-              </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                {orgChart?.industry || '주요 상장기업'} · {orgChart?.stats.totalExecutives}명 공시 임원 편제
-              </p>
-            </div>
-          </div>
-
-          {/* 연도별 시계열 선택기 */}
-          <div className="flex items-center gap-1 p-1 bg-slate-100/80 dark:bg-slate-950 rounded-xl border border-slate-200/80 dark:border-slate-800 self-start md:self-auto">
-            <span className="text-[11px] text-slate-500 dark:text-slate-400 px-2 font-medium flex items-center gap-1">
-              <Calendar className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
-              <span>연도:</span>
+        <ViewHeader
+          icon={Building2}
+          title={selectedCorpName}
+          subtitle={`${orgChart?.industry || '주요 상장기업'} · ${orgChart?.stats.totalExecutives}명 공시 임원 편제`}
+          englishTag={orgChart?.stockCode || 'KOSPI'}
+          badge={
+            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 font-medium font-mono">
+              DART 공시 FACT 기반
             </span>
-            {yearlySnapshots.map(snap => (
-              <button
-                key={snap.year}
-                onClick={() => setSelectedYear(snap.year)}
-                className={`px-3 py-1 rounded-lg text-xs transition-all ${
-                  selectedYear === snap.year
-                    ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-medium'
-                }`}
-              >
-                {snap.year}년
-              </button>
-            ))}
-          </div>
-        </div>
+          }
+          actions={
+            <div className="flex items-center gap-1 p-1 bg-slate-100/80 dark:bg-slate-950 rounded-xl border border-slate-200/80 dark:border-slate-800 self-start md:self-auto">
+              <span className="text-[11px] text-slate-500 dark:text-slate-400 px-2 font-medium flex items-center gap-1">
+                <Calendar className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                <span>연도:</span>
+              </span>
+              {yearlySnapshots.map(snap => (
+                <button
+                  key={snap.year}
+                  onClick={() => setSelectedYear(snap.year)}
+                  className={`px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+                    selectedYear === snap.year
+                      ? 'bg-white dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-xs'
+                      : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white font-medium'
+                  }`}
+                >
+                  {snap.year}년
+                </button>
+              ))}
+            </div>
+          }
+        />
 
         {/* 상위 기업 퀵 칩 */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">

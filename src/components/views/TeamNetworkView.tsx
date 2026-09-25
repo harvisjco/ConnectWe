@@ -5,6 +5,7 @@ import {
   Users, ShieldCheck, Search, Share2, 
   Copy, Building2, Lock
 } from 'lucide-react';
+import { ViewHeader } from '../ui';
 
 interface TeamNetworkViewProps {
   people: Person[];
@@ -149,32 +150,24 @@ export const TeamNetworkView: React.FC<TeamNetworkViewProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* 1. 상단 안내 및 PII 마스킹 헌장 배너 */}
-      <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
-        <div className="flex items-center gap-3.5">
-          <div className="p-3 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-600 shrink-0">
-            <Users className="w-6 h-6" />
+      {/* 1. Standardized Header */}
+      <ViewHeader
+        icon={Users}
+        title="B2B 팀 인맥 공유 풀"
+        subtitle="동료들의 개인 휴대전화번호·개인 메일은 철저히 마스킹 보호되며, 누가 어느 회사 임원과 1촌인지만 안전하게 결합 조회합니다."
+        englishTag="Team Shared Rolodex"
+        badge={
+          <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-500/30 font-semibold flex items-center gap-1 font-mono">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>Zero-Leak PII 마스킹 보호</span>
+          </span>
+        }
+        actions={
+          <div className="px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 text-slate-600 dark:text-slate-300 font-medium text-xs font-mono">
+            팀 총 공유 인맥: <strong className="text-indigo-600 dark:text-indigo-400 font-bold ml-1">{sharedContacts.length}명</strong>
           </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-slate-900 tracking-tight">B2B 팀 인맥 공유 풀 (Team Shared Rolodex)</h2>
-              <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold flex items-center gap-1 font-mono">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                <span>Zero-Leak PII 마스킹 보호</span>
-              </span>
-            </div>
-            <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-              동료들의 개인 휴대전화번호·개인 메일은 철저히 마스킹 보호되며, 누가 어느 회사 임원과 1촌인지만 안전하게 결합 조회합니다.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 text-xs shrink-0">
-          <div className="px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-600 font-medium">
-            팀 총 공유 인맥: <strong className="text-indigo-600 font-bold ml-1">{sharedContacts.length}명</strong>
-          </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* 2. 팀원 필터 & 검색 바 */}
       <div className="p-4 rounded-2xl bg-white border border-slate-200 shadow-sm space-y-3">

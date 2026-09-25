@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Person, AgeGroup } from '../../types/network';
-import { ShieldCheck, ArrowRight, Briefcase, Users, Phone } from 'lucide-react';
+import { ShieldCheck, ArrowRight, Briefcase, Users, Phone, Calendar } from 'lucide-react';
+import { ViewHeader } from '../ui';
 
 interface AgeSpectrumViewProps {
   people: Person[];
@@ -29,6 +30,14 @@ export const AgeSpectrumView: React.FC<AgeSpectrumViewProps> = ({ people, onSele
 
   return (
     <div className="space-y-6">
+      {/* Standardized Header */}
+      <ViewHeader
+        icon={Calendar}
+        title="세대별 인재 & 경력 스펙트럼 분석"
+        subtitle="청년 혁신 프론티어부터 원숙한 전략 총괄까지, 각 세대 및 경력 단계별 인재의 고유 강점을 파악합니다."
+        englishTag="Talent Spectrum & Seniority"
+      />
+
       {/* 4-Column Age Spectrum Tabs - Apple Clean Style */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         {AGE_SEGMENTS.map(seg => {

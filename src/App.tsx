@@ -11,6 +11,7 @@ import {
 
 import { Header } from './components/common/Header';
 import { SidebarLNB, NavViewType } from './components/common/SidebarLNB';
+import { WorkspaceSubNav } from './components/common/WorkspaceSubNav';
 import { MeetingRadarBanner } from './components/radar/MeetingRadarBanner';
 import { GraphSearchBar } from './components/search/GraphSearchBar';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
@@ -48,7 +49,7 @@ import { MeetingDebriefModal } from './components/radar/MeetingDebriefModal';
 import { FollowUpComposerModal } from './components/radar/FollowUpComposerModal';
 import { DebriefResult } from './services/meetingDebriefService';
 
-import { Building2, Calendar, Share2, CheckCircle2, Clock, Sparkles, Orbit, Users, Gift, Briefcase, Compass, Award, LayoutDashboard, GitBranch, ShieldAlert } from 'lucide-react';
+import { CheckCircle2, Sparkles } from 'lucide-react';
 
 export const App: React.FC = () => {
   // 로컬 스토리지 기반 오프라인 퍼스트 상태
@@ -253,60 +254,14 @@ export const App: React.FC = () => {
           />
         </section>
 
-        {/* GoodPartner AI 2.0 Style Unified Horizontal Pill Navigation Bar */}
-        <section className="space-y-3">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            {/* Unified Horizontal Pill Tab Bar */}
-            <div className="flex items-center gap-1 p-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-[0_1px_2px_rgba(0,0,0,0.02)] overflow-x-auto max-w-full scrollbar-none">
-              {[
-                { id: 'command', label: '사령탑 관제', icon: LayoutDashboard },
-                { id: 'orgchart', label: '기업 지배구조 & 조직도', icon: GitBranch },
-                { id: 'company', label: '회사·알럼나이', icon: Building2 },
-                { id: 'age', label: '나이대별 분석', icon: Calendar },
-                { id: 'canvas', label: '2D 관계망', icon: Share2 },
-                { id: 'galaxy', label: '3D 은하수', icon: Orbit },
-                { id: 'deals', label: '전략 딜 협업 룸', icon: Briefcase },
-                { id: 'proximity', label: '거점 레이더', icon: Compass },
-                { id: 'promotion', label: '영전 골든타임', icon: Award },
-                { id: 'audit', label: '인맥 건강도', icon: ShieldAlert },
-                { id: 'team', label: '팀 인맥', icon: Users },
-                { id: 'referral', label: '추천 리워드', icon: Gift },
-                { id: 'timeline', label: '소통 타임라인', icon: Clock }
-              ].map((tab) => {
-                const isActive = activeView === tab.id;
-                const IconComponent = tab.icon;
-
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    data-testid={`tab-${tab.id}`}
-                    onClick={() => handleNavigateView(tab.id)}
-                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs transition-all duration-150 whitespace-nowrap shrink-0 cursor-pointer ${
-                      isActive
-                        ? 'bg-slate-900 text-white dark:bg-indigo-600 dark:text-white font-bold shadow-2xs'
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 font-medium'
-                    }`}
-                  >
-                    <IconComponent className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-slate-400 dark:text-slate-500'}`} />
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Status & Scope Indicator */}
-            <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2 shrink-0">
-              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              {activeView === 'command' ? (
-                <span>실시간 경영 지능 브리핑</span>
-              ) : displayPeople.length === people.length ? (
-                <span>전체 <strong className="text-slate-900 dark:text-white font-semibold">{people.length}명</strong> 표출 중</span>
-              ) : (
-                <span>필터링 <strong className="text-indigo-600 dark:text-indigo-400 font-semibold">{displayPeople.length}명</strong> 표출 중</span>
-              )}
-            </div>
-          </div>
+        {/* Standardized Workspace Sub Navigation */}
+        <section>
+          <WorkspaceSubNav
+            activeView={activeView}
+            onNavigateView={handleNavigateView}
+            people={people}
+            displayPeopleCount={displayPeople.length}
+          />
         </section>
 
         {/* Dynamic Multi-dimensional Views with Code Splitting & Error Isolation */}

@@ -12,6 +12,7 @@ import {
   Briefcase, Plus, ShieldCheck, 
   DollarSign, ChevronRight, X, Trash2, FileText, Send
 } from 'lucide-react';
+import { ViewHeader } from '../ui';
 
 interface DealPipelineViewProps {
   people: Person[];
@@ -143,34 +144,21 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
   return (
     <div className="space-y-4">
       {/* 1. Header & Control Bar */}
-      <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-xs">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-indigo-950/80 border border-blue-200 dark:border-indigo-500/40 text-blue-600 dark:text-indigo-400">
-            <Briefcase className="w-6 h-6" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-slate-900 dark:text-white">전략 비즈니스 딜 파이프라인 협업 룸</h2>
-              <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30 font-semibold">
-                C-Level Deal Pipeline
-              </span>
-            </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              비즈니스 딜별 의사결정권자(Key Decision Maker)와 신뢰 지지자(Champion)를 소중한 인맥과 연결하여 프로젝트 성공 가능성을 높입니다.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
+      <ViewHeader
+        icon={Briefcase}
+        title="전략 비즈니스 딜 파이프라인 협업 룸"
+        subtitle="비즈니스 딜별 의사결정권자(Key Decision Maker)와 신뢰 지지자(Champion)를 소중한 인맥과 연결하여 프로젝트 성공 가능성을 높입니다."
+        englishTag="C-Level Deal Pipeline"
+        actions={
           <button
             onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-black dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-bold text-xs shadow-xs transition-all active:scale-95"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-black dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer"
           >
             <Plus className="w-4 h-4 text-white" />
             <span>신규 딜 생성</span>
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* 2. Kanban Board Columns */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 overflow-x-auto pb-4">

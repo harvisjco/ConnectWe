@@ -12,6 +12,7 @@ import {
   AlertCircle, ChevronRight, PieChart, 
   Compass, Send, FileText
 } from 'lucide-react';
+import { ViewHeader } from '../ui';
 
 interface NetworkAuditReportViewProps {
   people: Person[];
@@ -55,35 +56,22 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
 
   return (
     <div className="space-y-5 animate-in fade-in duration-300">
-      {/* 1. Header & KPI Section */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-gradient-to-r dark:from-slate-900 dark:via-indigo-950/40 dark:to-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="p-3 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-700 dark:bg-indigo-950/80 dark:border-indigo-500/40 dark:text-indigo-400 shrink-0">
-            <PieChart className="w-6 h-6 animate-pulse" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">신뢰 네트워크 현황 &amp; 주요 파트너 기업 커버리지 리포트</h2>
-              <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30 font-semibold font-mono">
-                Network Equity &amp; Coverage Audit
-              </span>
-            </div>
-            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
-              국내 20대 주요 기업군과의 신뢰 네트워크 현황을 정밀히 살펴보고, 새로운 협력 기회와 잠재적 인연을 정성껏 발굴합니다.
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0">
+      {/* 1. Standardized Header */}
+      <ViewHeader
+        icon={PieChart}
+        title="신뢰 네트워크 현황 & 주요 파트너 기업 커버리지 리포트"
+        subtitle="국내 20대 주요 기업군과의 신뢰 네트워크 현황을 정밀히 살펴보고, 새로운 협력 기회와 잠재적 인연을 정성껏 발굴합니다."
+        englishTag="Network Equity & Coverage Audit"
+        actions={
           <button
             onClick={handleExportCsv}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-xs border border-transparent shadow-sm transition-all active:scale-95"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-slate-800 dark:hover:bg-slate-700 font-bold text-xs border border-transparent shadow-sm transition-all active:scale-95 cursor-pointer"
           >
             <Download className="w-4 h-4 text-emerald-400" />
             <span>CSV 진단서 다운로드 (BOM)</span>
           </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* 2. Executive KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">

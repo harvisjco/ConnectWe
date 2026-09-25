@@ -4,3 +4,4 @@ export * from './Card';
 export * from './Button';
 export * from './ModalShell';
 export * from './DrawerShell';
+export * from './ViewHeader';
