@@ -2,9 +2,10 @@ import React, { useState, useMemo } from 'react';
 import { Person } from '../../types/network';
 import { DebriefResult } from '../../services/meetingDebriefService';
 import { generateFollowUpDrafts, FollowUpTone } from '../../services/followUpComposerService';
+import { identifyTalentCluster } from '../../services/talentClusterEngine';
 import { 
   Mail, MessageSquare, Copy, Check, X, 
-  Sparkles, ShieldCheck
+  Sparkles, Coffee
 } from 'lucide-react';
 
 interface FollowUpComposerModalProps {
@@ -20,8 +21,9 @@ export const FollowUpComposerModal: React.FC<FollowUpComposerModalProps> = ({
   onClose,
   onShowToast
 }) => {
+  const cluster = useMemo(() => identifyTalentCluster(person), [person]);
   const drafts = useMemo(() => generateFollowUpDrafts(person, debrief), [person, debrief]);
-  const [selectedTone, setSelectedTone] = useState<FollowUpTone>('formal');
+  const [selectedTone, setSelectedTone] = useState<FollowUpTone>('cluster_tailored');
   const [channelMode, setChannelMode] = useState<'email' | 'kakao'>('email');
   const [copied, setCopied] = useState(false);
 
@@ -44,26 +46,21 @@ export const FollowUpComposerModal: React.FC<FollowUpComposerModalProps> = ({
         
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-950/60">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center shadow-md shadow-indigo-600/30">
-              <Mail className="w-4 h-4 text-white" />
+          <div className="flex items-center gap-3">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-sky-600 to-indigo-600 flex items-center justify-center shadow-md shadow-indigo-600/30 shrink-0">
+              <Coffee className="w-4.5 h-4.5 text-white" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
-                <span>미팅 감사 &amp; 정중한 후속 서신 제안</span>
-                {person.sourceType === 'DART_FACT' ? (
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-500/40 text-emerald-300 font-bold flex items-center gap-0.5 font-mono">
-                    <ShieldCheck className="w-3 h-3" />
-                    공시 공인 임원
-                  </span>
-                ) : (
-                  <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 font-bold flex items-center gap-0.5">
-                    혁신 비즈니스 파트너
-                  </span>
-                )}
-              </h2>
-              <p className="text-[11px] text-slate-400">
-                수신자: <strong className="text-white">{person.name}</strong> ({person.currentCompany} · {person.currentTitle})
+              <div className="flex items-center gap-2">
+                <h2 className="text-base font-bold text-white tracking-tight">
+                  원터치 티타임 &amp; 소통 서신 제안
+                </h2>
+                <span className={`text-[11px] px-2 py-0.5 rounded-full font-bold flex items-center gap-1 border ${cluster.badgeStyle}`}>
+                  <span>{cluster.label}</span>
+                </span>
+              </div>
+              <p className="text-[11px] text-slate-400 mt-0.5">
+                수신자: <strong className="text-white">{person.name}</strong> ({person.currentCompany} · {person.currentTitle}) · <span className="text-indigo-400 font-mono">{cluster.seniorityLevel}</span>
               </p>
             </div>
           </div>
@@ -84,13 +81,14 @@ export const FollowUpComposerModal: React.FC<FollowUpComposerModalProps> = ({
               <button
                 key={d.tone}
                 onClick={() => setSelectedTone(d.tone)}
-                className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-semibold transition-all ${
                   selectedTone === d.tone
                     ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                     : 'bg-slate-800 text-slate-400 hover:text-slate-200'
                 }`}
               >
-                {d.label}
+                {d.tone === 'cluster_tailored' && <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" />}
+                <span>{d.label}</span>
               </button>
             ))}
           </div>

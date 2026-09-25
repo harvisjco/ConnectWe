@@ -235,10 +235,10 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
             <button
               type="button"
               onClick={() => onOpenDossier?.(person)}
-              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-950/80 via-purple-950/80 to-slate-900 hover:border-indigo-400 text-indigo-200 border border-indigo-500/40 text-xs font-bold transition-all active:scale-95 shadow-lg shadow-indigo-500/10"
+              className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-950/80 via-purple-950/80 to-slate-900 hover:border-indigo-400 text-indigo-200 border border-indigo-500/40 text-xs font-bold transition-all active:scale-95 shadow-lg shadow-indigo-500/10 cursor-pointer"
             >
               <Sparkles className="w-4 h-4 text-indigo-400 animate-pulse" />
-              <span>미팅 전 1-Page AI 전략 브리핑 (Executive Dossier)</span>
+              <span>미팅 준비 1-Page AI 브리프 (Meeting Prep Brief)</span>
             </button>
 
             {/* 미팅 직후 빠른 회고 & AI 액션 아이템 추출 */}
@@ -246,22 +246,22 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
               <button
                 type="button"
                 onClick={() => onOpenDebrief(person)}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-rose-950/40 hover:bg-rose-900/40 text-rose-300 border border-rose-500/40 text-xs font-bold transition-all active:scale-95"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-rose-950/40 hover:bg-rose-900/40 text-rose-300 border border-rose-500/40 text-xs font-bold transition-all active:scale-95 cursor-pointer"
               >
                 <Mic className="w-4 h-4 text-rose-400" />
                 <span>미팅 직후 빠른 회고 &amp; AI 액션 추출 (음성/텍스트)</span>
               </button>
             )}
 
-            {/* 미팅 후 24시간 감사 & 팔로업 시퀀스 */}
+            {/* 5대 인재 클러스터 맞춤 티타임 & 소통 서신 제안 */}
             {onOpenFollowUp && (
               <button
                 type="button"
                 onClick={() => onOpenFollowUp(person)}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-sky-950/40 hover:bg-sky-900/40 text-sky-300 border border-sky-500/40 text-xs font-bold transition-all active:scale-95"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-sky-950/40 hover:bg-sky-900/40 text-sky-300 border border-sky-500/40 text-xs font-bold transition-all active:scale-95 cursor-pointer"
               >
                 <Send className="w-4 h-4 text-sky-400" />
-                <span>미팅 후 24시간 감사 &amp; 팔로업 시퀀스 작성</span>
+                <span>원터치 티타임 &amp; 맞춤 소통 서신 생성 ({clusterProfile?.label || '인재 맞춤'})</span>
               </button>
             )}
 

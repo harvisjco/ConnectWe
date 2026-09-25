@@ -2,6 +2,15 @@
 
 본 문서는 ConnectWe 프로젝트에서 모든 에이전트와 엔지니어가 예외 없이 준수해야 하는 **프로젝트 영구 설계 Audit 규칙(Permanent Design Audit Rules)**입니다. 인맥 관리 및 네트워크 인텔리전스 서비스의 특성상, **사람을 도구화·화폐화하거나 공격적·차별적 어휘를 사용하는 것은 서비스의 신뢰도를 파괴하는 가장 치명적인 결함**입니다.
 
+## 0. ConnectWe 3대 시스템 최상위 전략 방향성 (Three Pillars of ConnectWe Architecture)
+
+1. **인간 중심 비즈니스 품격 (Human-Centric Executive Elegance)**:
+   - 군사·사냥·사찰 은어 및 상장사 편향을 완전히 걷어내고, 비상장 벤처 리더·딥테크 펠로우·투자 파트너 등 모든 인재의 고유 강점(Superpower Edge)을 존중하는 신뢰 네트워크를 구축합니다.
+2. **디자인 시스템 규격화 & 제로 노이즈 (Standardized Design System & Zero Clutter)**:
+   - 누더기 스타일을 영구 배제하고, 좌측 LNB를 단일 진실 공급원(SSOT)으로 삼으며, `ViewHeader`, `WorkspaceSubNav`, `CW_TOKENS` 기반 픽셀 퍼펙트한 통일성을 유지합니다.
+3. **팩트 기반 C-Level 실행력 (Actionable C-Level Intelligence)**:
+   - 단순 주소록을 넘어 DART 공시 실명 팩트, 비즈니스 딜 파이프라인, 정기 인사 레이더, 품격 있는 티타임 제안 등 경영진의 실질적 의사결정과 사업 실행을 가속합니다.
+
 ---
 
 ## 1. 5대 핵심 설계 원칙 (Core Design Philosophy)

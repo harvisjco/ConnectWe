@@ -8,6 +8,7 @@ import {
   MapPin, Coffee, ShieldCheck, 
   Check, Compass, Users, Building2, ChevronRight
 } from 'lucide-react';
+import { ViewHeader } from '../ui';
 
 interface GeoProximityRadarViewProps {
   people: Person[];
@@ -51,44 +52,28 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
 
   return (
     <div className="space-y-5 animate-in fade-in duration-300">
-      {/* 1. Header & Radar Status */}
-      <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="relative p-3 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-600 shrink-0">
-            <Compass className="w-6 h-6 animate-pulse" />
-            <span className="absolute -top-1 -right-1 flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
-            </span>
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight">전국 6대 비즈니스 거점별 인맥 레이더</h2>
-              <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold font-mono">
-                Geo Radar Proximity
-              </span>
+      {/* 1. Standardized Header */}
+      <ViewHeader
+        icon={Compass}
+        title="전국 6대 비즈니스 거점별 인맥 레이더"
+        subtitle="현재 방문 예정이거나 상주하는 비즈니스 거점을 선택하여, 인근에 위치한 소중한 인맥을 확인하고 여유로운 티타임 일정을 정중하게 제안해보세요."
+        englishTag="Geo Radar Proximity"
+        actions={
+          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shrink-0 font-mono">
+            <div className="text-right">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">등록 인맥 거점 분포</div>
+              <div className="text-xs font-bold text-indigo-700 dark:text-indigo-400">총 {people.length}명 매핑</div>
             </div>
-            <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-              현재 방문 예정이거나 상주하는 비즈니스 거점을 선택하여, 인근에 위치한 소중한 인맥을 확인하고 여유로운 티타임 일정을 정중하게 제안해보세요.
-            </p>
-          </div>
-        </div>
-
-        {/* Global Summary Badge */}
-        <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 shrink-0">
-          <div className="text-right">
-            <div className="text-[11px] text-slate-500 font-medium">등록 인맥 거점 분포</div>
-            <div className="text-sm font-bold text-indigo-700 font-mono">총 {people.length}명 매핑</div>
-          </div>
-          <div className="h-7 w-[1px] bg-slate-200" />
-          <div className="text-right">
-            <div className="text-[11px] text-slate-500 font-medium">DART 공시 임원</div>
-            <div className="text-sm font-bold text-emerald-700 font-mono">
-              {people.filter(p => p.sourceType === 'DART_FACT' || !!p.dartInfo?.isPublicDirector).length}명
+            <div className="h-6 w-[1px] bg-slate-200 dark:bg-slate-700" />
+            <div className="text-right">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">DART 공시 임원</div>
+              <div className="text-xs font-bold text-emerald-700 dark:text-emerald-400">
+                {people.filter(p => p.sourceType === 'DART_FACT' || !!p.dartInfo?.isPublicDirector).length}명
+              </div>
             </div>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* 2. Cluster Selection Chips */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2.5">

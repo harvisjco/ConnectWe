@@ -56,7 +56,52 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
       }, viewName);
     };
 
+    // Menu & Design Alignment Precision Checker
+    const getMenuAlignmentMetrics = async () => {
+      return await page.evaluate(() => {
+        // 1. LNB Navigation Items Alignment
+        const lnbItems = Array.from(document.querySelectorAll('aside [data-testid^="lnb-"]'));
+        const lnbMisaligned: string[] = [];
+        lnbItems.forEach((item, idx) => {
+          const svg = item.querySelector('svg');
+          const span = item.querySelector('span');
+          if (svg && span) {
+            const svgRect = svg.getBoundingClientRect();
+            const spanRect = span.getBoundingClientRect();
+            const diff = Math.abs((svgRect.top + svgRect.height/2) - (spanRect.top + spanRect.height/2));
+            if (diff > 4) {
+              lnbMisaligned.push(`LNB item ${idx} vertical diff: ${diff.toFixed(1)}px`);
+            }
+          }
+        });
+
+        // 2. WorkspaceSubNav Tab Alignment
+        const subNavTabs = Array.from(document.querySelectorAll('[data-testid^="tab-"]'));
+        const tabHeights = subNavTabs.map(t => Math.round(t.getBoundingClientRect().height));
+        const uniqueHeights = Array.from(new Set(tabHeights));
+
+        // 3. ViewHeader & Section Hierarchy
+        const viewHeaders = Array.from(document.querySelectorAll('h2'));
+        const h2Texts = viewHeaders.map(h => (h.textContent || '').trim());
+
+        // 4. Card Rhythm & Padding Uniformity
+        const cards = Array.from(document.querySelectorAll('div.rounded-2xl'));
+
+        return {
+          lnbItemCount: lnbItems.length,
+          lnbMisalignedCount: lnbMisaligned.length,
+          lnbMisalignedSamples: lnbMisaligned.slice(0, 3),
+          subNavTabCount: subNavTabs.length,
+          subNavUniformTabHeights: uniqueHeights,
+          h2Count: viewHeaders.length,
+          h2Samples: h2Texts.slice(0, 5),
+          rounded2xlCardCount: cards.length
+        };
+      });
+    };
+
     const metricsResults = [];
+    const alignmentMetrics: any = {};
 
     // Audit 1: Command Center
     metricsResults.push(await getHigMetrics('Command Center'));
@@ -236,6 +281,9 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
       await page.waitForTimeout(400);
     }
 
+    // Measure Desktop Menu & Design Alignment
+    const desktopAlignment = await getMenuAlignmentMetrics();
+
     // Audit 11: Mobile Viewport (iPhone 14 Pro: 393 x 852)
     await page.setViewportSize({ width: 393, height: 852 });
     await page.goto('/');
@@ -262,6 +310,8 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
 
     console.log('=== CHIEF DESIGNER AUDIT METRICS SUMMARY ===');
     console.log(JSON.stringify(metricsResults, null, 2));
+    console.log('=== DESKTOP MENU & DESIGN ALIGNMENT METRICS ===');
+    console.log(JSON.stringify(desktopAlignment, null, 2));
     console.log('Mobile Overflow:', mobileOverflow);
   });
 });

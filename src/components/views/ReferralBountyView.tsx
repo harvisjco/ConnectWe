@@ -16,6 +16,7 @@ import {
   ShieldCheck, Clock, RefreshCw, CheckCircle2, DollarSign, Zap, ArrowUpRight
 } from 'lucide-react';
 import { BountyWithdrawalModal } from '../bounty/BountyWithdrawalModal';
+import { ViewHeader } from '../ui';
 
 interface ReferralBountyViewProps {
   people: Person[];
@@ -163,48 +164,44 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* 상단 탭 및 추천 감사 리워드 통계 배너 */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs">
-        <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <Gift className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-            <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
-              인재 매칭 &amp; 채용 추천 감사 리워드 허브
-            </h2>
-            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 font-medium">
-              최대 1,000만원 보상
-            </span>
+      {/* 1. Standardized Header */}
+      <ViewHeader
+        icon={Gift}
+        title="인재 매칭 & 채용 추천 감사 리워드 허브"
+        subtitle="소중한 지인의 커리어 성장을 돕고, 따뜻한 안부 티타임부터 합격 시점까지 신뢰 기반 추천 감사 리워드를 지원받으세요."
+        englishTag="Referral & Reward Hub"
+        badge={
+          <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 font-medium">
+            최대 1,000만원 보상
+          </span>
+        }
+        actions={
+          <div className="flex items-center gap-1.5 bg-slate-100/80 dark:bg-slate-800 p-1.5 rounded-xl border border-slate-200/80 dark:border-slate-700">
+            <button
+              onClick={() => setActiveTab('positions')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                activeTab === 'positions'
+                  ? 'bg-white text-slate-900 shadow-xs dark:bg-slate-900 dark:text-white'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <Briefcase className="w-3.5 h-3.5" />
+              <span>오픈 포지션 ({positions.length})</span>
+            </button>
+            <button
+              onClick={() => setActiveTab('submissions')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                activeTab === 'submissions'
+                  ? 'bg-white text-slate-900 shadow-xs dark:bg-slate-900 dark:text-white'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+            >
+              <Clock className="w-3.5 h-3.5" />
+              <span>내 추천 현황 ({submissions.length})</span>
+            </button>
           </div>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            소중한 지인의 커리어 성장을 돕고, 따뜻한 안부 티타임부터 합격 시점까지 신뢰 기반 추천 감사 리워드를 지원받으세요.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-1.5 bg-slate-100/80 dark:bg-slate-800 p-1.5 rounded-xl border border-slate-200/80 dark:border-slate-700">
-          <button
-            onClick={() => setActiveTab('positions')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              activeTab === 'positions'
-                ? 'bg-white text-slate-900 shadow-xs dark:bg-slate-900 dark:text-white'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <Briefcase className="w-3.5 h-3.5" />
-            <span>오픈 포지션 ({positions.length})</span>
-          </button>
-          <button
-            onClick={() => setActiveTab('submissions')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-              activeTab === 'submissions'
-                ? 'bg-white text-slate-900 shadow-xs dark:bg-slate-900 dark:text-white'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
-            }`}
-          >
-            <Clock className="w-3.5 h-3.5" />
-            <span>내 추천 현황 ({submissions.length})</span>
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* 실시간 리워드 적립 & HRCO 브릿지 상태 3대 KPI 바 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">

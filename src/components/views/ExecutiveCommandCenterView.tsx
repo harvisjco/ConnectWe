@@ -21,6 +21,7 @@ import {
   Zap, Coffee, Gift, MessageCircle, ChevronRight, 
   ShieldCheck, Check, Sparkles, Building2, Share2
 } from 'lucide-react';
+import { ViewHeader } from '../ui';
 
 interface ExecutiveCommandCenterViewProps {
   people: Person[];
@@ -110,50 +111,40 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
 
   return (
     <div className="space-y-5 animate-in fade-in duration-300">
-      {/* 1. Hero Morning Briefing Header */}
-      <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 p-6 shadow-2xs">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="space-y-1.5">
-            <div className="flex items-center gap-2">
-              <span className="flex h-2.5 w-2.5 relative">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
-              </span>
-              <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 tracking-wider uppercase font-mono">
-                Executive Morning Briefing
-              </span>
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700 font-medium">
-                AI Ready
-              </span>
-            </div>
-
-            <h1 className="text-xl md:text-2xl font-bold text-slate-900 dark:text-white tracking-tight">
-              오늘의 비즈니스 경영 사령탑
-            </h1>
-            <p className="text-xs text-slate-500 dark:text-slate-400 max-w-2xl leading-relaxed">
-              대표님, 오늘 가장 높은 성약 확률을 가진 딜과 외근지 인맥 접점, 그리고 즉시 챙겨야 할 C-Level 영전 축하를 엄선했습니다.
-            </p>
+      {/* 1. Standardized Header */}
+      <ViewHeader
+        icon={Zap}
+        title="오늘의 비즈니스 경영 사령탑"
+        subtitle="대표님, 오늘 가장 높은 성약 확률을 가진 딜과 외근지 인맥 접점, 그리고 즉시 챙겨야 할 C-Level 영전 축하를 엄선했습니다."
+        englishTag="Executive Morning Briefing"
+        badge={
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800 text-[11px] font-semibold font-mono">
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+            </span>
+            <span>AI Ready</span>
           </div>
-
-          {/* Quick Action Matrix */}
+        }
+        actions={
           <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
               onClick={() => onNavigateView('deals')}
-              className="px-4 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-xs transition-colors active:scale-[0.98] flex items-center gap-1.5"
+              className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-900 font-semibold text-xs shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
             >
               <Briefcase className="w-3.5 h-3.5" />
               <span>전략 딜 협업 룸 열기</span>
             </button>
             <button
               onClick={() => onNavigateView('audit')}
-              className="px-4 py-2 rounded-full bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium text-xs border border-slate-200/90 dark:border-slate-700 shadow-2xs transition-colors active:scale-[0.98] flex items-center gap-1.5"
+              className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium text-xs border border-slate-200/90 dark:border-slate-700 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
             >
-              <span>20대 대기업 네트워크 커버리지</span>
+              <span>20대 기업 네트워크 커버리지</span>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             </button>
           </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* 2. Today's 4 Prime Action Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">

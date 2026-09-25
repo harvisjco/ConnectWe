@@ -12,6 +12,7 @@ import {
 import { Header } from './components/common/Header';
 import { SidebarLNB, NavViewType } from './components/common/SidebarLNB';
 import { WorkspaceSubNav } from './components/common/WorkspaceSubNav';
+import { MobileBottomBar } from './components/common/MobileBottomBar';
 import { MeetingRadarBanner } from './components/radar/MeetingRadarBanner';
 import { GraphSearchBar } from './components/search/GraphSearchBar';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
@@ -556,16 +557,22 @@ export const App: React.FC = () => {
         onShowToast={showToast}
       />
 
-      {/* Floating AI Copilot Trigger Button (우측 하단) */}
+      {/* Floating AI Copilot Trigger Button (우측 하단 - 모바일 바텀바 회피) */}
       <button
         onClick={() => setIsCopilotOpen(true)}
         title="AI 인맥 지능 코파일럿 열기"
-        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:scale-105 active:scale-95 text-white font-bold text-xs shadow-2xl shadow-indigo-600/40 border border-indigo-400/40 transition-all group"
+        className="fixed bottom-20 right-4 lg:bottom-6 lg:right-6 z-40 flex items-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:scale-105 active:scale-95 text-white font-bold text-xs shadow-2xl shadow-indigo-600/40 border border-indigo-400/40 transition-all group"
       >
         <Sparkles className="w-4 h-4 text-purple-200 group-hover:rotate-12 transition-transform" />
-        <span>인맥 코파일럿</span>
+        <span className="hidden sm:inline">인맥 코파일럿</span>
         <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
       </button>
+
+      {/* Mobile C-Level Bottom Floating Navigation Bar */}
+      <MobileBottomBar
+        currentView={activeView}
+        onSelectView={(v) => handleNavigateView(v as NavViewType)}
+      />
 
       {/* Toast Notification Banner */}
       {toastMessage && (

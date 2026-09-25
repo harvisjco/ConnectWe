@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { Person } from '../../types/network';
 import { 
-  Users, CheckCircle2, AlertTriangle, Sparkles, Search
+  Users, CheckCircle2, AlertTriangle, Sparkles, Search, Clock
 } from 'lucide-react';
+import { ViewHeader } from '../ui';
 
 interface InteractionTimelineViewProps {
   people: Person[];
@@ -49,6 +50,27 @@ export const InteractionTimelineView: React.FC<InteractionTimelineViewProps> = (
 
   return (
     <div className="space-y-6">
+      {/* 1. Standardized Header */}
+      <ViewHeader
+        icon={Clock}
+        title="소통 타임라인 & 안부 케어 센터"
+        subtitle="최근 미팅 및 연락 이력을 추적하고, 일정 기간 소통이 뜸했던 소중한 인연에 안부를 전할 수 있도록 케어 알림을 제공합니다."
+        englishTag="Interaction & Care Timeline"
+        actions={
+          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shrink-0 font-mono">
+            <div className="text-right">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">안부 케어 필요</div>
+              <div className="text-xs font-bold text-amber-600 dark:text-amber-400">{stalePeople.length}명</div>
+            </div>
+            <div className="h-6 w-[1px] bg-slate-200 dark:bg-slate-700" />
+            <div className="text-right">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">최근 90일 소통</div>
+              <div className="text-xs font-bold text-emerald-600 dark:text-emerald-400">{recentPeople.length}명</div>
+            </div>
+          </div>
+        }
+      />
+
       {/* 상단 현황 대시보드 배너 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div 

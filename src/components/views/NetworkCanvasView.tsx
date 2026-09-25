@@ -1,8 +1,9 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { Person } from '../../types/network';
 import { buildNetworkGraph } from '../../services/networkGraph';
-import { ZoomIn, ZoomOut, RotateCcw, Info, Zap, Sparkles } from 'lucide-react';
+import { ZoomIn, ZoomOut, RotateCcw, Info, Zap, Sparkles, Share2 } from 'lucide-react';
 import { CosmicGalaxy3DView } from './CosmicGalaxy3DView';
+import { ViewHeader } from '../ui';
 
 interface NetworkCanvasViewProps {
   people: Person[];
@@ -410,9 +411,31 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
   const hoveredNode = nodesRef.current.find((n) => n.id === hoveredNodeId);
 
   return (
-    <div className="relative w-full h-[650px] bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
-      {/* 2D / 3D Mode Switcher Header Floating Bar */}
-      <div className="absolute top-4 right-4 z-20 flex items-center gap-1 p-1 rounded-xl bg-slate-900/90 border border-slate-800 backdrop-blur shadow-xl">
+    <div className="space-y-5 animate-in fade-in duration-300">
+      {/* 1. Standardized Header */}
+      <ViewHeader
+        icon={Share2}
+        title="지능형 인터랙티브 인맥 캔버스"
+        subtitle="물리 엔진 기반 2D 은하수 및 Three.js 3D 우주 궤도로 인맥 연결망과 소통 허브를 시각적으로 탐색합니다."
+        englishTag="Dynamic Network Canvas & Galaxy"
+        actions={
+          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shrink-0 font-mono">
+            <div className="text-right">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">탐색 가능 노드</div>
+              <div className="text-xs font-bold text-indigo-700 dark:text-indigo-400">{nodesRef.current.length || people.length}개 노드</div>
+            </div>
+            <div className="h-6 w-[1px] bg-slate-200 dark:bg-slate-700" />
+            <div className="text-right">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">연결 관계 엣지</div>
+              <div className="text-xs font-bold text-emerald-700 dark:text-emerald-400">{edgesRef.current.length}개 엣지</div>
+            </div>
+          </div>
+        }
+      />
+
+      <div className="relative w-full h-[650px] bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-2xl">
+        {/* 2D / 3D Mode Switcher Header Floating Bar */}
+        <div className="absolute top-4 right-4 z-20 flex items-center gap-1 p-1 rounded-xl bg-slate-900/90 border border-slate-800 backdrop-blur shadow-xl">
         <button
           onClick={() => setIs3DMode(false)}
           className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
@@ -509,6 +532,7 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
           )}
         </>
       )}
+      </div>
     </div>
   );
 };

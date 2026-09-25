@@ -13,6 +13,7 @@ import {
   Clock, MessageCircle, 
   ChevronRight, Building2, Gift, Send, ExternalLink
 } from 'lucide-react';
+import { ViewHeader } from '../ui';
 
 interface PromotionCadenceViewProps {
   people: Person[];
@@ -88,42 +89,30 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
 
   return (
     <div className="space-y-5 animate-in fade-in duration-300">
-      {/* 1. Header & KPI Banner */}
-      <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="p-3 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-700 shrink-0">
-            <Award className="w-6 h-6 animate-pulse" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-slate-900 tracking-tight">DART 임원 영전·승진 &amp; 골든타임 케어 레이더</h2>
-              <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold font-mono">
-                Executive Promotion &amp; Cadence
-              </span>
+      {/* 1. Standardized Header */}
+      <ViewHeader
+        icon={Award}
+        title="DART 임원 영전·승진 & 골든타임 케어 레이더"
+        subtitle="DART 공시 임원의 승진·대표이사 선임을 조기에 축하하고, 소통 주기가 도래한 소중한 인맥에 따뜻한 안부를 전할 수 있도록 지원합니다."
+        englishTag="Executive Promotion & Cadence"
+        actions={
+          <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 shrink-0 font-mono">
+            <div className="text-right">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400">승진·영전 감지</div>
+              <div className="text-xs font-bold text-indigo-700 dark:text-indigo-400">
+                {promotions.length}건 <span className="text-[11px] text-rose-600 dark:text-rose-400 font-normal">({uncelebratedCount}건 미축하)</span>
+              </div>
             </div>
-            <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-              DART 공시 임원의 승진·대표이사 선임을 조기에 축하하고, 소통 주기가 도래한 소중한 인맥에 따뜻한 안부를 전할 수 있도록 지원합니다.
-            </p>
-          </div>
-        </div>
-
-        {/* Global Summary Badge */}
-        <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 shrink-0">
-          <div className="text-right">
-            <div className="text-[11px] text-slate-500">승진·영전 감지</div>
-            <div className="text-sm font-bold text-indigo-700 font-mono">
-              {promotions.length}건 <span className="text-xs text-rose-600 font-normal">({uncelebratedCount}건 미축하)</span>
+            <div className="h-6 w-[1px] bg-slate-200 dark:bg-slate-700" />
+            <div className="text-right">
+              <div className="text-[11px] text-slate-500 dark:text-slate-400">소통 환기 추천</div>
+              <div className="text-xs font-bold text-indigo-600 dark:text-indigo-300">
+                {cadenceAlerts.length}명
+              </div>
             </div>
           </div>
-          <div className="h-7 w-[1px] bg-slate-200" />
-          <div className="text-right">
-            <div className="text-[11px] text-slate-500">소통 환기 추천</div>
-            <div className="text-sm font-bold text-indigo-600 font-mono">
-              {cadenceAlerts.length}명
-            </div>
-          </div>
-        </div>
-      </div>
+        }
+      />
 
       {/* 2. Sub-Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-200 pb-2 text-xs">

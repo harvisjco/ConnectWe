@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Person } from '../../types/network';
 import { Building2, ArrowRight, ShieldCheck, Sparkles, Briefcase } from 'lucide-react';
+import { ViewHeader } from '../ui';
 
 interface CompanyAlumniViewProps {
   people: Person[];
@@ -44,7 +45,20 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
   const activeData = companyMap.get(selectedCompany) || { current: [], alumni: [] };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px]">
+    <div className="space-y-4">
+      <ViewHeader
+        icon={Building2}
+        title="기업별 현직 & 전직 알럼나이 네트워크"
+        subtitle="주요 법인별 현재 재직 중인 1촌과 이전 재직(알럼나이) 이력을 입체적으로 분석하여 신뢰 연결 고리를 발견합니다."
+        englishTag="Corporate & Alumni Networks"
+        badge={
+          <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 font-medium font-mono">
+            {companies.length}개 주요 법인
+          </span>
+        }
+      />
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-h-[600px]">
       {/* Left Column: Company Directory & Alumni Counts */}
       <div className="lg:col-span-4 bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 flex flex-col h-full space-y-3 shadow-xs">
         <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
@@ -255,6 +269,7 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
             좌측에서 기업을 선택하여 현직 및 전직 알럼나이 네트워크를 탐색하세요.
           </div>
         )}
+      </div>
       </div>
     </div>
   );
