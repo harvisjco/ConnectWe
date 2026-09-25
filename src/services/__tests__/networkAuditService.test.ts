@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { calculateCompanyPenetrations, calculateNetworkEquity } from '../networkAuditService';
 import { Person } from '../../types/network';
 
-describe('networkAuditService - 기업 침투도 및 네트워크 자산 진단', () => {
+describe('networkAuditService - 기업 네트워크 커버리지 및 자산 진단', () => {
   const mockPeople: Person[] = [
     {
       id: 'p1',
@@ -62,7 +62,7 @@ describe('networkAuditService - 기업 침투도 및 네트워크 자산 진단'
     },
   ];
 
-  it('20대 핵심 벤치마크 기업 침투도를 산출하고 삼성전자 접점이 정상 집계되어야 한다', () => {
+  it('20대 핵심 벤치마크 기업 네트워크 도달도를 산출하고 삼성전자 접점이 정상 집계되어야 한다', () => {
     const penetrations = calculateCompanyPenetrations(mockPeople);
     expect(penetrations.length).toBe(20);
 

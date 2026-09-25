@@ -150,7 +150,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
               onClick={() => onNavigateView('audit')}
               className="px-4 py-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 text-slate-200 font-bold text-xs border border-slate-700/80 shadow-[0_2px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.1)] ring-1 ring-white/5 transition-all active:scale-[0.98] flex items-center gap-2"
             >
-              <span>20대 대기업 침투 진단</span>
+              <span>20대 대기업 네트워크 커버리지</span>
               <ChevronRight className="w-4 h-4 text-slate-400" />
             </button>
           </div>
@@ -161,23 +161,23 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
         
         {/* Card 1: 현장 외근 레이더 */}
-        <div className="rounded-3xl bg-slate-900/90 border border-slate-800/80 hover:border-slate-700 shadow-[0_10px_25px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.08)] ring-1 ring-white/5 p-5 flex flex-col justify-between space-y-4 transition-all duration-300 hover:-translate-y-0.5 backdrop-blur-xl">
+        <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs hover:shadow-md p-5 flex flex-col justify-between space-y-4 transition-all duration-300 hover:-translate-y-0.5">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-xs font-bold text-sky-400">
+              <span className="flex items-center gap-1.5 text-xs font-bold text-sky-600 dark:text-sky-400">
                 <Compass className="w-4 h-4" />
                 <span>오늘의 현장 레이더</span>
               </span>
-              <span className="text-[11px] px-2.5 py-0.5 rounded-lg bg-sky-950/80 text-sky-300 border border-sky-800/80 font-mono shadow-[inset_0_1px_2px_rgba(0,0,0,0.4)]">
+              <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-sky-50 dark:bg-sky-950/80 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800/80 font-mono">
                 {activeCluster.cluster.shortName}
               </span>
             </div>
 
             <div>
-              <h3 className="text-sm font-bold text-white leading-snug">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-snug">
                 반경 내 핵심 인맥 {activeCluster.people.length}명 근무 중
               </h3>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 DART 공시 임원 {activeCluster.dartExecutiveCount}명이 상주하고 있습니다.
               </p>
             </div>
@@ -185,24 +185,24 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
             {/* Nearby Contacts - Soft Debossed Trays */}
             <div className="space-y-2 pt-1">
               {nearbyPeople.map(p => (
-                <div key={p.id} className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800/80 shadow-[inset_0_1px_3px_rgba(0,0,0,0.6)] flex items-center justify-between gap-2 text-xs">
+                <div key={p.id} className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 shadow-2xs flex items-center justify-between gap-2 text-xs">
                   <div 
                     onClick={() => onOpenDossier ? onOpenDossier(p) : onSelectPerson(p)}
                     className="min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
                     title="임원 상세 도시에 열기"
                   >
-                    <div className="font-bold text-slate-200 truncate flex items-center gap-1">
+                    <div className="font-bold text-slate-800 dark:text-slate-200 truncate flex items-center gap-1">
                       <span>{p.name}</span>
-                      <span className="text-sky-400 text-[11px]">({p.currentTitle})</span>
+                      <span className="text-sky-600 dark:text-sky-400 text-[11px]">({p.currentTitle})</span>
                     </div>
                     <div className="text-[11px] text-slate-500 truncate">{p.currentCompany}</div>
                   </div>
                   <button
                     onClick={() => handleCopyTeaInvite(p)}
-                    className="w-8 h-8 rounded-lg bg-sky-950/90 text-sky-300 border border-sky-500/40 hover:bg-sky-900/80 shadow-[0_2px_6px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-white/5 shrink-0 text-xs font-bold flex items-center justify-center transition-all active:scale-95 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)]"
+                    className="w-8 h-8 rounded-lg bg-sky-50 dark:bg-sky-950/90 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-500/40 hover:bg-sky-100 dark:hover:bg-sky-900/80 shadow-2xs shrink-0 text-xs font-bold flex items-center justify-center transition-all active:scale-95 cursor-pointer"
                     title="티타임 초대장 복사"
                   >
-                    {copiedKey === `tea-${p.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Coffee className="w-3.5 h-3.5" />}
+                    {copiedKey === `tea-${p.id}` ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Coffee className="w-3.5 h-3.5" />}
                   </button>
                 </div>
               ))}
@@ -211,23 +211,23 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
 
           <button
             onClick={() => onNavigateView('proximity')}
-            className="w-full py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-sky-300 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-[0_2px_6px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.08)] border border-slate-700/60 ring-1 ring-white/5 active:scale-[0.98]"
+            className="w-full py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-sky-700 hover:text-sky-900 dark:text-sky-300 dark:hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-2xs border border-slate-200 dark:border-slate-700/60 active:scale-[0.98] cursor-pointer"
           >
             <span>거점 레이더 맵 전체보기</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* Card 2: 미축하 영전 감지 - Neo-Tactile */}
-        <div className="rounded-3xl bg-slate-900/90 border border-slate-800/80 hover:border-slate-700 shadow-[0_10px_25px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.08)] ring-1 ring-white/5 p-5 flex flex-col justify-between space-y-4 transition-all duration-300 hover:-translate-y-0.5 backdrop-blur-xl">
+        {/* Card 2: 미축하 영전 감지 */}
+        <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs hover:shadow-md p-5 flex flex-col justify-between space-y-4 transition-all duration-300 hover:-translate-y-0.5">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-xs font-bold text-amber-400">
+              <span className="flex items-center gap-1.5 text-xs font-bold text-amber-600 dark:text-amber-400">
                 <Award className="w-4 h-4" />
                 <span>DART 영전 조기 감지</span>
               </span>
               {uncelebratedPromos.length > 0 && (
-                <span className="text-[11px] px-2.5 py-0.5 rounded-lg bg-rose-950/80 text-rose-300 border border-rose-500/30 font-bold font-mono shadow-[inset_0_1px_2px_rgba(0,0,0,0.4)]">
+                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/30 font-bold font-mono">
                   {uncelebratedPromos.length}건 미축하
                 </span>
               )}
@@ -242,22 +242,22 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                       onOpenDossier ? onOpenDossier(matched) : onSelectPerson(matched);
                     }
                   }}
-                  className="text-sm font-bold text-white leading-snug cursor-pointer hover:text-amber-300 transition-colors"
+                  className="text-sm font-bold text-slate-900 dark:text-white leading-snug cursor-pointer hover:text-amber-600 dark:hover:text-amber-300 transition-colors"
                   title="임원 프로필 열기"
                 >
                   {uncelebratedPromos[0].personName} {uncelebratedPromos[0].newTitle}
                 </h3>
-                <p className="text-xs text-slate-400 mt-1">
+                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                   {uncelebratedPromos[0].companyName} · {uncelebratedPromos[0].promotionType === 'CEO_APPOINTMENT' ? '대표이사 선임' : '임원 영전'}
                 </p>
 
-                <div className="mt-3 p-3 rounded-2xl bg-slate-950/80 border border-slate-800/80 shadow-[inset_0_1px_3px_rgba(0,0,0,0.6)] space-y-2">
-                  <div className="text-[11px] text-amber-300/90 font-medium">
+                <div className="mt-3 p-3 rounded-2xl bg-amber-50/60 dark:bg-slate-950/80 border border-amber-200/80 dark:border-slate-800/80 shadow-2xs space-y-2">
+                  <div className="text-[11px] text-amber-800 dark:text-amber-300/90 font-medium">
                     "취임을 진심으로 축하드리며 더 큰 도약을 기원합니다."
                   </div>
                   <button
                     onClick={() => handleCopyCongratulation(uncelebratedPromos[0])}
-                    className="w-full py-2.5 rounded-xl bg-gradient-to-b from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white font-bold text-xs shadow-[0_4px_12px_rgba(217,119,6,0.35),inset_0_1px_0_rgba(255,255,255,0.3)] border-t border-white/20 transition-all flex items-center justify-center gap-1.5 active:scale-[0.98]"
+                    className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] cursor-pointer"
                   >
                     {copiedKey === `promo-${uncelebratedPromos[0].id}` ? (
                       <>
@@ -275,8 +275,8 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
               </div>
             ) : (
               <div className="p-6 text-center text-xs text-slate-500 space-y-1">
-                <Check className="w-6 h-6 mx-auto text-emerald-400" />
-                <div className="font-bold text-slate-300">모든 영전 축하 완료</div>
+                <Check className="w-6 h-6 mx-auto text-emerald-500" />
+                <div className="font-bold text-slate-700 dark:text-slate-300">모든 영전 축하 완료</div>
                 <div>새로운 공시가 감지되면 즉시 알려드립니다.</div>
               </div>
             )}
@@ -284,31 +284,31 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
 
           <button
             onClick={() => onNavigateView('promotion')}
-            className="w-full py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-amber-300 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-[0_2px_6px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.08)] border border-slate-700/60 ring-1 ring-white/5 active:scale-[0.98]"
+            className="w-full py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-amber-700 hover:text-amber-900 dark:text-amber-300 dark:hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-2xs border border-slate-200 dark:border-slate-700/60 active:scale-[0.98] cursor-pointer"
           >
             <span>영전·케어 피드 전체보기</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* Card 3: 소통 골든타임 넛지 - Neo-Tactile */}
-        <div className="rounded-3xl bg-slate-900/90 border border-slate-800/80 hover:border-slate-700 shadow-[0_10px_25px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.08)] ring-1 ring-white/5 p-5 flex flex-col justify-between space-y-4 transition-all duration-300 hover:-translate-y-0.5 backdrop-blur-xl">
+        {/* Card 3: 소통 골든타임 넛지 */}
+        <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs hover:shadow-md p-5 flex flex-col justify-between space-y-4 transition-all duration-300 hover:-translate-y-0.5">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-xs font-bold text-rose-400">
+              <span className="flex items-center gap-1.5 text-xs font-bold text-rose-600 dark:text-rose-400">
                 <Clock className="w-4 h-4" />
                 <span>소통 골든타임 넛지</span>
               </span>
-              <span className="text-[11px] px-2.5 py-0.5 rounded-lg bg-rose-950/80 text-rose-300 border border-rose-800/80 font-mono shadow-[inset_0_1px_2px_rgba(0,0,0,0.4)]">
+              <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/80 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800/80 font-mono">
                 {cadenceAlerts.length}명 관리 요망
               </span>
             </div>
 
             <div>
-              <h3 className="text-sm font-bold text-white leading-snug">
+              <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-snug">
                 60일 이상 연락 없는 핵심 인맥
               </h3>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 관계가 느슨해지기 전에 가벼운 안부를 전달하세요.
               </p>
             </div>
@@ -316,24 +316,24 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
             {/* Top Cadence Alerts - Soft Debossed Trays */}
             <div className="space-y-2 pt-1">
               {topCadenceAlerts.map(alert => (
-                <div key={alert.person.id} className="p-2.5 rounded-xl bg-slate-950/80 border border-slate-800/80 shadow-[inset_0_1px_3px_rgba(0,0,0,0.6)] flex items-center justify-between gap-2 text-xs">
+                <div key={alert.person.id} className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800/80 shadow-2xs flex items-center justify-between gap-2 text-xs">
                   <div 
                     onClick={() => onOpenDossier ? onOpenDossier(alert.person) : onSelectPerson(alert.person)}
                     className="min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
                     title="임원 프로필 열기"
                   >
-                    <div className="font-bold text-slate-200 truncate flex items-center gap-1">
+                    <div className="font-bold text-slate-800 dark:text-slate-200 truncate flex items-center gap-1">
                       <span>{alert.person.name}</span>
-                      <span className="text-rose-400 text-[11px] font-mono">({alert.daysSinceLastContact}일)</span>
+                      <span className="text-rose-600 dark:text-rose-400 text-[11px] font-mono">({alert.daysSinceLastContact}일)</span>
                     </div>
                     <div className="text-[11px] text-slate-500 truncate">{alert.person.currentCompany}</div>
                   </div>
                   <button
                     onClick={() => handleCopyCadencePing(alert.person, alert.daysSinceLastContact)}
-                    className="w-8 h-8 rounded-lg bg-rose-950/90 text-rose-300 border border-rose-500/40 hover:bg-rose-900/80 shadow-[0_2px_6px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.15)] ring-1 ring-white/5 shrink-0 text-xs font-bold flex items-center justify-center transition-all active:scale-95 active:shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)]"
+                    className="w-8 h-8 rounded-lg bg-rose-50 dark:bg-rose-950/90 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-500/40 hover:bg-rose-100 dark:hover:bg-rose-900/80 shadow-2xs shrink-0 text-xs font-bold flex items-center justify-center transition-all active:scale-95 cursor-pointer"
                     title="안부 핑 복사"
                   >
-                    {copiedKey === `cadence-${alert.person.id}` ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <MessageCircle className="w-3.5 h-3.5" />}
+                    {copiedKey === `cadence-${alert.person.id}` ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <MessageCircle className="w-3.5 h-3.5" />}
                   </button>
                 </div>
               ))}
@@ -342,23 +342,23 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
 
           <button
             onClick={() => onNavigateView('promotion')}
-            className="w-full py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 text-rose-300 hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-[0_2px_6px_rgba(0,0,0,0.2),inset_0_1px_0_rgba(255,255,255,0.08)] border border-slate-700/60 ring-1 ring-white/5 active:scale-[0.98]"
+            className="w-full py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800/80 dark:hover:bg-slate-700/80 text-rose-700 hover:text-rose-900 dark:text-rose-300 dark:hover:text-white text-xs font-bold transition-all flex items-center justify-center gap-1 shadow-2xs border border-slate-200 dark:border-slate-700/60 active:scale-[0.98] cursor-pointer"
           >
             <span>소통 주기 관리 큐 전체보기</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
-        {/* Card 4: 포커스 딜 침투 건전도 - Neo-Tactile */}
-        <div className="rounded-3xl bg-slate-900/90 border border-slate-800/80 hover:border-slate-700 shadow-[0_10px_25px_rgba(0,0,0,0.45),inset_0_1px_0_rgba(255,255,255,0.08)] ring-1 ring-white/5 p-5 flex flex-col justify-between space-y-4 transition-all duration-300 hover:-translate-y-0.5 backdrop-blur-xl">
+        {/* Card 4: 포커스 딜 인맥 연결 건전도 */}
+        <div className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-xs hover:shadow-md p-5 flex flex-col justify-between space-y-4 transition-all duration-300 hover:-translate-y-0.5">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-400">
+              <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
                 <Briefcase className="w-4 h-4" />
                 <span>최우선 비즈니스 딜</span>
               </span>
               {activeFocusDeal && (
-                <span className="text-[11px] px-2.5 py-0.5 rounded-lg bg-emerald-950/80 text-emerald-300 border border-emerald-800/80 font-mono shadow-[inset_0_1px_2px_rgba(0,0,0,0.4)]">
+                <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/80 font-mono">
                   건전도 {activeFocusDeal.healthScore}%
                 </span>
               )}
@@ -367,7 +367,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
             {activeFocusDeal ? (
               <div className="space-y-2.5">
                 <div>
-                  <h3 className="text-sm font-bold text-white leading-snug line-clamp-2">
+                  <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-snug line-clamp-2">
                     {activeFocusDeal.title}
                   </h3>
                   <div className="text-xs text-indigo-300 font-semibold mt-1">
@@ -378,7 +378,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                 {/* Health Progress Bar - Debossed Slot */}
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-[11px] text-slate-400">
-                    <span>인맥 침투 건전도</span>
+                    <span>인맥 연결 건전도</span>
                     <span className="font-mono text-emerald-400 font-bold">{activeFocusDeal.healthScore}%</span>
                   </div>
                   <div className="w-full bg-slate-950 h-2.5 rounded-full overflow-hidden p-0.5 shadow-[inset_0_1px_3px_rgba(0,0,0,0.7)] border border-slate-800/60">
@@ -487,7 +487,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
           <div className="p-4 rounded-2xl bg-slate-950/80 border border-slate-800/80 shadow-[inset_0_1px_3px_rgba(0,0,0,0.6)] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div className="space-y-1">
               <div className="text-xs font-bold text-slate-200">
-                현대자동차 &amp; SK하이닉스 C-Level 침투 제안
+                현대자동차 &amp; SK하이닉스 C-Level 신뢰 브릿지 제안
               </div>
               <div className="text-[11px] text-slate-400">
                 내 알럼나이 1촌 4명이 해당 기업 2촌 임원진과 연결되어 있습니다.

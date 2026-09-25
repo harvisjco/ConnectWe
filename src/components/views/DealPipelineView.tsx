@@ -156,7 +156,7 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
               </span>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              비즈니스 딜별 의사결정권자(Key Decision Maker)와 내부 지지자(Champion)를 내 인맥과 매핑하여 침투 성공률을 극대화합니다.
+              비즈니스 딜별 의사결정권자(Key Decision Maker)와 내부 지지자(Champion)를 내 인맥과 매핑하여 딜 성사율과 접근성을 극대화합니다.
             </p>
           </div>
         </div>
@@ -226,7 +226,7 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
                     {/* Health Score Bar */}
                     <div className="space-y-1">
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="text-slate-500 dark:text-slate-400">인맥 침투 건전도</span>
+                        <span className="text-slate-500 dark:text-slate-400">인맥 연결 건전도</span>
                         <span className="font-bold text-blue-600 dark:text-indigo-300 font-mono">{deal.healthScore}%</span>
                       </div>
                       <div className="w-full bg-slate-100 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden">

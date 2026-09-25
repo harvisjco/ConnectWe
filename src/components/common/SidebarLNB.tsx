@@ -58,8 +58,8 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
   const sections: NavSection[] = [
     {
       title: '인맥 자산 & 인텔리전스',
-      tag: 'CORE',
-      tagColor: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-500/20 dark:text-blue-300 dark:border-blue-500/30',
+      tag: '',
+      tagColor: '',
       items: [
         {
           id: 'command',
@@ -75,44 +75,40 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
           id: 'company',
           label: 'DART 상장사 공시 팩트',
           icon: Building2,
-          badge: dartFactCount > 0 ? { text: `${dartFactCount}명`, variant: 'subtle' } : undefined
+          badge: dartFactCount > 0 ? { text: `${dartFactCount}`, variant: 'subtle' } : undefined
         },
         {
           id: 'orgchart',
           label: '기업 지배구조 & 조직도',
-          icon: GitBranch,
-          badge: { text: '6개사', variant: 'subtle' }
+          icon: GitBranch
         },
         {
           id: 'audit',
           label: '동문 & 인맥 건강도',
-          icon: ShieldAlert,
-          badge: { text: '94점', variant: 'subtle' }
+          icon: ShieldAlert
         }
       ]
     },
     {
       title: '비즈니스 & 딜 실행',
-      tag: 'CARE',
-      tagColor: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30',
+      tag: '',
+      tagColor: '',
       items: [
         {
           id: 'deals',
           label: '딜 파이프라인 칸반',
           icon: Briefcase,
-          badge: { text: '진행 3', variant: 'action-amber' }
+          badge: { text: '3', variant: 'action-amber' }
         },
         {
           id: 'promotion',
           label: '정기 승진 & 인사 레이더',
-          icon: TrendingUp,
-          badge: { text: '8명', variant: 'subtle' }
+          icon: TrendingUp
         },
         {
           id: 'referral',
           label: '소개 보상 파이프라인',
-          icon: Gift,
-          badge: { text: '2건', variant: 'subtle' }
+          icon: Gift
         },
         {
           id: 'team',
@@ -123,8 +119,8 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
     },
     {
       title: '다차원 공간 & 시계열',
-      tag: '3D/TIME',
-      tagColor: 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-500/20 dark:text-purple-300 dark:border-purple-500/30',
+      tag: '',
+      tagColor: '',
       items: [
         {
           id: 'canvas',
@@ -134,14 +130,12 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
         {
           id: 'galaxy',
           label: '3D 은하수 우주 뷰',
-          icon: Orbit,
-          badge: { text: '3D', variant: 'subtle' }
+          icon: Orbit
         },
         {
           id: 'proximity',
           label: '지리적 근접 레이더',
-          icon: Compass,
-          badge: { text: '4명', variant: 'subtle' }
+          icon: Compass
         },
         {
           id: 'timeline',
@@ -219,20 +213,14 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
           <div key={sIdx} className="space-y-1">
             {/* Section Header */}
             {!isCollapsed ? (
-              <div className="flex items-center justify-between px-2.5 py-1">
-                <div className="flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600" />
-                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 tracking-wider">
-                    {section.title}
-                  </span>
-                </div>
-                <span className={`text-[11px] px-1.5 py-0.5 rounded-full font-bold uppercase border ${section.tagColor}`}>
-                  {section.tag}
+              <div className="flex items-center px-2.5 pt-2 pb-1">
+                <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+                  {section.title}
                 </span>
               </div>
             ) : (
               <div className="w-full flex justify-center py-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-slate-400 dark:bg-slate-600" />
+                <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
               </div>
             )}
 

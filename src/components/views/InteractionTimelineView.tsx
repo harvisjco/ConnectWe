@@ -22,11 +22,11 @@ export const InteractionTimelineView: React.FC<InteractionTimelineViewProps> = (
 
   const handleFilterChange = (type: 'all' | 'stale' | 'recent') => {
     setFilterType(type);
-    if (type === 'stale') onShowToast('⚠️ 6개월 이상 소통이 단절된 인맥 필터가 적용되었습니다.');
+    if (type === 'stale') onShowToast('💬 6개월 이상 소통 공백(안부 연락 필요) 인맥 필터가 적용되었습니다.');
     else if (type === 'recent') onShowToast('✨ 최근 90일 내 소통 기록이 있는 인맥 필터가 적용되었습니다.');
   };
 
-  // 6개월(180일) 이상 소통 단절된 인맥
+  // 6개월(180일) 이상 소통 공백(안부 필요) 인맥
   const stalePeople = people.filter(p => p.closeness !== 1 && p.isStale);
 
   // 최근 90일 내 소통 기록이 있는 인맥
@@ -96,7 +96,7 @@ export const InteractionTimelineView: React.FC<InteractionTimelineViewProps> = (
           }`}
         >
           <div className="flex items-center justify-between text-xs text-rose-400 mb-1">
-            <span>관계 단절 위험 (180일+)</span>
+            <span>소통 공백 주의 (180일+)</span>
             <AlertTriangle className="w-4 h-4 text-rose-400" />
           </div>
           <div className="text-2xl font-bold text-rose-300">
@@ -127,7 +127,7 @@ export const InteractionTimelineView: React.FC<InteractionTimelineViewProps> = (
               onClick={() => handleFilterChange('stale')}
               className={`px-3 py-1 rounded-md transition-all ${filterType === 'stale' ? 'bg-rose-600 text-white font-bold' : 'text-slate-400 hover:text-white'}`}
             >
-              단절 위험 ({stalePeople.length})
+              소통 환기 필요 ({stalePeople.length})
             </button>
           </div>
         </div>

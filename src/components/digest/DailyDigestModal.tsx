@@ -23,7 +23,7 @@ export const DailyDigestModal: React.FC<DailyDigestModalProps> = ({
   const currentMonth = today.getMonth() + 1;
   const currentDay = today.getDate();
 
-  // 1. 소통 단절(6개월 이상) 핵심 1촌 (최대 3명)
+  // 1. 6개월 이상 미소통(안부 필요) 핵심 1촌 (최대 3명)
   const staleCorePeople = people
     .filter(p => p.isStale && p.closeness <= 3)
     .slice(0, 3);
@@ -135,12 +135,12 @@ export const DailyDigestModal: React.FC<DailyDigestModalProps> = ({
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
               <Clock className="w-4 h-4" />
-              <span>관계 유지가 필요한 소통 단절 핵심 1촌 (6개월 이상)</span>
+              <span>안부 연락이 필요한 핵심 1촌 (6개월 이상 연락 뜸함)</span>
             </div>
 
             {staleCorePeople.length === 0 ? (
               <p className="text-xs text-slate-500 p-4 border border-dashed border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl text-center">
-                현재 6개월 이상 소통이 단절된 핵심 1촌이 없습니다. 인맥 관리가 훌륭히 유지되고 있습니다!
+                현재 6개월 이상 소통 공백이 발생한 핵심 1촌이 없습니다. 인맥 관리가 훌륭히 유지되고 있습니다!
               </p>
             ) : (
               <div className="space-y-3">

@@ -57,7 +57,7 @@ export function executeGraphRagQuery(query: string, people: Person[]): GraphQuer
   if (isInfraCloud) filterTags.push('도메인: 클라우드/인프라');
   if (isVcFinance) filterTags.push('도메인: VC/투자');
   if (isDartFact) filterTags.push('검증: 🏛️ DART 실공시 팩트');
-  if (isStaleIntent) filterTags.push('상태: ⚡ 6개월 이상 소통 단절');
+  if (isStaleIntent) filterTags.push('상태: 💬 6개월 이상 안부 필요');
   if (isKaist) filterTags.push('학맥: KAIST');
   if (isSeoulUniv) filterTags.push('학맥: 서울대학교');
 
@@ -82,7 +82,7 @@ export function executeGraphRagQuery(query: string, people: Person[]): GraphQuer
       else return false;
     }
 
-    // 소통 단절 조건
+    // 6개월 미소통(안부 필요) 조건
     if (isStaleIntent) {
       if (p.isStale) score += 4;
       else return false;

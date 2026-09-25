@@ -31,7 +31,7 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
   const [selectedGradeFilter, setSelectedGradeFilter] = useState<PenetrationGrade | 'ALL'>('ALL');
   const [activeCompanyForDetail, setActiveCompanyForDetail] = useState<CompanyPenetration | null>(null);
 
-  // 20대 핵심 기업 침투도 계산
+  // 20대 핵심 기업 네트워크 커버리지(도달도) 계산
   const penetrations = useMemo(() => {
     return calculateCompanyPenetrations(people);
   }, [people]);
@@ -50,7 +50,7 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
   // CSV 다운로드
   const handleExportCsv = () => {
     exportPenetrationCsvWithBom(penetrations);
-    onShowToast('CSV BOM 포맷의 타깃 기업 침투도 진단 리포트가 다운로드되었습니다.');
+    onShowToast('CSV BOM 포맷의 타깃 기업 네트워크 커버리지 진단 리포트가 다운로드되었습니다.');
   };
 
   return (
@@ -63,13 +63,13 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">전략 인맥 자산 가치 &amp; 타깃 기업 침투율 진단실</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">전략 인맥 자산 가치 &amp; 타깃 기업 네트워크 커버리지 진단실</h2>
               <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30 font-semibold font-mono">
-                Network Equity &amp; Penetration Audit
+                Network Equity &amp; Coverage Audit
               </span>
             </div>
             <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
-              국내 20대 핵심 기업군에 대한 나의 인맥 침투 장악도(A~D등급)를 정밀 진단하고, 의사결정권자 사각지대(Blind Spot)를 조기에 포착합니다.
+              국내 20대 핵심 기업군에 대한 나의 인맥 도달력과 네트워크 커버리지(A~D등급)를 정밀 진단하고, 의사결정권자 사각지대(Blind Spot)를 조기에 포착합니다.
             </p>
           </div>
         </div>
@@ -108,12 +108,12 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
         </div>
 
         <div className="p-4 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-200 dark:border-emerald-500/30 shadow-sm flex flex-col justify-between">
-          <div className="text-xs text-emerald-800 dark:text-emerald-300 font-semibold">A등급 전략 장악</div>
+          <div className="text-xs text-emerald-800 dark:text-emerald-300 font-semibold">A등급 핵심 파트너십</div>
           <div className="text-xl font-bold text-emerald-700 dark:text-emerald-400 font-mono mt-1">
             {equitySummary.gradeACount}개사
           </div>
           <div className="text-[11px] text-emerald-600 dark:text-slate-400 mt-1">
-            침투율 75% 이상
+            도달률 75% 이상
           </div>
         </div>
 
@@ -123,7 +123,7 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
             {equitySummary.gradeBCount}개사
           </div>
           <div className="text-[11px] text-sky-600 dark:text-slate-400 mt-1">
-            침투율 45~74%
+            도달률 45~74%
           </div>
         </div>
 
@@ -169,7 +169,7 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
               : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white shadow-sm'
           }`}
         >
-          🟢 A등급: 전략 장악 ({equitySummary.gradeACount})
+          🟢 A등급: 핵심 파트너십 ({equitySummary.gradeACount})
         </button>
 
         <button
@@ -233,7 +233,7 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
               {/* Penetration Progress Bar */}
               <div className="space-y-1 pt-1">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500 dark:text-slate-400">침투 장악도</span>
+                  <span className="text-slate-500 dark:text-slate-400">네트워크 도달력</span>
                   <span className="font-mono font-bold text-indigo-600 dark:text-indigo-300">{item.penetrationScore}%</span>
                 </div>
                 <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
@@ -289,7 +289,7 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
                   </span>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  {activeCompanyForDetail.industry} · 시가총액 순위 #{activeCompanyForDetail.marketCapRank}위 · 침투점수 {activeCompanyForDetail.penetrationScore}점
+                  {activeCompanyForDetail.industry} · 시가총액 순위 #{activeCompanyForDetail.marketCapRank}위 · 도달점수 {activeCompanyForDetail.penetrationScore}점
                 </p>
               </div>
               <button 

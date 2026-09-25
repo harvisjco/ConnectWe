@@ -72,7 +72,7 @@ export interface Person {
   closeness: 1 | 2 | 3 | 4 | 5; // 1: Me, 2: 절친/핵심 1촌, 3: 일반 1촌(명함), 4: 2촌 접점, 5: 잠재 풀
   connectionChannel: 'remember' | 'vcard' | 'business_card' | 'dart' | 'manual';
   lastContactDate?: string;
-  isStale: boolean; // 6개월 이상 소통 단절
+  isStale: boolean; // 6개월 이상 미소통 (안부 필요)
   memo?: string;
   activityLogs?: ActivityLog[];
   address?: string;

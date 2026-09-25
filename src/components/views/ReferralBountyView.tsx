@@ -180,13 +180,13 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-2 bg-slate-900/90 p-1.5 rounded-xl border border-slate-800">
+        <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-900/90 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800">
           <button
             onClick={() => setActiveTab('positions')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'positions'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-blue-600 dark:bg-indigo-600 text-white shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             <Briefcase className="w-3.5 h-3.5" />
@@ -194,10 +194,10 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('submissions')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'submissions'
-                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-blue-600 dark:bg-indigo-600 text-white shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
             }`}
           >
             <Clock className="w-3.5 h-3.5" />
@@ -208,61 +208,61 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
 
       {/* 실시간 리워드 적립 & HRCO 브릿지 상태 3대 KPI 바 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div className="p-4 rounded-xl bg-slate-900/90 border border-emerald-500/30 shadow-lg flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-emerald-500/30 shadow-xs flex items-center justify-between">
           <div className="space-y-0.5">
-            <span className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
-              <DollarSign className="w-3.5 h-3.5 text-emerald-400" />
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
+              <DollarSign className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>누적 확정 정산 리워드</span>
             </span>
-            <div className="text-xl font-black text-emerald-300 font-mono">
+            <div className="text-xl font-black text-emerald-600 dark:text-emerald-300 font-mono">
               {formatMoney(totalEarnedReward)}
             </div>
           </div>
           <div className="flex flex-col items-end gap-1.5">
             <button
               onClick={() => setIsWithdrawalModalOpen(true)}
-              className="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] shadow-md shadow-emerald-600/30 flex items-center gap-1 transition-all hover:scale-102"
+              className="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] shadow-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
               title="세무 3.3% 원천징수 공제 후 등록 계좌로 출금 신청"
             >
               <span>계좌 출금 신청</span>
               <ArrowUpRight className="w-3 h-3" />
             </button>
-            <span className="text-[11px] text-emerald-400/80 font-mono">
+            <span className="text-[11px] text-emerald-600/80 dark:text-emerald-400/80 font-mono">
               익일 영업일 입금
             </span>
           </div>
         </div>
 
-        <div className="p-4 rounded-xl bg-slate-900/90 border border-indigo-500/30 shadow-lg flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-indigo-500/30 shadow-xs flex items-center justify-between">
           <div className="space-y-0.5">
-            <span className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
-              <Zap className="w-3.5 h-3.5 text-indigo-400" />
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
+              <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-indigo-400" />
               <span>진행 중 채용 파이프라인</span>
             </span>
-            <div className="text-xl font-black text-indigo-300 font-mono">
+            <div className="text-xl font-black text-blue-600 dark:text-indigo-300 font-mono">
               {activeSubmissionsCount}건
             </div>
           </div>
-          <span className="text-[11px] px-2 py-1 rounded-lg bg-indigo-950/80 border border-indigo-500/30 text-indigo-300 font-bold">
+          <span className="text-[11px] px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 dark:bg-indigo-950/80 dark:border-indigo-500/30 dark:text-indigo-300 font-bold">
             총 {submissions.length}건 추천
           </span>
         </div>
 
-        <div className="p-4 rounded-xl bg-slate-900/90 border border-purple-500/30 shadow-lg flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-purple-500/30 shadow-xs flex items-center justify-between">
           <div className="space-y-0.5">
-            <span className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+            <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
+              <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
               <span>단계별 보상 체계</span>
             </span>
-            <div className="text-xs text-slate-200 font-semibold space-x-1">
+            <div className="text-xs text-slate-700 dark:text-slate-200 font-semibold space-x-1">
               <span>☕ 5만</span>
-              <span className="text-slate-500">·</span>
+              <span className="text-slate-300 dark:text-slate-600">·</span>
               <span>🎤 20만</span>
-              <span className="text-slate-500">·</span>
-              <span className="text-purple-300 font-bold">🎉 최대 1,000만</span>
+              <span className="text-slate-300 dark:text-slate-600">·</span>
+              <span className="text-purple-600 dark:text-purple-300 font-bold">🎉 최대 1,000만</span>
             </div>
           </div>
-          <span className="text-[11px] px-2 py-1 rounded-lg bg-purple-950/80 border border-purple-500/30 text-purple-300 font-bold">
+          <span className="text-[11px] px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950/80 dark:border-purple-500/30 dark:text-purple-300 font-bold">
             3단계 마일스톤
           </span>
         </div>
@@ -442,7 +442,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
               </div>
 
               {matchedCandidates.length === 0 ? (
-                <div className="p-8 text-center rounded-2xl bg-slate-900 border border-slate-800 text-slate-400 text-xs">
+                <div className="p-8 text-center rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-xs shadow-xs">
                   현재 주소록에 본 포지션 요구역량과 일치하는 인맥이 부족합니다. 새 인맥을 등록하거나 CSV를 추가 가져오기 해보세요.
                 </div>
               ) : (
@@ -452,22 +452,22 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                     return (
                       <div
                         key={p.id}
-                        className="p-4 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-indigo-500/50 transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+                        className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-indigo-500/50 shadow-xs transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
                       >
                         <div className="space-y-1.5 flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <span 
                               onClick={() => onSelectPerson(p)}
-                              className="font-bold text-sm text-white hover:text-indigo-300 cursor-pointer transition-colors"
+                              className="font-bold text-sm text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-indigo-300 cursor-pointer transition-colors"
                             >
                               {p.name}
                             </span>
-                            <span className="text-xs text-slate-400">
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
                               {p.currentCompany} · {p.currentTitle}
                             </span>
                             {p.dartInfo && (
-                              <span className="text-[11px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 flex items-center gap-0.5 font-medium">
-                                <ShieldCheck className="w-3 h-3" /> DART
+                              <span className="text-[11px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 flex items-center gap-0.5 font-medium">
+                                <ShieldCheck className="w-3 h-3 text-emerald-600 dark:text-emerald-400" /> DART
                               </span>
                             )}
                           </div>

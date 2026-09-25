@@ -13,7 +13,7 @@ const PRESET_QUERIES = [
   '과거 네이버 거쳐간 40대 임원이나 기술 리드',
   'KAIST 출신 생성형 AI 창업자 또는 연구원',
   '금융감독원 DART 실공시된 상장사 사내이사',
-  '6개월 이상 소통 단절된 핵심 1촌 리마인더',
+  '6개월 이상 안부 연락이 뜸했던 핵심 1촌',
   'VC/PE 글로벌 투자 파트너 및 심사역'
 ];
 
@@ -49,7 +49,7 @@ export const GraphSearchBar: React.FC<GraphSearchBarProps> = ({
             type="text"
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
-            placeholder='자연어로 질의하세요: "과거 네이버 거쳐간 40대 임원", "카이스트 AI 연구원", "소통 단절된 1촌"...'
+            placeholder='자연어로 질의하세요: "과거 네이버 거쳐간 40대 임원", "카이스트 AI 연구원", "연락 뜸해진 1촌"...'
             className="w-full bg-transparent text-sm md:text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none font-normal"
           />
 
@@ -65,7 +65,7 @@ export const GraphSearchBar: React.FC<GraphSearchBarProps> = ({
 
           <button
             type="submit"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-black dark:bg-gradient-to-b dark:from-indigo-500 dark:to-indigo-600 dark:hover:from-indigo-400 active:scale-[0.98] transition-all text-xs md:text-sm font-semibold text-white shadow-xs dark:shadow-[0_4px_14px_rgba(79,70,229,0.4)] border border-slate-800 dark:border-white/20 flex-shrink-0"
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-indigo-600 dark:hover:bg-indigo-500 active:scale-[0.98] transition-all text-xs md:text-sm font-bold text-white shadow-xs cursor-pointer flex-shrink-0"
           >
             <Search className="w-4 h-4 text-white" />
             <span className="hidden sm:inline">GraphRAG 탐색</span>
@@ -75,41 +75,41 @@ export const GraphSearchBar: React.FC<GraphSearchBarProps> = ({
 
       {/* Recommended Prompt Chips - Clean Minimal Pills */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs text-slate-500 dark:text-slate-400 scrollbar-none">
-        <span className="text-[11px] font-medium text-slate-500 whitespace-nowrap flex items-center gap-1">
-          <Tag className="w-3 h-3 text-slate-400" /> 추천 질문:
+        <span className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 whitespace-nowrap flex items-center gap-1">
+          <Tag className="w-3 h-3 text-slate-400" /> 추천:
         </span>
         {PRESET_QUERIES.map((preset, idx) => (
           <button
             key={idx}
             type="button"
             onClick={() => handleChipClick(preset)}
-            className="px-3 py-1 rounded-full bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-900/90 dark:hover:bg-slate-800 border border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-indigo-500/40 text-slate-700 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white transition-all whitespace-nowrap text-xs shadow-2xs active:scale-95"
+            className="px-3 py-1 rounded-full bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-850 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white transition-all whitespace-nowrap text-xs shadow-2xs active:scale-95 cursor-pointer font-medium"
           >
             {preset}
           </button>
         ))}
       </div>
 
-      {/* AI Synthesis Reasoning Briefing Card - Spatial Glass */}
+      {/* AI Synthesis Reasoning Briefing Card */}
       {searchResult && query && (
-        <div className="rounded-2xl border border-indigo-500/30 bg-slate-900/85 shadow-[0_12px_32px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.1)] ring-1 ring-white/10 p-4 backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="rounded-2xl border border-blue-200 dark:border-indigo-500/40 bg-blue-50/80 dark:bg-slate-900 shadow-sm p-4 backdrop-blur-xl animate-in fade-in slide-in-from-top-2 duration-300">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-3">
-              <div className="p-2 rounded-xl bg-indigo-500/20 text-indigo-400 mt-0.5 shadow-[inset_0_1px_2px_rgba(0,0,0,0.3)]">
+              <div className="p-2 rounded-xl bg-blue-100 dark:bg-indigo-500/20 text-blue-700 dark:text-indigo-400 mt-0.5">
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">
+                  <span className="text-xs font-bold uppercase tracking-wider text-blue-800 dark:text-indigo-300">
                     GraphRAG 경로 분석 & 지능형 브리핑
                   </span>
                   {searchResult.filterTags.map((t, idx) => (
-                    <span key={idx} className="px-2 py-0.5 rounded text-[11px] bg-slate-950 text-slate-300 border border-slate-800 shadow-[inset_0_1px_2px_rgba(0,0,0,0.4)]">
+                    <span key={idx} className="px-2 py-0.5 rounded-md text-[11px] font-medium bg-white dark:bg-slate-800 text-blue-800 dark:text-slate-200 border border-blue-200 dark:border-slate-700 shadow-2xs">
                       {t}
                     </span>
                   ))}
                 </div>
-                <p className="text-xs md:text-sm text-slate-200 leading-relaxed">
+                <p className="text-xs md:text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-normal">
                   {searchResult.reasoning}
                 </p>
               </div>
@@ -117,7 +117,7 @@ export const GraphSearchBar: React.FC<GraphSearchBarProps> = ({
 
             <button
               onClick={onResetSearch}
-              className="text-xs text-slate-400 hover:text-slate-200 underline whitespace-nowrap mt-1"
+              className="text-xs text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 underline whitespace-nowrap mt-1 cursor-pointer"
             >
               필터 해제
             </button>

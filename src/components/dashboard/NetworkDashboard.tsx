@@ -146,7 +146,7 @@ export const NetworkDashboard: React.FC<NetworkDashboardProps> = ({
             <KpiCard icon={<Users className="w-4 h-4 text-indigo-400" />} label="전체 인맥" value={`${total}명`} sub="직접 연결 인맥" />
             <KpiCard icon={<Shield className="w-4 h-4 text-emerald-400" />} label="DART 검증" value={`${dartVerified}명`} sub={`검증률 ${total ? Math.round((dartVerified / total) * 100) : 0}%`} accent="emerald" />
             <KpiCard icon={<TrendingUp className="w-4 h-4 text-amber-400" />} label="최근 30일 소통" value={`${contactStats.d30}명`} sub="활성 인맥" accent="amber" />
-            <KpiCard icon={<AlertTriangle className="w-4 h-4 text-rose-400" />} label="소통 단절 위험" value={`${contactStats.stale}명`} sub="180일+ 미소통" accent="rose" />
+            <KpiCard icon={<AlertTriangle className="w-4 h-4 text-rose-400" />} label="소통 환기 필요" value={`${contactStats.stale}명`} sub="180일+ 미소통" accent="rose" />
           </div>
 
           {/* 차트 영역 */}

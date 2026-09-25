@@ -98,7 +98,7 @@ export function processCopilotQuery(
     return {
       id: `msg-${Date.now()}`,
       sender: 'assistant',
-      text: `6개월 이상 소통이 단절되어 관계 복원이 시급한 주요 지인들입니다. 아래 인맥 카드에서 [안부 메시지]를 생성해 부담 없이 연락을 건네보세요.`,
+      text: `최근 6개월 이상 안부 연락이 뜸했던 소중한 지인들입니다. 아래 인맥 카드에서 [안부 메시지]를 생성해 부담 없이 따뜻한 인사를 건네보세요.`,
       matchedPeople: staleList,
       actionType: 'stale_reminder',
       timestamp: timeStr

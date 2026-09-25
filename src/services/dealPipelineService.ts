@@ -30,7 +30,7 @@ export interface BusinessDeal {
 const STORAGE_KEY = 'connectwe_business_deals';
 
 /**
- * 딜 침투 건전도(Health Score) 계산 알고리즘
+ * 딜 인맥 연결 건전도(Health Score) 계산 알고리즘
  * - 의사결정권자(Decision Maker) 확보 여부 (+40점)
  * - 내부 챔피언(Champion) 확보 여부 (+30점)
  * - 1~2촌 직통 인맥 여부 (+20점)

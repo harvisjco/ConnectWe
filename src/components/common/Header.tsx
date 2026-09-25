@@ -81,7 +81,7 @@ export const Header: React.FC<HeaderProps> = ({
       return tel.replace(/^(\d{2,3})-(\d{3,4})-(\d{4})$/, '$1-****-$3');
     };
 
-    const headers = ['이름', '현재회사', '현재직함', '소속부서', '휴대전화', '이메일', '출처구분', '추정나이대', 'DART상장공시', '소통단절여부', '메모'];
+    const headers = ['이름', '현재회사', '현재직함', '소속부서', '휴대전화', '이메일', '출처구분', '추정나이대', 'DART상장공시', '소통상태(미소통여부)', '메모'];
     const rows = people.map(p => [
       `"${p.name}"`,
       `"${p.currentCompany}"`,
@@ -188,49 +188,46 @@ export const Header: React.FC<HeaderProps> = ({
               <Share2 className="w-5 h-5 text-white" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white whitespace-nowrap">
+              <div className="flex items-center gap-2.5">
+                <h1 className="text-lg sm:text-xl font-black tracking-tight text-slate-900 dark:text-white whitespace-nowrap">
                   ConnectWe
                 </h1>
-                <span className="hidden sm:inline-block text-[11px] px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30 font-semibold tracking-wide whitespace-nowrap">
-                  Production-Ready
-                </span>
                 <button
                   onClick={onOpenCloudSyncModal}
                   title="Supabase PostgreSQL E2EE Cloud Live 연동 중"
-                  className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 min-h-[32px] rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30 font-medium hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95 shadow-2xs"
+                  className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30 font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95 shadow-2xs"
                 >
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>Supabase Live</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                  <span>Cloud Live</span>
                 </button>
               </div>
-              <p className="hidden sm:block text-[11px] text-slate-500 dark:text-slate-400 whitespace-nowrap truncate max-w-xs md:max-w-none">
-                리멤버 · 스마트폰 주소록 · DART 8,500+ 상장사 실공시 팩트 융합 인맥 허브
+              <p className="hidden sm:block text-[11px] font-medium text-slate-400 dark:text-slate-400 whitespace-nowrap truncate max-w-xs md:max-w-none">
+                스마트폰 주소록 · DART 상장사 공시 팩트 융합 지능 허브
               </p>
             </div>
           </div>
         </div>
 
         {/* Zone 2: Executive Metric Capsule (Desktop & Tablet) - Clean Tech Capsule */}
-        <div className="hidden lg:flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-slate-100 dark:bg-slate-950/80 border border-slate-200/90 dark:border-slate-800/70 text-xs shadow-xs dark:shadow-[inset_0_2px_4px_rgba(0,0,0,0.6)] whitespace-nowrap">
+        <div className="hidden lg:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-slate-100/80 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 text-xs shadow-2xs whitespace-nowrap">
           <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
             <Users className="w-3.5 h-3.5 text-blue-600 dark:text-indigo-400" />
-            <span className="text-slate-500 dark:text-slate-400">총 인맥</span>
-            <span className="font-bold text-slate-900 dark:text-white">{people.length}명</span>
+            <span className="text-slate-500 dark:text-slate-400">인맥</span>
+            <span className="font-extrabold text-slate-900 dark:text-white">{people.length}명</span>
           </div>
-          <span className="text-slate-300 dark:text-slate-600">·</span>
+          <span className="text-slate-300 dark:text-slate-700">·</span>
           <div className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span className="text-emerald-700 dark:text-emerald-400 font-medium">DART FACT</span>
-            <span className="font-bold text-emerald-700 dark:text-emerald-300">{dartFactCount}명</span>
+            <span className="text-emerald-700 dark:text-emerald-400 font-semibold">DART 공시</span>
+            <span className="font-extrabold text-emerald-700 dark:text-emerald-300">{dartFactCount}명</span>
           </div>
           {staleCount > 0 && (
             <>
-              <span className="text-slate-300 dark:text-slate-600">·</span>
+              <span className="text-slate-300 dark:text-slate-700">·</span>
               <div className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                <span className="text-amber-700 dark:text-amber-400 font-medium">미소통</span>
-                <span className="font-bold text-amber-700 dark:text-amber-300">{staleCount}명</span>
+                <span className="text-amber-700 dark:text-amber-400 font-semibold">미소통</span>
+                <span className="font-extrabold text-amber-700 dark:text-amber-300">{staleCount}명</span>
               </div>
             </>
           )}
@@ -241,7 +238,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Daily Intelligence Digest CTA */}
           <button
             onClick={onOpenDigestModal}
-            className="flex items-center gap-1.5 px-3.5 py-2 min-h-[36px] rounded-xl bg-white dark:bg-gradient-to-b dark:from-indigo-950/90 dark:to-purple-950/90 border border-slate-200 dark:border-indigo-500/40 hover:border-slate-300 dark:hover:border-indigo-400 text-xs font-semibold text-slate-700 dark:text-indigo-200 hover:text-slate-900 dark:hover:text-white transition-all active:scale-[0.98] shadow-xs dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)] whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3 py-2 min-h-[36px] rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition-all active:scale-[0.98] shadow-xs cursor-pointer whitespace-nowrap"
             title="오늘의 인맥 지능 다이제스트"
           >
             <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-indigo-400 animate-pulse" />
@@ -251,10 +248,10 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </button>
 
-          {/* Add Person CTA - Naver Cloud Console Style Solid Button */}
+          {/* Add Person CTA - Dominant Clean Action Button */}
           <button
             onClick={onOpenAddModal}
-            className="flex items-center gap-1.5 px-3.5 py-2 min-h-[36px] rounded-xl bg-slate-900 hover:bg-black dark:bg-gradient-to-b dark:from-indigo-500 dark:to-indigo-600 dark:hover:from-indigo-400 active:scale-[0.98] transition-all text-xs font-semibold text-white shadow-xs dark:shadow-[0_4px_14px_rgba(79,70,229,0.4)] border border-slate-800 dark:border-white/20 whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3.5 py-2 min-h-[36px] rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-indigo-600 dark:hover:bg-indigo-500 active:scale-[0.98] transition-all text-xs font-bold text-white shadow-xs dark:shadow-indigo-500/20 cursor-pointer whitespace-nowrap"
             title="새 인맥 직접 등록"
           >
             <UserPlus className="w-3.5 h-3.5 text-white" />

@@ -23,7 +23,7 @@ export interface NetworkEquitySummary {
   totalPeople: number;
   totalCompanies: number;
   dartExecutiveTotal: number;
-  gradeACount: number; // 완전 장악 기업
+  gradeACount: number; // 핵심 파트너십 기업
   gradeBCount: number; // 양호 기업
   gradeCCount: number; // 진입 단계
   blindSpotCount: number; // 사각지대 (D)
@@ -66,7 +66,7 @@ function matchCompany(personComp: string, targetComp: string): boolean {
 }
 
 /**
- * 20대 핵심 기업 침투도 분석 산출
+ * 20대 핵심 기업 네트워크 커버리지(도달도) 분석 산출
  */
 export function calculateCompanyPenetrations(people: Person[]): CompanyPenetration[] {
   return TARGET_BENCHMARK_COMPANIES.map(target => {
@@ -85,7 +85,7 @@ export function calculateCompanyPenetrations(people: Person[]): CompanyPenetrati
       p.currentTitle.includes('본부장')
     );
 
-    // 침투 점수 산출 공식 (0~100)
+    // 네트워크 도달 점수 산출 공식 (0~100)
     // 1촌 1명당 25점, 2촌 1명당 10점, DART 임원 1명당 25점, 의사결정권자 1명당 20점
     const rawScore = 
       (direct1.length * 25) + 
@@ -102,7 +102,7 @@ export function calculateCompanyPenetrations(people: Person[]): CompanyPenetrati
 
     if (penetrationScore >= 75) {
       grade = 'GRADE_A';
-      gradeLabel = 'A등급: 전략적 장악';
+      gradeLabel = 'A등급: 핵심 파트너십';
       gradeColor = 'text-emerald-400 bg-emerald-950/80 border-emerald-500/40';
       recommendedStrategy = 'C-Level 다면 채널 및 비즈니스 딜 직통 가동';
     } else if (penetrationScore >= 45) {
@@ -201,8 +201,8 @@ export function exportPenetrationCsvWithBom(penetrations: CompanyPenetration[]):
     '기업명',
     '산업분야',
     '시가총액순위',
-    '침투등급',
-    '침투점수(100점만점)',
+    '도달등급',
+    '도달점수(100점만점)',
     '1촌인맥수',
     '2촌인맥수',
     'DART등기임원수',
@@ -229,7 +229,7 @@ export function exportPenetrationCsvWithBom(penetrations: CompanyPenetration[]):
 
   const link = document.createElement('a');
   link.href = url;
-  link.download = `ConnectWe_타깃기업_인맥침투도_진단리포트_${new Date().toISOString().split('T')[0]}.csv`;
+  link.download = `ConnectWe_타깃기업_네트워크커버리지_진단리포트_${new Date().toISOString().split('T')[0]}.csv`;
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
