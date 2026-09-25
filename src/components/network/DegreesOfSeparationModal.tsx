@@ -211,7 +211,7 @@ ${bridge.name}님께서 ${targetPerson.name}님과 같은 조직 및 네트워�
           {/* Target Profile Summary Banner */}
           <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
             <div>
-              <span className="text-[11px] text-indigo-400 font-semibold uppercase tracking-wider block">최종 도달 목표 대상</span>
+              <span className="text-[11px] text-indigo-400 font-semibold uppercase tracking-wider block">소개 연결 희망 인물</span>
               <div className="flex items-center gap-2 mt-0.5">
                 <span className="text-base font-bold text-white">{targetPerson.name} {targetPerson.currentTitle}</span>
                 <span className="text-xs text-slate-400">({targetPerson.currentCompany})</span>
@@ -229,9 +229,9 @@ ${bridge.name}님께서 ${targetPerson.name}님과 같은 조직 및 네트워�
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold uppercase tracking-wider text-purple-300 flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full bg-purple-400 animate-ping" />
-                소개 다리를 놓아줄 수 있는 검증된 1촌 지인 ({bridgeList.length}명 발견)
+                소개 다리를 놓아줄 수 있는 1촌 지인 ({bridgeList.length}명 연결 가능)
               </h3>
-              <span className="text-[11px] text-slate-500">재직 기간 겹침 및 동문 네트워크 교차 검증</span>
+              <span className="text-[11px] text-slate-500">재직 기간 겹침 및 동문 네트워크 교차 분석</span>
             </div>
 
             {bridgeList.length === 0 ? (
@@ -240,7 +240,7 @@ ${bridge.name}님께서 ${targetPerson.name}님과 같은 조직 및 네트워�
                   현재 등록된 1촌 지인 중 같은 기업 재직/알럼나이 또는 동문 이력을 공유하는 직접적인 2촌 접점이 발견되지 않았습니다.
                 </p>
                 <p className="text-[11px] text-slate-500">
-                  더 많은 리멤버 명함이나 스마트폰 주소록을 추가하면 연결 경로가 자동으로 확장됩니다.
+                  필요하실 때 새로운 명함이나 연락처를 등록하시면 지능형 접점을 자동으로 찾아드립니다.
                 </p>
               </div>
             ) : (
@@ -268,7 +268,7 @@ ${bridge.name}님께서 ${targetPerson.name}님과 같은 조직 및 네트워�
                             ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
                             : 'bg-purple-500/20 text-purple-300 border-purple-500/30'
                         }`}>
-                          신뢰도 {item.trustScore}%
+                          접점 일치도 {item.trustScore}%
                         </span>
                       </div>
 

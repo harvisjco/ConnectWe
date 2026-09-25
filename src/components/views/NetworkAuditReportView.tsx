@@ -63,13 +63,13 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">전략 인맥 자산 가치 &amp; 타깃 기업 네트워크 커버리지 진단실</h2>
+              <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">신뢰 네트워크 현황 &amp; 주요 파트너 기업 커버리지 리포트</h2>
               <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30 font-semibold font-mono">
                 Network Equity &amp; Coverage Audit
               </span>
             </div>
             <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
-              국내 20대 핵심 기업군에 대한 나의 인맥 도달력과 네트워크 커버리지(A~D등급)를 정밀 진단하고, 의사결정권자 사각지대(Blind Spot)를 조기에 포착합니다.
+              국내 20대 주요 기업군과의 신뢰 네트워크 현황을 정밀히 살펴보고, 새로운 협력 기회와 잠재적 인연을 정성껏 발굴합니다.
             </p>
           </div>
         </div>
@@ -88,12 +88,12 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
       {/* 2. Executive KPI Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
         <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-          <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">총 인맥 자산</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">함께하는 인연</div>
           <div className="text-xl font-bold text-slate-900 dark:text-white font-mono mt-1">
             {equitySummary.totalPeople}명
           </div>
           <div className="text-[11px] text-slate-500 mt-1">
-            {equitySummary.totalCompanies}개 기업에 포진
+            {equitySummary.totalCompanies}개 기업에서 활약 중
           </div>
         </div>
 
@@ -108,7 +108,7 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
         </div>
 
         <div className="p-4 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-200 dark:border-emerald-500/30 shadow-sm flex flex-col justify-between">
-          <div className="text-xs text-emerald-800 dark:text-emerald-300 font-semibold">A등급 핵심 파트너십</div>
+          <div className="text-xs text-emerald-800 dark:text-emerald-300 font-semibold">핵심 협력 파트너사</div>
           <div className="text-xl font-bold text-emerald-700 dark:text-emerald-400 font-mono mt-1">
             {equitySummary.gradeACount}개사
           </div>
@@ -118,7 +118,7 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
         </div>
 
         <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-sky-950/10 border border-sky-200 dark:border-sky-500/30 shadow-sm flex flex-col justify-between">
-          <div className="text-xs text-sky-800 dark:text-sky-300 font-semibold">B등급 우호 채널</div>
+          <div className="text-xs text-sky-800 dark:text-sky-300 font-semibold">우호적 교류 기업</div>
           <div className="text-xl font-bold text-sky-700 dark:text-sky-400 font-mono mt-1">
             {equitySummary.gradeBCount}개사
           </div>
@@ -127,13 +127,13 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-rose-50/50 dark:bg-rose-950/10 border border-rose-200 dark:border-rose-500/30 shadow-sm flex flex-col justify-between">
-          <div className="text-xs text-rose-800 dark:text-rose-300 font-semibold">사각지대 (Blind Spot)</div>
-          <div className="text-xl font-bold text-rose-700 dark:text-rose-400 font-mono mt-1">
+        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+          <div className="text-xs text-slate-700 dark:text-slate-300 font-semibold">새로운 인연 기대 기업</div>
+          <div className="text-xl font-bold text-slate-800 dark:text-slate-300 font-mono mt-1">
             {equitySummary.blindSpotCount}개사
           </div>
-          <div className="text-[11px] text-rose-600 dark:text-rose-400/80 font-medium mt-1">
-            접점 발굴 시급
+          <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">
+            새로운 접점 탐색
           </div>
         </div>
 
@@ -169,7 +169,7 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
               : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white shadow-sm'
           }`}
         >
-          🟢 A등급: 핵심 파트너십 ({equitySummary.gradeACount})
+          🟢 핵심 파트너십 ({equitySummary.gradeACount})
         </button>
 
         <button
@@ -180,7 +180,7 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
               : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white shadow-sm'
           }`}
         >
-          🔵 B등급: 우호 확보 ({equitySummary.gradeBCount})
+          🔵 우호적 교류 ({equitySummary.gradeBCount})
         </button>
 
         <button
@@ -191,18 +191,18 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
               : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white shadow-sm'
           }`}
         >
-          🟡 C등급: 초기 진입 ({equitySummary.gradeCCount})
+          🟡 초기 접점 ({equitySummary.gradeCCount})
         </button>
 
         <button
           onClick={() => setSelectedGradeFilter('GRADE_D')}
           className={`px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${
             selectedGradeFilter === 'GRADE_D'
-              ? 'bg-rose-600 text-white shadow-sm'
+              ? 'bg-slate-700 text-white shadow-sm'
               : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white shadow-sm'
           }`}
         >
-          🔴 D등급: 사각지대 ({equitySummary.blindSpotCount})
+          ⚪ 잠재 인연 ({equitySummary.blindSpotCount})
         </button>
       </div>
 

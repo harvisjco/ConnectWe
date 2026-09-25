@@ -8,10 +8,10 @@ interface AgeSpectrumViewProps {
 }
 
 const AGE_SEGMENTS: { key: AgeGroup; label: string; sub: string; range: string }[] = [
-  { key: '20s', label: '20대 청년 프론티어', sub: '신진 AI 연구원 · 주니어 빌더 · 예비 창업자', range: '20 ~ 29세' },
-  { key: '30s', label: '30대 실무 테크 리드', sub: '스타트업 창업자(CEO) · CPO · VP · 투자 심사역', range: '30 ~ 39세' },
-  { key: '40s', label: '40대 시니어/임원급', sub: '상장사/대기업 본부장 · CTO · VC 파트너', range: '40 ~ 49세' },
-  { key: '50s_plus', label: '50대+ C-Level & 고문', sub: '대표이사(CEO) · 사내이사 · CFO · 사외이사', range: '50세 이상' }
+  { key: '20s', label: '신진 혁신 프론티어 (20s)', sub: '최신 AI 기술 연구 · 기민한 프로토타이핑 · 도전적 창업가', range: '도전과 탐색기' },
+  { key: '30s', label: '도약기 비즈니스 리더 (30s)', sub: '제품 고도화 총괄 · 스타트업 스케일업 · 핵심 투자 심사', range: '고속 성장기' },
+  { key: '40s', label: '원숙한 전략 총괄 (40s)', sub: '조직 스케일링 & 테크 아키텍처 · 크로스펑셔널 리더십 · 글로벌 확장', range: '전략 주도기' },
+  { key: '50s_plus', label: '원로 고문 & 경영 자문 (50s+)', sub: '기업 거버넌스 · 거시적 통찰 · 풍부한 위기관리 경험', range: '경영 자문기' }
 ];
 
 export const AgeSpectrumView: React.FC<AgeSpectrumViewProps> = ({ people, onSelectPerson }) => {
@@ -130,15 +130,19 @@ export const AgeSpectrumView: React.FC<AgeSpectrumViewProps> = ({ people, onSele
                       <span className="font-bold text-base text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-indigo-300 transition-colors">
                         {person.name}
                       </span>
-                      {person.sourceType === 'DART_FACT' && (
+                      {person.sourceType === 'DART_FACT' ? (
                         <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30 flex items-center gap-1 shadow-2xs">
                           <ShieldCheck className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
-                          <span>DART FACT</span>
+                          <span>공시 공인 임원</span>
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-md text-[11px] font-medium bg-slate-50 text-slate-700 border border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700">
+                          혁신 비즈니스 인연
                         </span>
                       )}
                       {person.isAgeEstimated && (
                         <span className="px-1.5 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/10 dark:text-amber-400 dark:border-amber-500/20">
-                          연차추정
+                          경력단계 기반
                         </span>
                       )}
                     </div>

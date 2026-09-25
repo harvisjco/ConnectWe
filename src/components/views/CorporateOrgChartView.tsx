@@ -278,7 +278,7 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
           </p>
         )}
 
-        {/* 연계 채용 포지션 타겟 스카우팅 액션 바 */}
+        {/* 연계 채용 인재 추천 협업 액션 바 */}
         {onOpenTargetBounty && (isFirst || isSecond) && (
           <div className="mt-2.5 pt-1.5 flex items-center justify-between text-[11px] border-t border-slate-100 dark:border-slate-800/60">
             <button
@@ -286,14 +286,13 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
                 e.stopPropagation();
                 onOpenTargetBounty(node.corpName, node.chargeJob);
               }}
-              className="px-2 py-0.5 rounded-full bg-slate-50 hover:bg-indigo-50 dark:bg-slate-800 dark:hover:bg-indigo-950/50 text-slate-700 dark:text-slate-300 hover:text-indigo-700 dark:hover:text-indigo-300 border border-slate-200/80 hover:border-indigo-200 dark:border-slate-700 flex items-center gap-1 font-medium transition-colors"
-              title="이 임원의 소속/도메인과 연계된 HRCO 채용 오픈 포지션 타진"
+              className="px-2.5 py-0.5 rounded-full bg-slate-50 hover:bg-indigo-50 dark:bg-slate-800 dark:hover:bg-indigo-950/50 text-slate-700 dark:text-slate-300 hover:text-indigo-700 dark:hover:text-indigo-300 border border-slate-200/80 hover:border-indigo-200 dark:border-slate-700 flex items-center gap-1 font-medium transition-colors"
+              title="이 임원의 전문 도메인과 연계된 추천 협업 포지션 확인"
             >
               <Zap className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
-              <span>연계 채용 타진</span>
-              <span className="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium">(바운티)</span>
+              <span>추천 협업 포지션 확인</span>
             </button>
-            <span className="text-[11px] text-slate-400 font-medium">최대 500만원</span>
+            <span className="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium">추천 리워드 연계</span>
           </div>
         )}
 

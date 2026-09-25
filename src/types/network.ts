@@ -129,7 +129,7 @@ export interface GraphQueryResult {
 export interface ReferralRewardStructure {
   coffeeChatReward: number;   // 1단계: 커피챗 수락 보상 (원, 예: 50,000)
   interviewReward: number;    // 2단계: 1차 면접 진행 보상 (원, 예: 200,000)
-  hireSuccessBounty: number;  // 3단계: 최종 입사 성공 바운티 (원, 예: 3,000,000)
+  hireSuccessBounty: number;  // 3단계: 최종 입사 성공 리워드 (원, 예: 3,000,000)
   probationBounty?: number;   // 4단계: 수습(3개월) 통과 보너스 (원, 예: 1,000,000)
 }
 
@@ -166,7 +166,7 @@ export type ReferralStatus =
   | 'invitation_sent'        // 지인에게 비공개 타진 전달
   | 'coffee_chat_accepted'   // 지인이 커피챗 수락 (1단계 리워드 확정)
   | 'interviewing'           // 공식 면접 진행 중 (2단계 리워드 확정)
-  | 'hired_placed'           // 최종 입사 성공 (3단계 대형 바운티 확정)
+  | 'hired_placed'           // 최종 입사 성공 (3단계 추천 리워드 확정)
   | 'completed'              // 수습 통과 및 전액 정산 완료
   | 'rejected'               // 불합격 또는 포기
   | 'declined_by_candidate'; // 지인의 정중한 거절

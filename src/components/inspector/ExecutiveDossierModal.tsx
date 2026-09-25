@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { Person } from '../../types/network';
+import { getSeniorityLevel } from '../../services/talentClusterEngine';
 import { 
   X, Printer, Sparkles, Building2, 
   Clock, ShieldCheck, Lightbulb, AlertTriangle, UserCheck
@@ -78,7 +79,7 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-indigo-400" />
             <h2 className="text-base font-bold text-white tracking-tight">
-              1-Page Executive Dossier (미팅 전략 브리핑)
+              경영진 1-Page 미팅 전략 브리프 (Meeting Prep Brief)
             </h2>
             <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30 font-mono">
               미팅 10분 전 브리핑
@@ -102,7 +103,7 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
           </div>
         </div>
 
-        {/* 인쇄 대상 1-Page Dossier 본문 영역 */}
+        {/* 인쇄 대상 1-Page Brief 본문 영역 */}
         <div ref={printRef} className="p-6 md:p-8 space-y-6 overflow-y-auto bg-slate-900 text-slate-100 print:bg-white print:text-black print:p-0 print:m-0">
           
           {/* 헤더 프로필 블록 */}
@@ -126,7 +127,7 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
                 {person.currentCompany} {person.currentDepartment ? `· ${person.currentDepartment}` : ''}
               </p>
               <p className="text-xs text-slate-400 print:text-slate-600">
-                전문 분야: <strong className="text-slate-200 print:text-black">{person.primaryDomain}</strong> · 추정 연령대: {person.estimatedAgeGroup}
+                전문 분야: <strong className="text-slate-200 print:text-black">{person.primaryDomain}</strong> · 경력 단계: <strong className="text-slate-200 print:text-black">{getSeniorityLevel(person)}</strong>
               </p>
             </div>
 
@@ -190,7 +191,7 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
                 {person.memo ? person.memo : '등록된 개인 메모가 없습니다.'}
               </p>
               <div className="text-[11px] text-slate-500 pt-1">
-                마지막 소통일: {person.lastContactDate || '기록 없음'} {person.isStale && '(6개월 이상 미소통 · 안부 필요)'}
+                마지막 소통일: {person.lastContactDate || '기록 없음'} {person.isStale && '(소통 환기 추천)'}
               </div>
             </div>
 

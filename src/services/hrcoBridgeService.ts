@@ -186,7 +186,7 @@ export function simulateHrcoMilestoneProgress(
       label: '최종 합격 및 입사 확정',
       amount: 5000000,
       nextStatus: 'hired_placed' as const,
-      msg: `[${submission.candidateName}] 님이 ${submission.clientCompany} 최종 입사를 확정했습니다! 헤드헌팅 최종 바운티 5,000,000원이 확정 지급되었습니다!`
+      msg: `[${submission.candidateName}] 님이 ${submission.clientCompany} 최종 입사를 확정했습니다! 헤드헌팅 최종 추천 리워드 5,000,000원이 확정 지급되었습니다!`
     }
   };
 

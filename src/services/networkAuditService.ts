@@ -26,7 +26,7 @@ export interface NetworkEquitySummary {
   gradeACount: number; // 핵심 파트너십 기업
   gradeBCount: number; // 양호 기업
   gradeCCount: number; // 진입 단계
-  blindSpotCount: number; // 사각지대 (D)
+  blindSpotCount: number; // 잠재 파트너사 (D)
   industryDiversityScore: number; // 0 ~ 100 (HHI 기반 역산)
   averageClosenessScore: number; // 1.0 ~ 5.0
   activeRatio90Days: number; // 최근 90일 소통 활성 비율 (%)
@@ -96,25 +96,25 @@ export function calculateCompanyPenetrations(people: Person[]): CompanyPenetrati
     const penetrationScore = Math.min(100, rawScore);
 
     let grade: PenetrationGrade = 'GRADE_D';
-    let gradeLabel = '사각지대 (Blind Spot)';
-    let gradeColor = 'text-rose-400 bg-rose-950/80 border-rose-500/40';
-    let recommendedStrategy = '신규 1·2촌 접점 발굴 및 소개 요청 시급';
+    let gradeLabel = '잠재적 협력 탐색';
+    let gradeColor = 'text-slate-400 bg-slate-900 border-slate-700';
+    let recommendedStrategy = '동문 및 지인 기반 따뜻한 소개 연결 추진';
 
     if (penetrationScore >= 75) {
       grade = 'GRADE_A';
-      gradeLabel = 'A등급: 핵심 파트너십';
+      gradeLabel = '핵심 협력 파트너사';
       gradeColor = 'text-emerald-400 bg-emerald-950/80 border-emerald-500/40';
-      recommendedStrategy = 'C-Level 다면 채널 및 비즈니스 딜 직통 가동';
+      recommendedStrategy = '경영진 다면 소통 및 비즈니스 프로젝트 활성화';
     } else if (penetrationScore >= 45) {
       grade = 'GRADE_B';
-      gradeLabel = 'B등급: 우호 채널 확보';
+      gradeLabel = '우호적 신뢰 교류 중';
       gradeColor = 'text-sky-400 bg-sky-950/80 border-sky-500/40';
-      recommendedStrategy = '키맨 추가 미팅 및 챔피언 우호도 강화';
+      recommendedStrategy = '정기 교류 확대 및 상호 시너지 탐색';
     } else if (penetrationScore >= 15) {
       grade = 'GRADE_C';
-      gradeLabel = 'C등급: 초기 진입 단계';
+      gradeLabel = '초기 접점 형성 단계';
       gradeColor = 'text-amber-400 bg-amber-950/80 border-amber-500/40';
-      recommendedStrategy = '기존 인맥을 레버리지하여 2촌 임원 소개 추진';
+      recommendedStrategy = '기존 인맥을 통해 자연스러운 상호 소개 추진';
     }
 
     return {

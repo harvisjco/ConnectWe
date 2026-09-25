@@ -142,7 +142,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
               className="px-4 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-xs transition-colors active:scale-[0.98] flex items-center gap-1.5"
             >
               <Briefcase className="w-3.5 h-3.5" />
-              <span>전략 딜 워룸 열기</span>
+              <span>전략 딜 협업 룸 열기</span>
             </button>
             <button
               onClick={() => onNavigateView('audit')}
@@ -466,20 +466,20 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
           </div>
         </div>
 
-        {/* Corporate Penetration Blind Spot Radar */}
+        {/* Corporate Partnership Opportunity Radar */}
         <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs lg:col-span-2 flex flex-col justify-between space-y-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
                 <Building2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                <span>20대 대기업 사각지대(Blind Spot) 돌파 파이프라인</span>
+                <span>주요 20대 기업 파트너십 기회 발굴 파이프라인</span>
               </h3>
               <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700 font-mono font-medium">
-                D등급 집중 관리
+                잠재 파트너사 연계
               </span>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              접점이 없는 핵심 대기업에 대해 알럼나이 1촌을 레버리지하여 2촌 최단 소개 루트를 원클릭으로 가동합니다.
+              아직 직접 접점이 없는 주요 기업군에 대해 동문·이전 재직 인연을 통해 따뜻한 소개 연결을 제안합니다.
             </p>
           </div>
 
@@ -498,7 +498,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
               className="px-4 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-xs transition-colors shrink-0 flex items-center gap-1.5 active:scale-[0.98]"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>사각지대 진단실 열기</span>
+              <span>파트너십 진단 리포트 열기</span>
             </button>
           </div>
         </div>

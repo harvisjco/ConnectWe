@@ -265,12 +265,12 @@ export const App: React.FC = () => {
                 { id: 'age', label: '나이대별 분석', icon: Calendar },
                 { id: 'canvas', label: '2D 관계망', icon: Share2 },
                 { id: 'galaxy', label: '3D 은하수', icon: Orbit },
-                { id: 'deals', label: '전략 딜 워룸', icon: Briefcase },
+                { id: 'deals', label: '전략 딜 협업 룸', icon: Briefcase },
                 { id: 'proximity', label: '거점 레이더', icon: Compass },
                 { id: 'promotion', label: '영전 골든타임', icon: Award },
                 { id: 'audit', label: '인맥 건강도', icon: ShieldAlert },
                 { id: 'team', label: '팀 인맥', icon: Users },
-                { id: 'referral', label: '바운티', icon: Gift },
+                { id: 'referral', label: '추천 리워드', icon: Gift },
                 { id: 'timeline', label: '소통 타임라인', icon: Clock }
               ].map((tab) => {
                 const isActive = activeView === tab.id;
@@ -339,7 +339,7 @@ export const App: React.FC = () => {
                   onOpenDossier={(target) => setDossierTargetPerson(target)}
                   onOpenTargetBounty={(corpName) => {
                     handleNavigateView('referral');
-                    showToast(`[${corpName}] 연계 채용 오픈 포지션 및 바운티 탐색으로 전환되었습니다.`);
+                    showToast(`[${corpName}] 연계 채용 오픈 포지션 및 추천 리워드 탐색으로 전환되었습니다.`);
                   }}
                 />
               )}

@@ -210,7 +210,7 @@ export const TeamNetworkView: React.FC<TeamNetworkViewProps> = ({
           <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5" />
           <input
             type="text"
-            placeholder="타겟 인물명 소속 기업 직함 팀원명 검색..."
+            placeholder="찾으시는 지인 이름, 소속 기업, 직함, 팀원명 검색..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-8 pr-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all"

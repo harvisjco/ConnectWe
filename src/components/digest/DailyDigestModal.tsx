@@ -135,12 +135,12 @@ export const DailyDigestModal: React.FC<DailyDigestModalProps> = ({
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400">
               <Clock className="w-4 h-4" />
-              <span>안부 연락이 필요한 핵심 1촌 (6개월 이상 연락 뜸함)</span>
+              <span>따뜻한 안부를 전하기 좋은 소중한 인연 (최근 소통 환기)</span>
             </div>
 
             {staleCorePeople.length === 0 ? (
               <p className="text-xs text-slate-500 p-4 border border-dashed border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 rounded-2xl text-center">
-                현재 6개월 이상 소통 공백이 발생한 핵심 1촌이 없습니다. 인맥 관리가 훌륭히 유지되고 있습니다!
+                현재 6개월 이상 소통 공백이 발생한 핵심 인연이 없습니다. 소중한 분들과의 따뜻한 교류가 원활하게 이어지고 있습니다!
               </p>
             ) : (
               <div className="space-y-3">

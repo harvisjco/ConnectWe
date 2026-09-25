@@ -420,7 +420,7 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
             )}
           </div>
 
-          {/* Multi-source Career Timeline (Alumni 역추적 핵심) */}
+          {/* Multi-source Career Timeline (알럼나이 및 이전 재직 이력 연계) */}
           <div className="space-y-3">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
               <Briefcase className="w-3.5 h-3.5 text-indigo-400" />

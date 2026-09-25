@@ -22,8 +22,8 @@ interface DealPipelineViewProps {
 }
 
 const STAGES: { id: DealStage; label: string; color: string }[] = [
-  { id: 'PROSPECT', label: '1. 타깃 발굴', color: 'border-slate-200 dark:border-slate-700 bg-slate-100/60 dark:bg-slate-900/60' },
-  { id: 'WARM_CONTACT', label: '2. 1·2촌 접촉', color: 'border-blue-200 dark:border-indigo-500/40 bg-blue-50/40 dark:bg-indigo-950/20' },
+  { id: 'PROSPECT', label: '1. 기회 탐색', color: 'border-slate-200 dark:border-slate-700 bg-slate-100/60 dark:bg-slate-900/60' },
+  { id: 'WARM_CONTACT', label: '2. 신뢰 접점 형성', color: 'border-blue-200 dark:border-indigo-500/40 bg-blue-50/40 dark:bg-indigo-950/20' },
   { id: 'MEETING_HELD', label: '3. 미팅 완료', color: 'border-purple-200 dark:border-purple-500/40 bg-purple-50/40 dark:bg-purple-950/20' },
   { id: 'PROPOSAL', label: '4. 제안서 송부', color: 'border-sky-200 dark:border-sky-500/40 bg-sky-50/40 dark:bg-sky-950/20' },
   { id: 'NEGOTIATION', label: '5. 조건 협상', color: 'border-amber-200 dark:border-amber-500/40 bg-amber-50/40 dark:bg-amber-950/20' },
@@ -136,7 +136,7 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
 
     setDeals(updatedDeals);
     saveDealsToStorage(updatedDeals);
-    onShowToast(`[${target.name}] 님이 ${role} 역할로 딜에 배정되었습니다.`);
+    onShowToast(`[${target.name}] 님과 함께하는 프로젝트 파트너십이 등록되었습니다.`);
     setActiveDealForAddStakeholder(null);
   };
 
@@ -150,13 +150,13 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-base font-bold text-slate-900 dark:text-white">전략 비즈니스 딜 &amp; 인맥 어카운트 워룸</h2>
+              <h2 className="text-base font-bold text-slate-900 dark:text-white">전략 비즈니스 딜 파이프라인 협업 룸</h2>
               <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 dark:bg-indigo-500/20 dark:text-indigo-300 dark:border-indigo-500/30 font-semibold">
                 C-Level Deal Pipeline
               </span>
             </div>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-              비즈니스 딜별 의사결정권자(Key Decision Maker)와 내부 지지자(Champion)를 내 인맥과 매핑하여 딜 성사율과 접근성을 극대화합니다.
+              비즈니스 딜별 의사결정권자(Key Decision Maker)와 신뢰 지지자(Champion)를 소중한 인맥과 연결하여 프로젝트 성공 가능성을 높입니다.
             </p>
           </div>
         </div>

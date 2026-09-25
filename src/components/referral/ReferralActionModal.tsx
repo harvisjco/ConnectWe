@@ -137,7 +137,7 @@ export const ReferralActionModal: React.FC<ReferralActionModalProps> = ({
                       <span className="font-bold text-emerald-400">+{position.rewards.interviewReward.toLocaleString()}원</span>
                     </div>
                     <div className="flex justify-between items-center text-white font-bold pt-1 border-t border-indigo-800/40">
-                      <span>3단계: 최종 입사 바운티</span>
+                      <span>3단계: 최종 입사 추천 리워드</span>
                       <span className="text-amber-400 text-sm">+{position.rewards.hireSuccessBounty.toLocaleString()}원</span>
                     </div>
                   </div>

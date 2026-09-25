@@ -381,7 +381,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                 </div>
               </div>
 
-              {/* 4단계 추천 보상 프로세스 바운티 카드 */}
+              {/* 4단계 추천 보상 프로세스 리워드 카드 */}
               <div className="space-y-1.5">
                 <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                   단계별 추천 리워드 플랜

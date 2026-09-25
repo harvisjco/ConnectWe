@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Person, DataSourceType } from '../../types/network';
+import { Person, DataSourceType, AgeGroup } from '../../types/network';
 import { 
   parseBusinessCardText, 
   simulateExtractCardTextFromImage, 
@@ -14,6 +14,20 @@ interface CardScannerModalProps {
   onSavePerson: (person: Person) => void;
   onClose: () => void;
   onShowToast: (msg: string) => void;
+}
+
+function inferInitialAgeGroup(title: string): AgeGroup {
+  const t = (title || '').toLowerCase();
+  if (t.includes('고문') || t.includes('회장') || t.includes('부회장') || t.includes('사장') || t.includes('부사장') || t.includes('전무') || t.includes('상무')) {
+    return '50s_plus';
+  }
+  if (t.includes('이사') || t.includes('본부장') || t.includes('실장') || t.includes('팀장') || t.includes('파트너') || t.includes('수석') || t.includes('디렉터') || t.includes('cto') || t.includes('cfo') || t.includes('coo')) {
+    return '40s';
+  }
+  if (t.includes('매니저') || t.includes('선임') || t.includes('책임') || t.includes('팀원') || t.includes('대리') || t.includes('과장')) {
+    return '30s';
+  }
+  return '30s';
 }
 
 export const CardScannerModal: React.FC<CardScannerModalProps> = ({
@@ -107,7 +121,7 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
         source: 'SOURCE_DATA'
       }],
       academics: [],
-      estimatedAgeGroup: '40s',
+      estimatedAgeGroup: inferInitialAgeGroup(editTitle),
       isAgeEstimated: true,
       connectionChannel: 'business_card',
       dartInfo: extracted?.dartMatch?.isMatched ? {
@@ -120,7 +134,7 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
     };
 
     onSavePerson(newPerson);
-    onShowToast(`[${newPerson.name}] 님이 인맥 은하수에 성공적으로 등록되었습니다.`);
+    onShowToast(`[${newPerson.name}] 님이 소중한 인연으로 성공적으로 등록되었습니다.`);
     onClose();
   };
 
@@ -136,9 +150,9 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
             </div>
             <div>
               <h2 className="text-base font-bold text-white tracking-tight">
-                명함 1초 OCR 스캔 &amp; DART 임원 결합
+                명함 원터치 지능형 스캔 &amp; 프로필 생성
               </h2>
-              <p className="text-[11px] text-slate-400">온디바이스 비전 AI · Zero-Retention 메모리 보안</p>
+              <p className="text-[11px] text-slate-400">온디바이스 비전 AI · 공시 정보 및 프로필 자동 매칭 · Zero-Retention 메모리 보안</p>
             </div>
           </div>
 

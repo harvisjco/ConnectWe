@@ -23,7 +23,7 @@ export const mockReferralPositions: ReferralPosition[] = [
       hireSuccessBounty: 7000000,
       probationBounty: 3000000
     },
-    urgentBadge: '바운티 1,000만원 (급구)',
+    urgentBadge: '추천 리워드 1,000만원 (우대 영입)',
     description: '글로벌 엔터프라이즈용 파운데이션 모델을 자체 구축하는 유니콘 기업의 핵심 선행연구 총괄 포지션입니다.',
     deadline: '2026-10-31',
     isOpen: true

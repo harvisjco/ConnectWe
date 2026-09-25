@@ -180,7 +180,7 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
               )}
             </div>
 
-            {/* Section 2: Alumni Members (핵심 차별화 기능: 과거 거쳐간 인맥 역추적) */}
+            {/* Section 2: Alumni Members (알럼나이 및 이전 재직 인맥 네트워크 연결) */}
             <div className="space-y-3">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />

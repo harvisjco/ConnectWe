@@ -130,7 +130,7 @@ export const MeetingDebriefModal: React.FC<MeetingDebriefModalProps> = ({
     };
 
     onUpdatePerson(updatedPerson);
-    onShowToast(`[${person.name}] 님과의 미팅 회고 및 액션 아이템이 활동 이력에 영구 기록되었습니다.`);
+    onShowToast(`[${person.name}] 님과의 미팅 회고와 후속 계획이 활동 내역에 안전하게 보관되었습니다.`);
     onClose();
   };
 
@@ -231,10 +231,10 @@ export const MeetingDebriefModal: React.FC<MeetingDebriefModalProps> = ({
                     debriefResult.sentiment === 'POSITIVE'
                       ? 'bg-emerald-950/80 text-emerald-300 border-emerald-500/40'
                       : debriefResult.sentiment === 'CRITICAL'
-                      ? 'bg-rose-950/80 text-rose-300 border-rose-500/40'
+                      ? 'bg-amber-950/60 text-amber-300 border-amber-500/40'
                       : 'bg-slate-800 text-slate-300 border-slate-600'
                   }`}>
-                    {debriefResult.sentiment === 'POSITIVE' ? '🟢 우호적 협의' : debriefResult.sentiment === 'CRITICAL' ? '🔴 신중 검토' : '🟡 중립 미팅'}
+                    {debriefResult.sentiment === 'POSITIVE' ? '🟢 우호적 협의' : debriefResult.sentiment === 'CRITICAL' ? '⚪ 세부 조율 필요' : '🟡 중립 미팅'}
                   </span>
                 </div>
                 <p className="text-slate-300 text-xs leading-relaxed">

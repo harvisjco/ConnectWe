@@ -40,7 +40,7 @@ export function findReferralMatchesForPosition(
       if (position.targetAgeGroup.includes(p.estimatedAgeGroup)) {
         score += 20;
         const ageLabel = p.estimatedAgeGroup === '40s' ? '40대 시니어/임원급' : p.estimatedAgeGroup === '30s' ? '30대 핵심 리드급' : '50대 경영진급';
-        reasons.push(`타겟 연령대 부합 (${ageLabel})`);
+        reasons.push(`희망 경력 단계 부합 (${ageLabel})`);
       }
     }
 
