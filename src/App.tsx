@@ -48,12 +48,11 @@ import { MeetingDebriefModal } from './components/radar/MeetingDebriefModal';
 import { FollowUpComposerModal } from './components/radar/FollowUpComposerModal';
 import { DebriefResult } from './services/meetingDebriefService';
 
-import { Building2, Calendar, Share2, CheckCircle2, Clock, Sparkles, Orbit, Users, Gift, Briefcase, Compass, Award, PieChart, LayoutDashboard, Globe } from 'lucide-react';
+import { Building2, Calendar, Share2, CheckCircle2, Clock, Sparkles, Orbit, Users, Gift, Briefcase, Compass, Award, LayoutDashboard, GitBranch, ShieldAlert } from 'lucide-react';
 
 export const App: React.FC = () => {
   // 로컬 스토리지 기반 오프라인 퍼스트 상태
   const [people, setPeople] = useState<Person[]>(() => loadPeopleFromStorage());
-  const [activeSegment, setActiveSegment] = useState<'command' | 'explore' | 'business'>('command');
   const [activeView, setActiveView] = useState<NavViewType>('command');
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
@@ -63,16 +62,9 @@ export const App: React.FC = () => {
   });
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-  // 뷰 변경 핸들러 (LNB와 3-Segment 양방향 동기화)
+  // 뷰 변경 핸들러
   const handleSelectView = (view: NavViewType) => {
     setActiveView(view);
-    if (view === 'command') {
-      setActiveSegment('command');
-    } else if (['company', 'orgchart', 'age', 'canvas', 'galaxy', 'timeline'].includes(view)) {
-      setActiveSegment('explore');
-    } else {
-      setActiveSegment('business');
-    }
   };
 
   const handleToggleSidebarCollapse = () => {
@@ -191,18 +183,9 @@ export const App: React.FC = () => {
     showToast('인맥 정보가 안전하게 삭제되었습니다.');
   };
 
-  // 뷰 네비게이션 및 상위 세그먼트 동기화 헬퍼
+  // 뷰 네비게이션 헬퍼
   const handleNavigateView = (viewKey: string) => {
-    if (viewKey === 'command') {
-      setActiveSegment('command');
-      setActiveView('command');
-    } else if (['company', 'orgchart', 'age', 'canvas', 'galaxy', 'timeline'].includes(viewKey)) {
-      setActiveSegment('explore');
-      setActiveView(viewKey as any);
-    } else {
-      setActiveSegment('business');
-      setActiveView(viewKey as any);
-    }
+    setActiveView(viewKey as any);
   };
 
   // 현재 표출 대상 인물
@@ -270,225 +253,60 @@ export const App: React.FC = () => {
           />
         </section>
 
-        {/* Clean Tech Portal Executive 3-Segment Controller */}
+        {/* GoodPartner AI 2.0 Style Unified Horizontal Pill Navigation Bar */}
         <section className="space-y-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            {/* Primary 3-Segment Tab Bar - Naver Cloud & Apple Clean Style */}
-            <div className="inline-flex p-1.5 rounded-2xl bg-slate-100 dark:bg-slate-950/80 border border-slate-200/90 dark:border-slate-800/80 shadow-xs dark:shadow-[inset_0_2px_6px_rgba(0,0,0,0.7)] backdrop-blur-xl overflow-x-auto max-w-full">
-              <button
-                type="button"
-                data-testid="segment-command"
-                onClick={() => {
-                  setActiveSegment('command');
-                  setActiveView('command');
-                }}
-                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap shrink-0 active:scale-[0.98] ${
-                  activeSegment === 'command'
-                    ? 'bg-slate-900 text-white shadow-xs dark:bg-gradient-to-b dark:from-indigo-500 dark:via-indigo-600 dark:to-indigo-700 dark:text-white'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/70 dark:hover:bg-slate-900/60'
-                }`}
-              >
-                <LayoutDashboard className="w-4 h-4 text-amber-500 dark:text-amber-300 shrink-0" />
-                <span className="hidden sm:inline">🚀 오늘의 경영 사령탑</span>
-                <span className="sm:hidden">🚀 사령탑</span>
-              </button>
+            {/* Unified Horizontal Pill Tab Bar */}
+            <div className="flex items-center gap-1 p-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-[0_1px_2px_rgba(0,0,0,0.02)] overflow-x-auto max-w-full scrollbar-none">
+              {[
+                { id: 'command', label: '사령탑 관제', icon: LayoutDashboard },
+                { id: 'orgchart', label: '기업 지배구조 & 조직도', icon: GitBranch },
+                { id: 'company', label: '회사·알럼나이', icon: Building2 },
+                { id: 'age', label: '나이대별 분석', icon: Calendar },
+                { id: 'canvas', label: '2D 관계망', icon: Share2 },
+                { id: 'galaxy', label: '3D 은하수', icon: Orbit },
+                { id: 'deals', label: '전략 딜 워룸', icon: Briefcase },
+                { id: 'proximity', label: '거점 레이더', icon: Compass },
+                { id: 'promotion', label: '영전 골든타임', icon: Award },
+                { id: 'audit', label: '인맥 건강도', icon: ShieldAlert },
+                { id: 'team', label: '팀 인맥', icon: Users },
+                { id: 'referral', label: '바운티', icon: Gift },
+                { id: 'timeline', label: '소통 타임라인', icon: Clock }
+              ].map((tab) => {
+                const isActive = activeView === tab.id;
+                const IconComponent = tab.icon;
 
-              <button
-                type="button"
-                data-testid="segment-explore"
-                onClick={() => {
-                  setActiveSegment('explore');
-                  if (!['company', 'orgchart', 'age', 'canvas', 'galaxy', 'timeline'].includes(activeView)) {
-                    setActiveView('company');
-                  }
-                }}
-                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap shrink-0 active:scale-[0.98] ${
-                  activeSegment === 'explore'
-                    ? 'bg-slate-900 text-white shadow-xs dark:bg-gradient-to-b dark:from-indigo-500 dark:via-indigo-600 dark:to-indigo-700 dark:text-white'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/70 dark:hover:bg-slate-900/60'
-                }`}
-              >
-                <Globe className="w-4 h-4 text-sky-500 dark:text-sky-300 shrink-0" />
-                <span className="hidden sm:inline">🌐 인맥 맵 탐색</span>
-                <span className="sm:hidden">🌐 인맥 맵</span>
-              </button>
-
-              <button
-                type="button"
-                data-testid="segment-business"
-                onClick={() => {
-                  setActiveSegment('business');
-                  if (!['deals', 'proximity', 'promotion', 'audit', 'team', 'referral'].includes(activeView)) {
-                    setActiveView('deals');
-                  }
-                }}
-                className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 whitespace-nowrap shrink-0 active:scale-[0.98] ${
-                  activeSegment === 'business'
-                    ? 'bg-slate-900 text-white shadow-xs dark:bg-gradient-to-b dark:from-indigo-500 dark:via-indigo-600 dark:to-indigo-700 dark:text-white'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/70 dark:hover:bg-slate-900/60'
-                }`}
-              >
-                <Briefcase className="w-4 h-4 text-emerald-500 dark:text-emerald-300 shrink-0" />
-                <span className="hidden sm:inline">💼 전략 비즈니스 워룸</span>
-                <span className="sm:hidden">💼 비즈니스</span>
-              </button>
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    data-testid={`tab-${tab.id}`}
+                    onClick={() => handleNavigateView(tab.id)}
+                    className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs transition-all duration-150 whitespace-nowrap shrink-0 cursor-pointer ${
+                      isActive
+                        ? 'bg-slate-900 text-white dark:bg-indigo-600 dark:text-white font-bold shadow-2xs'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100/70 dark:hover:bg-slate-800/60 font-medium'
+                    }`}
+                  >
+                    <IconComponent className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-slate-400 dark:text-slate-500'}`} />
+                    <span>{tab.label}</span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Status & Scope Indicator */}
-            <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2">
+            <div className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-2 shrink-0">
               <span className="inline-block w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              {activeSegment === 'command' ? (
-                <span>경영 골든타임 & 신뢰 지능 우선순위 브리핑</span>
+              {activeView === 'command' ? (
+                <span>실시간 경영 지능 브리핑</span>
               ) : displayPeople.length === people.length ? (
-                <span>전체 <strong className="text-slate-900 dark:text-white font-semibold">{people.length}명</strong> 탐색 중</span>
+                <span>전체 <strong className="text-slate-900 dark:text-white font-semibold">{people.length}명</strong> 표출 중</span>
               ) : (
-                <span>검색 필터링 <strong className="text-blue-600 dark:text-indigo-400 font-semibold">{displayPeople.length}명</strong> 표출 중</span>
+                <span>필터링 <strong className="text-indigo-600 dark:text-indigo-400 font-semibold">{displayPeople.length}명</strong> 표출 중</span>
               )}
             </div>
           </div>
-
-          {/* Secondary Sub-navigation Pills for Explore & Business - Naver Cloud & Apple Clean Style */}
-          {activeSegment === 'explore' && (
-            <div className="flex items-center gap-1.5 p-1.5 rounded-xl bg-slate-100 dark:bg-slate-950/70 border border-slate-200/90 dark:border-slate-800/80 shadow-xs overflow-x-auto">
-              <button
-                onClick={() => setActiveView('company')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
-                  activeView === 'company'
-                    ? 'bg-white text-blue-700 shadow-xs border border-blue-200 dark:bg-slate-800/90 dark:text-indigo-300 dark:border-indigo-500/40'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <Building2 className="w-3.5 h-3.5 text-blue-600 dark:text-indigo-400" />
-                <span>🏢 회사·알럼나이</span>
-              </button>
-              <button
-                onClick={() => setActiveView('orgchart')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
-                  activeView === 'orgchart'
-                    ? 'bg-white text-amber-700 shadow-xs border border-amber-200 dark:bg-slate-800/90 dark:text-amber-300 dark:border-amber-500/40'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <Building2 className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                <span>🏛️ DART 기업 조직도</span>
-              </button>
-              <button
-                onClick={() => setActiveView('age')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
-                  activeView === 'age'
-                    ? 'bg-white text-blue-700 shadow-xs border border-blue-200 dark:bg-slate-800/90 dark:text-indigo-300 dark:border-indigo-500/40'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <Calendar className="w-3.5 h-3.5 text-blue-600 dark:text-indigo-400" />
-                <span>🎂 나이대별</span>
-              </button>
-              <button
-                onClick={() => setActiveView('canvas')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
-                  activeView === 'canvas'
-                    ? 'bg-white text-blue-700 shadow-xs border border-blue-200 dark:bg-slate-800/90 dark:text-indigo-300 dark:border-indigo-500/40'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <Share2 className="w-3.5 h-3.5 text-blue-600 dark:text-indigo-400" />
-                <span>🕸️ 2D 인터랙티브 그래프</span>
-              </button>
-              <button
-                onClick={() => setActiveView('galaxy')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
-                  activeView === 'galaxy'
-                    ? 'bg-white text-purple-700 shadow-xs border border-purple-200 dark:bg-slate-800/90 dark:text-purple-300 dark:border-purple-500/40'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <Orbit className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
-                <span>🪐 3D 은하계</span>
-              </button>
-              <button
-                onClick={() => setActiveView('timeline')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
-                  activeView === 'timeline'
-                    ? 'bg-white text-emerald-700 shadow-xs border border-emerald-200 dark:bg-slate-800/90 dark:text-emerald-300 dark:border-emerald-500/40'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <Clock className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span>📅 소통 타임라인</span>
-              </button>
-            </div>
-          )}
-
-          {activeSegment === 'business' && (
-            <div className="flex items-center gap-1.5 p-1.5 rounded-xl bg-slate-100 dark:bg-slate-950/70 border border-slate-200/90 dark:border-slate-800/80 shadow-xs overflow-x-auto">
-              <button
-                onClick={() => setActiveView('deals')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
-                  activeView === 'deals'
-                    ? 'bg-white text-amber-700 shadow-xs border border-amber-200 dark:bg-slate-800/90 dark:text-amber-300 dark:border-amber-500/40'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <Briefcase className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                <span>💼 전략 딜 워룸</span>
-              </button>
-              <button
-                onClick={() => setActiveView('proximity')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
-                  activeView === 'proximity'
-                    ? 'bg-white text-sky-700 shadow-xs border border-sky-200 dark:bg-slate-800/90 dark:text-sky-300 dark:border-sky-500/40'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <Compass className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
-                <span>🗺️ 거점별 레이더</span>
-              </button>
-              <button
-                onClick={() => setActiveView('promotion')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
-                  activeView === 'promotion'
-                    ? 'bg-white text-amber-700 shadow-xs border border-amber-200 dark:bg-slate-800/90 dark:text-amber-300 dark:border-amber-500/40'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <Award className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                <span>🎉 영전·케어 골든타임</span>
-              </button>
-              <button
-                onClick={() => setActiveView('audit')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
-                  activeView === 'audit'
-                    ? 'bg-white text-blue-700 shadow-xs border border-blue-200 dark:bg-slate-800/90 dark:text-indigo-300 dark:border-indigo-500/40'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <PieChart className="w-3.5 h-3.5 text-blue-600 dark:text-indigo-400" />
-                <span>📊 인맥 자산 진단</span>
-              </button>
-              <button
-                onClick={() => setActiveView('team')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
-                  activeView === 'team'
-                    ? 'bg-white text-sky-700 shadow-xs border border-sky-200 dark:bg-slate-800/90 dark:text-sky-300 dark:border-sky-500/40'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <Users className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
-                <span>👥 팀 인맥</span>
-              </button>
-              <button
-                onClick={() => setActiveView('referral')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap shrink-0 active:scale-95 ${
-                  activeView === 'referral'
-                    ? 'bg-white text-emerald-700 shadow-xs border border-emerald-200 dark:bg-slate-800/90 dark:text-emerald-300 dark:border-emerald-500/40'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
-                }`}
-              >
-                <Gift className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-                <span>🎁 바운티 탐색</span>
-              </button>
-            </div>
-          )}
         </section>
 
         {/* Dynamic Multi-dimensional Views with Code Splitting & Error Isolation */}
@@ -521,7 +339,7 @@ export const App: React.FC = () => {
                   onOpenDossier={(target) => setDossierTargetPerson(target)}
                   onOpenTargetBounty={(corpName) => {
                     handleNavigateView('referral');
-                    showToast(`🎯 [${corpName}] 연계 채용 오픈 포지션 및 바운티 탐색으로 전환되었습니다.`);
+                    showToast(`[${corpName}] 연계 채용 오픈 포지션 및 바운티 탐색으로 전환되었습니다.`);
                   }}
                 />
               )}

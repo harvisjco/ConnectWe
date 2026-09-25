@@ -136,7 +136,7 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
           }`}
         >
           <Award className="w-4 h-4" />
-          <span>🏆 DART 영전·승진 감지 피드 ({promotions.length})</span>
+          <span>DART 영전·승진 감지 피드 ({promotions.length})</span>
           {uncelebratedCount > 0 && (
             <span className="px-1.5 py-0.2 rounded-full bg-rose-500 text-white text-[11px] font-mono font-bold">
               {uncelebratedCount}

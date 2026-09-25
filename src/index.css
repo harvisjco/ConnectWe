@@ -25,8 +25,8 @@
 }
 
 /* ==========================================================================
-   Clean Tech Enterprise Portal Theme System (Naver Cloud & Apple Minimal)
-   Pure white surfaces, crisp 1px borders, subtle ambient shadows
+   GoodPartner AI 2.0 Style Enterprise Minimal Theme System
+   Soft cool slate background (#f4f6fb), crisp pure white surfaces, hairline borders
    ========================================================================== */
 
 html.light {
@@ -35,20 +35,20 @@ html.light {
 
 html.light body,
 html.light .bg-slate-950 {
-  background-color: #f8fafc !important;
-  color: #1e293b !important;
+  background-color: #f4f6fb !important;
+  color: #0f172a !important;
 }
 
-/* Header in Light Mode: Crisp White Portal Navigation */
+/* Header in Light Mode: Pure White Slim Navigation */
 html.light header {
-  background-color: rgba(255, 255, 255, 0.96) !important;
+  background-color: #ffffff !important;
   border-bottom: 1px solid #e2e8f0 !important;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
 }
 
-/* Meeting Radar Banner in Light Mode */
+/* Meeting Radar Banner in Light Mode: Minimal Hairline Bar */
 html.light aside {
-  background: linear-gradient(90deg, #f0fdf4 0%, #ffffff 50%, #f8fafc 100%) !important;
+  background-color: #ffffff !important;
   border-bottom: 1px solid #e2e8f0 !important;
   color: #334155 !important;
   box-shadow: none !important;

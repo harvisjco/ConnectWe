@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Apple Chief Designer Deep Precision Audit', () => {
-  test.setTimeout(120000);
+  test.setTimeout(180000);
 
   test('Audit All 11 Multi-Dimension Views, Modals, and Drawers in Clean Light Mode', async ({ page }) => {
     // 1. Desktop 1440x900
@@ -61,106 +61,113 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
     // Audit 1: Command Center
     metricsResults.push(await getHigMetrics('Command Center'));
 
-    // Audit 2: Explore - Company Alumni
-    await page.locator('[data-testid="segment-explore"]').click();
-    await page.waitForTimeout(600);
-    await page.screenshot({ path: 'e2e/screenshots/audit-02-explore-alumni.png', fullPage: true });
-    metricsResults.push(await getHigMetrics('Explore - Alumni'));
+    // Audit 2: Company Alumni
+    const alumniTab = page.locator('[data-testid="tab-company"]');
+    if (await alumniTab.isVisible()) {
+      await alumniTab.click();
+      await page.waitForTimeout(1200);
+      await page.screenshot({ path: 'e2e/screenshots/audit-02-explore-alumni.png', fullPage: true });
+      metricsResults.push(await getHigMetrics('Company Alumni'));
+    }
 
-    // Audit 3: Explore - Org Chart
-    const orgBtn = page.locator('button:has-text("DART 기업 조직도")');
-    if (await orgBtn.isVisible()) {
-      await orgBtn.click();
-      await page.waitForTimeout(600);
+    // Audit 3: Org Chart
+    const orgTab = page.locator('[data-testid="tab-orgchart"]');
+    if (await orgTab.isVisible()) {
+      await orgTab.click();
+      await page.waitForSelector('text=DART 공시 FACT 기반', { timeout: 8000 }).catch(() => {});
+      await page.waitForTimeout(1000);
       await page.screenshot({ path: 'e2e/screenshots/audit-03-explore-orgchart.png', fullPage: true });
-      metricsResults.push(await getHigMetrics('Explore - OrgChart'));
+      metricsResults.push(await getHigMetrics('Corporate OrgChart'));
     }
 
-    // Audit 4: Explore - 2D Canvas Graph
-    const canvasBtn = page.locator('button:has-text("2D 인터랙티브 그래프")');
-    if (await canvasBtn.isVisible()) {
-      await canvasBtn.click();
-      await page.waitForTimeout(600);
+    // Audit 4: 2D Canvas Graph
+    const canvasTab = page.locator('[data-testid="tab-canvas"]');
+    if (await canvasTab.isVisible()) {
+      await canvasTab.click();
+      await page.waitForTimeout(1200);
       await page.screenshot({ path: 'e2e/screenshots/audit-04-explore-canvas.png', fullPage: true });
-      metricsResults.push(await getHigMetrics('Explore - 2D Canvas'));
+      metricsResults.push(await getHigMetrics('2D Canvas'));
     }
 
-    // Audit 4b: Explore - 3D Cosmic Galaxy
-    const galaxyBtn = page.locator('button:has-text("3D 은하계")');
-    if (await galaxyBtn.isVisible()) {
-      await galaxyBtn.click();
-      await page.waitForTimeout(600);
+    // Audit 4b: 3D Cosmic Galaxy
+    const galaxyTab = page.locator('[data-testid="tab-galaxy"]');
+    if (await galaxyTab.isVisible()) {
+      await galaxyTab.click();
+      await page.waitForTimeout(1200);
       await page.screenshot({ path: 'e2e/screenshots/audit-04b-explore-galaxy3d.png', fullPage: true });
-      metricsResults.push(await getHigMetrics('Explore - 3D Galaxy'));
+      metricsResults.push(await getHigMetrics('3D Galaxy'));
     }
 
-    // Audit 4c: Explore - Age Spectrum
-    const ageBtn = page.locator('button:has-text("나이대별")');
-    if (await ageBtn.isVisible()) {
-      await ageBtn.click();
-      await page.waitForTimeout(600);
+    // Audit 4c: Age Spectrum
+    const ageTab = page.locator('[data-testid="tab-age"]');
+    if (await ageTab.isVisible()) {
+      await ageTab.click();
+      await page.waitForTimeout(1200);
       await page.screenshot({ path: 'e2e/screenshots/audit-04c-explore-age.png', fullPage: true });
-      metricsResults.push(await getHigMetrics('Explore - Age Spectrum'));
+      metricsResults.push(await getHigMetrics('Age Spectrum'));
     }
 
-    // Audit 4d: Explore - Timeline
-    const timelineBtn = page.locator('button:has-text("소통 타임라인")');
-    if (await timelineBtn.isVisible()) {
-      await timelineBtn.click();
-      await page.waitForTimeout(600);
+    // Audit 4d: Timeline
+    const timelineTab = page.locator('[data-testid="tab-timeline"]');
+    if (await timelineTab.isVisible()) {
+      await timelineTab.click();
+      await page.waitForTimeout(1200);
       await page.screenshot({ path: 'e2e/screenshots/audit-04d-explore-timeline.png', fullPage: true });
-      metricsResults.push(await getHigMetrics('Explore - Timeline'));
+      metricsResults.push(await getHigMetrics('Timeline'));
     }
 
-    // Audit 5: Business - Deals Pipeline
-    await page.locator('[data-testid="segment-business"]').click();
-    await page.waitForTimeout(600);
-    await page.screenshot({ path: 'e2e/screenshots/audit-05-business-deals.png', fullPage: true });
-    metricsResults.push(await getHigMetrics('Business - Deals'));
+    // Audit 5: Deals Pipeline
+    const dealsTab = page.locator('[data-testid="tab-deals"]');
+    if (await dealsTab.isVisible()) {
+      await dealsTab.click();
+      await page.waitForTimeout(1200);
+      await page.screenshot({ path: 'e2e/screenshots/audit-05-business-deals.png', fullPage: true });
+      metricsResults.push(await getHigMetrics('Business Deals'));
+    }
 
-    // Audit 6: Business - Proximity Radar
-    const proxBtn = page.locator('button:has-text("거점별 레이더")');
-    if (await proxBtn.isVisible()) {
-      await proxBtn.click();
-      await page.waitForTimeout(600);
+    // Audit 6: Proximity Radar
+    const proxTab = page.locator('[data-testid="tab-proximity"]');
+    if (await proxTab.isVisible()) {
+      await proxTab.click();
+      await page.waitForTimeout(1200);
       await page.screenshot({ path: 'e2e/screenshots/audit-06-business-proximity.png', fullPage: true });
-      metricsResults.push(await getHigMetrics('Business - Proximity'));
+      metricsResults.push(await getHigMetrics('Proximity Radar'));
     }
 
-    // Audit 7: Business - Promotion Cadence
-    const promoBtn = page.locator('button:has-text("영전·케어 골든타임")');
-    if (await promoBtn.isVisible()) {
-      await promoBtn.click();
-      await page.waitForTimeout(600);
+    // Audit 7: Promotion Cadence
+    const promoTab = page.locator('[data-testid="tab-promotion"]');
+    if (await promoTab.isVisible()) {
+      await promoTab.click();
+      await page.waitForTimeout(1200);
       await page.screenshot({ path: 'e2e/screenshots/audit-07-business-promotion.png', fullPage: true });
-      metricsResults.push(await getHigMetrics('Business - Promotion'));
+      metricsResults.push(await getHigMetrics('Promotion Cadence'));
     }
 
-    // Audit 8: Business - Network Audit
-    const auditBtn = page.locator('button:has-text("인맥 자산 진단")');
-    if (await auditBtn.isVisible()) {
-      await auditBtn.click();
-      await page.waitForTimeout(600);
+    // Audit 8: Network Audit
+    const auditTab = page.locator('[data-testid="tab-audit"]');
+    if (await auditTab.isVisible()) {
+      await auditTab.click();
+      await page.waitForTimeout(1200);
       await page.screenshot({ path: 'e2e/screenshots/audit-08-business-audit.png', fullPage: true });
-      metricsResults.push(await getHigMetrics('Business - Audit'));
+      metricsResults.push(await getHigMetrics('Network Audit'));
     }
 
-    // Audit 8b: Business - Team Network
-    const teamBtn = page.locator('button:has-text("팀 인맥")');
-    if (await teamBtn.isVisible()) {
-      await teamBtn.click();
-      await page.waitForTimeout(600);
+    // Audit 8b: Team Network
+    const teamTab = page.locator('[data-testid="tab-team"]');
+    if (await teamTab.isVisible()) {
+      await teamTab.click();
+      await page.waitForTimeout(1200);
       await page.screenshot({ path: 'e2e/screenshots/audit-08b-business-team.png', fullPage: true });
-      metricsResults.push(await getHigMetrics('Business - Team'));
+      metricsResults.push(await getHigMetrics('Team Network'));
     }
 
-    // Audit 8c: Business - Referral Bounty
-    const bountyBtn = page.locator('button:has-text("바운티 탐색")');
-    if (await bountyBtn.isVisible()) {
-      await bountyBtn.click();
-      await page.waitForTimeout(600);
+    // Audit 8c: Referral Bounty
+    const bountyTab = page.locator('[data-testid="tab-referral"]');
+    if (await bountyTab.isVisible()) {
+      await bountyTab.click();
+      await page.waitForTimeout(1200);
       await page.screenshot({ path: 'e2e/screenshots/audit-08c-business-bounty.png', fullPage: true });
-      metricsResults.push(await getHigMetrics('Business - Bounty'));
+      metricsResults.push(await getHigMetrics('Referral Bounty'));
     }
 
     // Audit 9: Modal Inspection (Daily Digest)
@@ -213,7 +220,7 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
 
     // Audit 10: Drawer Inspection (Person Inspector Drawer)
     // Go to Command Center and click first person
-    await page.locator('[data-testid="segment-command"]').click();
+    await page.locator('[data-testid="tab-command"]').click();
     await page.waitForTimeout(500);
     const firstPerson = page.locator('text=김서연').first();
     if (await firstPerson.isVisible()) {
@@ -245,8 +252,8 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
 
     await page.screenshot({ path: 'e2e/screenshots/audit-11-mobile-command.png', fullPage: true });
 
-    // Switch to Explore on Mobile
-    await page.locator('[data-testid="segment-explore"]').click();
+    // Switch to Company Alumni on Mobile
+    await page.locator('[data-testid="tab-company"]').click();
     await page.waitForTimeout(500);
     await page.screenshot({ path: 'e2e/screenshots/audit-12-mobile-explore.png', fullPage: true });
 

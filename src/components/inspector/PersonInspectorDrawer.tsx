@@ -581,10 +581,10 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
                   <div key={log.id} className="p-3 rounded-xl bg-slate-800/40 border border-slate-800 space-y-1">
                     <div className="flex items-center justify-between text-xs">
                       <span className="font-semibold text-slate-200 flex items-center gap-1.5">
-                        {log.type === 'call' && '📞 전화 통화'}
-                        {log.type === 'meeting' && '🤝 미팅/면담'}
-                        {log.type === 'email' && '✉️ 이메일'}
-                        {log.type === 'note' && '📝 메모'}
+                        {log.type === 'call' && '전화 통화'}
+                        {log.type === 'meeting' && '미팅/면담'}
+                        {log.type === 'email' && '이메일'}
+                        {log.type === 'note' && '메모'}
                         <span>: {log.title}</span>
                       </span>
                       <span className="text-[11px] text-slate-500 font-mono">{log.loggedAt}</span>

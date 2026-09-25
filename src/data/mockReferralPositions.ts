@@ -23,7 +23,7 @@ export const mockReferralPositions: ReferralPosition[] = [
       hireSuccessBounty: 7000000,
       probationBounty: 3000000
     },
-    urgentBadge: '🔥 바운티 1,000만원 (급구)',
+    urgentBadge: '바운티 1,000만원 (급구)',
     description: '글로벌 엔터프라이즈용 파운데이션 모델을 자체 구축하는 유니콘 기업의 핵심 선행연구 총괄 포지션입니다.',
     deadline: '2026-10-31',
     isOpen: true
@@ -50,7 +50,7 @@ export const mockReferralPositions: ReferralPosition[] = [
       hireSuccessBounty: 3500000,
       probationBounty: 1500000
     },
-    urgentBadge: '⚡ 면접비 20만원 지원',
+    urgentBadge: '면접비 20만원 지원',
     description: '월간 트래픽 5,000만 건 이상을 처리하는 엔터프라이즈 인프라 혁신을 총괄할 아키텍트를 모십니다.',
     deadline: '2026-11-15',
     isOpen: true
@@ -77,7 +77,7 @@ export const mockReferralPositions: ReferralPosition[] = [
       hireSuccessBounty: 5000000,
       probationBounty: 2000000
     },
-    urgentBadge: '🎯 IPO 지분 스톡옵션 별도',
+    urgentBadge: 'IPO 지분 스톡옵션 별도',
     description: '시리즈 C를 완료하고 2027년 코스닥 기술특례 상장을 준비 중인 자율주행 모빌리티의 재무 컨트롤타워 포지션입니다.',
     deadline: '2026-10-15',
     isOpen: true

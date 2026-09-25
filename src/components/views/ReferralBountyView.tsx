@@ -164,29 +164,29 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
   return (
     <div className="space-y-6">
       {/* 상단 탭 및 바운티 통계 배너 */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5 rounded-2xl bg-gradient-to-r from-indigo-950/70 via-slate-900 to-purple-950/70 border border-indigo-500/30 shadow-xl">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
-            <Gift className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-lg font-bold text-white tracking-tight">
+            <Gift className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">
               인맥 기반 헤드헌팅 &amp; 채용 바운티 허브
             </h2>
-            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/30 font-mono">
+            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-300 font-medium">
               최대 1,000만원 보상
             </span>
           </div>
-          <p className="text-xs text-slate-300">
+          <p className="text-xs text-slate-500 dark:text-slate-400">
             내 지인의 알럼나이 및 DART 팩트 경력을 기반으로 최적 포지션에 비공개 타진하고, 커피챗부터 최종 합격까지 단계별 리워드를 획득하세요.
           </p>
         </div>
 
-        <div className="flex items-center gap-1.5 bg-slate-100 dark:bg-slate-900/90 p-1.5 rounded-xl border border-slate-200 dark:border-slate-800">
+        <div className="flex items-center gap-1.5 bg-slate-100/80 dark:bg-slate-800 p-1.5 rounded-xl border border-slate-200/80 dark:border-slate-700">
           <button
             onClick={() => setActiveTab('positions')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               activeTab === 'positions'
-                ? 'bg-blue-600 dark:bg-indigo-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'bg-white text-slate-900 shadow-xs dark:bg-slate-900 dark:text-white'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <Briefcase className="w-3.5 h-3.5" />
@@ -194,10 +194,10 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
           </button>
           <button
             onClick={() => setActiveTab('submissions')}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               activeTab === 'submissions'
-                ? 'bg-blue-600 dark:bg-indigo-600 text-white shadow-xs'
-                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                ? 'bg-white text-slate-900 shadow-xs dark:bg-slate-900 dark:text-white'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             <Clock className="w-3.5 h-3.5" />
@@ -208,84 +208,84 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
 
       {/* 실시간 리워드 적립 & HRCO 브릿지 상태 3대 KPI 바 */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-emerald-500/30 shadow-xs flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
           <div className="space-y-0.5">
             <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
               <DollarSign className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
               <span>누적 확정 정산 리워드</span>
             </span>
-            <div className="text-xl font-black text-emerald-600 dark:text-emerald-300 font-mono">
+            <div className="text-xl font-bold text-slate-900 dark:text-white font-mono">
               {formatMoney(totalEarnedReward)}
             </div>
           </div>
           <div className="flex flex-col items-end gap-1.5">
             <button
               onClick={() => setIsWithdrawalModalOpen(true)}
-              className="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-[11px] shadow-xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
+              className="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-900 font-semibold text-[11px] shadow-2xs flex items-center gap-1 transition-all active:scale-95 cursor-pointer"
               title="세무 3.3% 원천징수 공제 후 등록 계좌로 출금 신청"
             >
               <span>계좌 출금 신청</span>
               <ArrowUpRight className="w-3 h-3" />
             </button>
-            <span className="text-[11px] text-emerald-600/80 dark:text-emerald-400/80 font-mono">
+            <span className="text-[11px] text-slate-400 font-mono">
               익일 영업일 입금
             </span>
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-indigo-500/30 shadow-xs flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
           <div className="space-y-0.5">
             <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
-              <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-indigo-400" />
+              <Zap className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
               <span>진행 중 채용 파이프라인</span>
             </span>
-            <div className="text-xl font-black text-blue-600 dark:text-indigo-300 font-mono">
+            <div className="text-xl font-bold text-slate-900 dark:text-white font-mono">
               {activeSubmissionsCount}건
             </div>
           </div>
-          <span className="text-[11px] px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200 dark:bg-indigo-950/80 dark:border-indigo-500/30 dark:text-indigo-300 font-bold">
+          <span className="text-[11px] px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 dark:bg-slate-800 dark:text-slate-300 font-medium">
             총 {submissions.length}건 추천
           </span>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-purple-500/30 shadow-xs flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs flex items-center justify-between">
           <div className="space-y-0.5">
             <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+              <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
               <span>단계별 보상 체계</span>
             </span>
-            <div className="text-xs text-slate-700 dark:text-slate-200 font-semibold space-x-1">
-              <span>☕ 5만</span>
+            <div className="text-xs text-slate-600 dark:text-slate-300 font-medium space-x-1">
+              <span>커피챗 5만</span>
               <span className="text-slate-300 dark:text-slate-600">·</span>
-              <span>🎤 20만</span>
+              <span>면접 20만</span>
               <span className="text-slate-300 dark:text-slate-600">·</span>
-              <span className="text-purple-600 dark:text-purple-300 font-bold">🎉 최대 1,000만</span>
+              <span className="text-indigo-600 dark:text-indigo-400 font-semibold">최종 1,000만</span>
             </div>
           </div>
-          <span className="text-[11px] px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200 dark:bg-purple-950/80 dark:border-purple-500/30 dark:text-purple-300 font-bold">
+          <span className="text-[11px] px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200/80 dark:bg-slate-800 dark:text-slate-300 font-medium">
             3단계 마일스톤
           </span>
         </div>
       </div>
 
       {/* HRCO GoodPartner Bridge Sync Bar */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-indigo-950/40 via-purple-950/20 to-slate-900 border border-indigo-800/40 text-xs">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center text-white shadow-md shadow-indigo-600/20 shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-800 flex items-center justify-center text-indigo-600 dark:text-indigo-400 shrink-0">
             <Building2 className="w-4 h-4" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-white">HRCO GoodPartner 헤드헌팅 ERP 실시간 연동</span>
-              <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border ${
+              <span className="font-semibold text-slate-900 dark:text-white">HRCO GoodPartner 헤드헌팅 ERP 실시간 연동</span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${
                 isLiveBridge 
-                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' 
-                  : 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
+                  ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300' 
+                  : 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/60 dark:text-indigo-300'
               }`}>
                 {isLiveBridge ? '● LIVE ERP SYNC' : '● ACTIVE FEED'}
               </span>
             </div>
-            <p className="text-[11px] text-slate-400">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
               추천 수락 시 HRCO 채용 관리자 파이프라인으로 지인 이력이 안전하게 직결되며, 마일스톤 도달 시 리워드가 자동 정산됩니다.
             </p>
           </div>
@@ -541,7 +541,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                         <span className="text-xs font-semibold text-indigo-400">{sub.clientCompany}</span>
                         {totalPaid > 0 && (
                           <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-950/80 text-emerald-300 font-bold border border-emerald-500/40 font-mono">
-                            💰 {formatMoney(totalPaid)} 정산됨
+                            {formatMoney(totalPaid)} 정산 완료
                           </span>
                         )}
                       </div>

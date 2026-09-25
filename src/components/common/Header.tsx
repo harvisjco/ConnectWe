@@ -169,65 +169,65 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="border-b border-slate-200/90 dark:border-slate-800/80 bg-white/95 dark:bg-slate-900/80 backdrop-blur-xl sticky top-0 z-40 px-4 sm:px-6 py-3 shadow-xs dark:shadow-[0_4px_24px_rgba(0,0,0,0.35)] transition-colors">
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3">
-        {/* Zone 1: Brand & Slogan */}
-        <div className="flex items-center justify-between md:justify-start gap-3">
-          <div className="flex items-center gap-2 sm:gap-3">
-            {onToggleSidebar && (
-              <button
-                onClick={onToggleSidebar}
-                className="flex items-center justify-center w-8 h-8 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200/80 dark:border-slate-700/60"
-                title="사이드바 내비게이션 토글"
-                aria-label="사이드바 토글"
-              >
-                <PanelLeft className="w-4 h-4" />
-              </button>
-            )}
-            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-slate-900 to-indigo-600 dark:from-indigo-600 dark:via-indigo-500 dark:to-sky-400 flex items-center justify-center shadow-xs dark:shadow-[0_4px_14px_rgba(79,70,229,0.35)] ring-1 ring-black/5 dark:ring-white/20 shrink-0">
-              <Share2 className="w-5 h-5 text-white" />
+    <header className="border-b border-slate-200/80 dark:border-slate-800/80 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl sticky top-0 z-40 px-4 sm:px-6 py-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-colors">
+      <div className="max-w-[1600px] mx-auto flex items-center justify-between gap-3">
+        {/* Zone 1: Brand Logo & Pill Badges (GoodPartner Style) */}
+        <div className="flex items-center gap-3 shrink-0">
+          {onToggleSidebar && (
+            <button
+              onClick={onToggleSidebar}
+              className="flex items-center justify-center w-8 h-8 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200/80 dark:border-slate-700/60 cursor-pointer"
+              title="사이드바 내비게이션 토글"
+              aria-label="사이드바 토글"
+            >
+              <PanelLeft className="w-4 h-4" />
+            </button>
+          )}
+
+          <div className="flex items-center gap-2.5">
+            <div className="w-8 h-8 rounded-xl bg-indigo-600 dark:bg-indigo-500 flex items-center justify-center shadow-xs shrink-0">
+              <Share2 className="w-4 h-4 text-white" />
             </div>
-            <div>
-              <div className="flex items-center gap-2.5">
-                <h1 className="text-lg sm:text-xl font-black tracking-tight text-slate-900 dark:text-white whitespace-nowrap">
-                  ConnectWe
-                </h1>
-                <button
-                  onClick={onOpenCloudSyncModal}
-                  title="Supabase PostgreSQL E2EE Cloud Live 연동 중"
-                  className="inline-flex items-center gap-1.5 text-xs px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30 font-semibold hover:bg-emerald-100 dark:hover:bg-emerald-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95 shadow-2xs"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>Cloud Live</span>
-                </button>
-              </div>
-              <p className="hidden sm:block text-[11px] font-medium text-slate-400 dark:text-slate-400 whitespace-nowrap truncate max-w-xs md:max-w-none">
-                스마트폰 주소록 · DART 상장사 공시 팩트 융합 지능 허브
-              </p>
+            
+            <div className="flex items-center gap-2">
+              <h1 className="text-base sm:text-lg font-black tracking-tight text-slate-900 dark:text-white whitespace-nowrap">
+                ConnectWe
+              </h1>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-500/30">
+                AI 2.0
+              </span>
+              <button
+                onClick={onOpenCloudSyncModal}
+                title="Supabase PostgreSQL E2EE Cloud Live 연동 중"
+                className="inline-flex items-center gap-1.5 text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-500/30 font-semibold hover:bg-emerald-100 transition-all cursor-pointer whitespace-nowrap active:scale-95 shadow-2xs"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Live</span>
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Zone 2: Executive Metric Capsule (Desktop & Tablet) - Clean Tech Capsule */}
-        <div className="hidden lg:flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-slate-100/80 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 text-xs shadow-2xs whitespace-nowrap">
+        {/* Zone 2: Executive Metric Capsule (Center - GoodPartner Style Pill) */}
+        <div className="hidden lg:flex items-center gap-3 px-3.5 py-1 rounded-full bg-slate-100/70 dark:bg-slate-950/80 border border-slate-200/70 dark:border-slate-800 text-xs whitespace-nowrap">
           <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
-            <Users className="w-3.5 h-3.5 text-blue-600 dark:text-indigo-400" />
+            <Users className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
             <span className="text-slate-500 dark:text-slate-400">인맥</span>
-            <span className="font-extrabold text-slate-900 dark:text-white">{people.length}명</span>
+            <span className="font-bold text-slate-900 dark:text-white">{people.length}명</span>
           </div>
           <span className="text-slate-300 dark:text-slate-700">·</span>
           <div className="flex items-center gap-1.5">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
-            <span className="text-emerald-700 dark:text-emerald-400 font-semibold">DART 공시</span>
-            <span className="font-extrabold text-emerald-700 dark:text-emerald-300">{dartFactCount}명</span>
+            <span className="text-emerald-700 dark:text-emerald-400 font-medium">DART 공시</span>
+            <span className="font-bold text-emerald-700 dark:text-emerald-300">{dartFactCount}명</span>
           </div>
           {staleCount > 0 && (
             <>
               <span className="text-slate-300 dark:text-slate-700">·</span>
               <div className="flex items-center gap-1.5">
                 <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                <span className="text-amber-700 dark:text-amber-400 font-semibold">미소통</span>
-                <span className="font-extrabold text-amber-700 dark:text-amber-300">{staleCount}명</span>
+                <span className="text-amber-700 dark:text-amber-400 font-medium">미소통</span>
+                <span className="font-bold text-amber-700 dark:text-amber-300">{staleCount}명</span>
               </div>
             </>
           )}
@@ -235,23 +235,33 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Zone 3: Core CTAs & Quick Tools Dropdown */}
         <div className="flex items-center justify-end gap-2 shrink-0">
+          {/* CSV Export Button Shortcut (GoodPartner Style) */}
+          <button
+            onClick={handleExportCsv}
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-200/90 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-[0.98] shadow-2xs cursor-pointer whitespace-nowrap"
+            title="엑셀 호환 CSV (UTF-8 with BOM) 다운로드"
+          >
+            <Download className="w-3.5 h-3.5 text-slate-500" />
+            <span>CSV</span>
+          </button>
+
           {/* Daily Intelligence Digest CTA */}
           <button
             onClick={onOpenDigestModal}
-            className="flex items-center gap-1.5 px-3 py-2 min-h-[36px] rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200 transition-all active:scale-[0.98] shadow-xs cursor-pointer whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-200/90 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-[0.98] shadow-2xs cursor-pointer whitespace-nowrap"
             title="오늘의 인맥 지능 다이제스트"
           >
-            <Sparkles className="w-3.5 h-3.5 text-blue-600 dark:text-indigo-400 animate-pulse" />
+            <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 animate-pulse" />
             <span>다이제스트</span>
             {staleCount > 0 && (
-              <span className="w-2 h-2 rounded-full bg-rose-500" />
+              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
             )}
           </button>
 
-          {/* Add Person CTA - Dominant Clean Action Button */}
+          {/* Add Person CTA - GoodPartner Style Indigo Pill Button */}
           <button
             onClick={onOpenAddModal}
-            className="flex items-center gap-1.5 px-3.5 py-2 min-h-[36px] rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-indigo-600 dark:hover:bg-indigo-500 active:scale-[0.98] transition-all text-xs font-bold text-white shadow-xs dark:shadow-indigo-500/20 cursor-pointer whitespace-nowrap"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 active:scale-[0.98] transition-all text-xs font-bold text-white shadow-xs cursor-pointer whitespace-nowrap"
             title="새 인맥 직접 등록"
           >
             <UserPlus className="w-3.5 h-3.5 text-white" />

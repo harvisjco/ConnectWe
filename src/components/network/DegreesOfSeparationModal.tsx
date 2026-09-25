@@ -354,7 +354,7 @@ ${bridge.name}님께서 ${targetPerson.name}님과 같은 조직 및 네트워�
                       introTone === 'alumni' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    🤝 동문/안부
+                    동문/안부
                   </button>
                 </div>
               </div>
@@ -369,11 +369,11 @@ ${bridge.name}님께서 ${targetPerson.name}님과 같은 조직 및 네트워�
                     onClick={() => handlePurposeChange(p)}
                     className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all ${
                       introPurpose === p 
-                        ? 'bg-purple-600 text-white shadow-xs' 
-                        : 'bg-slate-900 text-slate-400 hover:text-white border border-slate-800'
+                        ? 'bg-indigo-600 text-white shadow-xs' 
+                        : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800'
                     }`}
                   >
-                    {p === 'business' ? '💼 사업제휴' : p === 'coffee_chat' ? '☕ 티타임' : p === 'recruiting' ? '🎯 인재영입' : '📈 투자IR'}
+                    {p === 'business' ? '사업제휴' : p === 'coffee_chat' ? '티타임' : p === 'recruiting' ? '인재영입' : '투자IR'}
                   </button>
                 ))}
               </div>

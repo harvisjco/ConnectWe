@@ -71,7 +71,7 @@ export const DisclosureAlertModal: React.FC<DisclosureAlertModalProps> = ({
                       ? 'bg-rose-950/80 text-rose-300 border border-rose-500/30'
                       : 'bg-indigo-950/80 text-indigo-300 border border-indigo-500/30'
                   }`}>
-                    {alert.importance === 'HIGH' ? '🔥 중요 공시' : '📌 일반 변동'}
+                    {alert.importance === 'HIGH' ? '중요 공시' : '일반 변동'}
                   </span>
                   <span className="text-xs font-bold text-white flex items-center gap-1">
                     <Building2 className="w-3.5 h-3.5 text-indigo-400" />

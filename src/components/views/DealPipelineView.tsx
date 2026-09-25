@@ -27,7 +27,7 @@ const STAGES: { id: DealStage; label: string; color: string }[] = [
   { id: 'MEETING_HELD', label: '3. 미팅 완료', color: 'border-purple-200 dark:border-purple-500/40 bg-purple-50/40 dark:bg-purple-950/20' },
   { id: 'PROPOSAL', label: '4. 제안서 송부', color: 'border-sky-200 dark:border-sky-500/40 bg-sky-50/40 dark:bg-sky-950/20' },
   { id: 'NEGOTIATION', label: '5. 조건 협상', color: 'border-amber-200 dark:border-amber-500/40 bg-amber-50/40 dark:bg-amber-950/20' },
-  { id: 'WON', label: '6. 수주 성공 🏆', color: 'border-emerald-200 dark:border-emerald-500/40 bg-emerald-50/40 dark:bg-emerald-950/20' },
+  { id: 'WON', label: '6. 수주 완료', color: 'border-emerald-200 dark:border-emerald-500/40 bg-emerald-50/40 dark:bg-emerald-950/20' },
 ];
 
 export const DealPipelineView: React.FC<DealPipelineViewProps> = ({

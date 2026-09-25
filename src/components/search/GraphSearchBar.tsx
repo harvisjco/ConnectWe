@@ -38,37 +38,37 @@ export const GraphSearchBar: React.FC<GraphSearchBarProps> = ({
 
   return (
     <div className="w-full max-w-5xl mx-auto space-y-3">
-      {/* Search Input Box - Naver Cloud & Apple Clean Style */}
+      {/* Search Input Box - GoodPartner Pill Style */}
       <form onSubmit={handleSubmit} className="relative group">
-        <div className="relative flex items-center bg-white dark:bg-slate-950/80 border border-slate-200/90 dark:border-slate-800/80 focus-within:border-blue-500 dark:focus-within:border-indigo-500/60 rounded-2xl shadow-xs dark:shadow-[inset_0_2px_6px_rgba(0,0,0,0.7)] px-4 py-3 transition-all duration-200">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 dark:bg-indigo-500/10 text-blue-600 dark:text-indigo-400 mr-3 shrink-0">
-            <Sparkles className="w-4 h-4 animate-pulse" />
+        <div className="relative flex items-center bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 focus-within:border-indigo-500/80 rounded-full shadow-[0_1px_3px_rgba(0,0,0,0.03)] px-4 py-2 transition-all duration-200">
+          <div className="flex items-center justify-center w-7 h-7 rounded-full bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 mr-2.5 shrink-0">
+            <Search className="w-3.5 h-3.5" />
           </div>
 
           <input
             type="text"
             value={query}
             onChange={(e) => onQueryChange(e.target.value)}
-            placeholder='자연어로 질의하세요: "과거 네이버 거쳐간 40대 임원", "카이스트 AI 연구원", "연락 뜸해진 1촌"...'
-            className="w-full bg-transparent text-sm md:text-base text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none font-normal"
+            placeholder='인맥 성명, 출신 기업, DART 공시 직함, 도메인, 전문 스킬 검색... (예: "네이버 출신 40대 임원", "카이스트 AI")'
+            className="w-full bg-transparent text-xs sm:text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none font-normal"
           />
 
           {query && (
             <button
               type="button"
               onClick={onResetSearch}
-              className="p-1.5 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors mr-1 active:scale-95"
+              className="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors mr-1 active:scale-95 cursor-pointer"
             >
-              <X className="w-4 h-4" />
+              <X className="w-3.5 h-3.5" />
             </button>
           )}
 
           <button
             type="submit"
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 dark:bg-indigo-600 dark:hover:bg-indigo-500 active:scale-[0.98] transition-all text-xs md:text-sm font-bold text-white shadow-xs cursor-pointer flex-shrink-0"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 active:scale-[0.98] transition-all text-xs font-bold text-white shadow-2xs cursor-pointer flex-shrink-0"
           >
-            <Search className="w-4 h-4 text-white" />
-            <span className="hidden sm:inline">GraphRAG 탐색</span>
+            <Sparkles className="w-3.5 h-3.5 text-indigo-200" />
+            <span className="hidden sm:inline">지능 검색</span>
           </button>
         </div>
       </form>

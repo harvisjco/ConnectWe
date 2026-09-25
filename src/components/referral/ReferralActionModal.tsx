@@ -129,15 +129,15 @@ export const ReferralActionModal: React.FC<ReferralActionModalProps> = ({
                   </div>
                   <div className="space-y-1 text-xs">
                     <div className="flex justify-between items-center text-slate-300">
-                      <span>☕ 1단계: 커피챗 수락</span>
+                      <span>1단계: 커피챗 수락</span>
                       <span className="font-bold text-emerald-400">+{position.rewards.coffeeChatReward.toLocaleString()}원</span>
                     </div>
                     <div className="flex justify-between items-center text-slate-300">
-                      <span>💼 2단계: 1차 면접 진행</span>
+                      <span>2단계: 1차 면접 진행</span>
                       <span className="font-bold text-emerald-400">+{position.rewards.interviewReward.toLocaleString()}원</span>
                     </div>
                     <div className="flex justify-between items-center text-white font-bold pt-1 border-t border-indigo-800/40">
-                      <span>🎯 3단계: 최종 입사 바운티</span>
+                      <span>3단계: 최종 입사 바운티</span>
                       <span className="text-amber-400 text-sm">+{position.rewards.hireSuccessBounty.toLocaleString()}원</span>
                     </div>
                   </div>

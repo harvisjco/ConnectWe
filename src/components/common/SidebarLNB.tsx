@@ -58,7 +58,7 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
   const sections: NavSection[] = [
     {
       title: '인맥 자산 & 인텔리전스',
-      tag: '',
+      tag: 'CORE',
       tagColor: '',
       items: [
         {
@@ -91,7 +91,7 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
     },
     {
       title: '비즈니스 & 딜 실행',
-      tag: '',
+      tag: 'BIZ',
       tagColor: '',
       items: [
         {
@@ -119,7 +119,7 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
     },
     {
       title: '다차원 공간 & 시계열',
-      tag: '',
+      tag: 'SPACE',
       tagColor: '',
       items: [
         {
@@ -150,27 +150,20 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
     if (!badge) return null;
     if (badge.variant === 'action-pink') {
       return (
-        <span className="px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-pink-50 text-pink-600 border border-pink-200 dark:bg-pink-500/20 dark:text-pink-300 dark:border-pink-500/30 shrink-0">
+        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-pink-50 text-pink-600 border border-pink-200/80 dark:bg-pink-950/40 dark:text-pink-300 dark:border-pink-500/30 shrink-0 font-mono">
           {badge.text}
         </span>
       );
     }
     if (badge.variant === 'action-amber') {
       return (
-        <span className="px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/30 shrink-0">
-          {badge.text}
-        </span>
-      );
-    }
-    if (badge.variant === 'action-emerald') {
-      return (
-        <span className="px-1.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/20 dark:text-emerald-300 dark:border-emerald-500/30 shrink-0">
+        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/80 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-500/30 shrink-0 font-mono">
           {badge.text}
         </span>
       );
     }
     return (
-      <span className="px-1.5 py-0.5 rounded text-[11px] font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/60 shrink-0">
+      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 shrink-0 font-mono">
         {badge.text}
       </span>
     );
@@ -181,17 +174,17 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
       {/* LNB Top Header */}
       <div className="flex items-center justify-between px-3 py-3 border-b border-slate-200/80 dark:border-slate-800/80 shrink-0">
         <div className="flex items-center gap-2 overflow-hidden">
-          <span className="w-2 h-2 rounded-full bg-blue-600 dark:bg-indigo-400 shrink-0" />
+          <span className="w-2 h-2 rounded-full bg-indigo-600 dark:bg-indigo-400 shrink-0" />
           {!isCollapsed && (
             <span className="text-xs font-bold tracking-tight text-slate-800 dark:text-slate-200 truncate">
-              ConnectWe Console
+              ConnectWe 콘솔
             </span>
           )}
         </div>
         {/* Desktop Collapse Button */}
         <button
           onClick={onToggleCollapse}
-          className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+          className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
           title={isCollapsed ? '사이드바 펼치기' : '사이드바 축소'}
           aria-label="사이드바 토글"
         >
@@ -207,16 +200,21 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
         </button>
       </div>
 
-      {/* Nav Menu Items List (Scrollable if viewport is tiny, normally fits) */}
+      {/* Nav Menu Items List */}
       <div className="flex-1 overflow-y-auto px-2 py-3 space-y-4 scrollbar-none">
         {sections.map((section, sIdx) => (
           <div key={sIdx} className="space-y-1">
-            {/* Section Header */}
+            {/* Section Header with GoodPartner Pill Tag */}
             {!isCollapsed ? (
-              <div className="flex items-center px-2.5 pt-2 pb-1">
-                <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
+              <div className="flex items-center justify-between px-2.5 pt-2 pb-1">
+                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 tracking-tight">
                   {section.title}
                 </span>
+                {section.tag && (
+                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 uppercase tracking-wider font-mono">
+                    {section.tag}
+                  </span>
+                )}
               </div>
             ) : (
               <div className="w-full flex justify-center py-1">
@@ -239,14 +237,14 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
                       onCloseMobile();
                     }}
                     title={isCollapsed ? item.label : undefined}
-                    className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold transition-all duration-150 active:scale-[0.98] ${
+                    className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs transition-all duration-150 active:scale-[0.98] cursor-pointer ${
                       isActive
-                        ? 'bg-blue-50 text-blue-700 border border-blue-200 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-500/40 shadow-2xs font-bold'
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/80 dark:hover:bg-slate-800/60'
+                        ? 'bg-indigo-50/90 text-indigo-700 border border-indigo-150/80 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-500/40 shadow-2xs font-bold'
+                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/60 dark:hover:bg-slate-800/60 font-medium'
                     } ${isCollapsed ? 'justify-center px-0' : 'justify-between'}`}
                   >
                     <div className="flex items-center gap-2.5 truncate">
-                      <IconComponent className={`w-4 h-4 shrink-0 ${isActive ? 'text-blue-600 dark:text-indigo-400' : 'text-slate-500 dark:text-slate-400'}`} />
+                      <IconComponent className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500'}`} />
                       {!isCollapsed && <span className="truncate">{item.label}</span>}
                     </div>
 
