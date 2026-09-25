@@ -1,9 +1,10 @@
 import React, { useRef } from 'react';
 import { Person } from '../../types/network';
-import { getSeniorityLevel } from '../../services/talentClusterEngine';
+import { identifyTalentCluster } from '../../services/talentClusterEngine';
 import { 
   X, Printer, Sparkles, Building2, 
-  Clock, ShieldCheck, Lightbulb, AlertTriangle, UserCheck
+  Clock, ShieldCheck, Lightbulb, AlertTriangle, UserCheck,
+  Rocket, Cpu, Briefcase
 } from 'lucide-react';
 
 interface ExecutiveDossierModalProps {
@@ -29,11 +30,46 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
     return pCompanies.some(c => targetCompanies.includes(c));
   }).slice(0, 3);
 
-  // AI 화두(Ice-breaker) 생성 로직 (룰 기반 지능형 템플릿)
-  const generateIcebreakers = () => {
-    const items: { title: string; desc: string; type: 'dart' | 'alumni' | 'domain' }[] = [];
+  const cluster = identifyTalentCluster(person);
 
-    // 1. DART 공시 기반 화두
+  // AI 화두(Ice-breaker) 생성 로직 (5대 인재 클러스터 특화 연계)
+  const generateIcebreakers = () => {
+    const items: { title: string; desc: string; type: 'cluster' | 'dart' | 'alumni' | 'domain' }[] = [];
+
+    // 1. 5대 인재 클러스터 고유 강점(Superpower) 기반 특화 화두
+    if (cluster.id === 'VENTURE_LEADER') {
+      items.push({
+        title: `${person.currentCompany}의 빠른 시장 개척 & 비즈니스 기동성`,
+        desc: `기동성 있는 의사결정과 넓은 업무 스콥을 이끄시는 혁신 리더입니다. 최근 시장 성장 모멘텀에 대한 경의를 표하며 양사 간 신속한 협력 시너지를 제안하기에 최적입니다.`,
+        type: 'cluster'
+      });
+    } else if (cluster.id === 'TECH_FELLOW') {
+      items.push({
+        title: `원천 기술 아키텍처 비전 & 최신 공학적 프론티어`,
+        desc: `선도 기술과 R&D 영역에서 독보적 시스템을 설계하는 최고 수준의 기술 인재입니다. 기술 스택, 차세대 AI/공학 아키텍처 및 미래 로드맵에 관한 고견을 여쭈며 깊이 있는 교류를 시작하세요.`,
+        type: 'cluster'
+      });
+    } else if (cluster.id === 'INVESTOR_PARTNER') {
+      items.push({
+        title: `산업 거시 생태계 통찰 & 기업가치 스케일업 딜 동향`,
+        desc: `자본 시장과 성장 딜을 꿰뚫고 있는 투자 파트너입니다. 최근 투자 심리, 유망 섹터 포트폴리오 트렌드 및 향후 자본 조달/파트너십 관점의 거시적 담론으로 신뢰를 형성할 수 있습니다.`,
+        type: 'cluster'
+      });
+    } else if (cluster.id === 'LISTED_EXECUTIVE') {
+      items.push({
+        title: `공적 거버넌스 신뢰 & 대규모 조직 전략 제휴`,
+        desc: `전자공시(DART)로 검증된 제도권 거버넌스와 대규모 조직 관리를 주도하는 임원입니다. 기업의 투명한 경영 성과를 축하하고 안정적 파트너십 프레임워크를 정중히 논의하기 좋습니다.`,
+        type: 'cluster'
+      });
+    } else {
+      items.push({
+        title: `현장 프로덕트 빌딩 경험 & 최신 기술 마스터리`,
+        desc: `탁월한 실무 전문성으로 제품을 직접 견인하는 핵심 인재입니다. 현장에서 겪은 생생한 문제해결 노하우와 최신 빌딩 프로세스를 편안하게 나누며 깊은 유대감을 쌓을 수 있습니다.`,
+        type: 'cluster'
+      });
+    }
+
+    // 2. DART 공시 기반 화두 (있을 경우)
     if (person.dartInfo) {
       items.push({
         title: `${person.dartInfo.stockName} 최근 공시 및 경영 현황`,
@@ -42,7 +78,7 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
       });
     }
 
-    // 2. 알럼나이 기반 화두
+    // 3. 알럼나이 기반 화두
     const pastCareer = person.careers.find(c => !c.isCurrent);
     if (pastCareer) {
       items.push({
@@ -52,7 +88,7 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
       });
     }
 
-    // 3. 전문 도메인 기반 화두
+    // 4. 전문 도메인 기반 화두
     items.push({
       title: `${person.primaryDomain} 최신 산업 트렌드 및 인사이트`,
       desc: `${person.currentTitle} 직함에 걸맞게 최근 ${person.primaryDomain} 분야의 시장 변동성이나 향후 기술/투자 방향성에 대해 고견을 구하는 질문이 효과적입니다.`,
@@ -109,12 +145,20 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
           {/* 헤더 프로필 블록 */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800 print:border-slate-300">
             <div className="space-y-1.5">
-              <div className="flex items-center gap-2.5">
+              <div className="flex items-center gap-2.5 flex-wrap">
                 <h1 className="text-2xl font-extrabold tracking-tight text-white print:text-black">
                   {person.name}
                 </h1>
                 <span className="text-xs px-2.5 py-0.5 rounded-md bg-indigo-950/60 text-indigo-300 border border-indigo-500/30 font-semibold print:border-slate-400 print:text-slate-800">
                   {person.currentTitle}
+                </span>
+                <span className={`text-xs px-2.5 py-0.5 rounded-md font-semibold border flex items-center gap-1 ${cluster.badgeStyle} print:border-slate-400 print:text-slate-800`}>
+                  {cluster.id === 'LISTED_EXECUTIVE' && <Building2 className="w-3.5 h-3.5" />}
+                  {cluster.id === 'VENTURE_LEADER' && <Rocket className="w-3.5 h-3.5" />}
+                  {cluster.id === 'TECH_FELLOW' && <Cpu className="w-3.5 h-3.5" />}
+                  {cluster.id === 'INVESTOR_PARTNER' && <Briefcase className="w-3.5 h-3.5" />}
+                  {cluster.id === 'CORE_SPECIALIST' && <Sparkles className="w-3.5 h-3.5" />}
+                  <span>{cluster.label}</span>
                 </span>
                 {person.dartInfo && (
                   <span className="text-xs px-2 py-0.5 rounded-md bg-emerald-950/60 text-emerald-300 border border-emerald-500/30 font-semibold flex items-center gap-1">
@@ -127,8 +171,17 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
                 {person.currentCompany} {person.currentDepartment ? `· ${person.currentDepartment}` : ''}
               </p>
               <p className="text-xs text-slate-400 print:text-slate-600">
-                전문 분야: <strong className="text-slate-200 print:text-black">{person.primaryDomain}</strong> · 경력 단계: <strong className="text-slate-200 print:text-black">{getSeniorityLevel(person)}</strong>
+                전문 분야: <strong className="text-slate-200 print:text-black">{person.primaryDomain}</strong> · 경력 단계: <strong className="text-slate-200 print:text-black">{cluster.seniorityLevel}</strong>
               </p>
+
+              {/* 3대 고유 강점 (Superpowers) */}
+              <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                {cluster.superpowers.map((sp, i) => (
+                  <span key={i} className="text-[11px] px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700/80 font-medium print:bg-slate-100 print:text-slate-800 print:border-slate-300">
+                    ⚡ {sp}
+                  </span>
+                ))}
+              </div>
             </div>
 
             {/* 기본 연락 정보 (미팅 직전 빠른 확인용) */}
