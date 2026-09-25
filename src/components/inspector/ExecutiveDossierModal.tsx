@@ -190,7 +190,7 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
                 {person.memo ? person.memo : '등록된 개인 메모가 없습니다.'}
               </p>
               <div className="text-[11px] text-slate-500 pt-1">
-                마지막 소통일: {person.lastContactDate || '기록 없음'} {person.isStale && '(💬 6개월 이상 미소통 · 안부 필요)'}
+                마지막 소통일: {person.lastContactDate || '기록 없음'} {person.isStale && '(6개월 이상 미소통 · 안부 필요)'}
               </div>
             </div>
 

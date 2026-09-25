@@ -250,6 +250,9 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
       };
     });
 
+    expect(mobileOverflow.hasHorizontalScroll).toBe(false);
+    expect(mobileOverflow.bodyScrollWidth).toBe(393);
+
     await page.screenshot({ path: 'e2e/screenshots/audit-11-mobile-command.png', fullPage: true });
 
     // Switch to Company Alumni on Mobile

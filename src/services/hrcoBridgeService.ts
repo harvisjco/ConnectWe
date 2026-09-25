@@ -174,19 +174,19 @@ export function simulateHrcoMilestoneProgress(
       label: '커피챗 수락 완료',
       amount: 50000,
       nextStatus: 'coffee_chat_accepted' as const,
-      msg: `☕ [${submission.candidateName}] 님이 커피챗을 수락했습니다! 커피챗 리워드 50,000원이 확정 적립되었습니다.`
+      msg: `[${submission.candidateName}] 님이 커피챗을 수락했습니다! 커피챗 리워드 50,000원이 확정 적립되었습니다.`
     },
     interview_pass: {
       label: '1차 인터뷰 합격',
       amount: 200000,
       nextStatus: 'interviewing' as const,
-      msg: `🎤 [${submission.candidateName}] 님이 ${submission.clientCompany} 1차 면접에 합격했습니다! 면접 패스 리워드 200,000원이 확정 적립되었습니다.`
+      msg: `[${submission.candidateName}] 님이 ${submission.clientCompany} 1차 면접에 합격했습니다! 면접 패스 리워드 200,000원이 확정 적립되었습니다.`
     },
     final_hire: {
       label: '최종 합격 및 입사 확정',
       amount: 5000000,
       nextStatus: 'hired_placed' as const,
-      msg: `🎉 [${submission.candidateName}] 님이 ${submission.clientCompany} 최종 입사를 확정했습니다! 헤드헌팅 최종 바운티 5,000,000원이 확정 지급되었습니다!`
+      msg: `[${submission.candidateName}] 님이 ${submission.clientCompany} 최종 입사를 확정했습니다! 헤드헌팅 최종 바운티 5,000,000원이 확정 지급되었습니다!`
     }
   };
 

@@ -203,7 +203,7 @@ export const ReferralActionModal: React.FC<ReferralActionModalProps> = ({
               </div>
 
               <div className="p-4 rounded-xl bg-slate-800/40 border border-slate-700/40 text-xs text-slate-400 text-left space-y-1.5">
-                <div className="font-semibold text-slate-300">💬 추천 팁 (카톡 예시 문구)</div>
+                <div className="font-semibold text-slate-300">추천 팁 (카톡 예시 문구)</div>
                 <p className="italic text-slate-400 bg-slate-900/80 p-2.5 rounded-lg border border-slate-800">
                   "{person.name}님, 최근 {position.clientCompany}에서 좋은 조건의 {position.title} 포지션을 찾고 있어서 {person.name}님이 가장 먼저 떠올라 공유드립니다. 편하게 커피 한 잔 하시며 이야기 나눠보실래요? 링크: {shareUrl}"
                 </p>

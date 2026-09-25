@@ -159,14 +159,14 @@ export function generateCongratulationMessages(
   return [
     {
       type: 'FLOWER_RIBBON',
-      title: '🌺 축하 화환 / 동양란 리본 문구',
+      title: '축하 화환 / 동양란 리본 문구',
       content: isCeo
         ? `[우측 리본] 祝 就任 (축 취임) / 代表理事 就任을 眞心으로 祝賀드립니다\n[좌측 리본] ${senderName} 拜上`
         : `[우측 리본] 祝 榮轉 (축 영전) / ${event.newTitle} 昇進을 眞心으로 祝賀드립니다\n[좌측 리본] ${senderName} 拜上`
     },
     {
       type: 'FORMAL_LETTER',
-      title: '💼 C-Level 공식 서신 & 이메일 축전',
+      title: 'C-Level 공식 서신 & 이메일 축전',
       content: `존경하는 ${event.personName} ${event.newTitle}님께,
 
 금번 ${event.companyName}의 ${event.newTitle} ${isCeo ? '취임' : '영전'}을 진심으로 축하드립니다.
@@ -181,8 +181,8 @@ ${senderName} 배상`
     },
     {
       type: 'WARM_MOBILE',
-      title: '📱 모바일 카카오톡 / 문자 축하 메시지',
-      content: `${event.personName} 선배님/대표님, ${event.companyName} ${event.newTitle} ${isCeo ? '취임' : '승진'} 공시 보고 너무 반갑고 기쁜 마음에 연락드립니다! 🎉
+      title: '모바일 카카오톡 / 문자 축하 메시지',
+      content: `${event.personName} 선배님/대표님, ${event.companyName} ${event.newTitle} ${isCeo ? '취임' : '승진'} 공시 보고 너무 반갑고 기쁜 마음에 연락드립니다!
 그간의 노고와 성과가 결실을 맺게 되어 진심으로 축하드립니다.
 바쁘신 일정 조금 추스러지시면 시원하게 축하 커피 한 잔 사겠습니다. 항상 응원하겠습니다!`
     }

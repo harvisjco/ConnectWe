@@ -71,7 +71,7 @@ export function findReferralMatchesForPosition(
     // 5. DART 공시 실데이터 검증 가산점 (10점)
     if (p.sourceType === 'DART_FACT' || p.dartInfo) {
       score += 10;
-      reasons.push('🏛️ DART 공식 검증 임원 이력');
+      reasons.push('DART 공식 검증 임원 이력');
     }
 
     // 최소 적합 기준(50점 이상) 통과 시 매칭 후보자로 등록

@@ -46,7 +46,7 @@ export const CalendarImportModal: React.FC<CalendarImportModalProps> = ({
       const updated = [...parsed, ...meetings];
       onUpdateMeetings(updated);
       saveMeetingsToStorage(updated);
-      onShowToast(`📅 ${parsed.length}건의 일정이 동기화되었습니다.`);
+      onShowToast(`${parsed.length}건의 일정이 동기화되었습니다.`);
     } catch (e) {
       console.error(e);
       onShowToast('파일 파싱 중 오류가 발생했습니다.');

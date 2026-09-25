@@ -63,17 +63,17 @@ export function calculatePersonPowerMetric(
 
   // 4. 네트워크 티어 분류
   let tier: NetworkTier = 'GROWTH_NODE';
-  let tierLabel = '🌱 잠재 인맥 노드';
+  let tierLabel = '잠재 인맥 노드';
 
   if (finalScore >= 80) {
     tier = 'ALPHA_HUB';
-    tierLabel = '👑 알파 슈퍼 커넥터 (핵심 허브)';
+    tierLabel = '알파 슈퍼 커넥터 (핵심 허브)';
   } else if (finalScore >= 65) {
     tier = 'CORE_CONNECTOR';
-    tierLabel = '⚡ 핵심 비즈니스 연결자';
+    tierLabel = '핵심 비즈니스 연결자';
   } else if (finalScore >= 45) {
     tier = 'SPECIALIST';
-    tierLabel = '💼 도메인 스페셜리스트';
+    tierLabel = '도메인 스페셜리스트';
   }
 
   // 5. 정량적 인사이트 도출

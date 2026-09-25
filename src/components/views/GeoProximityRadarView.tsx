@@ -37,7 +37,7 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
   const handleCopyTeaInvite = (person: Person, clusterName: string) => {
     const inviteMessage = `안녕하세요 ${person.name} ${person.currentTitle}님! 
 오늘 제가 ${clusterName} 쪽에 미팅 일정이 있어 나와있는데, 혹시 오후에 가볍게 15~20분 정도 커피 한 잔 하실 수 있는 여유가 되실까요? 
-최근 소식도 나누고 안부도 전하고 싶습니다. 부담 없이 편하실 때 말씀해 주세요! ☕`;
+최근 소식도 나누고 안부도 전하고 싶습니다. 부담 없이 편하실 때 말씀해 주세요!`;
 
     navigator.clipboard.writeText(inviteMessage).then(() => {
       setCopiedPersonId(person.id);
@@ -51,19 +51,19 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
   return (
     <div className="space-y-5 animate-in fade-in duration-300">
       {/* 1. Header & Radar Status */}
-      <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="relative p-3 rounded-2xl bg-sky-50 border border-sky-200 text-sky-600 shrink-0">
+          <div className="relative p-3 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-600 shrink-0">
             <Compass className="w-6 h-6 animate-pulse" />
             <span className="absolute -top-1 -right-1 flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
             </span>
           </div>
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-lg font-bold text-slate-900 tracking-tight">전국 6대 비즈니스 거점별 인맥 레이더</h2>
-              <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200 font-semibold font-mono">
+              <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold font-mono">
                 Geo Radar Proximity
               </span>
             </div>
@@ -77,7 +77,7 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
         <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-slate-50 border border-slate-200 shrink-0">
           <div className="text-right">
             <div className="text-[11px] text-slate-500 font-medium">등록 인맥 거점 분포</div>
-            <div className="text-sm font-bold text-sky-700 font-mono">총 {people.length}명 매핑</div>
+            <div className="text-sm font-bold text-indigo-700 font-mono">총 {people.length}명 매핑</div>
           </div>
           <div className="h-7 w-[1px] bg-slate-200" />
           <div className="text-right">
@@ -100,22 +100,22 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
               onClick={() => setSelectedClusterId(cluster.id)}
               className={`p-3 rounded-xl border text-left transition-all relative overflow-hidden flex flex-col justify-between ${
                 isSelected
-                  ? 'bg-sky-50/80 border-2 border-sky-600 shadow-md shadow-sky-100 scale-[1.02]'
-                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/80 shadow-sm'
+                  ? 'bg-indigo-50/80 border-2 border-indigo-600 shadow-sm shadow-indigo-100/50 scale-[1.01]'
+                  : 'bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50/80 shadow-2xs'
               }`}
             >
               <div>
-                <div className={`text-xs font-bold truncate flex items-center gap-1 ${isSelected ? 'text-sky-950' : 'text-slate-900'}`}>
+                <div className={`text-xs font-bold truncate flex items-center gap-1 ${isSelected ? 'text-indigo-950' : 'text-slate-900'}`}>
                   <span>{cluster.shortName}</span>
                 </div>
-                <div className={`text-[11px] truncate mt-0.5 ${isSelected ? 'text-sky-700 font-medium' : 'text-slate-500'}`}>
+                <div className={`text-[11px] truncate mt-0.5 ${isSelected ? 'text-indigo-700 font-medium' : 'text-slate-500'}`}>
                   {cluster.badge}
                 </div>
               </div>
 
-              <div className={`flex items-center justify-between mt-3 pt-2 border-t text-[11px] ${isSelected ? 'border-sky-200' : 'border-slate-100'}`}>
-                <div className={`flex items-center gap-1 font-mono font-medium ${isSelected ? 'text-sky-900' : 'text-slate-600'}`}>
-                  <Users className={`w-3.5 h-3.5 ${isSelected ? 'text-sky-600' : 'text-slate-400'}`} />
+              <div className={`flex items-center justify-between mt-3 pt-2 border-t text-[11px] ${isSelected ? 'border-indigo-200' : 'border-slate-100'}`}>
+                <div className={`flex items-center gap-1 font-mono font-medium ${isSelected ? 'text-indigo-900' : 'text-slate-600'}`}>
+                  <Users className={`w-3.5 h-3.5 ${isSelected ? 'text-indigo-600' : 'text-slate-400'}`} />
                   <span>{cPeople.length}명</span>
                 </div>
                 {dartExecutiveCount > 0 && (
@@ -127,7 +127,7 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
               </div>
 
               {isSelected && (
-                <div className="absolute top-0 right-0 w-2 h-2 bg-sky-600 rounded-bl" />
+                <div className="absolute top-0 right-0 w-2 h-2 bg-indigo-600 rounded-bl" />
               )}
             </button>
           );
@@ -137,14 +137,14 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
       {/* 3. Selected Cluster Spotlight & People List */}
       <div className="space-y-4">
         {/* Spotlight Banner */}
-        <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="text-base font-bold text-slate-900 flex items-center gap-1.5">
-                <MapPin className="w-4 h-4 text-sky-600" />
+                <MapPin className="w-4 h-4 text-indigo-600" />
                 {activeClusterMatch.cluster.name}
               </span>
-              <span className="text-xs px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200 font-mono font-medium">
+              <span className="text-xs px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-mono font-medium">
                 반경 내 {activeClusterMatch.people.length}명 근무 중
               </span>
             </div>
@@ -188,14 +188,14 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
               return (
                 <div
                   key={person.id}
-                  className="p-4 rounded-xl bg-white border border-slate-200 hover:border-sky-300 hover:shadow-md transition-all flex flex-col justify-between group shadow-sm"
+                  className="p-4 rounded-xl bg-white border border-slate-200 hover:border-indigo-300 hover:shadow-xs transition-all flex flex-col justify-between group shadow-2xs"
                 >
                   <div className="space-y-2.5">
                     {/* Top row */}
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <div className="flex items-center gap-1.5 flex-wrap">
-                          <span className="font-bold text-sm text-slate-900 group-hover:text-sky-700 transition-colors">
+                          <span className="font-bold text-sm text-slate-900 group-hover:text-indigo-600 transition-colors">
                             {person.name}
                           </span>
                           {isDart && (
@@ -212,7 +212,7 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
                           <Building2 className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                           <span className="truncate max-w-[130px]">{person.currentCompany}</span>
                           <span className="text-slate-300">·</span>
-                          <span className="text-sky-700 font-semibold truncate max-w-[110px]">{person.currentTitle}</span>
+                          <span className="text-indigo-600 font-semibold truncate max-w-[110px]">{person.currentTitle}</span>
                         </div>
                       </div>
 
@@ -248,20 +248,20 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
                   <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between gap-2">
                     <button
                       onClick={() => handleCopyTeaInvite(person, activeClusterMatch.cluster.shortName)}
-                      className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all min-h-[36px] ${
+                      className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all min-h-[36px] active:scale-[0.98] ${
                         isCopied
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 hover:border-sky-300 active:scale-95'
+                          ? 'bg-emerald-600 text-white shadow-2xs'
+                          : 'bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200/80 shadow-2xs'
                       }`}
                     >
                       {isCopied ? (
                         <>
                           <Check className="w-3.5 h-3.5" />
-                          <span>카톡 초대장 복사 완료!</span>
+                          <span>초대장 복사 완료</span>
                         </>
                       ) : (
                         <>
-                          <Coffee className="w-3.5 h-3.5 text-sky-600" />
+                          <Coffee className="w-3.5 h-3.5 text-indigo-600" />
                           <span>오늘 티타임 제안</span>
                         </>
                       )}
@@ -269,7 +269,7 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
 
                     <button
                       onClick={() => onSelectPerson(person)}
-                      className="px-3 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 border border-slate-200 text-xs font-semibold transition-colors shrink-0 min-h-[36px]"
+                      className="px-3 py-2 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 text-xs font-semibold transition-all shrink-0 min-h-[36px] shadow-2xs active:scale-[0.98]"
                     >
                       인맥 상세
                     </button>

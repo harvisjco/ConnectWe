@@ -169,14 +169,14 @@ export const Header: React.FC<HeaderProps> = ({
   };
 
   return (
-    <header className="border-b border-slate-200/80 dark:border-slate-800/80 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl sticky top-0 z-40 px-4 sm:px-6 py-2.5 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-colors">
-      <div className="max-w-[1600px] mx-auto flex items-center justify-between gap-3">
+    <header className="border-b border-slate-200/80 dark:border-slate-800/80 bg-white/95 dark:bg-slate-900/95 backdrop-blur-xl sticky top-0 z-40 px-3 sm:px-6 py-2 shadow-[0_1px_2px_rgba(0,0,0,0.02)] transition-colors overflow-hidden">
+      <div className="max-w-[1600px] mx-auto flex items-center justify-between gap-2 sm:gap-3">
         {/* Zone 1: Brand Logo & Pill Badges (GoodPartner Style) */}
-        <div className="flex items-center gap-3 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {onToggleSidebar && (
             <button
               onClick={onToggleSidebar}
-              className="flex items-center justify-center w-8 h-8 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200/80 dark:border-slate-700/60 cursor-pointer"
+              className="flex items-center justify-center w-8 h-8 rounded-xl text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors border border-slate-200/80 dark:border-slate-700/60 cursor-pointer min-h-[32px] min-w-[32px]"
               title="사이드바 내비게이션 토글"
               aria-label="사이드바 토글"
             >
@@ -184,22 +184,22 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
           )}
 
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-xl bg-indigo-600 dark:bg-indigo-500 flex items-center justify-center shadow-xs shrink-0">
-              <Share2 className="w-4 h-4 text-white" />
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-indigo-600 dark:bg-indigo-500 flex items-center justify-center shadow-2xs shrink-0">
+              <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
             </div>
             
-            <div className="flex items-center gap-2">
-              <h1 className="text-base sm:text-lg font-black tracking-tight text-slate-900 dark:text-white whitespace-nowrap">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <h1 className="text-sm sm:text-base font-black tracking-tight text-slate-900 dark:text-white whitespace-nowrap">
                 ConnectWe
               </h1>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-500/30">
+              <span className="text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-500/30">
                 AI 2.0
               </span>
               <button
                 onClick={onOpenCloudSyncModal}
                 title="Supabase PostgreSQL E2EE Cloud Live 연동 중"
-                className="inline-flex items-center gap-1.5 text-[10px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-500/30 font-semibold hover:bg-emerald-100 transition-all cursor-pointer whitespace-nowrap active:scale-95 shadow-2xs"
+                className="inline-flex items-center gap-1 text-[11px] px-2 py-1 min-h-[32px] rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-500/30 font-semibold hover:bg-emerald-100 transition-all cursor-pointer whitespace-nowrap active:scale-95 shadow-2xs"
               >
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                 <span>Live</span>
@@ -234,11 +234,11 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Zone 3: Core CTAs & Quick Tools Dropdown */}
-        <div className="flex items-center justify-end gap-2 shrink-0">
+        <div className="flex items-center justify-end gap-1.5 sm:gap-2 shrink-0">
           {/* CSV Export Button Shortcut (GoodPartner Style) */}
           <button
             onClick={handleExportCsv}
-            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-200/90 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-[0.98] shadow-2xs cursor-pointer whitespace-nowrap"
+            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-200/90 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-[0.98] shadow-2xs cursor-pointer whitespace-nowrap min-h-[32px]"
             title="엑셀 호환 CSV (UTF-8 with BOM) 다운로드"
           >
             <Download className="w-3.5 h-3.5 text-slate-500" />
@@ -248,7 +248,7 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Daily Intelligence Digest CTA */}
           <button
             onClick={onOpenDigestModal}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-200/90 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-[0.98] shadow-2xs cursor-pointer whitespace-nowrap"
+            className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-200/90 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-[0.98] shadow-2xs cursor-pointer whitespace-nowrap min-h-[32px]"
             title="오늘의 인맥 지능 다이제스트"
           >
             <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 animate-pulse" />
@@ -261,30 +261,31 @@ export const Header: React.FC<HeaderProps> = ({
           {/* Add Person CTA - GoodPartner Style Indigo Pill Button */}
           <button
             onClick={onOpenAddModal}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 active:scale-[0.98] transition-all text-xs font-bold text-white shadow-xs cursor-pointer whitespace-nowrap"
+            className="flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 active:scale-[0.98] transition-all text-xs font-bold text-white shadow-2xs cursor-pointer whitespace-nowrap min-h-[32px]"
             title="새 인맥 직접 등록"
           >
             <UserPlus className="w-3.5 h-3.5 text-white" />
-            <span>+ 인맥 등록</span>
+            <span className="hidden sm:inline">+ 인맥 등록</span>
+            <span className="sm:hidden">등록</span>
           </button>
 
           {/* Theme Toggle Button (Clean Light vs Dark) */}
           {onToggleTheme && (
             <button
               onClick={onToggleTheme}
-              className="flex items-center gap-1.5 px-3 py-2 min-h-[36px] rounded-xl border text-xs font-semibold transition-all whitespace-nowrap active:scale-[0.98] bg-white hover:bg-slate-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-slate-200 dark:border-slate-700/80 shadow-xs dark:shadow-[0_2px_8px_rgba(0,0,0,0.3)] cursor-pointer"
-              title={theme === 'dark' ? '밝은 모드(Clean Tech Portal)로 전환' : '다크 모드로 전환'}
+              className="flex items-center justify-center w-8 h-8 sm:w-auto sm:px-3 sm:py-2 min-h-[32px] min-w-[32px] rounded-xl border text-xs font-semibold transition-all whitespace-nowrap active:scale-[0.98] bg-white hover:bg-slate-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-slate-200 dark:border-slate-700/80 shadow-2xs cursor-pointer"
+              title={theme === 'dark' ? '밝은 모드로 전환' : '다크 모드로 전환'}
               aria-label="테마 전환"
             >
               {theme === 'light' ? (
                 <>
                   <Sun className="w-4 h-4 text-amber-500" />
-                  <span className="hidden md:inline">밝은 모드</span>
+                  <span className="hidden md:inline ml-1.5">밝은 모드</span>
                 </>
               ) : (
                 <>
                   <Moon className="w-4 h-4 text-sky-400" />
-                  <span className="hidden md:inline">다크 모드</span>
+                  <span className="hidden md:inline ml-1.5">다크 모드</span>
                 </>
               )}
             </button>
@@ -294,16 +295,16 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="relative" ref={toolsMenuRef}>
             <button
               onClick={() => setIsToolsOpen(prev => !prev)}
-              className={`flex items-center gap-1.5 px-3 py-2 min-h-[36px] rounded-xl border text-xs font-semibold transition-all whitespace-nowrap active:scale-[0.98] ${
+              className={`flex items-center justify-center sm:justify-start gap-1 px-2 sm:px-3 py-1.5 sm:py-2 min-h-[32px] min-w-[32px] rounded-xl border text-xs font-semibold transition-all whitespace-nowrap active:scale-[0.98] cursor-pointer ${
                 isToolsOpen
-                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border-slate-300 dark:border-indigo-500/50 shadow-xs'
-                  : 'bg-white hover:bg-slate-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-slate-200 dark:border-slate-700/80 shadow-xs'
+                  ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border-slate-300 dark:border-indigo-500/50 shadow-2xs'
+                  : 'bg-white hover:bg-slate-50 dark:bg-slate-800/80 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white border-slate-200 dark:border-slate-700/80 shadow-2xs'
               }`}
               title="도구 모음 (분석, 스캔, 암호화, 동기화, 내보내기)"
             >
               <MoreHorizontal className="w-4 h-4 text-slate-500 dark:text-slate-300" />
-              <span className="hidden sm:inline">도구 모음</span>
-              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isToolsOpen ? 'rotate-180' : ''}`} />
+              <span className="hidden sm:inline">도구</span>
+              <ChevronDown className={`hidden sm:inline w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isToolsOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {/* Dropdown Menu Popover - Clean Light Tech & Spatial Glass */}

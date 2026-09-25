@@ -336,7 +336,7 @@ ${bridge.name}님께서 ${targetPerson.name}님과 같은 조직 및 네트워�
                       introTone === 'formal' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    💼 공식 비즈니스
+                    공식 비즈니스
                   </button>
                   <button
                     type="button"
@@ -345,7 +345,7 @@ ${bridge.name}님께서 ${targetPerson.name}님과 같은 조직 및 네트워�
                       introTone === 'coffee' ? 'bg-indigo-600 text-white' : 'text-slate-400 hover:text-white'
                     }`}
                   >
-                    ☕ 부드러운 티타임
+                    부드러운 티타임
                   </button>
                   <button
                     type="button"

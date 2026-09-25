@@ -267,11 +267,11 @@ export const CosmicGalaxy3DView: React.FC<CosmicGalaxy3DViewProps> = ({
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500" />
-            <span>🏛️ DART FACT 임원</span>
+            <span>DART FACT 임원</span>
           </div>
           <div className="flex items-center gap-1.5">
             <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
-            <span>📇 일반 인맥 행성</span>
+            <span>일반 인맥 행성</span>
           </div>
         </div>
       </div>
@@ -292,7 +292,7 @@ export const CosmicGalaxy3DView: React.FC<CosmicGalaxy3DViewProps> = ({
             {hoveredPerson.primaryDomain} ({hoveredPerson.estimatedAgeGroup})
           </p>
           {hoveredPerson.dartInfo && (
-            <p className="text-[11px] text-emerald-400 font-medium">🏛️ DART 상장사 공시 확인</p>
+            <p className="text-[11px] text-emerald-400 font-medium">DART 상장사 공시 확인</p>
           )}
         </div>
       )}

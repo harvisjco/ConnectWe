@@ -62,7 +62,7 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
       setEditDomain(parsed.primaryDomain);
 
       if (parsed.dartMatch?.isMatched) {
-        onShowToast(`🎉 [${parsed.dartMatch.stockName}] DART 상장사 공시 임원 매칭이 확인되었습니다!`);
+        onShowToast(`[${parsed.dartMatch.stockName}] DART 상장사 공시 임원 매칭이 확인되었습니다!`);
       } else {
         onShowToast('명함 텍스트가 성공적으로 파싱되었습니다.');
       }

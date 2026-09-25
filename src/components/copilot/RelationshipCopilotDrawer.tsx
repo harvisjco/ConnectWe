@@ -30,7 +30,7 @@ export const RelationshipCopilotDrawer: React.FC<RelationshipCopilotDrawerProps>
     {
       id: 'welcome',
       sender: 'assistant',
-      text: `안녕하세요! ConnectWe 인맥 지능 코파일럿입니다. 💡\n\n내 인맥 그래프를 바탕으로 커피챗 대상 추천, 오랜 기간 연락이 닿지 않은 C-Level 지인 탐색, 맞춤 안부 카톡 작성 등을 도와드립니다. 무엇이 궁금하신가요?`,
+      text: `안녕하세요! ConnectWe 인맥 지능 코파일럿입니다.\n\n내 인맥 그래프를 바탕으로 커피챗 대상 추천, 오랜 기간 연락이 닿지 않은 C-Level 지인 탐색, 맞춤 안부 카톡 작성 등을 도와드립니다. 무엇이 궁금하신가요?`,
       timestamp: '지금'
     }
   ]);
@@ -219,21 +219,21 @@ export const RelationshipCopilotDrawer: React.FC<RelationshipCopilotDrawerProps>
       <div className="pt-3 border-t border-slate-100 flex flex-wrap gap-1.5 text-[11px]">
         <button
           onClick={() => handleQuickChip('이번 주 가볍게 커피챗하기 좋은 지인 추천해줘')}
-          className="px-2.5 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 shadow-sm whitespace-nowrap transition-colors font-medium min-h-[32px]"
+          className="px-2.5 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 shadow-2xs whitespace-nowrap transition-colors font-medium min-h-[32px] cursor-pointer"
         >
-          ☕ 커피챗 추천
+          커피챗 추천
         </button>
         <button
           onClick={() => handleQuickChip('오랫동안 연락 안 한 C-Level 누구 있어?')}
-          className="px-2.5 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 shadow-sm whitespace-nowrap transition-colors font-medium min-h-[32px]"
+          className="px-2.5 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 shadow-2xs whitespace-nowrap transition-colors font-medium min-h-[32px] cursor-pointer"
         >
-          ⚠️ 미소통 지인
+          미소통 지인
         </button>
         <button
           onClick={() => handleQuickChip('네이버나 삼성전자 출신 인맥 찾아줘')}
-          className="px-2.5 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 shadow-sm whitespace-nowrap transition-colors font-medium min-h-[32px]"
+          className="px-2.5 py-1.5 rounded-full bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200 shadow-2xs whitespace-nowrap transition-colors font-medium min-h-[32px] cursor-pointer"
         >
-          🏛️ 빅테크 알럼나이
+          빅테크 알럼나이
         </button>
       </div>
     </DrawerShell>

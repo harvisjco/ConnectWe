@@ -69,7 +69,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
   const handleCopyTeaInvite = (person: Person) => {
     const text = `안녕하세요 ${person.name} ${person.currentTitle}님! 
 오늘 제가 ${activeCluster.cluster.shortName} 쪽에 미팅 일정이 있어 나와있는데, 혹시 오후에 가볍게 15~20분 정도 커피 한 잔 하실 수 있는 여유가 되실까요? 
-최근 소식도 나누고 안부도 전하고 싶습니다. 편하실 때 말씀해 주세요! ☕`;
+최근 소식도 나누고 안부도 전하고 싶습니다. 편하실 때 말씀해 주세요!`;
 
     navigator.clipboard.writeText(text).then(() => {
       setCopiedKey(`tea-${person.id}`);
@@ -99,7 +99,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
   const handleCopyCadencePing = (person: Person, days: number) => {
     const text = `안녕하세요 ${person.name} ${person.currentTitle}님! 
 잘 지내고 계신지요? 마지막으로 인사 나눈 지 벌써 ${days}일 가량 지난 것 같습니다. 
-요즘 어떻게 지내시는지 궁금하여 안부 여쭙니다. 편하실 때 식사나 커피 한 잔 모시겠습니다! ☕`;
+요즘 어떻게 지내시는지 궁금하여 안부 여쭙니다. 편하실 때 식사나 커피 한 잔 모시겠습니다!`;
 
     navigator.clipboard.writeText(text).then(() => {
       setCopiedKey(`cadence-${person.id}`);

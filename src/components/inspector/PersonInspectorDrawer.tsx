@@ -148,7 +148,7 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
                 </span>
               ) : (
                 <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/30">
-                  📇 SOURCE DATA
+                  SOURCE DATA
                 </span>
               )}
 
@@ -401,7 +401,7 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
                         </span>
                       ) : (
                         <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                          🏛️ 알럼나이 (전직)
+                          알럼나이 (전직)
                         </span>
                       )}
                     </div>

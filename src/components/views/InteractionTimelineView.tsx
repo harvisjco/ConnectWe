@@ -22,8 +22,8 @@ export const InteractionTimelineView: React.FC<InteractionTimelineViewProps> = (
 
   const handleFilterChange = (type: 'all' | 'stale' | 'recent') => {
     setFilterType(type);
-    if (type === 'stale') onShowToast('💬 6개월 이상 소통 공백(안부 연락 필요) 인맥 필터가 적용되었습니다.');
-    else if (type === 'recent') onShowToast('✨ 최근 90일 내 소통 기록이 있는 인맥 필터가 적용되었습니다.');
+    if (type === 'stale') onShowToast('6개월 이상 소통 공백(안부 연락 필요) 인맥 필터가 적용되었습니다.');
+    else if (type === 'recent') onShowToast('최근 90일 내 소통 기록이 있는 인맥 필터가 적용되었습니다.');
   };
 
   // 6개월(180일) 이상 소통 공백(안부 필요) 인맥
@@ -147,7 +147,7 @@ export const InteractionTimelineView: React.FC<InteractionTimelineViewProps> = (
       {/* 인맥 소통 타임라인 카드 그리드 */}
       <div className="space-y-3">
         <div className="text-xs font-bold text-slate-400 uppercase tracking-wider px-1">
-          {filterType === 'stale' ? '⚠️ 관계 복원이 필요한 인맥 리스트' : filterType === 'recent' ? '✨ 최근 소통 인맥 타임라인' : '인맥 소통 관리 대장'} ({filteredPeople.length}명)
+          {filterType === 'stale' ? '관계 복원이 필요한 인맥 리스트' : filterType === 'recent' ? '최근 소통 인맥 타임라인' : '인맥 소통 관리 대장'} ({filteredPeople.length}명)
         </div>
 
         {filteredPeople.length === 0 ? (

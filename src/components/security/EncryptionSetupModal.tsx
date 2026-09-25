@@ -103,7 +103,7 @@ export const EncryptionSetupModal: React.FC<EncryptionSetupModalProps> = ({
               : <AlertTriangle className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" />}
             <div className="space-y-1">
               <p className={`text-xs font-semibold ${isEncrypted ? 'text-emerald-300' : 'text-amber-300'}`}>
-                {isEncrypted ? '🔒 암호화 활성 상태' : '⚠️ 암호화 비활성 상태'}
+                {isEncrypted ? '암호화 활성 상태' : '암호화 비활성 상태'}
               </p>
               <p className="text-[11px] text-slate-400 leading-relaxed">
                 {isEncrypted
@@ -171,7 +171,7 @@ export const EncryptionSetupModal: React.FC<EncryptionSetupModalProps> = ({
 
               {/* 경고 문구 */}
               <div className="p-3 rounded-xl bg-slate-800/60 border border-slate-700 text-[11px] text-slate-400 space-y-1">
-                <p className="font-semibold text-slate-300">⚠️ 주의사항</p>
+                <p className="font-semibold text-slate-300">주의사항</p>
                 <p>• 비밀번호를 분실하면 데이터를 복구할 방법이 없습니다.</p>
                 <p>• 암호화 전 JSON 백업을 먼저 다운로드하시길 권장합니다.</p>
                 <p>• PBKDF2(310,000 iterations) + AES-256-GCM 군사급 보안 적용.</p>

@@ -38,7 +38,7 @@ export const DailyDigestModal: React.FC<DailyDigestModalProps> = ({
   // 메시지 템플릿 생성기
   const generateMessageTemplate = (person: Person, type: 'birthday' | 'catchup') => {
     if (type === 'birthday') {
-      return `${person.name} ${person.currentTitle}님, 생신 진심으로 축하드립니다! 🎉 올 한 해도 뜻하시는 모든 사업과 연구에서 큰 성취 이루시길 항상 응원하겠습니다. 조만간 편하신 때 따뜻한 차 한잔 모시겠습니다. - [내 이름] 드림`;
+      return `${person.name} ${person.currentTitle}님, 생신 진심으로 축하드립니다! 올 한 해도 뜻하시는 모든 사업과 연구에서 큰 성취 이루시길 항상 응원하겠습니다. 조만간 편하신 때 따뜻한 차 한잔 모시겠습니다. - [내 이름] 드림`;
     }
     return `${person.name} ${person.currentTitle}님, 오랜만에 인사드립니다. 최근 ${person.currentCompany}의 활발한 행보 늘 인상 깊게 지켜보고 있습니다. 바쁘신 일정 중에도 건강 잘 챙기시고, 근처 오실 일 있으실 때 가볍게 티타임 나누면 좋겠습니다! - [내 이름] 드림`;
   };
@@ -86,10 +86,10 @@ export const DailyDigestModal: React.FC<DailyDigestModalProps> = ({
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-bold text-sm text-slate-900 dark:text-white">{person.name}</span>
-                            <span className="text-xs text-pink-600 dark:text-pink-300 font-semibold">🎂 오늘 생일</span>
+                            <span className="text-xs text-pink-600 dark:text-pink-300 font-semibold">오늘 생일</span>
                             {person.sourceType === 'DART_FACT' && (
                               <span className="px-1.5 py-0.5 rounded text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400 dark:border-emerald-500/30">
-                                🏛️ DART FACT
+                                DART FACT
                               </span>
                             )}
                           </div>

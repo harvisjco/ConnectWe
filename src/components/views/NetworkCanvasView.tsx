@@ -485,12 +485,12 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
           <Info className="w-3.5 h-3.5 text-indigo-400" /> 노드 &amp; 엣지 범례
         </div>
         <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-slate-400">
-          <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-emerald-500" /><span>🏛️ DART FACT 검증</span></div>
-          <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-blue-500" /><span>📇 주소록/명함</span></div>
-          <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-sky-500" /><span>🏢 기업 노드</span></div>
-          <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 border-t border-dashed border-amber-400" /><span>⚡ 알럼나이 엣지</span></div>
+          <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-emerald-500" /><span>DART FACT 검증</span></div>
+          <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-blue-500" /><span>주소록/명함</span></div>
+          <div className="flex items-center gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-sky-500" /><span>기업 노드</span></div>
+          <div className="flex items-center gap-1.5"><div className="w-3 h-0.5 border-t border-dashed border-amber-400" /><span>알럼나이 엣지</span></div>
         </div>
-        <div className="text-[11px] text-slate-400 mt-1">⚡ 버튼: 레이아웃 재계산 · 드래그: 노드 이동</div>
+        <div className="text-[11px] text-slate-400 mt-1">버튼: 레이아웃 재계산 · 드래그: 노드 이동</div>
       </div>
 
           {/* 호버 카드 */}
@@ -503,7 +503,7 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
               <p className="text-xs text-indigo-400 font-medium">{hoveredNode.rawPerson.currentCompany} · {hoveredNode.rawPerson.currentTitle}</p>
               <p className="text-[11px] text-slate-400">{hoveredNode.rawPerson.primaryDomain} ({hoveredNode.rawPerson.estimatedAgeGroup})</p>
               {hoveredNode.rawPerson.dartInfo && (
-                <p className="text-[11px] text-emerald-400 font-medium">🏛️ DART 공시 검증 완료</p>
+                <p className="text-[11px] text-emerald-400 font-medium">DART 공시 검증 완료</p>
               )}
             </div>
           )}

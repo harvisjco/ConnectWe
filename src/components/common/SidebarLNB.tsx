@@ -150,20 +150,20 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
     if (!badge) return null;
     if (badge.variant === 'action-pink') {
       return (
-        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-pink-50 text-pink-600 border border-pink-200/80 dark:bg-pink-950/40 dark:text-pink-300 dark:border-pink-500/30 shrink-0 font-mono">
+        <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-pink-50 text-pink-600 border border-pink-200/80 dark:bg-pink-950/40 dark:text-pink-300 dark:border-pink-500/30 shrink-0 font-mono">
           {badge.text}
         </span>
       );
     }
     if (badge.variant === 'action-amber') {
       return (
-        <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/80 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-500/30 shrink-0 font-mono">
+        <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200/80 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-500/30 shrink-0 font-mono">
           {badge.text}
         </span>
       );
     }
     return (
-      <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 shrink-0 font-mono">
+      <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 shrink-0 font-mono">
         {badge.text}
       </span>
     );
@@ -211,7 +211,7 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
                   {section.title}
                 </span>
                 {section.tag && (
-                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 uppercase tracking-wider font-mono">
+                  <span className="text-[11px] font-bold px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 uppercase tracking-wider font-mono">
                     {section.tag}
                   </span>
                 )}

@@ -115,7 +115,7 @@ export const MeetingRadarBanner: React.FC<MeetingRadarBannerProps> = ({
               {onOpenDebrief && (
                 <button
                   onClick={() => onOpenDebrief(matchedPerson)}
-                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 dark:bg-rose-950/80 dark:hover:bg-rose-900 border border-slate-200 dark:border-rose-500/40 text-rose-600 dark:text-rose-300 font-bold transition-all text-xs active:scale-95 shadow-2xs whitespace-nowrap cursor-pointer"
+                  className="flex items-center gap-1 px-3 py-1.5 min-h-[32px] rounded-xl bg-white hover:bg-slate-50 dark:bg-rose-950/80 dark:hover:bg-rose-900 border border-slate-200 dark:border-rose-500/40 text-rose-600 dark:text-rose-300 font-bold transition-all text-xs active:scale-95 shadow-2xs whitespace-nowrap cursor-pointer"
                   title="미팅 직후 빠른 회고 & AI 액션 추출"
                 >
                   <Mic className="w-3.5 h-3.5 text-rose-500 dark:text-rose-400 shrink-0" />
@@ -126,7 +126,7 @@ export const MeetingRadarBanner: React.FC<MeetingRadarBannerProps> = ({
           ) : (
             <button
               onClick={onOpenCalendarModal}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-semibold transition-colors whitespace-nowrap cursor-pointer shadow-2xs"
+              className="flex items-center gap-1 px-3 py-1.5 min-h-[32px] rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-xs font-semibold transition-colors whitespace-nowrap cursor-pointer shadow-2xs"
             >
               <span>캘린더 관리</span>
               <ChevronRight className="w-3.5 h-3.5" />
@@ -135,16 +135,18 @@ export const MeetingRadarBanner: React.FC<MeetingRadarBannerProps> = ({
 
           <button
             onClick={onOpenCalendarModal}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors shrink-0 cursor-pointer"
+            className="flex items-center justify-center w-8 h-8 min-h-[32px] min-w-[32px] rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors shrink-0 cursor-pointer"
             title="캘린더 설정"
+            aria-label="캘린더 설정"
           >
             <Calendar className="w-4 h-4" />
           </button>
 
           <button
             onClick={() => setIsDismissed(true)}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors shrink-0 cursor-pointer"
+            className="flex items-center justify-center w-8 h-8 min-h-[32px] min-w-[32px] rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:bg-slate-200/60 dark:hover:bg-slate-800 transition-colors shrink-0 cursor-pointer"
             title="배너 닫기"
+            aria-label="배너 닫기"
           >
             <X className="w-4 h-4" />
           </button>

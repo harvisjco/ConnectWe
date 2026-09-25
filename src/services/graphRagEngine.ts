@@ -56,8 +56,8 @@ export function executeGraphRagQuery(query: string, people: Person[]): GraphQuer
   if (isAiDomain) filterTags.push('도메인: AI/LLM');
   if (isInfraCloud) filterTags.push('도메인: 클라우드/인프라');
   if (isVcFinance) filterTags.push('도메인: VC/투자');
-  if (isDartFact) filterTags.push('검증: 🏛️ DART 실공시 팩트');
-  if (isStaleIntent) filterTags.push('상태: 💬 6개월 이상 안부 필요');
+  if (isDartFact) filterTags.push('검증: DART 실공시 팩트');
+  if (isStaleIntent) filterTags.push('상태: 6개월 이상 안부 필요');
   if (isKaist) filterTags.push('학맥: KAIST');
   if (isSeoulUniv) filterTags.push('학맥: 서울대학교');
 

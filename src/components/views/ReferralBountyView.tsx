@@ -47,7 +47,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
         if (!rawEvent) return;
         const syncEvent: RewardMilestoneSyncEvent = normalizeRewardEvent(rawEvent);
         setRewardEvents(prev => [syncEvent, ...prev]);
-        onShowToast(`🎉 [HRCO 채용 실시간 보상] ${syncEvent.message}`);
+        onShowToast(`[HRCO 채용 실시간 보상] ${syncEvent.message}`);
         
         // 제출 목록 리로드
         try {
@@ -127,7 +127,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
     const matchScoreVal = matchObj?.matchScore || 90;
     submitReferralToHrcoBridge(newSubmission, matchReasonList, matchScoreVal);
 
-    onShowToast(`🎉 [${targetCandidate.name}] 님께 ${selectedPosition.clientCompany} 추천 타진이 발송되고 HRCO 파이프라인으로 연동되었습니다!`);
+    onShowToast(`[${targetCandidate.name}] 님께 ${selectedPosition.clientCompany} 추천 타진이 발송되고 HRCO 파이프라인으로 연동되었습니다!`);
     setTargetCandidate(null);
     setRecommendationNote('');
   };
@@ -277,7 +277,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
           <div>
             <div className="flex items-center gap-2">
               <span className="font-semibold text-slate-900 dark:text-white">HRCO GoodPartner 헤드헌팅 ERP 실시간 연동</span>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border ${
+              <span className={`px-2 py-0.5 rounded-full text-[11px] font-medium border ${
                 isLiveBridge 
                   ? 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300' 
                   : 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/60 dark:text-indigo-300'
@@ -420,7 +420,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                 <div className="flex flex-wrap gap-1.5">
                   {selectedPosition.targetAlumniCompanies?.map(alumni => (
                     <span key={alumni} className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700 font-medium">
-                      🏛️ {alumni}
+                      {alumni}
                     </span>
                   ))}
                 </div>
@@ -551,10 +551,10 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
 
                     <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5">
                       <span className="text-xs px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold">
-                        {sub.status === 'invitation_sent' && '✉️ 비공개 타진 전달완료'}
-                        {sub.status === 'coffee_chat_accepted' && '☕ 커피챗 수락 (+5만)'}
-                        {sub.status === 'interviewing' && '🎤 1차 면접 패스 (+20만)'}
-                        {sub.status === 'hired_placed' && '🎉 최종 입사 확정 (+500만)'}
+                        {sub.status === 'invitation_sent' && '비공개 타진 전달완료'}
+                        {sub.status === 'coffee_chat_accepted' && '커피챗 수락 (+5만)'}
+                        {sub.status === 'interviewing' && '1차 면접 패스 (+20만)'}
+                        {sub.status === 'hired_placed' && '최종 입사 확정 (+500만)'}
                       </span>
 
                       {/* HRCO 채용 단계 진척 시뮬레이터 버튼 (양방향 피드백 테스트) */}
@@ -565,7 +565,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                             className="text-[11px] px-2.5 py-1 rounded-lg bg-indigo-950/80 hover:bg-indigo-900 text-indigo-300 border border-indigo-500/40 font-semibold transition-all"
                             title="HRCO: 커피챗 수락 시뮬레이션"
                           >
-                            ☕ 커피챗 수락 (+5만)
+                            커피챗 수락 (+5만)
                           </button>
                         )}
 
@@ -575,7 +575,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                             className="text-[11px] px-2.5 py-1 rounded-lg bg-purple-950/80 hover:bg-purple-900 text-purple-300 border border-purple-500/40 font-semibold transition-all"
                             title="HRCO: 1차 면접 합격 시뮬레이션"
                           >
-                            🎤 1차 면접 합격 (+20만)
+                            1차 면접 합격 (+20만)
                           </button>
                         )}
 
@@ -585,7 +585,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
                             className="text-[11px] px-2.5 py-1 rounded-lg bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/40 font-bold transition-all animate-pulse"
                             title="HRCO: 최종 입사 확정 바운티 수령 시뮬레이션"
                           >
-                            🎉 최종 입사 (+500만)
+                            최종 입사 (+500만)
                           </button>
                         )}
 
@@ -667,7 +667,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
             </div>
 
             <div className="p-3 rounded-xl bg-indigo-950/40 border border-indigo-500/30 text-[11px] text-indigo-300">
-              💡 추천 타진은 지인의 사전 동의를 전제로 비공개로 전달되며, 후보자가 커피챗을 수락하면 1단계 리워드가 지급됩니다.
+              추천 타진은 지인의 사전 동의를 전제로 비공개로 전달되며, 후보자가 커피챗을 수락하면 1단계 리워드가 지급됩니다.
             </div>
 
             <div className="flex justify-end gap-2 pt-2">
@@ -694,7 +694,7 @@ export const ReferralBountyView: React.FC<ReferralBountyViewProps> = ({
           totalAvailableReward={totalEarnedReward}
           onClose={() => setIsWithdrawalModalOpen(false)}
           onConfirmWithdrawal={(_amount, netAmount, bankInfo) => {
-            onShowToast(`🎉 [출금 신청 완료] 세무 3.3% 공제 후 실수령액 ${netAmount.toLocaleString()}원이 ${bankInfo} 계좌로 익일 입금 접수되었습니다.`);
+            onShowToast(`[출금 신청 완료] 세무 3.3% 공제 후 실수령액 ${netAmount.toLocaleString()}원이 ${bankInfo} 계좌로 익일 입금 접수되었습니다.`);
           }}
         />
       )}

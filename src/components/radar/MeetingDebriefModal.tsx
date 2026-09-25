@@ -306,7 +306,7 @@ export const MeetingDebriefModal: React.FC<MeetingDebriefModalProps> = ({
                   onClick={() => onOpenFollowUpComposer(person, debriefResult)}
                   className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-indigo-300 hover:text-white border border-indigo-500/30 font-semibold transition-all active:scale-95 text-xs"
                 >
-                  <span>✉️ 24시간 감사 팔로업 작성</span>
+                  <span>24시간 감사 팔로업 작성</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
 

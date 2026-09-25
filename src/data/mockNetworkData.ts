@@ -113,7 +113,7 @@ export const INITIAL_PEOPLE_SEED: Person[] = [
     connectionChannel: 'dart',
     lastContactDate: '2023-08-15',
     isStale: true, // 6개월 이상 미소통 (안부 필요)
-    memo: '🏛️ 금융감독원 정기공시 확인 완료. 네이버 10년 재직 후 코스닥 상장사 사내이사 재직 중.'
+    memo: '금융감독원 정기공시 확인 완료. 네이버 10년 재직 후 코스닥 상장사 사내이사 재직 중.'
   },
 
   // 3. 삼성전자 알럼나이 -> 반도체 팹리스 대표이사 (DART 실공시 팩트)
@@ -396,7 +396,7 @@ export const INITIAL_PEOPLE_SEED: Person[] = [
     connectionChannel: 'dart',
     lastContactDate: '2023-06-11',
     isStale: true,
-    memo: '🏛️ 유가증권 상장사 사내이사 실공시 팩트. 공인회계사(KICPA) 자격 보유.'
+    memo: '유가증권 상장사 사내이사 실공시 팩트. 공인회계사(KICPA) 자격 보유.'
   },
 
   // 8. 20대 촉망받는 AI 프론티어 개발자 (추정 나이대)
@@ -437,7 +437,7 @@ export const INITIAL_PEOPLE_SEED: Person[] = [
     connectionChannel: 'business_card',
     lastContactDate: '2024-03-10',
     isStale: false,
-    memo: '⚡ 카이스트 졸업 후 즉시 AI 스타트업 합류. 오픈소스 vLLM 컨트리뷰터.'
+    memo: '카이스트 졸업 후 즉시 AI 스타트업 합류. 오픈소스 vLLM 컨트리뷰터.'
   },
 
   // 9. 쿠팡 알럼나이 -> 이커머스 풀필먼트 테크 본부장 (40대)

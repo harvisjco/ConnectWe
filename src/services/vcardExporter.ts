@@ -34,7 +34,7 @@ export function personToVCardString(p: Person): string {
     notes.push(`[알럼나이 이력] ${pastCareers.map(c => `${c.companyName} ${c.title}`).join(', ')}`);
   }
   if (p.dartInfo) {
-    notes.push(`[🏛️ DART FACT] ${p.dartInfo.stockName} ${p.dartInfo.registeredRole}`);
+    notes.push(`[DART FACT] ${p.dartInfo.stockName} ${p.dartInfo.registeredRole}`);
   }
 
   if (notes.length > 0) {

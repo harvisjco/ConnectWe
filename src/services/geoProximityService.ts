@@ -20,7 +20,7 @@ export interface GeoCluster {
 export const GEO_CLUSTERS: GeoCluster[] = [
   {
     id: 'gangnam_teheran',
-    name: '🏙️ 테헤란로 / 강남 비즈니스 밸리',
+    name: '테헤란로 / 강남 비즈니스 밸리',
     shortName: '강남·테헤란로',
     badge: '스타트업 & VC 허브',
     description: '강남파이낸스센터, 아크플레이스, 테헤란밸리 스타트업, 벤처캐피탈, IT 솔루션 밀집지',
@@ -28,7 +28,7 @@ export const GEO_CLUSTERS: GeoCluster[] = [
   },
   {
     id: 'pangyo',
-    name: '🌲 판교 테크노밸리',
+    name: '판교 테크노밸리',
     shortName: '판교 테크노밸리',
     badge: '빅테크 & 게임 메카',
     description: '알파돔시티, 카카오 아지트, 네이버 그린팩토리, 엔씨소프트, 크래프톤 등 국가대표 IT 거점',
@@ -36,7 +36,7 @@ export const GEO_CLUSTERS: GeoCluster[] = [
   },
   {
     id: 'yeouido',
-    name: '🏛️ 여의도 금융 & 핀테크가',
+    name: '여의도 금융 & 핀테크 타운',
     shortName: '여의도 금융가',
     badge: '투자은행 & 자산운용',
     description: '파크원, IFC서울, 증권사 본사, 자산운용사, 핀테크 유니콘 및 금융감독원 인접지',
@@ -44,7 +44,7 @@ export const GEO_CLUSTERS: GeoCluster[] = [
   },
   {
     id: 'gwanghwamun_jongno',
-    name: '🏢 광화문 / 종로 도심 비즈니스',
+    name: '광화문 / 종로 도심 비즈니스',
     shortName: '광화문·종로',
     badge: '전통 대기업 & 지주사',
     description: 'SK서린빌딩, 그랑서울, 교보빌딩, 주요 4대 그룹 본사, 대형 로펌, 정부 부처 거점',
@@ -52,7 +52,7 @@ export const GEO_CLUSTERS: GeoCluster[] = [
   },
   {
     id: 'yangjae_seocho',
-    name: '🚗 양재 / 서초 미래 모빌리티 & AI R&D',
+    name: '양재 / 서초 모빌리티 & AI R&D',
     shortName: '양재·서초 R&D',
     badge: '모빌리티 & 첨단 R&D',
     description: '현대자동차 양재 본사, 삼성전자 서울R&D캠퍼스, LG전자 양재센터, AI 특구',
@@ -60,7 +60,7 @@ export const GEO_CLUSTERS: GeoCluster[] = [
   },
   {
     id: 'suwon_giheung',
-    name: '⚙️ 수원 / 기흥 / 동탄 반도체 허브',
+    name: '수원 / 기흥 / 동탄 반도체 허브',
     shortName: '수원·기흥 반도체',
     badge: '글로벌 반도체 밸류체인',
     description: '삼성전자 디지털시티 본사, 기흥·화성 나노시티, 한미반도체, 글로벌 반도체 팹',

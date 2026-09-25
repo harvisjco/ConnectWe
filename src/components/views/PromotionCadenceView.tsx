@@ -75,7 +75,7 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
   const handleCopyCadencePing = (person: Person, days: number) => {
     const text = `안녕하세요 ${person.name} ${person.currentTitle}님! 
 잘 지내고 계신지요? 마지막으로 인사 나눈 지 벌써 ${days}일 가량 지난 것 같습니다. 
-요즘 어떻게 지내시는지 궁금하여 안부 여쭙니다. 편하실 때 식사나 커피 한 잔 모시겠습니다! ☕`;
+요즘 어떻게 지내시는지 궁금하여 안부 여쭙니다. 편하실 때 식사나 커피 한 잔 모시겠습니다!`;
 
     navigator.clipboard.writeText(text).then(() => {
       setCopiedCadenceId(person.id);
@@ -89,36 +89,36 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
   return (
     <div className="space-y-5 animate-in fade-in duration-300">
       {/* 1. Header & KPI Banner */}
-      <div className="p-6 rounded-2xl bg-white dark:bg-gradient-to-r dark:from-slate-900 dark:via-amber-950/30 dark:to-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex items-center gap-3.5">
-          <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200 text-amber-700 dark:bg-amber-950/80 dark:border-amber-500/40 dark:text-amber-400 shrink-0">
+          <div className="p-3 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-700 shrink-0">
             <Award className="w-6 h-6 animate-pulse" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white tracking-tight">DART 임원 영전·승진 &amp; 골든타임 케어 레이더</h2>
-              <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 dark:bg-amber-500/20 dark:text-amber-300 dark:border-amber-500/30 font-semibold font-mono">
+              <h2 className="text-lg font-bold text-slate-900 tracking-tight">DART 임원 영전·승진 &amp; 골든타임 케어 레이더</h2>
+              <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold font-mono">
                 Executive Promotion &amp; Cadence
               </span>
             </div>
-            <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+            <p className="text-xs text-slate-600 mt-1 leading-relaxed">
               DART 공시 임원의 승진·대표이사 선임을 조기에 감지하여 영전 화환 및 축전을 신속히 보내고, 장기 미소통 핵심 인맥의 소통 골든타임을 방어합니다.
             </p>
           </div>
         </div>
 
         {/* Global Summary Badge */}
-        <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 shrink-0">
+        <div className="flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-slate-50 border border-slate-200 shrink-0">
           <div className="text-right">
-            <div className="text-[11px] text-slate-500 dark:text-slate-400">승진·영전 감지</div>
-            <div className="text-sm font-bold text-amber-700 dark:text-amber-400 font-mono">
-              {promotions.length}건 <span className="text-xs text-rose-600 dark:text-rose-400 font-normal">({uncelebratedCount}건 미축하)</span>
+            <div className="text-[11px] text-slate-500">승진·영전 감지</div>
+            <div className="text-sm font-bold text-indigo-700 font-mono">
+              {promotions.length}건 <span className="text-xs text-rose-600 font-normal">({uncelebratedCount}건 미축하)</span>
             </div>
           </div>
-          <div className="h-7 w-[1px] bg-slate-200 dark:bg-slate-800" />
+          <div className="h-7 w-[1px] bg-slate-200" />
           <div className="text-right">
-            <div className="text-[11px] text-slate-500 dark:text-slate-400">소통 공백 위험군</div>
-            <div className="text-sm font-bold text-rose-600 dark:text-rose-400 font-mono">
+            <div className="text-[11px] text-slate-500">소통 공백 위험군</div>
+            <div className="text-sm font-bold text-rose-600 font-mono">
               {cadenceAlerts.length}명
             </div>
           </div>
@@ -126,13 +126,13 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
       </div>
 
       {/* 2. Sub-Tabs */}
-      <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2 text-xs">
+      <div className="flex items-center gap-2 border-b border-slate-200 pb-2 text-xs">
         <button
           onClick={() => setActiveTab('promotions')}
           className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold transition-all ${
             activeTab === 'promotions'
-              ? 'bg-amber-600 text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs'
+              ? 'bg-slate-900 text-white shadow-2xs'
+              : 'text-slate-600 hover:text-slate-900 bg-white border border-slate-200 shadow-2xs'
           }`}
         >
           <Award className="w-4 h-4" />
@@ -148,12 +148,12 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
           onClick={() => setActiveTab('cadence')}
           className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold transition-all ${
             activeTab === 'cadence'
-              ? 'bg-rose-600 text-white shadow-sm'
-              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xs'
+              ? 'bg-slate-900 text-white shadow-2xs'
+              : 'text-slate-600 hover:text-slate-900 bg-white border border-slate-200 shadow-2xs'
           }`}
         >
           <Clock className="w-4 h-4" />
-          <span>⏳ 소통 골든타임 넛지 ({cadenceAlerts.length})</span>
+          <span>소통 골든타임 넛지 ({cadenceAlerts.length})</span>
         </button>
       </div>
 
@@ -242,7 +242,7 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
 
                       <button
                         onClick={() => setActivePromoForMessage(promo)}
-                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs shadow-sm shadow-amber-600/20 transition-all active:scale-95"
+                        className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-2xs transition-all active:scale-[0.98] cursor-pointer"
                       >
                         <Gift className="w-3.5 h-3.5" />
                         <span>축전·화환 생성</span>
@@ -257,9 +257,9 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
       ) : (
         /* Cadence Alerts List */
         <div className="space-y-3">
-          <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 flex items-center justify-between text-xs text-slate-400">
+          <div className="p-4 rounded-xl bg-white border border-slate-200/90 shadow-2xs flex items-center justify-between text-xs text-slate-600">
             <span>60일 이상 소통이 없었던 1·2촌 핵심 인맥입니다. 관계가 느슨해지기 전에 가벼운 안부를 전달하세요.</span>
-            <span className="font-mono text-rose-400 font-bold">{cadenceAlerts.length}명 관리 요망</span>
+            <span className="font-mono text-rose-600 font-bold">{cadenceAlerts.length}명 관리 요망</span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -269,16 +269,16 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
               return (
                 <div
                   key={alert.person.id}
-                  className="p-4.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all flex flex-col justify-between space-y-3.5 shadow-sm"
+                  className="p-4.5 rounded-2xl bg-white border border-slate-200/90 hover:border-slate-300 transition-all flex flex-col justify-between space-y-3.5 shadow-2xs"
                 >
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-[11px]">
                       <span className={`px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1 ${
                         alert.urgency === 'HIGH'
-                          ? 'bg-rose-50 text-rose-700 border border-rose-200 dark:bg-rose-950 dark:text-rose-300 dark:border-rose-500/40'
+                          ? 'bg-rose-50 text-rose-700 border border-rose-200'
                           : alert.urgency === 'MEDIUM'
-                          ? 'bg-amber-50 text-amber-700 border border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-500/40'
-                          : 'bg-slate-50 text-slate-600 border border-slate-200 dark:bg-slate-800 dark:text-slate-400'
+                          ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                          : 'bg-slate-50 text-slate-600 border border-slate-200'
                       }`}>
                         <AlertTriangle className="w-3 h-3" />
                         {alert.daysSinceLastContact}일간 무연락
@@ -290,19 +290,19 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
 
                     <div>
                       <div className="flex items-center justify-between">
-                        <div className="font-bold text-slate-900 dark:text-white text-sm">
+                        <div className="font-bold text-slate-900 text-sm">
                           {alert.person.name}
-                          <span className="text-slate-500 dark:text-slate-400 text-xs ml-1 font-normal">({alert.person.currentTitle})</span>
+                          <span className="text-slate-500 text-xs ml-1 font-normal">({alert.person.currentTitle})</span>
                         </div>
                         <button
                           onClick={() => onSelectPerson(alert.person)}
-                          className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-slate-800 transition-colors"
+                          className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
                           title="상세 열기"
                         >
                           <ChevronRight className="w-4 h-4" />
                         </button>
                       </div>
-                      <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 flex items-center gap-1">
+                      <div className="text-xs text-slate-500 mt-0.5 flex items-center gap-1">
                         <Building2 className="w-3.5 h-3.5 text-slate-400" />
                         <span>{alert.person.currentCompany}</span>
                       </div>
@@ -310,24 +310,24 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
                   </div>
 
                   {/* 1-Click 안부 핑 복사 */}
-                  <div className="pt-2.5 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between gap-2">
+                  <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between gap-2">
                     <button
                       onClick={() => handleCopyCadencePing(alert.person, alert.daysSinceLastContact)}
-                      className={`w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-2xs ${
+                      className={`w-full flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all shadow-2xs min-h-[36px] active:scale-[0.98] ${
                         isCopied
-                          ? 'bg-emerald-600 text-white shadow-sm'
-                          : 'bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 dark:bg-rose-600/20 dark:hover:bg-rose-600/30 dark:text-rose-300 dark:border-rose-500/30 active:scale-95'
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-slate-900 hover:bg-slate-800 text-white'
                       }`}
                     >
                       {isCopied ? (
                         <>
                           <Check className="w-3.5 h-3.5" />
-                          <span>안부 핑 복사 완료!</span>
+                          <span>안부 핑 복사 완료</span>
                         </>
                       ) : (
                         <>
                           <MessageCircle className="w-3.5 h-3.5" />
-                          <span>☕ 안부 핑 1-Click 복사</span>
+                          <span>안부 핑 1-Click 복사</span>
                         </>
                       )}
                     </button>

@@ -238,7 +238,7 @@ export const AddPersonModal: React.FC<AddPersonModalProps> = ({ onClose, onSave 
               }`} />
               <div>
                 <span className="font-bold block">
-                  {dartMatchResult.matched ? '🏛️ 금융감독원 DART 실공시 팩트 확인됨' : 'DART 조회 결과'}
+                  {dartMatchResult.matched ? '금융감독원 DART 실공시 팩트 확인됨' : 'DART 조회 결과'}
                 </span>
                 <span className="text-[11px] leading-relaxed">{dartMatchResult.summary}</span>
               </div>

@@ -89,8 +89,8 @@ export function crossCheckPersonWithDart(person: Person): {
     isAgeEstimated: birthYear ? false : person.isAgeEstimated,
     dartInfo,
     memo: person.memo 
-      ? `${person.memo}\n[🏛️ DART 교차검증 완료] ${matchedExec.reportLabel || '정기공시'} 기준 임원 팩트 일치` 
-      : `[🏛️ DART 교차검증 완료] ${matchedExec.reportLabel || '정기공시'} 기준 임원 팩트 일치`
+      ? `${person.memo}\n[DART 교차검증 완료] ${matchedExec.reportLabel || '정기공시'} 기준 임원 팩트 일치` 
+      : `[DART 교차검증 완료] ${matchedExec.reportLabel || '정기공시'} 기준 임원 팩트 일치`
   };
 
   return {

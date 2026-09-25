@@ -291,9 +291,9 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
             >
               <Zap className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
               <span>연계 채용 타진</span>
-              <span className="text-[10px] text-indigo-600 dark:text-indigo-400 font-medium">(바운티)</span>
+              <span className="text-[11px] text-indigo-600 dark:text-indigo-400 font-medium">(바운티)</span>
             </button>
-            <span className="text-[10px] text-slate-400 font-medium">최대 500만원</span>
+            <span className="text-[11px] text-slate-400 font-medium">최대 500만원</span>
           </div>
         )}
 
