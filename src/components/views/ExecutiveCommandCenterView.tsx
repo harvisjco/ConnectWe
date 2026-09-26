@@ -19,7 +19,7 @@ import { getTopSuperConnectors } from '../../services/centralityEngine';
 import { 
   Compass, Award, Clock, Briefcase, 
   Zap, Coffee, Gift, MessageCircle, ChevronRight, 
-  ShieldCheck, Check, Sparkles, Building2, Share2
+  ShieldCheck, Check, Sparkles, Building2, Share2, Mic
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -28,6 +28,7 @@ interface ExecutiveCommandCenterViewProps {
   onSelectPerson: (person: Person) => void;
   onOpenDossier?: (person: Person) => void;
   onOpenBridgeModal?: (person: Person) => void;
+  onOpenDebrief?: (person: Person) => void;
   onShowToast: (msg: string) => void;
   onNavigateView: (viewKey: string) => void;
 }
@@ -37,6 +38,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
   onSelectPerson,
   onOpenDossier,
   onOpenBridgeModal,
+  onOpenDebrief,
   onShowToast,
   onNavigateView,
 }) => {
@@ -128,6 +130,19 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
         }
         actions={
           <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {onOpenDebrief && (
+              <button
+                onClick={() => {
+                  const defaultTarget = people.find(p => p.closeness === 2) || people[0];
+                  if (defaultTarget) onOpenDebrief(defaultTarget);
+                }}
+                className="px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold text-xs border border-indigo-200/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+                title="오늘 진행한 미팅 1분 음성/텍스트 회고 및 AI 액션 아이템 추출"
+              >
+                <Mic className="w-3.5 h-3.5 text-indigo-600" />
+                <span>오늘 미팅 1분 회고</span>
+              </button>
+            )}
             <button
               onClick={() => onNavigateView('deals')}
               className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-900 font-semibold text-xs shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"

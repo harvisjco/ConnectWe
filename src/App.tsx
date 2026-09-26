@@ -9,6 +9,7 @@ import {
   loadMeetingsFromStorage, 
   getImminentMeeting 
 } from './services/calendarRadarService';
+import { loadPromotionEvents } from './services/promotionRadarService';
 
 import { Header } from './components/common/Header';
 import { SidebarLNB, NavViewType } from './components/common/SidebarLNB';
@@ -114,6 +115,11 @@ export const App: React.FC = () => {
   const [bridgeTargetPerson, setBridgeTargetPerson] = useState<Person | null>(null);
   const [dossierTargetPerson, setDossierTargetPerson] = useState<Person | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // 미축하 영전 건수 (모바일 바텀바 배지용)
+  const uncelebratedPromosCount = React.useMemo(() => {
+    return loadPromotionEvents(people).filter(p => !p.isCongratulated).length;
+  }, [people]);
 
   // people 상태 변경 시 자동 영속화
   useEffect(() => {
@@ -300,6 +306,7 @@ export const App: React.FC = () => {
                   onSelectPerson={setSelectedPerson}
                   onOpenDossier={(target) => setDossierTargetPerson(target)}
                   onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
+                  onOpenDebrief={(target) => setDebriefTargetPerson(target)}
                   onShowToast={showToast}
                   onNavigateView={handleNavigateView}
                 />
@@ -602,6 +609,7 @@ export const App: React.FC = () => {
       <MobileBottomBar
         currentView={activeView}
         onSelectView={(v) => handleNavigateView(v as NavViewType)}
+        uncelebratedPromosCount={uncelebratedPromosCount}
       />
 
       {/* Toast Notification Banner */}

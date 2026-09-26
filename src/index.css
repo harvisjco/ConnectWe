@@ -226,3 +226,57 @@ button.bg-slate-800:hover {
 input::placeholder {
   color: #94a3b8;
 }
+
+/* ==========================================================================
+   Executive 1-Page Brief & OrgChart Print Optimization (@media print)
+   ========================================================================== */
+@media print {
+  /* Hide non-printable app chromes */
+  header,
+  aside,
+  nav,
+  .print\:hidden,
+  button,
+  .fixed.bottom-3,
+  .fixed.bottom-6,
+  .fixed.bottom-20 {
+    display: none !important;
+  }
+
+  body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 11pt !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Expand modal to full printable page */
+  .fixed.inset-0 {
+    position: static !important;
+    background: transparent !important;
+    padding: 0 !important;
+    display: block !important;
+  }
+
+  .fixed.inset-0 > div {
+    max-width: 100% !important;
+    max-height: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    border-radius: 0 !important;
+  }
+
+  /* Page breaks & contrast */
+  .break-inside-avoid {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  @page {
+    size: A4 portrait;
+    margin: 12mm 15mm 12mm 15mm;
+  }
+}

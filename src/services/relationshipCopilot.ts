@@ -1,11 +1,14 @@
 import { Person } from '../types/network';
+import { GEO_CLUSTERS, matchPersonToCluster } from './geoProximityService';
+import { identifyTalentCluster, TALENT_CLUSTERS, TalentClusterId } from './talentClusterEngine';
+import { loadDealsFromStorage } from './dealPipelineService';
 
 export interface CopilotMessage {
   id: string;
   sender: 'user' | 'assistant';
   text: string;
   matchedPeople?: Person[];
-  actionType?: 'intro_template' | 'coffee_chat' | 'stale_reminder' | 'search_result';
+  actionType?: 'intro_template' | 'coffee_chat' | 'stale_reminder' | 'search_result' | 'geo_cluster' | 'talent_cluster' | 'deal_keyman';
   suggestedAction?: {
     label: string;
     payload: string;
@@ -66,13 +69,79 @@ export function processCopilotQuery(
   const now = new Date();
   const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
-  // 1. 커피챗 / 가벼운 만남 / 점심 추천
+  // 1. 거점 / 외근 / 지역 기반 질의 (판교, 테헤란로, 여의도, 광화문, 양재/서초, 수원/기흥 등)
+  const matchedCluster = GEO_CLUSTERS.find(c => 
+    q.includes(c.shortName.toLowerCase()) || 
+    q.includes(c.name.toLowerCase()) ||
+    c.keyCompanies.some(k => q.includes(k.toLowerCase())) ||
+    (c.id === 'pangyo' && q.includes('판교')) ||
+    (c.id === 'gangnam_teheran' && (q.includes('강남') || q.includes('테헤란'))) ||
+    (c.id === 'yeouido' && q.includes('여의도')) ||
+    (c.id === 'gwanghwamun_jongno' && (q.includes('광화문') || q.includes('종로'))) ||
+    (c.id === 'yangjae_seocho' && (q.includes('양재') || q.includes('서초'))) ||
+    (c.id === 'suwon_giheung' && (q.includes('수원') || q.includes('기흥') || q.includes('화성') || q.includes('동탄')))
+  );
+
+  if (matchedCluster && (q.includes('외근') || q.includes('출장') || q.includes('방문') || q.includes('거점') || q.includes('근처') || q.includes('인근') || q.includes('만날') || q.includes('누구') || q.includes('추천') || q.includes('있어') || q.includes('지인') || q.includes(matchedCluster.shortName.toLowerCase()))) {
+    const clusterPeople = people.filter(p => p.closeness !== 1 && matchPersonToCluster(p) === matchedCluster.id);
+    const dartCount = clusterPeople.filter(p => p.sourceType === 'DART_FACT' || !!p.dartInfo?.isPublicDirector).length;
+
+    return {
+      id: `msg-${Date.now()}`,
+      sender: 'assistant',
+      text: `[${matchedCluster.name}] 권역에 상주하거나 근무 중인 핵심 인맥 ${clusterPeople.length}명(DART 공시 임원 ${dartCount}명)을 찾았습니다. 방문 일정에 맞춰 편안한 티타임이나 미팅을 조율해 보세요.`,
+      matchedPeople: clusterPeople.slice(0, 4),
+      actionType: 'geo_cluster',
+      timestamp: timeStr
+    };
+  }
+
+  // 2. 5대 인재 클러스터 특화 질의
+  const clusterKeywords: { id: TalentClusterId; keywords: string[] }[] = [
+    { id: 'VENTURE_LEADER', keywords: ['벤처 리더', '스타트업', '창업자', '대표', 'ceo', '기동성', '신속한 협력'] },
+    { id: 'TECH_FELLOW', keywords: ['테크 펠로우', '딥테크', '엔지니어', '개발자', 'cto', '아키텍트', '원천 기술', 'r&d'] },
+    { id: 'INVESTOR_PARTNER', keywords: ['투자 파트너', '투자자', 'vc', '심사역', '자본', 'ir', '파트너스', '펀드'] },
+    { id: 'LISTED_EXECUTIVE', keywords: ['상장사 임원', '등기임원', '공시 임원', '대기업 임원', '전무', '상무', '부사장'] },
+    { id: 'CORE_SPECIALIST', keywords: ['스페셜리스트', '실무 리더', '프로덕트 리드', 'po', 'pm', '팀장', '전문가'] }
+  ];
+
+  const matchedClusterEntry = clusterKeywords.find(c => c.keywords.some(k => q.includes(k)));
+  if (matchedClusterEntry) {
+    const clusterInfo = TALENT_CLUSTERS.find(tc => tc.id === matchedClusterEntry.id);
+    const targetPeople = people.filter(p => p.closeness !== 1 && identifyTalentCluster(p).id === matchedClusterEntry.id).slice(0, 4);
+
+    return {
+      id: `msg-${Date.now()}`,
+      sender: 'assistant',
+      text: `[${clusterInfo?.label || '인재 클러스터'}] 그룹의 핵심 인맥 ${targetPeople.length}명입니다. ${clusterInfo?.description || ''}`,
+      matchedPeople: targetPeople,
+      actionType: 'talent_cluster',
+      timestamp: timeStr
+    };
+  }
+
+  // 3. 전략 비즈니스 딜 & 키맨 연계 질의
+  if (q.includes('딜') || q.includes('파이프라인') || q.includes('프로젝트') || q.includes('수주') || q.includes('키맨')) {
+    const deals = loadDealsFromStorage(people);
+    const activeDeals = deals.filter(d => d.stage !== 'WON');
+    const keymanIds = activeDeals.flatMap(d => d.stakeholders.map(s => s.personId));
+    const keymanPeople = people.filter(p => keymanIds.includes(p.id)).slice(0, 4);
+
+    return {
+      id: `msg-${Date.now()}`,
+      sender: 'assistant',
+      text: `현재 진행 중인 전략 비즈니스 딜(${activeDeals.length}건)에 매핑된 핵심 의사결정권자(Key Decision Maker) 및 챔피언 인맥 ${keymanPeople.length}명입니다.`,
+      matchedPeople: keymanPeople.length > 0 ? keymanPeople : people.filter(p => p.closeness === 2).slice(0, 3),
+      actionType: 'deal_keyman',
+      timestamp: timeStr
+    };
+  }
+
+  // 4. 커피챗 / 가벼운 만남 / 점심 추천
   if (q.includes('커피챗') || q.includes('만날') || q.includes('점심') || q.includes('식사') || q.includes('차 한잔')) {
-    // 친밀도 높고(closeness 2, 3), 최근 180일 내 소통 기록이 있거나 전문 분야가 뚜렷한 1촌
     const candidates = people
       .filter(p => p.closeness !== 1)
       .sort((a, b) => {
-        // 친밀도 우선, DART 검증 가산
         const scoreA = (a.closeness === 2 ? 10 : 5) + (a.dartInfo ? 3 : 0);
         const scoreB = (b.closeness === 2 ? 10 : 5) + (b.dartInfo ? 3 : 0);
         return scoreB - scoreA;
@@ -89,7 +158,7 @@ export function processCopilotQuery(
     };
   }
 
-  // 2. 소통 단절 / 연락 안 한 / 미소통 / 안부
+  // 5. 소통 단절 / 연락 안 한 / 미소통 / 안부
   if (q.includes('연락 안') || q.includes('미소통') || q.includes('단절') || q.includes('오랜만') || q.includes('안부')) {
     const staleList = people
       .filter(p => p.closeness !== 1 && p.isStale)
@@ -105,8 +174,8 @@ export function processCopilotQuery(
     };
   }
 
-  // 3. 특정 기업 / 알럼나이 질의 (예: 네이버, 카카오, 삼성전자, 쿠팡 등)
-  const matchedCompany = ['네이버', '카카오', '삼성전자', '쿠팡', '토스', '현대자동차', 'sk', 'lg'].find(c => q.includes(c));
+  // 6. 특정 기업 / 알럼나이 질의 (예: 네이버, 카카오, 삼성전자, 쿠팡 등)
+  const matchedCompany = ['네이버', '카카오', '삼성전자', '쿠팡', '토스', '현대자동차', 'sk', 'lg', '크래프톤', '엔씨소프트'].find(c => q.includes(c));
   if (matchedCompany) {
     const companyPeople = people.filter(p => {
       if (p.closeness === 1) return false;
@@ -124,8 +193,8 @@ export function processCopilotQuery(
     };
   }
 
-  // 4. 특정 도메인 질의 (AI, 클라우드, 투자, VC, 반도체, 금융 등)
-  const matchedDomain = ['ai', '인공지능', '클라우드', '투자', 'vc', '반도체', 'm&a', '재무'].find(d => q.includes(d));
+  // 7. 특정 도메인 질의 (AI, 클라우드, 투자, VC, 반도체, 금융 등)
+  const matchedDomain = ['ai', '인공지능', '클라우드', '투자', 'vc', '반도체', 'm&a', '재무', '바이오'].find(d => q.includes(d));
   if (matchedDomain) {
     const domainPeople = people.filter(p => {
       if (p.closeness === 1) return false;
@@ -143,7 +212,7 @@ export function processCopilotQuery(
     };
   }
 
-  // 5. 기본 질의: 이름 또는 키워드 매칭
+  // 8. 기본 질의: 이름 또는 키워드 매칭
   const searchResults = people.filter(p => {
     if (p.closeness === 1) return false;
     const text = `${p.name} ${p.currentCompany} ${p.currentTitle} ${p.primaryDomain} ${p.memo || ''}`.toLowerCase();
@@ -161,11 +230,11 @@ export function processCopilotQuery(
     };
   }
 
-  // 6. 매칭 없을 시 친절한 가이드
+  // 9. 매칭 없을 시 친절한 가이드
   return {
     id: `msg-${Date.now()}`,
     sender: 'assistant',
-    text: `질문하신 내용과 정확히 일치하는 인맥을 찾지 못했습니다. 다음과 같이 질문해 보세요:\n\n• "이번 주에 커피챗할 만한 지인 추천해줘"\n• "오랫동안 연락 안 한 C-Level 누구 있어?"\n• "네이버나 삼성전자 출신 인맥 찾아줘"`,
+    text: `질문하신 내용과 정확히 일치하는 인맥을 찾지 못했습니다. 다음과 같이 질문해 보세요:\n\n• "판교나 강남 외근 시 만날 인맥 추천해줘"\n• "AI 펠로우나 벤처 리더 지인 누구 있어?"\n• "진행 중인 딜 키맨 목록 보여줘"\n• "오랫동안 연락 안 한 C-Level 누구 있어?"`,
     timestamp: timeStr
   };
 }

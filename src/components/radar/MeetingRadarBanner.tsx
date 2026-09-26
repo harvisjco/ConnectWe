@@ -26,16 +26,16 @@ export const MeetingRadarBanner: React.FC<MeetingRadarBannerProps> = ({
   // 매칭된 미팅이 없을 때
   if (!imminentMeeting) {
     return (
-      <aside aria-label="일정 동기화 알림" className="w-full bg-slate-900/90 border-b border-slate-800 px-4 py-2 backdrop-blur-md transition-all">
+      <aside aria-label="일정 동기화 알림" className="w-full bg-slate-50/80 border-b border-slate-200/90 px-4 py-2 backdrop-blur-md transition-all">
         <div className="max-w-7xl mx-auto flex items-center justify-between text-xs">
-          <div className="flex items-center gap-2 text-slate-400">
-            <span className="flex h-2 w-2 rounded-full bg-slate-500" />
-            <Calendar className="w-3.5 h-3.5 text-indigo-400" />
+          <div className="flex items-center gap-2 text-slate-500">
+            <span className="flex h-2 w-2 rounded-full bg-slate-400" />
+            <Calendar className="w-3.5 h-3.5 text-indigo-600" />
             <span>실시간 미팅 레이더: 예정된 일정이 없습니다.</span>
           </div>
           <button
             onClick={onOpenCalendarModal}
-            className="flex items-center gap-1 text-indigo-400 hover:text-indigo-300 font-medium transition-colors"
+            className="flex items-center gap-1 text-indigo-600 hover:text-indigo-800 font-medium transition-colors"
           >
             <span>캘린더 (.ics) 동기화</span>
             <ChevronRight className="w-3.5 h-3.5" />
