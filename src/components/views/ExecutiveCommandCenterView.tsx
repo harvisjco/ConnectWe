@@ -19,7 +19,7 @@ import { getTopSuperConnectors } from '../../services/centralityEngine';
 import { 
   Compass, Award, Clock, Briefcase, 
   Zap, Coffee, Gift, MessageCircle, ChevronRight, 
-  ShieldCheck, Check, Sparkles, Building2, Share2, Mic
+  ShieldCheck, Check, Sparkles, Building2, Share2, Mic, Cloud
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -29,6 +29,8 @@ interface ExecutiveCommandCenterViewProps {
   onOpenDossier?: (person: Person) => void;
   onOpenBridgeModal?: (person: Person) => void;
   onOpenDebrief?: (person: Person) => void;
+  onOpenSalon?: () => void;
+  onOpenCloudSync?: () => void;
   onShowToast: (msg: string) => void;
   onNavigateView: (viewKey: string) => void;
 }
@@ -39,6 +41,8 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
   onOpenDossier,
   onOpenBridgeModal,
   onOpenDebrief,
+  onOpenSalon,
+  onOpenCloudSync,
   onShowToast,
   onNavigateView,
 }) => {
@@ -130,6 +134,16 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
         }
         actions={
           <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {onOpenSalon && (
+              <button
+                onClick={onOpenSalon}
+                className="px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold text-xs border border-amber-200/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+                title="7대 거점 및 인재 클러스터 기반 프라이빗 티 살롱 기획"
+              >
+                <Coffee className="w-3.5 h-3.5 text-amber-700" />
+                <span>프라이빗 살롱 기획</span>
+              </button>
+            )}
             {onOpenDebrief && (
               <button
                 onClick={() => {
@@ -143,18 +157,28 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                 <span>오늘 미팅 1분 회고</span>
               </button>
             )}
+            {onOpenCloudSync && (
+              <button
+                onClick={onOpenCloudSync}
+                className="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-medium text-xs border border-sky-200/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+                title="Supabase 클라우드 실시간 암호화 백업 & 복원"
+              >
+                <Cloud className="w-3.5 h-3.5 text-sky-600" />
+                <span>클라우드 동기화</span>
+              </button>
+            )}
             <button
               onClick={() => onNavigateView('deals')}
-              className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-900 font-semibold text-xs shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+              className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
             >
               <Briefcase className="w-3.5 h-3.5" />
-              <span>전략 딜 협업 룸 열기</span>
+              <span>전략 딜 협업 룸</span>
             </button>
             <button
               onClick={() => onNavigateView('audit')}
-              className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium text-xs border border-slate-200/90 dark:border-slate-700 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+              className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs border border-slate-200/90 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
             >
-              <span>20대 기업 네트워크 커버리지</span>
+              <span>20대 기업 커버리지</span>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
             </button>
           </div>

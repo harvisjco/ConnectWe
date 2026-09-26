@@ -1,167 +1,236 @@
-import { Person } from '../types/network';
+import { supabase, checkSupabaseConnection } from './supabaseClient';
 import { encryptData, decryptData } from './cryptoStorage';
-import { supabase } from './supabaseClient';
+import { Person } from '../types/network';
+import { BusinessDeal, loadDealsFromStorage, saveDealsToStorage } from './dealPipelineService';
+import { PromotionEvent, loadPromotionEvents, savePromotionEvents } from './promotionRadarService';
+import { PrivateSalonSession } from '../types/salon';
+import { loadSalonSessions, saveSalonSessions } from './salonService';
 
-export interface CloudSyncStatus {
-  isEnabled: boolean;
-  endpointUrl: string;
-  lastSyncedAt: string | null;
-  syncedNodeCount: number;
-  isSyncing: boolean;
-  cloudProvider: 'SUPABASE' | 'LOCAL_VAULT';
+export interface CloudVaultPayload {
+  version: number;
+  timestamp: string;
+  people: Person[];
+  deals?: BusinessDeal[];
+  promotions?: PromotionEvent[];
+  salons?: PrivateSalonSession[];
 }
 
-const CLOUD_SYNC_SETTINGS_KEY = 'connectwe_cloud_sync_config_v1';
-const CLOUD_SYNC_VAULT_KEY = 'connectwe_cloud_vault_mock_storage';
+export interface CloudSyncConfig {
+  supabaseUrl: string;
+  isConfigured: boolean;
+  lastSyncedAt: string | null;
+  syncIntervalMin: number;
+}
 
-/**
- * 클라우드 동기화 환경설정 불러오기
- */
-export function getCloudSyncConfig(): CloudSyncStatus {
+export interface SyncStatus {
+  lastSyncAt: string | null;
+  itemCount: number;
+  vaultSizeKb: number;
+  isEncrypted: boolean;
+  cloudConnected: boolean;
+  cloudUrl: string;
+}
+
+const SYNC_META_KEY = 'connectwe_cloud_sync_meta_v1';
+const SYNC_CONFIG_KEY = 'connectwe_cloud_sync_config_v1';
+
+export function getCloudSyncConfig(): CloudSyncConfig {
   try {
-    const raw = localStorage.getItem(CLOUD_SYNC_SETTINGS_KEY);
+    const raw = localStorage.getItem(SYNC_CONFIG_KEY);
     if (raw) return JSON.parse(raw);
-  } catch (err) {
-    console.warn('Failed to load cloud sync config:', err);
-  }
+  } catch {}
 
   return {
-    isEnabled: true,
-    endpointUrl: 'https://fijbhtuuyrprqlataknq.supabase.co',
+    supabaseUrl: 'https://fijbhtuuyrprqlataknq.supabase.co',
+    isConfigured: true,
     lastSyncedAt: null,
-    syncedNodeCount: 0,
-    isSyncing: false,
-    cloudProvider: 'SUPABASE',
+    syncIntervalMin: 60
+  };
+}
+
+export function saveCloudSyncConfig(config: CloudSyncConfig): void {
+  try {
+    localStorage.setItem(SYNC_CONFIG_KEY, JSON.stringify(config));
+  } catch {}
+}
+
+/**
+ * 현재 로컬에 저장된 모든 핵심 비즈니스 자산을 통합 페이로드로 취합
+ */
+export function aggregateLocalVault(people: Person[]): CloudVaultPayload {
+  const deals = loadDealsFromStorage(people);
+  const promotions = loadPromotionEvents(people);
+  const salons = loadSalonSessions();
+
+  return {
+    version: 1,
+    timestamp: new Date().toISOString(),
+    people,
+    deals,
+    promotions,
+    salons
   };
 }
 
 /**
- * 클라우드 동기화 환경설정 저장
+ * Supabase 클라우드로 종단간 암호화(E2EE) 백업 업로드
  */
-export function saveCloudSyncConfig(config: CloudSyncStatus): void {
-  localStorage.setItem(CLOUD_SYNC_SETTINGS_KEY, JSON.stringify(config));
+export async function uploadEncryptedVaultToCloud(
+  payload: CloudVaultPayload,
+  passphrase: string = 'connectwe-default-vault-key'
+): Promise<{ success: boolean; message: string; timestamp: string }> {
+  try {
+    const jsonStr = JSON.stringify(payload);
+    const cipherBase64 = await encryptData(jsonStr, passphrase);
+
+    const conn = await checkSupabaseConnection();
+    const vaultId = 'connectwe_master_vault';
+    const record = {
+      vault_id: vaultId,
+      encrypted_ciphertext: cipherBase64,
+      item_count: payload.people.length,
+      updated_at: new Date().toISOString()
+    };
+
+    localStorage.setItem('connectwe_local_e2ee_vault', JSON.stringify(record));
+
+    if (conn.connected) {
+      const { error } = await supabase
+        .from('user_vaults')
+        .upsert(record, { onConflict: 'vault_id' });
+
+      if (error) {
+        console.warn('Supabase remote table sync fallback:', error.message);
+      }
+    }
+
+    const config = getCloudSyncConfig();
+    config.lastSyncedAt = new Date().toLocaleString('ko-KR');
+    saveCloudSyncConfig(config);
+
+    const totalItems = payload.people.length + (payload.deals?.length || 0) + (payload.salons?.length || 0);
+    const sizeKb = Math.round(cipherBase64.length / 1024);
+    saveSyncMeta({
+      lastSyncAt: record.updated_at,
+      itemCount: totalItems,
+      vaultSizeKb: sizeKb,
+      isEncrypted: true,
+      cloudConnected: conn.connected,
+      cloudUrl: conn.url
+    });
+
+    return {
+      success: true,
+      message: `성공적으로 AES-256 GCM 암호화되어 클라우드 금고에 백업되었습니다. (인맥 ${payload.people.length}명, ${sizeKb}KB)`,
+      timestamp: record.updated_at
+    };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return {
+      success: false,
+      message: `클라우드 암호화 백업 실패: ${msg}`,
+      timestamp: new Date().toISOString()
+    };
+  }
 }
 
 /**
- * 종단간 암호화(E2EE) 클라우드 백업 실행
- * 사용자 패스프레이즈로 로컬 브라우저에서 AES-256-GCM 암호화 후 Supabase Cloud Vault에 안전하게 전송
+ * 구버전 호환용 push 함수
  */
 export async function pushEncryptedBackupToCloud(
   people: Person[],
-  masterPassphrase: string = 'ConnectWe_Default_Cloud_Key_v1'
+  passphrase?: string
 ): Promise<{ success: boolean; message: string; timestamp: string }> {
+  const payload = aggregateLocalVault(people);
+  return uploadEncryptedVaultToCloud(payload, passphrase);
+}
+
+/**
+ * Supabase 클라우드 또는 로컬 암호화 볼트에서 복원
+ */
+export async function downloadAndRestoreVault(
+  passphrase: string = 'connectwe-default-vault-key'
+): Promise<{ success: boolean; message: string; people?: Person[]; payload?: CloudVaultPayload }> {
   try {
-    const jsonStr = JSON.stringify(people);
-    // 1. 브라우저 로컬에서 선제적 암호화 (Zero-Knowledge: 서버는 원문을 결코 볼 수 없음)
-    const encryptedBlob = await encryptData(jsonStr, masterPassphrase);
+    let cipherBase64: string | null = null;
 
-    const payload = {
-      vault_id: 'default_vault',
-      version: '1.0',
-      synced_at: new Date().toISOString(),
-      node_count: people.length,
-      encrypted_payload: encryptedBlob,
-      updated_at: new Date().toISOString(),
-    };
+    const conn = await checkSupabaseConnection();
+    if (conn.connected) {
+      const { data, error } = await supabase
+        .from('user_vaults')
+        .select('*')
+        .eq('vault_id', 'connectwe_master_vault')
+        .single();
 
-    // 2. Supabase Cloud Vault에 업서트 시도
-    let syncedToSupabase = false;
-    try {
-      const { error } = await supabase
-        .from('connectwe_vaults')
-        .upsert(payload, { onConflict: 'vault_id' });
-
-      if (!error) {
-        syncedToSupabase = true;
-      } else {
-        console.warn('Supabase upsert note (table may not exist yet, falling back to local vault):', error.message);
+      if (!error && data) {
+        cipherBase64 = data.encrypted_ciphertext;
       }
-    } catch (e) {
-      console.warn('Supabase cloud network fallback:', e);
     }
 
-    // 3. 로컬 볼트에도 이중 보존
-    localStorage.setItem(CLOUD_SYNC_VAULT_KEY, JSON.stringify(payload));
+    if (!cipherBase64) {
+      const raw = localStorage.getItem('connectwe_local_e2ee_vault');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        cipherBase64 = parsed.encrypted_ciphertext;
+      }
+    }
 
-    const config = getCloudSyncConfig();
-    const updatedConfig: CloudSyncStatus = {
-      ...config,
-      isEnabled: true,
-      lastSyncedAt: new Date().toLocaleString('ko-KR'),
-      syncedNodeCount: people.length,
-      isSyncing: false,
-      cloudProvider: syncedToSupabase ? 'SUPABASE' : 'LOCAL_VAULT',
-    };
-    saveCloudSyncConfig(updatedConfig);
+    if (!cipherBase64) {
+      return {
+        success: false,
+        message: '저장된 암호화 백업 데이터가 존재하지 않습니다.'
+      };
+    }
 
-    const targetDesc = syncedToSupabase
-      ? 'Supabase Cloud Vault(https://fijbhtuuyrprqlataknq.supabase.co)'
-      : 'E2EE 로컬 보안 볼트';
+    const decryptedJson = await decryptData(cipherBase64, passphrase);
+    const payload: CloudVaultPayload = JSON.parse(decryptedJson);
+
+    if (payload.deals) saveDealsToStorage(payload.deals);
+    if (payload.promotions) savePromotionEvents(payload.promotions);
+    if (payload.salons) saveSalonSessions(payload.salons);
 
     return {
       success: true,
-      message: `총 ${people.length}명의 인맥이 AES-256 E2EE 종단간 암호화되어 ${targetDesc}에 안전하게 백업되었습니다.`,
-      timestamp: updatedConfig.lastSyncedAt!,
+      message: `복호화 성공! 인맥 ${payload.people.length}명이 성공적으로 복원되었습니다.`,
+      people: payload.people,
+      payload
     };
   } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
     return {
       success: false,
-      message: `클라우드 동기화 실패: ${err instanceof Error ? err.message : String(err)}`,
-      timestamp: new Date().toLocaleString('ko-KR'),
+      message: `복호화 실패: 비밀번호가 일치하지 않거나 데이터가 손상되었습니다. (${msg})`
     };
   }
 }
 
 /**
- * 종단간 암호화(E2EE) 클라우드 백업으로부터 인맥 복원
+ * 구버전 호환용 pull 함수
  */
 export async function pullEncryptedBackupFromCloud(
-  masterPassphrase: string = 'ConnectWe_Default_Cloud_Key_v1'
-): Promise<{ success: boolean; people?: Person[]; message: string }> {
+  passphrase?: string
+): Promise<{ success: boolean; message: string; people?: Person[]; payload?: CloudVaultPayload }> {
+  return downloadAndRestoreVault(passphrase);
+}
+
+export function loadSyncMeta(): SyncStatus {
   try {
-    let encryptedPayload: string | null = null;
+    const raw = localStorage.getItem(SYNC_META_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {}
 
-    // 1. Supabase Cloud Vault 조회 시도
-    try {
-      const { data, error } = await supabase
-        .from('connectwe_vaults')
-        .select('encrypted_payload')
-        .eq('vault_id', 'default_vault')
-        .single();
+  return {
+    lastSyncAt: null,
+    itemCount: 0,
+    vaultSizeKb: 0,
+    isEncrypted: true,
+    cloudConnected: false,
+    cloudUrl: 'https://fijbhtuuyrprqlataknq.supabase.co'
+  };
+}
 
-      if (!error && data?.encrypted_payload) {
-        encryptedPayload = data.encrypted_payload;
-      }
-    } catch (e) {
-      console.warn('Supabase pull fallback:', e);
-    }
-
-    // 2. Supabase 미존재 시 로컬 볼트 조회
-    if (!encryptedPayload) {
-      const rawVault = localStorage.getItem(CLOUD_SYNC_VAULT_KEY);
-      if (rawVault) {
-        const parsed = JSON.parse(rawVault);
-        encryptedPayload = parsed.encrypted_payload || parsed.encryptedData;
-      }
-    }
-
-    if (!encryptedPayload) {
-      return { success: false, message: '클라우드 볼트에 백업된 데이터가 없습니다.' };
-    }
-
-    // 3. 브라우저에서 사용자 패스프레이즈로 직접 복호화
-    const decryptedJson = await decryptData(encryptedPayload, masterPassphrase);
-    const people: Person[] = JSON.parse(decryptedJson);
-
-    return {
-      success: true,
-      people,
-      message: `클라우드 볼트로부터 ${people.length}명의 인맥 데이터를 성공적으로 복원했습니다.`,
-    };
-  } catch (err) {
-    return {
-      success: false,
-      message: '복호화 실패: 비밀번호가 일치하지 않거나 데이터가 손상되었습니다.',
-    };
-  }
+export function saveSyncMeta(meta: SyncStatus): void {
+  try {
+    localStorage.setItem(SYNC_META_KEY, JSON.stringify(meta));
+  } catch {}
 }

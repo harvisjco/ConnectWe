@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Person } from '../../types/network';
 import { 
   X, GitFork, ArrowRight, ShieldCheck, Sparkles, 
-  Copy, Check, UserCheck
+  Copy, Check, UserCheck, Gift
 } from 'lucide-react';
 
 interface DegreesOfSeparationModalProps {
@@ -10,6 +10,7 @@ interface DegreesOfSeparationModalProps {
   people: Person[];
   onClose: () => void;
   onSelectPerson: (person: Person) => void;
+  onOpenBounty?: () => void;
   onShowToast?: (msg: string) => void;
 }
 
@@ -19,7 +20,7 @@ type WarmIntroPurpose = 'business' | 'coffee_chat' | 'recruiting' | 'investment'
 interface BridgeItem {
   bridge: Person;
   trustScore: number;
-  trustGrade: 'VERIFIED_GOLD' | 'VERIFIED_SILVER' | 'NETWORK';
+  trustContext: 'SAME_COMPANY' | 'ALUMNI_NETWORK' | 'COMMUNITY';
   overlapReasons: string[];
 }
 
@@ -28,6 +29,7 @@ export const DegreesOfSeparationModal: React.FC<DegreesOfSeparationModalProps> =
   people,
   onClose,
   onSelectPerson,
+  onOpenBounty,
   onShowToast = () => {}
 }) => {
   // 1촌 다리(Bridge) 후보자 발굴 및 신뢰 점수(Trust Score) 계산
@@ -69,13 +71,17 @@ export const DegreesOfSeparationModal: React.FC<DegreesOfSeparationModalProps> =
       if (bridge.closeness === 2) trustScore += 10;
 
       const finalScore = Math.min(99, trustScore);
-      const trustGrade: 'VERIFIED_GOLD' | 'VERIFIED_SILVER' | 'NETWORK' = 
-        finalScore >= 85 ? 'VERIFIED_GOLD' : finalScore >= 70 ? 'VERIFIED_SILVER' : 'NETWORK';
+      let trustContext: 'SAME_COMPANY' | 'ALUMNI_NETWORK' | 'COMMUNITY' = 'COMMUNITY';
+      if (bridge.currentCompany === targetPerson.currentCompany) {
+        trustContext = 'SAME_COMPANY';
+      } else if (reasons.some(r => r.includes('동문') || r.includes('재직 이력'))) {
+        trustContext = 'ALUMNI_NETWORK';
+      }
 
       return {
         bridge,
         trustScore: finalScore,
-        trustGrade,
+        trustContext,
         overlapReasons: reasons
       };
     })
@@ -264,11 +270,13 @@ ${bridge.name}님께서 ${targetPerson.name}님과 같은 조직 및 네트워�
                           {item.bridge.name} <span className="text-xs font-normal text-slate-500">({item.bridge.currentTitle})</span>
                         </div>
                         <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold border ${
-                          item.trustGrade === 'VERIFIED_GOLD'
-                            ? 'bg-amber-50 text-amber-800 border-amber-200'
-                            : 'bg-indigo-50 text-indigo-700 border-indigo-100'
+                          item.trustContext === 'SAME_COMPANY'
+                            ? 'bg-blue-50 text-blue-700 border-blue-200'
+                            : item.trustContext === 'ALUMNI_NETWORK'
+                            ? 'bg-purple-50 text-purple-700 border-purple-200'
+                            : 'bg-slate-50 text-slate-700 border-slate-200'
                         }`}>
-                          접점 일치도 {item.trustScore}%
+                          {item.trustContext === 'SAME_COMPANY' ? '동일 기업 동료' : item.trustContext === 'ALUMNI_NETWORK' ? '알럼나이 인연' : '네트워크 접점'} ({item.trustScore}%)
                         </span>
                       </div>
 
@@ -394,17 +402,33 @@ ${bridge.name}님께서 ${targetPerson.name}님과 같은 조직 및 네트워�
                   메시지를 복사하여 카카오톡이나 메신저로 1촌 지인에게 정중히 전달하세요.
                 </span>
 
-                <button
-                  onClick={handleCopyMessage}
-                  className={`px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer active:scale-95 ${
-                    isCopied
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-slate-900 hover:bg-slate-800 text-white'
-                  }`}
-                >
-                  {isCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5 text-indigo-300" />}
-                  <span>{isCopied ? '복사 완료!' : '소개 요청서 복사'}</span>
-                </button>
+                <div className="flex items-center gap-2">
+                  {onOpenBounty && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onClose();
+                        onOpenBounty();
+                      }}
+                      className="px-4 py-2.5 rounded-xl text-xs font-semibold text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-all flex items-center gap-1.5 shadow-2xs"
+                      title="소개 성사 시 1촌 지인에게 감사의 마음(기프티콘/추천 리워드) 전달"
+                    >
+                      <Gift className="w-3.5 h-3.5 text-amber-600" />
+                      <span>추천 감사 리워드</span>
+                    </button>
+                  )}
+                  <button
+                    onClick={handleCopyMessage}
+                    className={`px-5 py-2.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer active:scale-95 ${
+                      isCopied
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-slate-900 hover:bg-slate-800 text-white'
+                    }`}
+                  >
+                    {isCopied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5 text-indigo-300" />}
+                    <span>{isCopied ? '복사 완료!' : '소개 요청서 복사'}</span>
+                  </button>
+                </div>
               </div>
             </div>
           )}

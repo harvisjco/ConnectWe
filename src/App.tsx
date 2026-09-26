@@ -50,6 +50,8 @@ import { CalendarImportModal } from './components/radar/CalendarImportModal';
 import { MeetingDebriefModal } from './components/radar/MeetingDebriefModal';
 import { FollowUpComposerModal } from './components/radar/FollowUpComposerModal';
 import { DebriefResult } from './services/meetingDebriefService';
+import { PrivateSalonModal } from './components/modals/PrivateSalonModal';
+import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 
 import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2 } from 'lucide-react';
 
@@ -111,6 +113,7 @@ export const App: React.FC = () => {
   const [isEncryptionModalOpen, setIsEncryptionModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isCloudSyncOpen, setIsCloudSyncOpen] = useState(false);
+  const [isSalonModalOpen, setIsSalonModalOpen] = useState(false);
   const [isCopilotOpen, setIsCopilotOpen] = useState(false);
   const [bridgeTargetPerson, setBridgeTargetPerson] = useState<Person | null>(null);
   const [dossierTargetPerson, setDossierTargetPerson] = useState<Person | null>(null);
@@ -307,6 +310,8 @@ export const App: React.FC = () => {
                   onOpenDossier={(target) => setDossierTargetPerson(target)}
                   onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
                   onOpenDebrief={(target) => setDebriefTargetPerson(target)}
+                  onOpenSalon={() => setIsSalonModalOpen(true)}
+                  onOpenCloudSync={() => setIsCloudSyncOpen(true)}
                   onShowToast={showToast}
                   onNavigateView={handleNavigateView}
                 />
@@ -470,6 +475,10 @@ export const App: React.FC = () => {
           people={people}
           onClose={() => setBridgeTargetPerson(null)}
           onSelectPerson={setSelectedPerson}
+          onOpenBounty={() => {
+            setBridgeTargetPerson(null);
+            handleNavigateView('bounty');
+          }}
           onShowToast={showToast}
         />
       )}
@@ -517,6 +526,20 @@ export const App: React.FC = () => {
           people={people}
           onUpdatePeople={setPeople}
           onClose={() => setIsCloudSyncOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* Private Salon & Tea Hosting Modal */}
+      {isSalonModalOpen && (
+        <PrivateSalonModal
+          people={people}
+          onClose={() => setIsSalonModalOpen(false)}
+          onSelectPerson={setSelectedPerson}
+          onOpenDebrief={(target) => {
+            setIsSalonModalOpen(false);
+            setDebriefTargetPerson(target);
+          }}
           onShowToast={showToast}
         />
       )}
@@ -619,6 +642,9 @@ export const App: React.FC = () => {
           <span>{toastMessage}</span>
         </div>
       )}
+
+      {/* PWA Mobile Installation Floating Banner */}
+      <PwaInstallBanner />
     </div>
   );
 };
