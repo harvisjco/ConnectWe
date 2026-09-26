@@ -182,15 +182,15 @@ export const Header: React.FC<HeaderProps> = ({
           )}
 
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-indigo-600 dark:bg-indigo-500 flex items-center justify-center shadow-2xs shrink-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-900 flex items-center justify-center shadow-xs border border-slate-800 shrink-0">
               <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
             </div>
             
             <div className="flex items-center gap-1.5 sm:gap-2">
-              <h1 className="text-sm sm:text-base font-black tracking-tight text-slate-900 dark:text-white whitespace-nowrap">
+              <h1 className="text-sm sm:text-base font-black tracking-tight text-slate-900 whitespace-nowrap">
                 ConnectWe
               </h1>
-              <span className="text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80 dark:bg-indigo-950/60 dark:text-indigo-300 dark:border-indigo-500/30">
+              <span className="text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
                 AI 2.0
               </span>
               <button
@@ -262,10 +262,10 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </button>
 
-          {/* Add Person CTA - GoodPartner Style Indigo Pill Button */}
+          {/* Add Person CTA - Premium Dark Slate Pill Button */}
           <button
             onClick={onOpenAddModal}
-            className="flex items-center gap-1 px-2.5 sm:px-3.5 py-1.5 rounded-full bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 active:scale-[0.98] transition-all text-xs font-bold text-white shadow-2xs cursor-pointer whitespace-nowrap min-h-[32px]"
+            className="flex items-center gap-1.5 px-3 sm:px-4 py-1.5 rounded-full bg-slate-900 hover:bg-slate-800 active:scale-[0.98] transition-all text-xs font-bold text-white shadow-xs cursor-pointer whitespace-nowrap min-h-[32px] border border-slate-800"
             title="새 인맥 직접 등록"
           >
             <UserPlus className="w-3.5 h-3.5 text-white" />

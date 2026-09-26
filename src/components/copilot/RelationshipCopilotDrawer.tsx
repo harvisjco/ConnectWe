@@ -102,8 +102,8 @@ export const RelationshipCopilotDrawer: React.FC<RelationshipCopilotDrawerProps>
       onClose={onClose}
       title="인맥 지능 코파일럿"
       subtitle="자연어 인맥 질의 & 소통 비서"
-      badge={<Badge variant="brand">AI Copilot</Badge>}
-      icon={<Sparkles className="w-4 h-4 text-white" />}
+      badge={<span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-200">AI Copilot</span>}
+      icon={<Sparkles className="w-4 h-4 text-slate-700" />}
       footer={
         <form
           onSubmit={(e) => {
@@ -117,12 +117,12 @@ export const RelationshipCopilotDrawer: React.FC<RelationshipCopilotDrawerProps>
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder="인맥 관련 질문을 입력하세요..."
-            className="flex-1 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition-all"
+            className="flex-1 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:border-slate-400 focus:bg-white transition-all"
           />
           <button
             type="submit"
             disabled={!inputValue.trim()}
-            className="p-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 disabled:opacity-40 text-white transition-all shadow-sm shadow-indigo-600/20 min-h-[36px] min-w-[36px] flex items-center justify-center active:scale-95"
+            className="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-40 text-white transition-all shadow-sm shadow-slate-900/10 min-h-[36px] min-w-[36px] flex items-center justify-center active:scale-95 cursor-pointer"
             title="전송"
           >
             <Send className="w-4 h-4" />
@@ -145,8 +145,8 @@ export const RelationshipCopilotDrawer: React.FC<RelationshipCopilotDrawerProps>
                 </>
               ) : (
                 <>
-                  <Bot className="w-3.5 h-3.5 text-indigo-600" />
-                  <span className="text-[11px] font-bold text-indigo-600">ConnectWe AI</span>
+                  <Bot className="w-3.5 h-3.5 text-slate-700" />
+                  <span className="text-[11px] font-bold text-slate-800">ConnectWe AI</span>
                   <span className="text-[11px] text-slate-400 font-mono">{msg.timestamp}</span>
                 </>
               )}
@@ -156,8 +156,8 @@ export const RelationshipCopilotDrawer: React.FC<RelationshipCopilotDrawerProps>
             <div
               className={`p-3.5 rounded-2xl max-w-[90%] leading-relaxed ${
                 msg.sender === 'user'
-                  ? 'bg-indigo-600 text-white rounded-tr-none shadow-sm'
-                  : 'bg-slate-100 border border-slate-200/80 text-slate-800 rounded-tl-none whitespace-pre-wrap shadow-sm'
+                  ? 'bg-slate-900 text-white rounded-tr-none shadow-sm'
+                  : 'bg-slate-50 border border-slate-200/90 text-slate-800 rounded-tl-none whitespace-pre-wrap shadow-sm'
               }`}
             >
               {msg.text}

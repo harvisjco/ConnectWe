@@ -486,9 +486,9 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
 
             <button
               onClick={() => onNavigateView('audit')}
-              className="px-4 py-2 rounded-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs shadow-xs transition-colors shrink-0 flex items-center gap-1.5 active:scale-[0.98]"
+              className="px-4 py-2 rounded-full bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-xs transition-colors shrink-0 flex items-center gap-1.5 active:scale-[0.98] cursor-pointer"
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
               <span>파트너십 진단 리포트 열기</span>
             </button>
           </div>

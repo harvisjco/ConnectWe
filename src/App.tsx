@@ -529,11 +529,11 @@ export const App: React.FC = () => {
       <button
         onClick={() => setIsCopilotOpen(true)}
         title="AI 인맥 지능 코파일럿 열기"
-        className="fixed bottom-20 right-4 lg:bottom-6 lg:right-6 z-40 flex items-center gap-2 px-4 py-3 rounded-full bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-600 hover:scale-105 active:scale-95 text-white font-bold text-xs shadow-2xl shadow-indigo-600/40 border border-indigo-400/40 transition-all group"
+        className="fixed bottom-20 right-4 lg:bottom-6 lg:right-6 z-40 flex items-center gap-2 px-4 py-3 rounded-full bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-bold text-xs shadow-xl shadow-slate-900/25 border border-slate-700/80 transition-all duration-200 group cursor-pointer"
       >
-        <Sparkles className="w-4 h-4 text-purple-200 group-hover:rotate-12 transition-transform" />
-        <span className="hidden sm:inline">인맥 코파일럿</span>
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+        <Sparkles className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform" />
+        <span className="hidden sm:inline tracking-tight">인맥 코파일럿</span>
+        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
       </button>
 
       {/* Mobile C-Level Bottom Floating Navigation Bar */}
@@ -544,8 +544,8 @@ export const App: React.FC = () => {
 
       {/* Toast Notification Banner */}
       {toastMessage && (
-        <div className="fixed bottom-20 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-2xl bg-indigo-600 text-white text-xs font-semibold shadow-2xl shadow-indigo-500/40 border border-indigo-400/30 animate-in slide-in-from-bottom-4 duration-300">
-          <CheckCircle2 className="w-4 h-4" />
+        <div className="fixed bottom-20 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-slate-900/95 backdrop-blur-md text-white text-xs font-semibold shadow-2xl shadow-slate-900/40 border border-slate-700/80 animate-in slide-in-from-bottom-4 duration-300">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
           <span>{toastMessage}</span>
         </div>
       )}

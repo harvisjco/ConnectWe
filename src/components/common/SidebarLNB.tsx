@@ -174,7 +174,7 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
       {/* LNB Top Header */}
       <div className="flex items-center justify-between px-3 py-3 border-b border-slate-200/80 dark:border-slate-800/80 shrink-0">
         <div className="flex items-center gap-2 overflow-hidden">
-          <span className="w-2 h-2 rounded-full bg-indigo-600 dark:bg-indigo-400 shrink-0" />
+          <span className="w-2 h-2 rounded-full bg-slate-800 shrink-0" />
           {!isCollapsed && (
             <span className="text-xs font-bold tracking-tight text-slate-800 dark:text-slate-200 truncate">
               ConnectWe 콘솔
@@ -239,12 +239,12 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
                     title={isCollapsed ? item.label : undefined}
                     className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs transition-all duration-150 active:scale-[0.98] cursor-pointer ${
                       isActive
-                        ? 'bg-indigo-50/90 text-indigo-700 border border-indigo-150/80 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-500/40 shadow-2xs font-bold'
-                        : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100/60 dark:hover:bg-slate-800/60 font-medium'
+                        ? 'bg-slate-100/90 text-slate-900 border border-slate-300/80 shadow-2xs font-bold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/60 font-medium'
                     } ${isCollapsed ? 'justify-center px-0' : 'justify-between'}`}
                   >
                     <div className="flex items-center gap-2.5 truncate">
-                      <IconComponent className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500'}`} />
+                      <IconComponent className={`w-4 h-4 shrink-0 ${isActive ? 'text-slate-900' : 'text-slate-400'}`} />
                       {!isCollapsed && <span className="truncate">{item.label}</span>}
                     </div>
 
@@ -263,21 +263,21 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
           onClick={onOpenCopilot}
           className={`w-full p-2.5 rounded-xl border text-left transition-all duration-150 active:scale-[0.98] cursor-pointer group ${
             isCollapsed
-              ? 'flex items-center justify-center p-2 bg-indigo-50/60 dark:bg-indigo-950/30 border-indigo-200 dark:border-indigo-800/50'
-              : 'bg-gradient-to-br from-indigo-50/90 via-sky-50/60 to-white dark:from-indigo-950/40 dark:via-slate-900 dark:to-slate-900 border-indigo-200/90 dark:border-indigo-800/60 shadow-xs hover:border-indigo-300 dark:hover:border-indigo-700'
+              ? 'flex items-center justify-center p-2 bg-slate-100 border-slate-200'
+              : 'bg-gradient-to-b from-slate-100/90 via-slate-50/70 to-white border-slate-200/90 shadow-sm hover:border-slate-300'
           }`}
           title="ConnectWe AI Copilot 드로어 열기"
         >
           {isCollapsed ? (
-            <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400 animate-pulse" />
+            <Sparkles className="w-4 h-4 text-slate-700 animate-pulse" />
           ) : (
             <>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5 text-xs font-bold text-indigo-900 dark:text-indigo-300">
-                  <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 animate-pulse shrink-0" />
+                <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
+                  <Sparkles className="w-3.5 h-3.5 text-slate-700 shrink-0" />
                   <span>BARS AI Radar</span>
                 </div>
-                <span className="text-[11px] px-1.5 py-0.5 rounded-full font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-500/20 dark:text-indigo-300">
+                <span className="text-[11px] px-1.5 py-0.5 rounded-full font-bold bg-slate-200/80 text-slate-700 font-mono">
                   LIVE
                 </span>
               </div>

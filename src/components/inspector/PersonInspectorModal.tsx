@@ -252,9 +252,9 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
               <button
                 type="button"
                 onClick={() => onOpenDossier(person)}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition-all active:scale-[0.98] shadow-sm cursor-pointer"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all active:scale-[0.98] shadow-md shadow-slate-900/10 border border-slate-800 cursor-pointer"
               >
-                <Sparkles className="w-4 h-4 text-indigo-200" />
+                <Sparkles className="w-4 h-4 text-amber-400" />
                 <span>미팅 준비 1-Page AI 브리프 열기 (Meeting Prep Brief)</span>
               </button>
             )}

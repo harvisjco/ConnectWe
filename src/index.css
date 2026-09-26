@@ -69,19 +69,28 @@ aside {
   box-shadow: none;
 }
 
-/* Primary Card Surfaces: Pure White with 1px Crisp Border */
+/* Primary Card Surfaces: Subtle Cool-Grey Gradient Header + Floating Elevation Shadow */
+.bg-white.rounded-2xl,
+.bg-white.rounded-xl,
+.card-base,
+.apple-card,
 .bg-slate-900,
-[class*="bg-slate-900/"] {
-  background-color: #ffffff;
+[class*="bg-slate-900/"]:not(button):not(.fixed):not(.absolute) {
+  background: linear-gradient(180deg, #f8fafc 0%, #ffffff 44px, #ffffff 100%) !important;
   border-color: #e2e8f0;
   color: #1e293b;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03), 0 1px 2px -1px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.05), 0 2px 4px -1px rgba(15, 23, 42, 0.03);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.bg-white.rounded-2xl:hover,
+.bg-white.rounded-xl:hover,
+.card-base:hover,
+.apple-card:hover,
 .bg-slate-900:hover,
-[class*="bg-slate-900/"]:hover {
+[class*="bg-slate-900/"]:not(button):not(.fixed):not(.absolute):hover {
   border-color: #cbd5e1;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 10px 25px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.03);
 }
 
 /* Primary Inset / Recessed Slots */
@@ -91,26 +100,55 @@ aside {
   border-color: #e2e8f0;
 }
 
-/* Buttons and Sub-cards: Clean White with 1px Border */
-.bg-slate-800,
-[class*="bg-slate-800/"] {
-  background-color: #ffffff;
+/* Buttons and Sub-cards: Clean Slate Inset with Crisp 1px Border */
+.bg-slate-800:not(button),
+[class*="bg-slate-800/"]:not(button) {
+  background-color: #f8fafc;
   color: #334155;
   border-color: #e2e8f0;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
 }
 
-.bg-slate-800:hover,
-[class*="bg-slate-800/"]:hover {
-  background-color: #f8fafc;
+.bg-slate-800:not(button):hover,
+[class*="bg-slate-800/"]:not(button):hover {
+  background-color: #f1f5f9;
   color: #0f172a;
   border-color: #cbd5e1;
 }
 
-/* Typography Hierarchy in Pure Light Mode */
-.text-white {
-  color: #0f172a;
+/* Premium Dark Slate Buttons & Floating Elements (Always Crisp White Text) */
+button.bg-slate-900,
+button.bg-slate-800,
+div.bg-slate-900,
+.bg-slate-900.text-white,
+button.bg-slate-900 *,
+div.bg-slate-900 * {
+  color: #ffffff;
 }
+
+button.bg-slate-900,
+button.bg-slate-800 {
+  background-color: #0f172a !important;
+  border-color: #1e293b;
+  box-shadow: 0 2px 6px -1px rgba(15, 23, 42, 0.12), 0 1px 3px -1px rgba(15, 23, 42, 0.08);
+}
+
+button.bg-slate-900:hover,
+button.bg-slate-800:hover {
+  background-color: #1e293b !important;
+  box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.2);
+}
+
+/* Modal Backdrops & Overlays (Keep Semi-Transparent Dark Dim) */
+.bg-slate-900\/40,
+.bg-slate-950\/60,
+.bg-slate-900\/60 {
+  background-color: rgba(15, 23, 42, 0.45) !important;
+  color: inherit;
+  box-shadow: none;
+}
+
+/* Clean Typography Hierarchy */
 .text-slate-100 {
   color: #0f172a;
 }

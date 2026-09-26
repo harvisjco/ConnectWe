@@ -68,8 +68,8 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
               data-testid={`mobile-tab-${item.id}`}
               className={`relative flex flex-col items-center justify-center py-1 px-2.5 rounded-xl transition-all duration-200 active:scale-95 ${
                 isActive
-                  ? 'text-white bg-indigo-600/90 shadow-sm shadow-indigo-600/40'
-                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
+                  ? 'text-white bg-slate-800 shadow-sm border border-slate-700/80 font-bold'
+                  : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
               }`}
             >
               <div className="relative">
