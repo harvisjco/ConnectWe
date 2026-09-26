@@ -115,7 +115,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
       <ViewHeader
         icon={Zap}
         title="오늘의 비즈니스 경영 사령탑"
-        subtitle="대표님, 오늘 가장 높은 성약 확률을 가진 딜과 외근지 인맥 접점, 그리고 즉시 챙겨야 할 C-Level 영전 축하를 엄선했습니다."
+        subtitle="오늘의 핵심 딜 파이프라인 · 테헤란로 외근 접점 · DART 공시 영전 레이더"
         englishTag="Executive Morning Briefing"
         badge={
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800 text-[11px] font-semibold font-mono">
@@ -163,11 +163,11 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
             </div>
 
             <div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-snug">
-                반경 내 핵심 인맥 {activeCluster.people.length}명 근무 중
+              <h3 className="text-sm font-bold text-slate-900 leading-snug truncate">
+                반경 내 핵심 인맥 {activeCluster.people.length}명 근무
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                DART 공시 임원 {activeCluster.dartExecutiveCount}명이 상주하고 있습니다.
+              <p className="text-[11px] text-slate-500 mt-0.5 truncate">
+                DART 공시 임원 {activeCluster.dartExecutiveCount}명 상주
               </p>
             </div>
 
@@ -294,11 +294,11 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
             </div>
 
             <div>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-snug">
-                60일 이상 연락 없는 핵심 인맥
+              <h3 className="text-sm font-bold text-slate-900 leading-snug truncate">
+                골든타임 관리 요망 {cadenceAlerts.length}명
               </h3>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                관계가 느슨해지기 전에 가벼운 안부를 전달하세요.
+              <p className="text-[11px] text-slate-500 mt-0.5 truncate">
+                마지막 교류 후 60일 이상 경과
               </p>
             </div>
 
@@ -469,18 +469,18 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                 잠재 파트너사 연계
               </span>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
-              아직 직접 접점이 없는 주요 기업군에 대해 동문·이전 재직 인연을 통해 따뜻한 소개 연결을 제안합니다.
+            <p className="text-[11px] text-slate-500 truncate">
+              동문·이전 재직 알럼나이 네트워크 기반 C-Level 신뢰 소개 연결
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div className="space-y-1">
-              <div className="text-xs font-bold text-slate-800 dark:text-slate-200">
-                현대자동차 &amp; SK하이닉스 C-Level 신뢰 브릿지 제안
+          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-0.5 min-w-0">
+              <div className="text-xs font-bold text-slate-800 truncate">
+                현대자동차 &amp; SK하이닉스 C-Level 2촌 임원진 연결
               </div>
-              <div className="text-[11px] text-slate-500 dark:text-slate-400">
-                내 알럼나이 1촌 4명이 해당 기업 2촌 임원진과 연결되어 있습니다.
+              <div className="text-[11px] text-slate-500 truncate">
+                내 알럼나이 1촌 4명을 통한 신뢰 브릿지 매핑
               </div>
             </div>
 

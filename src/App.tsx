@@ -265,7 +265,7 @@ export const App: React.FC = () => {
                     로컬 E2EE 보안 가동 중
                   </span>
                   <span className="hidden lg:inline ml-2 text-slate-500 text-[11px]">
-                    DART 상장공시 8,500+ 기업 실명 데이터 및 주소록 인맥이 안전하게 교차 매핑되어 있습니다.
+                    DART 8,500+ 기업 실공시 &amp; 주소록 인맥 실시간 교차 매칭
                   </span>
                 </div>
               </div>
