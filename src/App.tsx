@@ -50,7 +50,16 @@ import { MeetingDebriefModal } from './components/radar/MeetingDebriefModal';
 import { FollowUpComposerModal } from './components/radar/FollowUpComposerModal';
 import { DebriefResult } from './services/meetingDebriefService';
 
-import { CheckCircle2, Sparkles } from 'lucide-react';
+import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2 } from 'lucide-react';
+
+const quickNavTabs: { id: NavViewType; label: string; icon: any }[] = [
+  { id: 'command', label: '사령탑', icon: Zap },
+  { id: 'company', label: '소중한 인연', icon: Users },
+  { id: 'orgchart', label: '기업 조직도', icon: Building2 },
+  { id: 'deals', label: '전략 딜', icon: Briefcase },
+  { id: 'proximity', label: '외근 레이더', icon: Compass },
+  { id: 'promotion', label: '영전·승진', icon: Award },
+];
 
 export const App: React.FC = () => {
   // 로컬 스토리지 기반 오프라인 퍼스트 상태
@@ -218,23 +227,71 @@ export const App: React.FC = () => {
         />
 
         {/* Main Content Area */}
-        <main className="flex-1 min-w-0 pb-28 space-y-6">
-        
-        {/* GraphRAG Search Interface */}
-        <section>
-          <GraphSearchBar
-            query={searchQuery}
-            onQueryChange={setSearchQuery}
-            onExecuteSearch={handleExecuteSearch}
-            onResetSearch={handleResetSearch}
-            searchResult={searchResult}
-            selectedClusterId={selectedClusterId}
-            onSelectCluster={setSelectedClusterId}
-          />
-        </section>
+        <main className="flex-1 min-w-0 pb-28 space-y-4 w-full max-w-full">
+          {/* Quick SubNav Pills (GoodPartner Capsule Style - Desktop only, Mobile uses BottomBar) */}
+          <div className="hidden sm:flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none w-full">
+            {quickNavTabs.map((tab) => {
+              const TabIcon = tab.icon;
+              const isActive = activeView === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  data-testid={`tab-${tab.id}`}
+                  onClick={() => handleNavigateView(tab.id)}
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all active:scale-95 whitespace-nowrap cursor-pointer shrink-0 ${
+                    isActive
+                      ? 'bg-slate-900 text-white shadow-xs'
+                      : 'bg-white hover:bg-slate-100 text-slate-600 border border-slate-200/90 shadow-2xs'
+                  }`}
+                >
+                  <TabIcon className={`w-3.5 h-3.5 ${isActive ? 'text-amber-300' : 'text-slate-400'}`} />
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
 
-        {/* Dynamic Multi-dimensional Views with Code Splitting & Error Isolation */}
-        <section className="animate-in fade-in duration-200 min-h-[520px]">
+          {/* Main White Canvas Board Card (GoodPartner Large Round Card Style) */}
+          <div className="rounded-2xl bg-white border border-slate-200/90 shadow-sm p-3.5 sm:p-6 space-y-6 w-full max-w-full overflow-hidden">
+            {/* Reference GoodPartner Style Info Banner */}
+            <div className="flex items-center justify-between p-3 rounded-xl bg-indigo-50/60 border border-indigo-150/90 text-xs w-full overflow-hidden gap-2">
+              <div className="flex items-center gap-2.5 min-w-0 flex-1 truncate">
+                <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                  <Share2 className="w-3.5 h-3.5" />
+                </div>
+                <div className="text-slate-700 truncate">
+                  <span className="font-bold text-slate-900 truncate">ConnectWe 인텔리전스</span>
+                  <span className="hidden sm:inline-block ml-2 text-[11px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-semibold border border-amber-200">
+                    로컬 E2EE 보안 가동 중
+                  </span>
+                  <span className="hidden lg:inline ml-2 text-slate-500 text-[11px]">
+                    DART 상장공시 8,500+ 기업 실명 데이터 및 주소록 인맥이 안전하게 교차 매핑되어 있습니다.
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsDisclosureAlertOpen(true)}
+                className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-700 font-semibold text-[11px] border border-slate-200/90 shadow-2xs transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95"
+              >
+                <span>공시 레이더 확인</span>
+              </button>
+            </div>
+
+            {/* GraphRAG Search Interface */}
+            <section>
+              <GraphSearchBar
+                query={searchQuery}
+                onQueryChange={setSearchQuery}
+                onExecuteSearch={handleExecuteSearch}
+                onResetSearch={handleResetSearch}
+                searchResult={searchResult}
+                selectedClusterId={selectedClusterId}
+                onSelectCluster={setSelectedClusterId}
+              />
+            </section>
+
+            {/* Dynamic Multi-dimensional Views with Code Splitting & Error Isolation */}
+            <section className="animate-in fade-in duration-200 min-h-[520px]">
           <ErrorBoundary fallbackTitle="선택된 뷰 컴포넌트 런타임 오류 방어">
             <React.Suspense fallback={<ViewLoadingSkeleton />}>
               {activeView === 'command' && (
@@ -353,8 +410,8 @@ export const App: React.FC = () => {
             </React.Suspense>
           </ErrorBoundary>
         </section>
-
-      </main>
+          </div>
+        </main>
       </div>
 
       {/* Apple-styled Centered Dim Inspector Modal */}
@@ -525,15 +582,20 @@ export const App: React.FC = () => {
         onShowToast={showToast}
       />
 
-      {/* Floating AI Copilot Trigger Button (우측 하단 - 모바일 바텀바 회피) */}
+      {/* Floating AI Copilot Trigger Button (GoodPartner Circular Lightning FAB) */}
       <button
         onClick={() => setIsCopilotOpen(true)}
         title="AI 인맥 지능 코파일럿 열기"
-        className="fixed bottom-20 right-4 lg:bottom-6 lg:right-6 z-40 flex items-center gap-2 px-4 py-3 rounded-full bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-bold text-xs shadow-xl shadow-slate-900/25 border border-slate-700/80 transition-all duration-200 group cursor-pointer"
+        className="fixed bottom-20 right-4 lg:bottom-6 lg:right-6 z-40 w-12 h-12 rounded-full bg-gradient-to-tr from-indigo-600 via-indigo-600 to-purple-600 text-white shadow-xl shadow-indigo-600/35 border border-indigo-400/40 hover:scale-105 active:scale-95 transition-all flex items-center justify-center group cursor-pointer"
       >
-        <Sparkles className="w-4 h-4 text-amber-400 group-hover:rotate-12 transition-transform" />
-        <span className="hidden sm:inline tracking-tight">인맥 코파일럿</span>
-        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+        <Zap className="w-5 h-5 text-amber-300 fill-amber-300 group-hover:rotate-12 transition-transform" />
+        <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center border-2 border-white font-mono shadow-xs">
+          3
+        </span>
+        {/* Floating Tooltip Label */}
+        <span className="absolute right-14 px-2.5 py-1 rounded-lg bg-slate-900 text-white text-xs font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-lg">
+          인맥 코파일럿
+        </span>
       </button>
 
       {/* Mobile C-Level Bottom Floating Navigation Bar */}

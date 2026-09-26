@@ -182,7 +182,7 @@ export const Header: React.FC<HeaderProps> = ({
           )}
 
           <div className="flex items-center gap-2">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-slate-900 flex items-center justify-center shadow-xs border border-slate-800 shrink-0">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-gradient-to-tr from-indigo-600 to-purple-600 flex items-center justify-center shadow-xs border border-indigo-400/30 shrink-0">
               <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
             </div>
             
@@ -190,7 +190,7 @@ export const Header: React.FC<HeaderProps> = ({
               <h1 className="text-sm sm:text-base font-black tracking-tight text-slate-900 whitespace-nowrap">
                 ConnectWe
               </h1>
-              <span className="text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+              <span className="text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80">
                 AI 2.0
               </span>
               <button

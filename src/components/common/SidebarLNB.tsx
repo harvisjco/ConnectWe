@@ -146,24 +146,17 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
     }
   ];
 
-  const renderBadge = (badge: NavItem['badge']) => {
+  const renderBadge = (badge: NavItem['badge'], isActive: boolean) => {
     if (!badge) return null;
-    if (badge.variant === 'action-pink') {
+    if (isActive) {
       return (
-        <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-pink-50 text-pink-600 border border-pink-200/80 dark:bg-pink-950/40 dark:text-pink-300 dark:border-pink-500/30 shrink-0 font-mono">
-          {badge.text}
-        </span>
-      );
-    }
-    if (badge.variant === 'action-amber') {
-      return (
-        <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-50 text-amber-700 border border-amber-200/80 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-500/30 shrink-0 font-mono">
+        <span className="w-5 h-5 rounded-full text-[10px] font-bold bg-indigo-600 text-white flex items-center justify-center font-mono shadow-xs shrink-0">
           {badge.text}
         </span>
       );
     }
     return (
-      <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 shrink-0 font-mono">
+      <span className="px-1.5 py-0.5 rounded text-[10px] font-mono text-slate-500 bg-slate-100 border border-slate-200/60 shrink-0">
         {badge.text}
       </span>
     );
@@ -239,16 +232,16 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
                     title={isCollapsed ? item.label : undefined}
                     className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs transition-all duration-150 active:scale-[0.98] cursor-pointer ${
                       isActive
-                        ? 'bg-slate-100/90 text-slate-900 border border-slate-300/80 shadow-2xs font-bold'
-                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/60 font-medium'
+                        ? 'bg-indigo-50/80 text-indigo-700 border border-indigo-150/90 shadow-2xs font-bold'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium'
                     } ${isCollapsed ? 'justify-center px-0' : 'justify-between'}`}
                   >
                     <div className="flex items-center gap-2.5 truncate">
-                      <IconComponent className={`w-4 h-4 shrink-0 ${isActive ? 'text-slate-900' : 'text-slate-400'}`} />
+                      <IconComponent className={`w-4 h-4 shrink-0 ${isActive ? 'text-indigo-600' : 'text-slate-400'}`} />
                       {!isCollapsed && <span className="truncate">{item.label}</span>}
                     </div>
 
-                    {!isCollapsed && renderBadge(item.badge)}
+                    {!isCollapsed && renderBadge(item.badge, isActive)}
                   </button>
                 );
               })}
