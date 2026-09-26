@@ -336,7 +336,7 @@ export const INITIAL_PEOPLE_SEED: Person[] = [
     connectionChannel: 'business_card',
     lastContactDate: '2024-02-28',
     isStale: false,
-    memo: '카카오브레인 언어모델 리드 출신으로 2023년 창업 후 Pre-A 50억 유치 성공.'
+    memo: '성수동 서울숲 사옥 입주. 카카오브레인 언어모델 리드 출신으로 2023년 창업 후 Pre-A 50억 유치 성공.'
   },
 
   // 7. 대기업 상장사 재무총괄 (DART 실공시 팩트, 50대+)
@@ -437,7 +437,7 @@ export const INITIAL_PEOPLE_SEED: Person[] = [
     connectionChannel: 'business_card',
     lastContactDate: '2024-03-10',
     isStale: false,
-    memo: '카이스트 졸업 후 즉시 AI 스타트업 합류. 오픈소스 vLLM 컨트리뷰터.'
+    memo: '성수 서울숲 캠퍼스 근무. 카이스트 졸업 후 즉시 AI 스타트업 합류. 오픈소스 vLLM 컨트리뷰터.'
   },
 
   // 9. 쿠팡 알럼나이 -> 이커머스 풀필먼트 테크 본부장 (40대)
@@ -542,5 +542,66 @@ export const INITIAL_PEOPLE_SEED: Person[] = [
     lastContactDate: '2023-07-20',
     isStale: true,
     memo: '네이버 테크 인재 영입 및 평가제도 기틀 마련. 현재 AI 유니콘 HR 총괄.'
+  },
+
+  // 11. 크래프톤 성수 사옥 -> CAIO (DART 실공시 팩트)
+  {
+    id: 'p_11',
+    name: '이강석',
+    currentCompany: '㈜크래프톤',
+    currentDepartment: 'AI Research 본부',
+    currentTitle: 'CAIO / AI 본부장',
+    mobile: '010-8273-1928',
+    email: 'ks.lee@krafton.com',
+    birthYear: 1980,
+    estimatedAgeGroup: '40s',
+    isAgeEstimated: false,
+    primaryDomain: 'AI/LLM & Data',
+    skills: ['GenAI NPC', '딥러닝 리서치', '강화학습', 'AI 윤리 & 특허'],
+    careers: [
+      {
+        id: 'c_11_1',
+        companyName: '㈜크래프톤',
+        department: 'AI Research 본부',
+        title: 'CAIO / AI 본부장',
+        startYear: 2022,
+        isCurrent: true,
+        source: 'DART_FACT'
+      },
+      {
+        id: 'c_11_2',
+        companyName: '위스콘신 대학교 (Madison)',
+        department: '컴퓨터과학과',
+        title: '조교수 / 부교수',
+        startYear: 2019,
+        endYear: 2026,
+        isCurrent: false,
+        isAlumniTarget: false,
+        source: 'DART_FACT'
+      }
+    ],
+    academics: [
+      {
+        schoolName: 'UC 버클리 (UC Berkeley)',
+        degree: '박사',
+        major: '전기공학 및 컴퓨터과학 (EECS)',
+        graduationYear: 2018,
+        source: 'DART_FACT'
+      }
+    ],
+    sourceType: 'DART_FACT',
+    dartInfo: {
+      corpCode: '01392607',
+      stockName: '크래프톤(유가증권)',
+      isPublicDirector: true,
+      registeredRole: '미등기임원 / CAIO',
+      registeredTerm: '2026.03 ~ 재직 중',
+      verifiedAt: '2024-03-25'
+    },
+    closeness: 2,
+    connectionChannel: 'dart',
+    lastContactDate: '2024-03-12',
+    isStale: false,
+    memo: '성수동 복합사옥 상주. UC버클리 박사 출신 크래프톤 최고인공지능책임자(CAIO). 생성형 AI 게임 NPC 및 온디바이스 AI 리딩.'
   }
 ];

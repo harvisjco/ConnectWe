@@ -79,7 +79,8 @@ export function processCopilotQuery(
     (c.id === 'yeouido' && q.includes('여의도')) ||
     (c.id === 'gwanghwamun_jongno' && (q.includes('광화문') || q.includes('종로'))) ||
     (c.id === 'yangjae_seocho' && (q.includes('양재') || q.includes('서초'))) ||
-    (c.id === 'suwon_giheung' && (q.includes('수원') || q.includes('기흥') || q.includes('화성') || q.includes('동탄')))
+    (c.id === 'suwon_giheung' && (q.includes('수원') || q.includes('기흥') || q.includes('화성') || q.includes('동탄'))) ||
+    (c.id === 'seongsu' && (q.includes('성수') || q.includes('뚝섬') || q.includes('서울숲')))
   );
 
   if (matchedCluster && (q.includes('외근') || q.includes('출장') || q.includes('방문') || q.includes('거점') || q.includes('근처') || q.includes('인근') || q.includes('만날') || q.includes('누구') || q.includes('추천') || q.includes('있어') || q.includes('지인') || q.includes(matchedCluster.shortName.toLowerCase()))) {
@@ -234,7 +235,7 @@ export function processCopilotQuery(
   return {
     id: `msg-${Date.now()}`,
     sender: 'assistant',
-    text: `질문하신 내용과 정확히 일치하는 인맥을 찾지 못했습니다. 다음과 같이 질문해 보세요:\n\n• "판교나 강남 외근 시 만날 인맥 추천해줘"\n• "AI 펠로우나 벤처 리더 지인 누구 있어?"\n• "진행 중인 딜 키맨 목록 보여줘"\n• "오랫동안 연락 안 한 C-Level 누구 있어?"`,
+    text: `질문하신 내용과 정확히 일치하는 인맥을 찾지 못했습니다. 다음과 같이 질문해 보세요:\n\n• "성수나 판교 외근 시 만날 인맥 추천해줘"\n• "AI 펠로우나 벤처 리더 지인 누구 있어?"\n• "진행 중인 딜 키맨 목록 보여줘"\n• "오랫동안 연락 안 한 C-Level 누구 있어?"`,
     timestamp: timeStr
   };
 }

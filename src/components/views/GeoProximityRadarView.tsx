@@ -27,7 +27,7 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
   const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
   const [copiedPersonId, setCopiedPersonId] = useState<string | null>(null);
 
-  // 6대 거점 통계 산출
+  // 7대 거점 통계 산출
   const clusterData = useMemo(() => {
     return getGeoClusterBreakdown(people);
   }, [people]);
@@ -42,7 +42,9 @@ export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
     const cluster = identifyTalentCluster(person);
     let contextualNote = '바쁘실 텐데 부담 없이 편하실 때 말씀해 주시면 감사하겠습니다!';
 
-    if (cluster.id === 'VENTURE_LEADER') {
+    if (selectedClusterId === 'seongsu' || (person.memo && person.memo.includes('성수'))) {
+      contextualNote = `${person.currentCompany}의 혁신적인 AI·프로덕트 행보 늘 인상 깊게 지켜보고 있습니다. 성수 인근에서 부담 없이 15~20분 내외로 가볍게 차 한 잔 나누며 고견 여쭙고자 합니다.`;
+    } else if (cluster.id === 'VENTURE_LEADER') {
       contextualNote = `${person.currentCompany}의 역동적인 사업 행보와 빠른 실행력 늘 인상 깊게 지켜보고 있습니다. 편하실 때 시너지 나눌 수 있는 포인트 가볍게 이야기 나누고 싶습니다!`;
     } else if (cluster.id === 'TECH_FELLOW') {
       contextualNote = `${person.currentCompany}에서 이끄시는 기술 아키텍처와 엔지니어링 성과 늘 깊이 접하고 있습니다. 연구에 지장 없으시도록 15분 내외로 차 한 잔 나누며 고견 여쭙고자 합니다.`;
@@ -73,7 +75,7 @@ ${contextualNote}
       {/* 1. Standardized Header */}
       <ViewHeader
         icon={Compass}
-        title="전국 6대 비즈니스 거점별 인맥 레이더"
+        title="전국 7대 비즈니스 거점별 인맥 레이더"
         subtitle="방문 예정이거나 상주하는 거점을 선택하여, 인근의 소중한 인맥과 여유로운 티타임 일정을 정중히 조율하세요."
         englishTag="Geo Radar Proximity"
         actions={
@@ -94,7 +96,7 @@ ${contextualNote}
       />
 
       {/* 2. Cluster Selection Chips */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-2.5">
         {clusterData.map(({ cluster, people: cPeople, dartExecutiveCount }) => {
           const isSelected = cluster.id === selectedClusterId;
 

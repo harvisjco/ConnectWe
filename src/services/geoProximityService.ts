@@ -6,7 +6,8 @@ export type GeoClusterId =
   | 'yeouido' 
   | 'gwanghwamun_jongno' 
   | 'yangjae_seocho' 
-  | 'suwon_giheung';
+  | 'suwon_giheung'
+  | 'seongsu';
 
 export interface GeoCluster {
   id: GeoClusterId;
@@ -65,6 +66,14 @@ export const GEO_CLUSTERS: GeoCluster[] = [
     badge: '글로벌 반도체 밸류체인',
     description: '삼성전자 디지털시티 본사, 기흥·화성 나노시티, 한미반도체, 글로벌 반도체 팹',
     keyCompanies: ['삼성전자', '한미반도체', 'SK하이닉스', '원익', '반도체', 'ASML', 'TEL']
+  },
+  {
+    id: 'seongsu',
+    name: '성수 / 서울숲 크리에이티브 & AI 밸리',
+    shortName: '성수·서울숲',
+    badge: '크리에이티브 & 생성형 AI',
+    description: '크래프톤 메가타워, 무신사 캠퍼스, 쏘카 본사, 생성형 AI 스타트업, 헤이그라운드 소셜벤처',
+    keyCompanies: ['크래프톤', '무신사', '쏘카', '뤼튼', '패스트파이브', '헤이그라운드', '오픈소버린', '코사이어티']
   }
 ];
 
@@ -82,32 +91,48 @@ export function matchPersonToCluster(person: Person): GeoClusterId {
   const memo = (person.memo || '').toLowerCase();
   const fullText = `${comp} ${memo}`;
 
-  if (fullText.includes('판교') || fullText.includes('삼평') || ['네이버', '카카오', 'naver', '엔씨', '넥슨', '크래프톤', '두나무', '안랩'].some(k => comp.includes(k.toLowerCase()))) {
+  // 1. 성수·서울숲 클러스터 (크리에이티브 & 생성형 AI 혁신 거점)
+  if (
+    fullText.includes('성수') || 
+    fullText.includes('서울숲') || 
+    fullText.includes('뚝섬') || 
+    ['무신사', '쏘카', '뤼튼', '오픈소버린', '헤이그라운드', '코사이어티'].some(k => comp.includes(k.toLowerCase()) || memo.includes(k.toLowerCase())) ||
+    (comp.includes('크래프톤') && (fullText.includes('성수') || !fullText.includes('판교')))
+  ) {
+    return 'seongsu';
+  }
+
+  // 2. 판교 테크노밸리
+  if (fullText.includes('판교') || fullText.includes('삼평') || ['네이버', '카카오', 'naver', '엔씨', '넥슨', '두나무', '안랩'].some(k => comp.includes(k.toLowerCase()))) {
     return 'pangyo';
   }
 
+  // 3. 여의도 금융가
   if (fullText.includes('여의도') || ['증권', '자산운용', '금융', '신한', 'kb', '하나', '우리'].some(k => comp.includes(k.toLowerCase()))) {
     return 'yeouido';
   }
 
+  // 4. 광화문·종로
   if (fullText.includes('광화문') || fullText.includes('종로') || ['한화', 'cj'].some(k => comp.includes(k.toLowerCase()))) {
     return 'gwanghwamun_jongno';
   }
 
+  // 5. 양재·서초 R&D
   if (fullText.includes('양재') || ['현대자동차', '현대차', '기아', '현대모비스'].some(k => comp.includes(k.toLowerCase()))) {
     return 'yangjae_seocho';
   }
 
+  // 6. 수원·기흥 반도체
   if (fullText.includes('수원') || fullText.includes('기흥') || fullText.includes('화성') || ['삼성전자', '하이닉스', '반도체'].some(k => comp.includes(k.toLowerCase()))) {
     return 'suwon_giheung';
   }
 
-  // 기본 강남 테헤란로 (스타트업, 일반 IT, 테헤란로 중심)
+  // 7. 기본 강남 테헤란로 (스타트업, 일반 IT, 테헤란로 중심)
   return 'gangnam_teheran';
 }
 
 /**
- * 전체 인맥을 6대 거점별로 클러스터링 및 통계 산출
+ * 전체 인맥을 7대 거점별로 클러스터링 및 통계 산출
  */
 export function getGeoClusterBreakdown(people: Person[]): ClusterMatchResult[] {
   const map = new Map<GeoClusterId, Person[]>();
