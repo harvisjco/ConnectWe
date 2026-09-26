@@ -74,109 +74,109 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
       />
 
       {/* 2. Executive KPI Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-          <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">함께하는 인연</div>
-          <div className="text-xl font-bold text-slate-900 dark:text-white font-mono mt-1">
-            {equitySummary.totalPeople}명
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
+        <div className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between">
+          <div className="text-[11px] text-slate-500 font-medium">함께하는 인연</div>
+          <div className="text-xl font-bold text-slate-900 font-mono mt-1">
+            {equitySummary.totalPeople}<span className="text-xs font-normal text-slate-500 ml-0.5">명</span>
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">
-            {equitySummary.totalCompanies}개 기업에서 활약 중
+          <div className="text-[11px] text-slate-400 mt-1 truncate">
+            {equitySummary.totalCompanies}개 기업 활약
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-          <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">DART 공시 임원</div>
-          <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400 font-mono mt-1">
-            {equitySummary.dartExecutiveTotal}명
+        <div className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between">
+          <div className="text-[11px] text-emerald-800 font-medium">DART 공시 임원</div>
+          <div className="text-xl font-bold text-emerald-600 font-mono mt-1">
+            {equitySummary.dartExecutiveTotal}<span className="text-xs font-normal text-slate-500 ml-0.5">명</span>
           </div>
-          <div className="text-[11px] text-emerald-700 dark:text-emerald-500/80 font-medium mt-1">
+          <div className="text-[11px] text-emerald-700 font-medium mt-1 truncate">
             등기/미등기 C-Level
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/10 border border-emerald-200 dark:border-emerald-500/30 shadow-sm flex flex-col justify-between">
-          <div className="text-xs text-emerald-800 dark:text-emerald-300 font-semibold">핵심 협력 파트너사</div>
-          <div className="text-xl font-bold text-emerald-700 dark:text-emerald-400 font-mono mt-1">
-            {equitySummary.gradeACount}개사
+        <div className="p-3.5 rounded-2xl bg-emerald-50/50 border border-emerald-200/90 shadow-2xs flex flex-col justify-between">
+          <div className="text-[11px] text-emerald-800 font-semibold">핵심 파트너사</div>
+          <div className="text-xl font-bold text-emerald-700 font-mono mt-1">
+            {equitySummary.gradeACount}<span className="text-xs font-normal text-emerald-600 ml-0.5">개사</span>
           </div>
-          <div className="text-[11px] text-emerald-600 dark:text-slate-400 mt-1">
+          <div className="text-[11px] text-emerald-600 mt-1">
             도달률 75% 이상
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-sky-50/50 dark:bg-sky-950/10 border border-sky-200 dark:border-sky-500/30 shadow-sm flex flex-col justify-between">
-          <div className="text-xs text-sky-800 dark:text-sky-300 font-semibold">우호적 교류 기업</div>
-          <div className="text-xl font-bold text-sky-700 dark:text-sky-400 font-mono mt-1">
-            {equitySummary.gradeBCount}개사
+        <div className="p-3.5 rounded-2xl bg-sky-50/50 border border-sky-200/90 shadow-2xs flex flex-col justify-between">
+          <div className="text-[11px] text-sky-800 font-semibold">우호 교류 기업</div>
+          <div className="text-xl font-bold text-sky-700 font-mono mt-1">
+            {equitySummary.gradeBCount}<span className="text-xs font-normal text-sky-600 ml-0.5">개사</span>
           </div>
-          <div className="text-[11px] text-sky-600 dark:text-slate-400 mt-1">
+          <div className="text-[11px] text-sky-600 mt-1">
             도달률 45~74%
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-          <div className="text-xs text-slate-700 dark:text-slate-300 font-semibold">새로운 인연 기대 기업</div>
-          <div className="text-xl font-bold text-slate-800 dark:text-slate-300 font-mono mt-1">
-            {equitySummary.blindSpotCount}개사
+        <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/90 shadow-2xs flex flex-col justify-between">
+          <div className="text-[11px] text-slate-700 font-semibold">잠재 교류 기업</div>
+          <div className="text-xl font-bold text-slate-800 font-mono mt-1">
+            {equitySummary.blindSpotCount}<span className="text-xs font-normal text-slate-500 ml-0.5">개사</span>
           </div>
-          <div className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-1">
+          <div className="text-[11px] text-slate-500 font-medium mt-1 truncate">
             새로운 접점 탐색
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
-          <div className="text-xs text-slate-500 dark:text-slate-400 font-medium">90일 소통 활성도</div>
-          <div className="text-xl font-bold text-indigo-600 dark:text-indigo-400 font-mono mt-1">
-            {equitySummary.activeRatio90Days}%
+        <div className="p-3.5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs flex flex-col justify-between">
+          <div className="text-[11px] text-slate-500 font-medium">90일 소통 활성도</div>
+          <div className="text-xl font-bold text-indigo-600 font-mono mt-1">
+            {equitySummary.activeRatio90Days}<span className="text-xs font-normal text-slate-500 ml-0.5">%</span>
           </div>
-          <div className="text-[11px] text-slate-500 mt-1">
+          <div className="text-[11px] text-slate-400 mt-1">
             관계 건강성 양호
           </div>
         </div>
       </div>
 
       {/* 3. Filter Chips */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs">
         <button
           onClick={() => setSelectedGradeFilter('ALL')}
-          className={`px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${
+          className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all shadow-2xs ${
             selectedGradeFilter === 'ALL'
-              ? 'bg-indigo-600 text-white shadow-sm'
-              : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white shadow-sm'
+              ? 'bg-slate-900 text-white'
+              : 'bg-white border border-slate-200/90 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
-          전체 보기 ({penetrations.length})
+          전체 ({penetrations.length})
         </button>
 
         <button
           onClick={() => setSelectedGradeFilter('GRADE_A')}
-          className={`px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${
+          className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all shadow-2xs ${
             selectedGradeFilter === 'GRADE_A'
-              ? 'bg-emerald-600 text-white shadow-sm'
-              : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white shadow-sm'
+              ? 'bg-emerald-600 text-white'
+              : 'bg-white border border-slate-200/90 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
-          🟢 핵심 파트너십 ({equitySummary.gradeACount})
+          🟢 핵심 파트너 ({equitySummary.gradeACount})
         </button>
 
         <button
           onClick={() => setSelectedGradeFilter('GRADE_B')}
-          className={`px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${
+          className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all shadow-2xs ${
             selectedGradeFilter === 'GRADE_B'
-              ? 'bg-sky-600 text-white shadow-sm'
-              : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white shadow-sm'
+              ? 'bg-sky-600 text-white'
+              : 'bg-white border border-slate-200/90 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
-          🔵 우호적 교류 ({equitySummary.gradeBCount})
+          🔵 우호 교류 ({equitySummary.gradeBCount})
         </button>
 
         <button
           onClick={() => setSelectedGradeFilter('GRADE_C')}
-          className={`px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${
+          className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all shadow-2xs ${
             selectedGradeFilter === 'GRADE_C'
-              ? 'bg-amber-600 text-white shadow-sm'
-              : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white shadow-sm'
+              ? 'bg-amber-600 text-white'
+              : 'bg-white border border-slate-200/90 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
           🟡 초기 접점 ({equitySummary.gradeCCount})
@@ -184,10 +184,10 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
 
         <button
           onClick={() => setSelectedGradeFilter('GRADE_D')}
-          className={`px-3.5 py-2 rounded-xl font-bold whitespace-nowrap transition-all ${
+          className={`px-3 py-1.5 rounded-xl font-bold whitespace-nowrap transition-all shadow-2xs ${
             selectedGradeFilter === 'GRADE_D'
-              ? 'bg-slate-700 text-white shadow-sm'
-              : 'bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white shadow-sm'
+              ? 'bg-slate-700 text-white'
+              : 'bg-white border border-slate-200/90 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
           }`}
         >
           ⚪ 잠재 인연 ({equitySummary.blindSpotCount})
@@ -200,31 +200,31 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
           <div
             key={item.companyName}
             onClick={() => setActiveCompanyForDetail(item)}
-            className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-500/50 transition-all flex flex-col justify-between space-y-3 cursor-pointer group shadow-sm hover:shadow-md"
+            className="p-4 rounded-2xl bg-white border border-slate-200/90 hover:border-slate-300 transition-all flex flex-col justify-between space-y-3 cursor-pointer group shadow-2xs hover:shadow-xs"
           >
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs">
-                <span className="font-mono text-slate-500">#{item.marketCapRank}위</span>
+                <span className="font-mono text-slate-400 text-[11px]">#{item.marketCapRank}위</span>
                 <span className={`px-2 py-0.5 rounded text-[11px] font-bold border ${item.gradeColor}`}>
                   {item.gradeLabel}
                 </span>
               </div>
 
               <div>
-                <h4 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors flex items-center justify-between">
+                <h4 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors flex items-center justify-between">
                   <span>{item.companyName}</span>
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-600 dark:group-hover:text-slate-300 transition-colors" />
+                  <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-slate-600 transition-colors" />
                 </h4>
-                <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{item.industry}</div>
+                <div className="text-[11px] text-slate-500 mt-0.5 truncate">{item.industry}</div>
               </div>
 
               {/* Penetration Progress Bar */}
               <div className="space-y-1 pt-1">
-                <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500 dark:text-slate-400">네트워크 도달력</span>
-                  <span className="font-mono font-bold text-indigo-600 dark:text-indigo-300">{item.penetrationScore}%</span>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-slate-400">네트워크 도달력</span>
+                  <span className="font-mono font-bold text-indigo-600">{item.penetrationScore}%</span>
                 </div>
-                <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all ${
                       item.penetrationScore >= 75
@@ -241,23 +241,23 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
               </div>
 
               {/* Metrics Pill Grid */}
-              <div className="grid grid-cols-3 gap-1.5 pt-2 text-center text-xs">
-                <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800/80">
-                  <div className="text-[11px] text-slate-500">1촌</div>
-                  <div className="font-mono font-bold text-slate-900 dark:text-white mt-0.5">{item.totalDirectContacts}명</div>
+              <div className="grid grid-cols-3 gap-1 pt-1.5 text-center text-xs">
+                <div className="p-1.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="text-[10px] text-slate-400">1촌</div>
+                  <div className="font-mono font-bold text-slate-900 mt-0.5 text-xs">{item.totalDirectContacts}명</div>
                 </div>
-                <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800/80">
-                  <div className="text-[11px] text-slate-500">2촌</div>
-                  <div className="font-mono font-bold text-slate-700 dark:text-slate-300 mt-0.5">{item.totalSecondDegreeContacts}명</div>
+                <div className="p-1.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="text-[10px] text-slate-400">2촌</div>
+                  <div className="font-mono font-bold text-slate-700 mt-0.5 text-xs">{item.totalSecondDegreeContacts}명</div>
                 </div>
-                <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800/80">
-                  <div className="text-[11px] text-slate-500">공시임원</div>
-                  <div className="font-mono font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">{item.dartExecutiveCount}명</div>
+                <div className="p-1.5 rounded-xl bg-slate-50 border border-slate-100">
+                  <div className="text-[10px] text-slate-400">공시임원</div>
+                  <div className="font-mono font-bold text-emerald-600 mt-0.5 text-xs">{item.dartExecutiveCount}명</div>
                 </div>
               </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 text-xs text-slate-500 dark:text-slate-400 flex items-center justify-between">
+            <div className="pt-2 border-t border-slate-100 text-[11px] text-slate-500 flex items-center justify-between">
               <span className="truncate">{item.recommendedStrategy}</span>
             </div>
           </div>
@@ -266,41 +266,47 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
 
       {/* 5. Company Penetration Detail Modal */}
       {activeCompanyForDetail && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-in fade-in duration-200">
-          <div className="w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-3xl shadow-2xl p-6 space-y-4 max-h-[85vh] flex flex-col">
-            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+        <div 
+          onClick={() => setActiveCompanyForDetail(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-2xl bg-white border border-slate-200/90 rounded-3xl shadow-2xl p-6 space-y-4 max-h-[85vh] flex flex-col"
+          >
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="text-base font-bold text-slate-900 dark:text-white">{activeCompanyForDetail.companyName}</h3>
+                  <h3 className="text-base font-bold text-slate-900">{activeCompanyForDetail.companyName}</h3>
                   <span className={`px-2.5 py-0.5 rounded text-[11px] font-bold border ${activeCompanyForDetail.gradeColor}`}>
                     {activeCompanyForDetail.gradeLabel}
                   </span>
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  {activeCompanyForDetail.industry} · 시가총액 순위 #{activeCompanyForDetail.marketCapRank}위 · 도달점수 {activeCompanyForDetail.penetrationScore}점
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {activeCompanyForDetail.industry} · 시가총액 #{activeCompanyForDetail.marketCapRank}위 · 도달도 {activeCompanyForDetail.penetrationScore}%
                 </p>
               </div>
               <button 
                 onClick={() => setActiveCompanyForDetail(null)} 
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 dark:hover:text-white dark:hover:bg-slate-800"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
               >
                 ✕
               </button>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-500/30 text-xs text-indigo-900 dark:text-indigo-300 flex items-center gap-2">
-              <Compass className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+            <div className="p-3.5 rounded-2xl bg-indigo-50/60 border border-indigo-200/80 text-xs text-indigo-900 flex items-center gap-2">
+              <Compass className="w-4 h-4 text-indigo-600 shrink-0" />
               <span>권장 액션 전략: <strong>{activeCompanyForDetail.recommendedStrategy}</strong></span>
             </div>
 
             {/* Contacts in this company */}
             <div className="flex-1 overflow-y-auto space-y-2 pr-1 text-xs">
-              <div className="font-bold text-slate-900 dark:text-slate-300 pb-1">보유 접점 인맥 ({activeCompanyForDetail.keyContacts.length}명)</div>
+              <div className="font-bold text-slate-900 pb-1">보유 접점 인맥 ({activeCompanyForDetail.keyContacts.length}명)</div>
 
               {activeCompanyForDetail.keyContacts.length === 0 ? (
-                <div className="p-8 text-center rounded-2xl bg-slate-50 dark:bg-slate-950 border border-dashed border-slate-200 dark:border-slate-800 text-slate-500">
+                <div className="p-8 text-center rounded-2xl bg-slate-50 border border-dashed border-slate-200 text-slate-500">
                   <AlertCircle className="w-6 h-6 mx-auto mb-2 text-rose-500" />
-                  <div className="font-medium">현재 직접적인 인맥 접점이 없습니다.</div>
+                  <div className="font-medium text-slate-800">현재 직접적인 인맥 접점이 없습니다.</div>
                   <p className="text-xs text-slate-500 mt-1">2촌 소개망 또는 알럼나이 네트워크를 탐색해 첫 접점을 개척하세요.</p>
                 </div>
               ) : (
@@ -310,30 +316,30 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
                   return (
                     <div
                       key={p.id}
-                      className="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 hover:border-slate-300 dark:hover:border-slate-700 transition-colors"
+                      className="p-3.5 rounded-xl bg-slate-50/60 border border-slate-200/80 flex items-center justify-between gap-3 hover:border-slate-300 transition-colors"
                     >
                       <div className="min-w-0">
-                        <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                        <div className="font-bold text-slate-900 flex items-center gap-1.5">
                           <span>{p.name}</span>
-                          <span className="text-indigo-600 dark:text-indigo-400 text-xs">({p.currentTitle})</span>
+                          <span className="text-slate-500 font-normal text-xs">({p.currentTitle})</span>
                           {isDart && (
-                            <span className="flex items-center gap-0.5 px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-500/30 text-[11px] font-bold">
+                            <span className="flex items-center gap-0.5 px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
                               <ShieldCheck className="w-3 h-3" />
                               공시임원
                             </span>
                           )}
-                          <span className="text-[11px] px-2 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 font-medium">
+                          <span className="text-[11px] px-2 py-0.5 rounded bg-white border border-slate-200 text-slate-600 font-medium">
                             {p.closeness === 1 ? '1촌' : p.closeness === 2 ? '2촌' : '3촌'}
                           </span>
                         </div>
-                        <div className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{p.currentDepartment || '주요 부서'}</div>
+                        <div className="text-[11px] text-slate-500 mt-0.5">{p.currentDepartment || '주요 부서'}</div>
                       </div>
 
                       <div className="flex items-center gap-1.5 shrink-0">
                         {isDart && onOpenDossier && (
                           <button
                             onClick={() => onOpenDossier(p)}
-                            className="p-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 dark:bg-emerald-950 dark:text-emerald-300 dark:border-emerald-500/30 dark:hover:bg-emerald-900 transition-colors"
+                            className="p-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 transition-colors cursor-pointer"
                             title="DART 공시 다면 분석 보고서"
                           >
                             <FileText className="w-3.5 h-3.5" />
@@ -342,7 +348,7 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
                         {p.closeness >= 2 && onOpenBridgeModal && (
                           <button
                             onClick={() => onOpenBridgeModal(p)}
-                            className="p-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 dark:bg-indigo-950 dark:text-indigo-300 dark:border-indigo-500/30 dark:hover:bg-indigo-900 transition-colors"
+                            className="p-2 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition-colors cursor-pointer"
                             title="2촌 소개 요청"
                           >
                             <Send className="w-3.5 h-3.5" />
@@ -353,7 +359,7 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
                             onSelectPerson(p);
                             setActiveCompanyForDetail(null);
                           }}
-                          className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-transparent text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:text-white text-xs font-semibold shadow-sm"
+                          className="px-3 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-semibold shadow-2xs cursor-pointer"
                         >
                           상세
                         </button>
@@ -364,10 +370,10 @@ export const NetworkAuditReportView: React.FC<NetworkAuditReportViewProps> = ({
               )}
             </div>
 
-            <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex justify-end">
+            <div className="pt-3 border-t border-slate-100 flex justify-end">
               <button
                 onClick={() => setActiveCompanyForDetail(null)}
-                className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-sm"
+                className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-2xs cursor-pointer"
               >
                 닫기
               </button>

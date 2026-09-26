@@ -208,55 +208,58 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
         </div>
 
         {/* Card 2: 미축하 영전 감지 */}
-        <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-600 shadow-2xs hover:shadow-xs p-5 flex flex-col justify-between space-y-4 transition-all duration-200">
+        <div className="rounded-2xl bg-white border border-slate-200/90 hover:border-amber-300 shadow-2xs hover:shadow-xs p-5 flex flex-col justify-between space-y-4 transition-all duration-200">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-xs font-bold text-amber-600 dark:text-amber-400">
+              <span className="flex items-center gap-1.5 text-xs font-bold text-amber-600">
                 <Award className="w-4 h-4" />
                 <span>DART 영전 조기 감지</span>
               </span>
               {uncelebratedPromos.length > 0 && (
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/80 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700 font-mono font-medium">
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 font-mono font-semibold">
                   {uncelebratedPromos.length}건 미축하
                 </span>
               )}
             </div>
 
             {uncelebratedPromos.length > 0 ? (
-              <div>
-                <h3 
+              <div className="space-y-2">
+                <div 
                   onClick={() => {
                     const matched = people.find(p => p.name === uncelebratedPromos[0].personName);
                     if (matched) {
                       onOpenDossier ? onOpenDossier(matched) : onSelectPerson(matched);
                     }
                   }}
-                  className="text-sm font-bold text-slate-900 dark:text-white leading-snug cursor-pointer hover:text-indigo-600 dark:hover:text-indigo-300 transition-colors"
-                  title="임원 프로필 열기"
+                  className="cursor-pointer group/title"
+                  title="임원 프로필 센터 딤 모달 열기"
                 >
-                  {uncelebratedPromos[0].personName} {uncelebratedPromos[0].newTitle}
-                </h3>
-                <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-                  {uncelebratedPromos[0].companyName} · {uncelebratedPromos[0].promotionType === 'CEO_APPOINTMENT' ? '대표이사 선임' : '임원 영전'}
-                </p>
-
-                <div className="mt-3 p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/60 space-y-2">
-                  <div className="text-[11px] text-slate-600 dark:text-slate-400 font-medium">
-                    "취임을 진심으로 축하드리며 더 큰 도약을 기원합니다."
+                  <h3 className="text-sm font-bold text-slate-900 group-hover/title:text-blue-600 transition-colors leading-snug">
+                    {uncelebratedPromos[0].personName} {uncelebratedPromos[0].newTitle}
+                  </h3>
+                  <div className="flex items-center gap-1.5 mt-0.5 text-xs text-slate-500">
+                    <span className="font-medium text-slate-700">{uncelebratedPromos[0].companyName}</span>
+                    <span>·</span>
+                    <span className="text-amber-800 font-semibold">
+                      {uncelebratedPromos[0].promotionType === 'CEO_APPOINTMENT' ? '대표이사 선임' : '임원 영전'}
+                    </span>
                   </div>
+                </div>
+
+                <div className="pt-1">
                   <button
                     onClick={() => handleCopyCongratulation(uncelebratedPromos[0])}
-                    className="w-full py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:hover:bg-slate-100 dark:text-slate-900 font-semibold text-xs transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] cursor-pointer shadow-2xs"
+                    className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition-all flex items-center justify-center gap-1.5 active:scale-[0.98] cursor-pointer shadow-2xs"
                   >
                     {copiedKey === `promo-${uncelebratedPromos[0].id}` ? (
                       <>
-                        <Check className="w-3.5 h-3.5" />
-                        <span>축전 복사 및 완료 처리됨!</span>
+                        <Check className="w-3.5 h-3.5 text-emerald-400" />
+                        <span>축전 복사 완료!</span>
                       </>
                     ) : (
                       <>
-                        <Gift className="w-3.5 h-3.5" />
-                        <span>1-Click 화환 리본 &amp; 축전 복사</span>
+                        <Gift className="w-3.5 h-3.5 text-amber-300" />
+                        <span>1-Click 화환 &amp; 축전 복사</span>
                       </>
                     )}
                   </button>
@@ -339,15 +342,15 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
         </div>
 
         {/* Card 4: 포커스 딜 인맥 연결 건전도 */}
-        <div className="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-indigo-300 dark:hover:border-indigo-600 shadow-2xs hover:shadow-xs p-5 flex flex-col justify-between space-y-4 transition-all duration-200">
+        <div className="rounded-2xl bg-white border border-slate-200/90 hover:border-indigo-300 shadow-2xs hover:shadow-xs p-5 flex flex-col justify-between space-y-4 transition-all duration-200">
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                <Briefcase className="w-4 h-4" />
+              <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-700">
+                <Briefcase className="w-4 h-4 text-emerald-600" />
                 <span>최우선 비즈니스 딜</span>
               </span>
               {activeFocusDeal && (
-                <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700 font-mono font-medium">
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono font-semibold">
                   건전도 {activeFocusDeal.healthScore}%
                 </span>
               )}
@@ -355,11 +358,15 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
 
             {activeFocusDeal ? (
               <div className="space-y-2.5">
-                <div>
-                  <h3 className="text-sm font-bold text-slate-900 dark:text-white leading-snug line-clamp-2">
+                <div 
+                  onClick={() => onNavigateView('deals')} 
+                  className="cursor-pointer group/deal"
+                  title="전략 딜 협업 룸으로 이동"
+                >
+                  <h3 className="text-sm font-bold text-slate-900 group-hover/deal:text-blue-600 transition-colors leading-snug line-clamp-2">
                     {activeFocusDeal.title}
                   </h3>
-                  <div className="text-xs text-indigo-600 dark:text-indigo-400 font-semibold mt-1">
+                  <div className="text-xs text-blue-700 font-semibold mt-1">
                     {activeFocusDeal.targetCompany} · {activeFocusDeal.dealSize}
                   </div>
                 </div>
@@ -368,25 +375,25 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                 <div className="space-y-1">
                   <div className="flex items-center justify-between text-[11px] text-slate-500">
                     <span>인맥 연결 건전도</span>
-                    <span className="font-mono text-emerald-600 dark:text-emerald-400 font-bold">{activeFocusDeal.healthScore}%</span>
+                    <span className="font-mono text-emerald-700 font-bold">{activeFocusDeal.healthScore}%</span>
                   </div>
-                  <div className="w-full bg-slate-100 dark:bg-slate-800 h-2 rounded-full overflow-hidden p-0.5 border border-slate-200/80 dark:border-slate-700">
+                  <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden p-0.5 border border-slate-200/80">
                     <div 
-                      className="h-full bg-indigo-600 rounded-full"
+                      className="h-full bg-blue-600 rounded-full"
                       style={{ width: `${activeFocusDeal.healthScore}%` }}
                     />
                   </div>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/60 text-[11px] text-slate-600 dark:text-slate-300 flex items-center justify-between">
-                  <span>키맨: <strong className="text-slate-800 dark:text-white">{activeFocusDeal.stakeholders.length}명</strong></span>
+                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200/70 text-[11px] text-slate-600 flex items-center justify-between">
+                  <span>키맨: <strong className="text-slate-800">{activeFocusDeal.stakeholders.length}명</strong></span>
                   {activeFocusDeal.stakeholders.length > 0 && onOpenBridgeModal ? (
                     <button
                       onClick={() => {
                         const keyman = people.find(p => p.id === activeFocusDeal.stakeholders[0].personId);
                         if (keyman) onOpenBridgeModal(keyman);
                       }}
-                      className="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-semibold flex items-center gap-1 active:scale-95"
+                      className="text-xs text-blue-600 hover:underline font-semibold flex items-center gap-1 active:scale-95"
                     >
                       <Share2 className="w-3 h-3" />
                       <span>브릿지 연결</span>
@@ -405,7 +412,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
 
           <button
             onClick={() => onNavigateView('deals')}
-            className="w-full py-2 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-all flex items-center justify-center gap-1 border border-slate-200/80 dark:border-slate-700 active:scale-[0.98] cursor-pointer"
+            className="w-full py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition-all flex items-center justify-center gap-1 border border-slate-200/80 active:scale-[0.98] cursor-pointer"
           >
             <span>전략 딜 파이프라인 관리</span>
             <ChevronRight className="w-3.5 h-3.5" />
@@ -416,14 +423,14 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
 
       {/* 3. Bottom Row: Super Connectors & Fast Discovery */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        {/* Super Connectors Spotlight */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs space-y-3">
+        {/* Core Network Hubs Spotlight */}
+        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-              <Zap className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-              <span>알파 슈퍼 커넥터 TOP 3</span>
+            <h3 className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+              <Zap className="w-4 h-4 text-blue-600" />
+              <span>핵심 네트워크 허브 TOP 3</span>
             </h3>
-            <span className="text-[11px] text-slate-400 font-mono">Centrality Metric</span>
+            <span className="text-[11px] text-slate-400 font-mono">Hub Index</span>
           </div>
 
           <div className="space-y-2">
@@ -431,10 +438,10 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
               <div
                 key={person.id}
                 onClick={() => onOpenDossier ? onOpenDossier(person) : onSelectPerson(person)}
-                className="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/60 hover:border-indigo-300 dark:hover:border-indigo-600 cursor-pointer transition-all flex items-center justify-between group active:scale-[0.98]"
+                className="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/70 hover:border-slate-300 cursor-pointer transition-all flex items-center justify-between group active:scale-[0.98]"
               >
                 <div className="min-w-0">
-                  <div className="font-semibold text-slate-900 dark:text-white text-xs group-hover:text-indigo-600 dark:group-hover:text-indigo-300 transition-colors flex items-center gap-1">
+                  <div className="font-semibold text-slate-900 text-xs group-hover:text-blue-600 transition-colors flex items-center gap-1">
                     <span>{person.name}</span>
                     <span className="text-slate-400 text-[11px]">({person.currentTitle})</span>
                     {person.sourceType === 'DART_FACT' && (
@@ -445,11 +452,11 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                 </div>
 
                 <div className="text-right shrink-0">
-                  <div className="text-xs font-bold text-indigo-600 dark:text-indigo-400 font-mono">
+                  <div className="text-xs font-bold text-blue-600 font-mono">
                     {powerScore}점
                   </div>
                   <div className="text-[11px] text-slate-400">
-                    {tier === 'ALPHA_HUB' ? '알파 허브' : '핵심 커넥터'}
+                    {tier === 'ALPHA_HUB' ? '중심 허브' : '신뢰 커넥터'}
                   </div>
                 </div>
               </div>
@@ -458,14 +465,14 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
         </div>
 
         {/* Corporate Partnership Opportunity Radar */}
-        <div className="p-5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 shadow-2xs lg:col-span-2 flex flex-col justify-between space-y-4">
+        <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs lg:col-span-2 flex flex-col justify-between space-y-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <h3 className="text-xs font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
-                <Building2 className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+              <h3 className="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+                <Building2 className="w-4 h-4 text-blue-600" />
                 <span>주요 20대 기업 파트너십 기회 발굴 파이프라인</span>
               </h3>
-              <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-700 font-mono font-medium">
+              <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200/80 font-mono font-medium">
                 잠재 파트너사 연계
               </span>
             </div>

@@ -107,17 +107,23 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="w-full max-w-3xl bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+    <div 
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200"
+    >
+      <div 
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-3xl bg-white border border-slate-200/90 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92vh]"
+      >
         
         {/* 모달 상단 툴바 (인쇄 시 숨김) */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900 print:hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-white print:hidden">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-indigo-400" />
-            <h2 className="text-base font-bold text-white tracking-tight">
+            <Sparkles className="w-5 h-5 text-indigo-600" />
+            <h2 className="text-base font-bold text-slate-900 tracking-tight">
               경영진 1-Page 미팅 전략 브리프 (Meeting Prep Brief)
             </h2>
-            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 font-bold border border-indigo-500/30 font-mono">
+            <span className="text-[11px] px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-bold border border-indigo-100 font-mono">
               미팅 10분 전 브리핑
             </span>
           </div>
@@ -125,14 +131,14 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-2xs transition-all cursor-pointer"
             >
-              <Printer className="w-3.5 h-3.5 text-indigo-400" />
-              <span>A4 리포트 인쇄 / PDF 저장</span>
+              <Printer className="w-3.5 h-3.5 text-indigo-300" />
+              <span>A4 리포트 인쇄 / PDF</span>
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -140,16 +146,16 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
         </div>
 
         {/* 인쇄 대상 1-Page Brief 본문 영역 */}
-        <div ref={printRef} className="p-6 md:p-8 space-y-6 overflow-y-auto bg-slate-900 text-slate-100 print:bg-white print:text-black print:p-0 print:m-0">
+        <div ref={printRef} className="p-6 md:p-8 space-y-6 overflow-y-auto bg-white text-slate-900 print:p-0 print:m-0">
           
           {/* 헤더 프로필 블록 */}
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-800 print:border-slate-300">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100 print:border-slate-300">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2.5 flex-wrap">
-                <h1 className="text-2xl font-extrabold tracking-tight text-white print:text-black">
+                <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 print:text-black">
                   {person.name}
                 </h1>
-                <span className="text-xs px-2.5 py-0.5 rounded-md bg-indigo-950/60 text-indigo-300 border border-indigo-500/30 font-semibold print:border-slate-400 print:text-slate-800">
+                <span className="text-xs px-2.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-100 font-semibold print:border-slate-400 print:text-slate-800">
                   {person.currentTitle}
                 </span>
                 <span className={`text-xs px-2.5 py-0.5 rounded-md font-semibold border flex items-center gap-1 ${cluster.badgeStyle} print:border-slate-400 print:text-slate-800`}>
@@ -161,23 +167,23 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
                   <span>{cluster.label}</span>
                 </span>
                 {person.dartInfo && (
-                  <span className="text-xs px-2 py-0.5 rounded-md bg-emerald-950/60 text-emerald-300 border border-emerald-500/30 font-semibold flex items-center gap-1">
-                    <ShieldCheck className="w-3.5 h-3.5" /> DART 공시 검증
+                  <span className="text-xs px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold flex items-center gap-1">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> DART 공시 검증
                   </span>
                 )}
               </div>
 
-              <p className="text-sm font-semibold text-indigo-400 print:text-indigo-800">
+              <p className="text-sm font-semibold text-indigo-600 print:text-indigo-800">
                 {person.currentCompany} {person.currentDepartment ? `· ${person.currentDepartment}` : ''}
               </p>
-              <p className="text-xs text-slate-400 print:text-slate-600">
-                전문 분야: <strong className="text-slate-200 print:text-black">{person.primaryDomain}</strong> · 경력 단계: <strong className="text-slate-200 print:text-black">{cluster.seniorityLevel}</strong>
+              <p className="text-xs text-slate-500 print:text-slate-600">
+                전문 분야: <strong className="text-slate-800 print:text-black">{person.primaryDomain}</strong> · 경력 단계: <strong className="text-slate-800 print:text-black">{cluster.seniorityLevel}</strong>
               </p>
 
               {/* 3대 고유 강점 (Superpowers) */}
               <div className="flex flex-wrap items-center gap-1.5 pt-1">
                 {cluster.superpowers.map((sp, i) => (
-                  <span key={i} className="text-[11px] px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700/80 font-medium print:bg-slate-100 print:text-slate-800 print:border-slate-300">
+                  <span key={i} className="text-[11px] px-2 py-0.5 rounded-md bg-slate-50 text-slate-700 border border-slate-200/80 font-medium print:bg-slate-100 print:text-slate-800 print:border-slate-300">
                     ⚡ {sp}
                   </span>
                 ))}
@@ -185,47 +191,47 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
             </div>
 
             {/* 기본 연락 정보 (미팅 직전 빠른 확인용) */}
-            <div className="p-3 rounded-xl bg-slate-850 border border-slate-800 text-xs space-y-1 min-w-[200px] print:bg-slate-100 print:border-slate-300">
-              <div className="text-[11px] text-slate-400 print:text-slate-600 uppercase font-bold tracking-wider">
+            <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 text-xs space-y-1 min-w-[200px] print:bg-slate-100 print:border-slate-300 shadow-2xs">
+              <div className="text-[10px] text-slate-400 print:text-slate-600 uppercase font-bold tracking-wider">
                 Direct Contact
               </div>
-              <div className="font-mono text-white print:text-black font-semibold">{person.mobile}</div>
-              <div className="text-slate-300 print:text-slate-700 truncate text-[11px]">{person.email}</div>
+              <div className="font-mono text-slate-900 print:text-black font-semibold">{person.mobile}</div>
+              <div className="text-slate-500 print:text-slate-700 truncate text-[11px]">{person.email}</div>
             </div>
           </div>
 
           {/* DART 실공시 팩트 섹션 (있을 경우) */}
           {person.dartInfo && (
-            <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/30 space-y-2 print:bg-emerald-50 print:border-emerald-300">
-              <div className="flex items-center gap-2 text-xs font-bold text-emerald-400 print:text-emerald-800">
-                <Building2 className="w-4 h-4" />
+            <div className="p-4 rounded-2xl bg-emerald-50/60 border border-emerald-200 text-xs space-y-2 print:bg-emerald-50 print:border-emerald-300 shadow-2xs">
+              <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 print:text-emerald-800">
+                <Building2 className="w-4 h-4 text-emerald-600" />
                 금융감독원 전자공시(DART) 공식 확인 팩트
               </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-slate-300 print:text-slate-800">
-                <div><span className="text-slate-500 print:text-slate-500">법인명:</span> {person.dartInfo.stockName}</div>
-                <div><span className="text-slate-500 print:text-slate-500">등기 직위:</span> {person.dartInfo.registeredRole}</div>
-                <div><span className="text-slate-500 print:text-slate-500">검증 기준일:</span> {person.dartInfo.verifiedAt}</div>
-                <div><span className="text-slate-500 print:text-slate-500">등기 여부:</span> {person.dartInfo.isPublicDirector ? '사내/사외 등기' : '미등기 임원'}</div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs text-slate-700 print:text-slate-800">
+                <div><span className="text-slate-500">법인명:</span> {person.dartInfo.stockName}</div>
+                <div><span className="text-slate-500">등기 직위:</span> {person.dartInfo.registeredRole}</div>
+                <div><span className="text-slate-500">검증 기준일:</span> {person.dartInfo.verifiedAt}</div>
+                <div><span className="text-slate-500">등기 여부:</span> {person.dartInfo.isPublicDirector ? '사내/사외 등기' : '미등기 임원'}</div>
               </div>
             </div>
           )}
 
           {/* 전략 섹션 1: 미팅 아이스브레이킹 추천 화두 */}
           <div className="space-y-3">
-            <h3 className="text-xs font-bold text-slate-400 print:text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
-              <Lightbulb className="w-4 h-4 text-amber-400" />
+            <h3 className="text-xs font-bold text-slate-500 print:text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+              <Lightbulb className="w-4 h-4 text-amber-500" />
               미팅 성공을 위한 3대 전략적 대화 화두 (Ice-breaking Topics)
             </h3>
             <div className="space-y-2.5">
               {icebreakers.map((item, idx) => (
-                <div key={idx} className="p-3 rounded-xl bg-slate-850/80 border border-slate-800 print:bg-slate-50 print:border-slate-300 space-y-1">
-                  <div className="text-xs font-bold text-white print:text-black flex items-center gap-1.5">
-                    <span className="w-4 h-4 rounded-full bg-indigo-600 text-white text-[11px] flex items-center justify-center font-bold">
+                <div key={idx} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 print:bg-slate-50 print:border-slate-300 space-y-1 shadow-2xs">
+                  <div className="text-xs font-bold text-slate-900 print:text-black flex items-center gap-1.5">
+                    <span className="w-4 h-4 rounded-full bg-slate-900 text-white text-[10px] flex items-center justify-center font-bold">
                       {idx + 1}
                     </span>
                     {item.title}
                   </div>
-                  <p className="text-xs text-slate-300 print:text-slate-700 leading-relaxed pl-5">
+                  <p className="text-xs text-slate-600 print:text-slate-700 leading-relaxed pl-5">
                     {item.desc}
                   </p>
                 </div>
@@ -234,36 +240,36 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
           </div>
 
           {/* 전략 섹션 2: 나와의 과거 소통 이력 및 메모 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 rounded-xl bg-slate-850/50 border border-slate-800 print:bg-slate-50 print:border-slate-300 space-y-2">
-              <div className="text-xs font-bold text-slate-300 print:text-slate-800 flex items-center gap-1.5">
-                <Clock className="w-3.5 h-3.5 text-indigo-400" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 print:bg-slate-50 print:border-slate-300 space-y-2 shadow-2xs">
+              <div className="text-xs font-bold text-slate-800 print:text-slate-800 flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5 text-indigo-600" />
                 과거 소통 상태 &amp; 개인 메모
               </div>
-              <p className="text-xs text-slate-300 print:text-slate-700 leading-relaxed">
+              <p className="text-xs text-slate-600 print:text-slate-700 leading-relaxed">
                 {person.memo ? person.memo : '등록된 개인 메모가 없습니다.'}
               </p>
-              <div className="text-[11px] text-slate-500 pt-1">
+              <div className="text-[11px] text-slate-400 pt-1">
                 마지막 소통일: {person.lastContactDate || '기록 없음'} {person.isStale && '(소통 환기 추천)'}
               </div>
             </div>
 
             {/* 전략 섹션 3: 공통 출신(알럼나이) 연계 가능 인맥 */}
-            <div className="p-4 rounded-xl bg-slate-850/50 border border-slate-800 print:bg-slate-50 print:border-slate-300 space-y-2">
-              <div className="text-xs font-bold text-slate-300 print:text-slate-800 flex items-center gap-1.5">
-                <UserCheck className="w-3.5 h-3.5 text-purple-400" />
+            <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 print:bg-slate-50 print:border-slate-300 space-y-2 shadow-2xs">
+              <div className="text-xs font-bold text-slate-800 print:text-slate-800 flex items-center gap-1.5">
+                <UserCheck className="w-3.5 h-3.5 text-purple-600" />
                 공통 회사 출신 알럼나이 지인 ({sharedAlumniPeople.length}명)
               </div>
               {sharedAlumniPeople.length === 0 ? (
-                <p className="text-xs text-slate-500 leading-relaxed">
+                <p className="text-xs text-slate-400 leading-relaxed">
                   현재 등록된 주소록에 동일 회사 출신 지인이 없습니다.
                 </p>
               ) : (
                 <div className="space-y-1.5">
                   {sharedAlumniPeople.map(p => (
-                    <div key={p.id} className="text-xs text-slate-300 print:text-slate-700 flex items-center justify-between">
-                      <span className="font-semibold text-white print:text-black">{p.name}</span>
-                      <span className="text-[11px] text-slate-400 print:text-slate-600">{p.currentCompany} · {p.currentTitle}</span>
+                    <div key={p.id} className="text-xs text-slate-600 print:text-slate-700 flex items-center justify-between">
+                      <span className="font-semibold text-slate-900 print:text-black">{p.name}</span>
+                      <span className="text-[11px] text-slate-500 print:text-slate-600">{p.currentCompany} · {p.currentTitle}</span>
                     </div>
                   ))}
                 </div>
@@ -272,11 +278,11 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
           </div>
 
           {/* 전략 섹션 4: 미팅 시 주의 및 유의사항 */}
-          <div className="p-3.5 rounded-xl bg-amber-950/20 border border-amber-500/30 text-xs text-amber-200 print:bg-amber-50 print:text-amber-900 print:border-amber-300 flex items-start gap-2.5">
-            <AlertTriangle className="w-4 h-4 text-amber-400 flex-shrink-0 mt-0.5" />
+          <div className="p-3.5 rounded-2xl bg-amber-50/70 border border-amber-200 text-xs text-amber-900 print:bg-amber-50 print:text-amber-900 print:border-amber-300 flex items-start gap-2.5 shadow-2xs">
+            <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
             <div className="space-y-0.5">
               <span className="font-bold">미팅 주의사항:</span>
-              <p className="text-[11px] leading-relaxed text-amber-300/90 print:text-amber-900">
+              <p className="text-[11px] leading-relaxed text-amber-800 print:text-amber-900">
                 상장사 임원 또는 핵심 직무자의 경우 내부 미공개 정보에 대한 직접적 질문은 지양하고, 거시적인 산업 발전 및 상호 협력 가능성 중심의 아젠다로 미팅을 리드하는 것이 바람직합니다.
               </p>
             </div>
