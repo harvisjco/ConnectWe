@@ -35,6 +35,7 @@ interface ExecutiveCommandCenterViewProps {
   onOpenCadenceGreeting?: (person: Person, daysSince: number) => void;
   onOpenTeaBundle?: (clusterId?: GeoClusterId) => void;
   onOpenWarmIntroConnector?: (personA?: Person, personB?: Person) => void;
+  onOpenWeeklyBrief?: () => void;
   onShowToast: (msg: string) => void;
   onNavigateView: (viewKey: string) => void;
 }
@@ -51,6 +52,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
   onOpenCadenceGreeting,
   onOpenTeaBundle,
   onOpenWarmIntroConnector,
+  onOpenWeeklyBrief,
   onShowToast,
   onNavigateView,
 }) => {
@@ -142,6 +144,16 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
         }
         actions={
           <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {onOpenWeeklyBrief && (
+              <button
+                onClick={onOpenWeeklyBrief}
+                className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+                title="C-Level 월요 전략 인텔리전스 1-Page 리포트 (A4 인쇄 / PDF 저장 / 텍스트 요약)"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>주간 1-Page 리포트</span>
+              </button>
+            )}
             {onOpenTeaBundle && (
               <button
                 onClick={() => onOpenTeaBundle(selectedClusterId)}

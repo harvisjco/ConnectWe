@@ -28,13 +28,15 @@ const STORAGE_PROMOTION_KEY = 'connectwe_promotions_v1';
  * DART 공시 및 최근 경력 기반 승진/영전 이벤트 초기 목 데이터 및 감지 로직
  */
 export function loadPromotionEvents(people: Person[]): PromotionEvent[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_PROMOTION_KEY);
-    if (raw) {
-      return JSON.parse(raw);
+  if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_PROMOTION_KEY);
+      if (raw) {
+        return JSON.parse(raw);
+      }
+    } catch {
+      // Fallback
     }
-  } catch (e) {
-    console.error('Failed to load promotions from storage', e);
   }
 
   // DART 공시 임원 중 샘플 승진/영전 이벤트 자동 매핑
@@ -96,10 +98,12 @@ export function loadPromotionEvents(people: Person[]): PromotionEvent[] {
 }
 
 export function savePromotionEvents(events: PromotionEvent[]): void {
-  try {
-    localStorage.setItem(STORAGE_PROMOTION_KEY, JSON.stringify(events));
-  } catch (e) {
-    console.error('Failed to save promotions to storage', e);
+  if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+    try {
+      window.localStorage.setItem(STORAGE_PROMOTION_KEY, JSON.stringify(events));
+    } catch {
+      // Fallback
+    }
   }
 }
 

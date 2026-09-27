@@ -54,6 +54,7 @@ import { PrivateSalonModal } from './components/modals/PrivateSalonModal';
 import { CadenceGreetingModal } from './components/modals/CadenceGreetingModal';
 import { ProximityTeaBundleModal } from './components/radar/ProximityTeaBundleModal';
 import { WarmIntroConnectorModal } from './components/bridge/WarmIntroConnectorModal';
+import { ExecutiveWeeklyBriefModal } from './components/modals/ExecutiveWeeklyBriefModal';
 import { GeoClusterId } from './services/geoProximityService';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 
@@ -124,6 +125,7 @@ export const App: React.FC = () => {
   const [cadenceTarget, setCadenceTarget] = useState<{ person: Person; daysSince: number } | null>(null);
   const [teaBundleClusterId, setTeaBundleClusterId] = useState<GeoClusterId | null>(null);
   const [warmIntroConnectorTargets, setWarmIntroConnectorTargets] = useState<{ personA?: Person; personB?: Person } | null>(null);
+  const [isWeeklyBriefOpen, setIsWeeklyBriefOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // 미축하 영전 건수 (모바일 바텀바 배지용)
@@ -323,6 +325,7 @@ export const App: React.FC = () => {
                   onOpenCadenceGreeting={(person, daysSince) => setCadenceTarget({ person, daysSince })}
                   onOpenTeaBundle={(clusterId) => setTeaBundleClusterId(clusterId || 'gangnam_teheran')}
                   onOpenWarmIntroConnector={(personA, personB) => setWarmIntroConnectorTargets({ personA, personB })}
+                  onOpenWeeklyBrief={() => setIsWeeklyBriefOpen(true)}
                   onShowToast={showToast}
                   onNavigateView={handleNavigateView}
                 />
@@ -606,6 +609,17 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* C-Level Weekly Intelligence 1-Page Brief Modal */}
+      {isWeeklyBriefOpen && (
+        <ExecutiveWeeklyBriefModal
+          people={people}
+          meetings={meetings}
+          onClose={() => setIsWeeklyBriefOpen(false)}
+          onSelectPerson={setSelectedPerson}
+          onShowToast={showToast}
+        />
+      )}
+
       {/* DART Corporate Disclosure Alert Modal */}
       {isDisclosureAlertOpen && (
         <DisclosureAlertModal
@@ -683,6 +697,7 @@ export const App: React.FC = () => {
         currentView={activeView}
         onSelectView={(v) => handleNavigateView(v as NavViewType)}
         uncelebratedPromosCount={uncelebratedPromosCount}
+        onOpenScanner={() => setIsCardScannerOpen(true)}
       />
 
       {/* Toast Notification Banner */}
