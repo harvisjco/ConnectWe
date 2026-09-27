@@ -51,6 +51,7 @@ import { MeetingDebriefModal } from './components/radar/MeetingDebriefModal';
 import { FollowUpComposerModal } from './components/radar/FollowUpComposerModal';
 import { DebriefResult } from './services/meetingDebriefService';
 import { PrivateSalonModal } from './components/modals/PrivateSalonModal';
+import { CadenceGreetingModal } from './components/modals/CadenceGreetingModal';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 
 import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2 } from 'lucide-react';
@@ -117,6 +118,7 @@ export const App: React.FC = () => {
   const [isCopilotOpen, setIsCopilotOpen] = useState(false);
   const [bridgeTargetPerson, setBridgeTargetPerson] = useState<Person | null>(null);
   const [dossierTargetPerson, setDossierTargetPerson] = useState<Person | null>(null);
+  const [cadenceTarget, setCadenceTarget] = useState<{ person: Person; daysSince: number } | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // 미축하 영전 건수 (모바일 바텀바 배지용)
@@ -312,6 +314,8 @@ export const App: React.FC = () => {
                   onOpenDebrief={(target) => setDebriefTargetPerson(target)}
                   onOpenSalon={() => setIsSalonModalOpen(true)}
                   onOpenCloudSync={() => setIsCloudSyncOpen(true)}
+                  onOpenScanner={() => setIsCardScannerOpen(true)}
+                  onOpenCadenceGreeting={(person, daysSince) => setCadenceTarget({ person, daysSince })}
                   onShowToast={showToast}
                   onNavigateView={handleNavigateView}
                 />
@@ -552,6 +556,17 @@ export const App: React.FC = () => {
             setSelectedPerson(p);
           }}
           onClose={() => setIsCardScannerOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* Cadence Greeting Modal (소통 골든타임 안부 레이더) */}
+      {cadenceTarget && (
+        <CadenceGreetingModal
+          person={cadenceTarget.person}
+          daysSinceLastContact={cadenceTarget.daysSince}
+          onUpdatePerson={handleUpdatePerson}
+          onClose={() => setCadenceTarget(null)}
           onShowToast={showToast}
         />
       )}

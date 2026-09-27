@@ -19,7 +19,7 @@ import { getTopSuperConnectors } from '../../services/centralityEngine';
 import { 
   Compass, Award, Clock, Briefcase, 
   Zap, Coffee, Gift, MessageCircle, ChevronRight, 
-  ShieldCheck, Check, Sparkles, Building2, Share2, Mic, Cloud
+  ShieldCheck, Check, Sparkles, Building2, Share2, Mic, Cloud, Camera
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -31,6 +31,8 @@ interface ExecutiveCommandCenterViewProps {
   onOpenDebrief?: (person: Person) => void;
   onOpenSalon?: () => void;
   onOpenCloudSync?: () => void;
+  onOpenScanner?: () => void;
+  onOpenCadenceGreeting?: (person: Person, daysSince: number) => void;
   onShowToast: (msg: string) => void;
   onNavigateView: (viewKey: string) => void;
 }
@@ -43,6 +45,8 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
   onOpenDebrief,
   onOpenSalon,
   onOpenCloudSync,
+  onOpenScanner,
+  onOpenCadenceGreeting,
   onShowToast,
   onNavigateView,
 }) => {
@@ -134,6 +138,16 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
         }
         actions={
           <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {onOpenScanner && (
+              <button
+                onClick={onOpenScanner}
+                className="px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold text-xs border border-emerald-200/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+                title="스마트폰 실시간 카메라 명함 OCR 및 DART 임원 1초 결합"
+              >
+                <Camera className="w-3.5 h-3.5 text-emerald-700" />
+                <span>명함 실시간 스캔</span>
+              </button>
+            )}
             {onOpenSalon && (
               <button
                 onClick={onOpenSalon}
@@ -349,9 +363,17 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
               {topCadenceAlerts.map(alert => (
                 <div key={alert.person.id} className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-700/60 flex items-center justify-between gap-2 text-xs">
                   <div 
-                    onClick={() => onOpenDossier ? onOpenDossier(alert.person) : onSelectPerson(alert.person)}
+                    onClick={() => {
+                      if (onOpenCadenceGreeting) {
+                        onOpenCadenceGreeting(alert.person, alert.daysSinceLastContact);
+                      } else if (onOpenDossier) {
+                        onOpenDossier(alert.person);
+                      } else {
+                        onSelectPerson(alert.person);
+                      }
+                    }}
                     className="min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
-                    title="임원 프로필 열기"
+                    title="소통 골든타임 안부 모달 열기"
                   >
                     <div className="font-semibold text-slate-800 dark:text-slate-200 truncate flex items-center gap-1">
                       <span>{alert.person.name}</span>
@@ -360,11 +382,17 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                     <div className="text-[11px] text-slate-500 truncate">{alert.person.currentCompany}</div>
                   </div>
                   <button
-                    onClick={() => handleCopyCadencePing(alert.person, alert.daysSinceLastContact)}
+                    onClick={() => {
+                      if (onOpenCadenceGreeting) {
+                        onOpenCadenceGreeting(alert.person, alert.daysSinceLastContact);
+                      } else {
+                        handleCopyCadencePing(alert.person, alert.daysSinceLastContact);
+                      }
+                    }}
                     className="w-7 h-7 rounded-lg bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-50 shadow-2xs shrink-0 text-xs font-medium flex items-center justify-center transition-all active:scale-95 cursor-pointer"
-                    title="안부 핑 복사"
+                    title="소통 골든타임 안부 모달 열기"
                   >
-                    {copiedKey === `cadence-${alert.person.id}` ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <MessageCircle className="w-3.5 h-3.5" />}
+                    {copiedKey === `cadence-${alert.person.id}` ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <MessageCircle className="w-3.5 h-3.5 text-rose-500" />}
                   </button>
                 </div>
               ))}

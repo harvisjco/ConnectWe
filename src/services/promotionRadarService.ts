@@ -188,3 +188,60 @@ ${senderName} 배상`
     }
   ];
 }
+
+/**
+ * 소통 골든타임 이탈 인맥을 위한 상황별 맞춤 안부 카피 생성기
+ */
+export interface CadenceGreetingPreset {
+  type: 'WARM_TEA_INVITE' | 'FORMAL_CHECK_IN' | 'ALUMNI_TOUCH';
+  title: string;
+  badge: string;
+  content: string;
+}
+
+export function generateCadenceGreetings(
+  person: Person,
+  daysSinceLastContact: number,
+  senderName: string = '홍길동'
+): CadenceGreetingPreset[] {
+  const company = person.currentCompany;
+  const title = person.currentTitle;
+  const name = person.name;
+
+  const timeSpanText = daysSinceLastContact >= 365
+    ? '어느덧 1년 남짓 시간이 흘러'
+    : daysSinceLastContact >= 180
+    ? '지난 반년 동안 찾아뵙지 못했는데'
+    : '지난 분기 인사드린 후 시간이 다소 흘렀는데';
+
+  return [
+    {
+      type: 'WARM_TEA_INVITE',
+      title: '따뜻한 계절 안부 & 편안한 티타임 제안',
+      badge: '가장 추천',
+      content: `${name} ${title}님, 평안하신지요? ${senderName}입니다.
+${timeSpanText} 뵌 지가 꽤 되었더군요. 바쁜 일상 속에서도 늘 ${company}에서 멋진 성과 이끌어주시는 모습 멀리서나마 깊이 응원하고 있습니다.
+날씨도 완연히 좋아졌는데, 이번 달에 부담 없이 편하신 일정에 가볍게 차 한 잔 나누며 안부 전하고 싶습니다.
+일정 중 여유로운 날 편하게 말씀해 주시면 맞추어 찾아뵙겠습니다. 늘 건강 유의하세요!`
+    },
+    {
+      type: 'FORMAL_CHECK_IN',
+      title: '정중한 비즈니스 근황 안부 & 시너지 탐색',
+      badge: '공식 비즈니스',
+      content: `${name} ${title}님께,
+안녕하십니까, ${senderName}입니다.
+최근 ${company}의 역동적인 사업 행보와 혁신적인 프로젝트 소식을 뉴스와 공시를 통해 반갑게 접하고 있습니다.
+지난 미팅 이후 현업에 매진하시느라 분주하셨을 줄 압니다. 혹시 이번 분기에 추진 중이신 사업과 관련하여 가볍게 근황도 여쭙고 시너지 포인트를 나눌 수 있는 15분 내외의 티타임 자리가 가능하실지요?
+편하신 일시를 회신해 주시면 감사히 조율하도록 하겠습니다.`
+    },
+    {
+      type: 'ALUMNI_TOUCH',
+      title: '동문·이전 직장 인연 반가운 터치',
+      badge: '알럼나이 인연',
+      content: `${name} 선배님/동료님, 잘 지내고 계시죠? ${senderName}입니다.
+문득 예전 함께했던 프로젝트 이야기 나누다 선배님 생각이 나 연락드렸습니다.
+${company}에서 중책 맡으셔서 눈코 뜰 새 없이 바쁘시겠지만, 근처 지나실 때나 시간 되실 때 따뜻한 커피 한 잔 나누며 밀린 이야기 나눌 수 있으면 좋겠습니다.
+항상 건승하시길 기원합니다!`
+    }
+  ];
+}
