@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Person } from '../../types/network';
 import { Gathering, BirthdayContact } from '../../types/community';
+import { UserRole } from '../../types/userRole';
 import { 
   extractAlumniGroups, 
   getUpcomingBirthdays, 
@@ -22,13 +23,15 @@ interface GeneralMemberViewProps {
   onSelectPerson: (person: Person) => void;
   onOpenAddModal: () => void;
   onShowToast: (msg: string) => void;
+  onSelectUserRole?: (role: UserRole) => void;
 }
 
 export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
   people,
   onSelectPerson,
   onOpenAddModal,
-  onShowToast
+  onShowToast,
+  onSelectUserRole
 }) => {
   // 4대 탭 상태: contacts (주소록) | groups (그룹별) | birthday (생일 챙기기) | meetups (소모임)
   const [activeTab, setActiveTab] = useState<'contacts' | 'groups' | 'birthday' | 'meetups'>('contacts');
@@ -156,6 +159,38 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
           </div>
         }
       />
+
+      {/* 회원 등급 안내 & 원클릭 모드 전환 배너 */}
+      {onSelectUserRole && (
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-indigo-50/50 dark:from-emerald-950/40 dark:via-teal-950/30 dark:to-indigo-950/30 border border-emerald-200/80 dark:border-emerald-800/60 flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-2xs">
+          <div className="flex items-start sm:items-center gap-2.5">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse mt-1 sm:mt-0 shrink-0" />
+            <div className="text-xs">
+              <span className="font-bold text-emerald-900 dark:text-emerald-300">현재 [🟢 일반 회원] 화면입니다: </span>
+              <span className="text-slate-600 dark:text-slate-400">동문 주소록과 소모임 위주의 심플한 모드이며, 다른 등급의 메뉴를 보시려면 우측 버튼을 눌러 전환하세요.</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+            <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 hidden lg:inline">다른 등급 전환:</span>
+            <button
+              type="button"
+              onClick={() => onSelectUserRole('hidden')}
+              className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-indigo-50 dark:hover:bg-slate-700 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700 text-xs font-bold transition-all shadow-2xs hover:scale-102 active:scale-95 cursor-pointer"
+              title="C-Level VIP 비즈니스 파트너십 관리 모드로 전환"
+            >
+              🟣 Hidden 모드로 전환
+            </button>
+            <button
+              type="button"
+              onClick={() => onSelectUserRole('master')}
+              className="px-3 py-1.5 rounded-xl bg-white dark:bg-slate-800 hover:bg-amber-50 dark:hover:bg-slate-700 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-700 text-xs font-bold transition-all shadow-2xs hover:scale-102 active:scale-95 cursor-pointer"
+              title="DART 상장공시 & 기업 지배구조 전용 마스터 관제 모드로 전환"
+            >
+              👑 마스터 관리자로 전환
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* 4대 탭 네비게이션 */}
       <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-2">

@@ -20,6 +20,7 @@ interface SidebarLNBProps {
   onSelectView: (view: NavViewType) => void;
   people: Person[];
   userRole?: UserRole;
+  onSelectUserRole?: (role: UserRole) => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
   isOpenMobile: boolean;
@@ -49,6 +50,7 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
   onSelectView,
   people,
   userRole = 'general',
+  onSelectUserRole,
   isCollapsed,
   onToggleCollapse,
   isOpenMobile,
@@ -315,6 +317,69 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
           <X className="w-4 h-4" />
         </button>
       </div>
+
+      {/* Role Switcher in Sidebar (원클릭 전환) */}
+      {!isCollapsed && onSelectUserRole && (
+        <div className="p-2 border-b border-slate-200/80 dark:border-slate-800/80 bg-slate-50/70 dark:bg-slate-900/60 shrink-0">
+          <div className="flex items-center justify-between text-[10px] font-bold text-slate-400 mb-1.5 px-1 uppercase tracking-wider">
+            <span>회원 등급 전환</span>
+            <span className="text-[9px] font-medium text-slate-500">원클릭 전환</span>
+          </div>
+          <div className="grid grid-cols-3 gap-1 bg-slate-200/70 dark:bg-slate-800/80 p-0.5 rounded-lg text-xs">
+            <button
+              type="button"
+              onClick={() => onSelectUserRole('general')}
+              className={`py-1.5 px-1 rounded-md text-center font-bold text-[11px] transition-all cursor-pointer ${
+                userRole === 'general'
+                  ? 'bg-emerald-600 text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="일반 회원: 동문 주소록 & 소모임"
+            >
+              일반
+            </button>
+            <button
+              type="button"
+              onClick={() => onSelectUserRole('hidden')}
+              className={`py-1.5 px-1 rounded-md text-center font-bold text-[11px] transition-all cursor-pointer ${
+                userRole === 'hidden'
+                  ? 'bg-indigo-600 text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="Hidden 회원: 품격 있는 인맥 & 파트너십 관리"
+            >
+              Hidden
+            </button>
+            <button
+              type="button"
+              onClick={() => onSelectUserRole('master')}
+              className={`py-1.5 px-1 rounded-md text-center font-bold text-[11px] transition-all cursor-pointer ${
+                userRole === 'master'
+                  ? 'bg-amber-600 text-white shadow-xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+              }`}
+              title="마스터: DART 공시 & 기업 지배구조 전용 관제"
+            >
+              마스터
+            </button>
+          </div>
+        </div>
+      )}
+      {isCollapsed && onSelectUserRole && (
+        <div className="py-2 flex justify-center border-b border-slate-200/80 dark:border-slate-800/80 shrink-0">
+          <button
+            type="button"
+            onClick={() => {
+              const nextRole = userRole === 'general' ? 'hidden' : userRole === 'hidden' ? 'master' : 'general';
+              onSelectUserRole(nextRole);
+            }}
+            className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold transition-all cursor-pointer ${USER_ROLES[userRole].colorScheme.bg} ${USER_ROLES[userRole].colorScheme.text} border ${USER_ROLES[userRole].colorScheme.border}`}
+            title={`현재 등급: ${USER_ROLES[userRole].label} (클릭 시 다음 등급으로 전환)`}
+          >
+            {userRole === 'master' ? '👑' : userRole === 'hidden' ? 'H' : 'G'}
+          </button>
+        </div>
+      )}
 
       {/* Nav Menu Items List */}
       <div className="flex-1 overflow-y-auto px-2 py-3 space-y-4 scrollbar-none">

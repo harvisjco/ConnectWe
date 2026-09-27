@@ -317,6 +317,7 @@ export const App: React.FC = () => {
           onSelectView={handleSelectView}
           people={people}
           userRole={userRole}
+          onSelectUserRole={handleSelectUserRole}
           isCollapsed={isSidebarCollapsed}
           onToggleCollapse={handleToggleSidebarCollapse}
           isOpenMobile={isMobileSidebarOpen}
@@ -398,6 +399,7 @@ export const App: React.FC = () => {
                   onSelectPerson={setSelectedPerson}
                   onOpenAddModal={() => setIsAddModalOpen(true)}
                   onShowToast={showToast}
+                  onSelectUserRole={handleSelectUserRole}
                 />
               )}
 
