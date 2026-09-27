@@ -455,15 +455,19 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
             <>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900">
-                  <Sparkles className="w-3.5 h-3.5 text-slate-700 shrink-0" />
-                  <span>BARS AI Radar</span>
+                  <Sparkles className={`w-3.5 h-3.5 shrink-0 ${userRole === 'general' ? 'text-emerald-600' : 'text-slate-700'}`} />
+                  <span>{userRole === 'general' ? '동문 AI 도우미' : 'BARS AI Radar'}</span>
                 </div>
-                <span className="text-[11px] px-1.5 py-0.5 rounded-full font-bold bg-slate-200/80 text-slate-700 font-mono">
-                  LIVE
+                <span className={`text-[11px] px-1.5 py-0.5 rounded-full font-bold font-mono ${
+                  userRole === 'general' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200/80 text-slate-700'
+                }`}>
+                  {userRole === 'general' ? '온라인' : 'LIVE'}
                 </span>
               </div>
               <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-snug line-clamp-2">
-                DART 8,500+ 기업 실공시 & AI 인맥 전략 코칭 가동 중
+                {userRole === 'general' 
+                  ? '동문 네트워크 탐색 & 소모임 활동 추천 가동 중' 
+                  : 'DART 8,500+ 기업 실공시 & AI 인맥 전략 코칭 가동 중'}
               </p>
             </>
           )}

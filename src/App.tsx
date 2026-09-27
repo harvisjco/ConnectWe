@@ -272,13 +272,15 @@ export const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col font-sans selection:bg-indigo-600 selection:text-white bg-[#f8fafc] text-slate-800">
-      {/* Real-time Meeting Radar Banner */}
-      <MeetingRadarBanner
-        imminentMeeting={imminentMeeting}
-        onOpenDossier={(target) => setDossierTargetPerson(target)}
-        onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
-        onOpenDebrief={(target) => setDebriefTargetPerson(target)}
-      />
+      {/* Real-time Meeting Radar Banner (비일반 회원 전용) */}
+      {userRole !== 'general' && (
+        <MeetingRadarBanner
+          imminentMeeting={imminentMeeting}
+          onOpenDossier={(target) => setDossierTargetPerson(target)}
+          onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
+          onOpenDebrief={(target) => setDebriefTargetPerson(target)}
+        />
+      )}
 
       {/* Top Header */}
       <Header
@@ -352,42 +354,46 @@ export const App: React.FC = () => {
 
           {/* Main White Canvas Board Card (GoodPartner Large Round Card Style) */}
           <div className="rounded-2xl bg-white border border-slate-200/90 shadow-sm p-3.5 sm:p-6 space-y-6 w-full max-w-full overflow-hidden">
-            {/* Reference GoodPartner Style Info Banner */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-indigo-50/60 border border-indigo-150/90 text-xs w-full overflow-hidden gap-2">
-              <div className="flex items-center gap-2.5 min-w-0 flex-1 truncate">
-                <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center shrink-0 shadow-2xs">
-                  <Share2 className="w-3.5 h-3.5" />
+            {/* Reference GoodPartner Style Info Banner (비일반 회원 전용) */}
+            {userRole !== 'general' && (
+              <div className="flex items-center justify-between p-3 rounded-xl bg-indigo-50/60 border border-indigo-150/90 text-xs w-full overflow-hidden gap-2">
+                <div className="flex items-center gap-2.5 min-w-0 flex-1 truncate">
+                  <div className="w-6 h-6 rounded-lg bg-gradient-to-tr from-indigo-600 to-purple-600 text-white flex items-center justify-center shrink-0 shadow-2xs">
+                    <Share2 className="w-3.5 h-3.5" />
+                  </div>
+                  <div className="text-slate-700 truncate">
+                    <span className="font-bold text-slate-900 truncate">ConnectWe 인텔리전스</span>
+                    <span className="hidden sm:inline-block ml-2 text-[11px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-semibold border border-amber-200">
+                      로컬 E2EE 보안 가동 중
+                    </span>
+                    <span className="hidden lg:inline ml-2 text-slate-500 text-[11px]">
+                      DART 8,500+ 기업 실공시 &amp; 주소록 인맥 실시간 교차 매칭
+                    </span>
+                  </div>
                 </div>
-                <div className="text-slate-700 truncate">
-                  <span className="font-bold text-slate-900 truncate">ConnectWe 인텔리전스</span>
-                  <span className="hidden sm:inline-block ml-2 text-[11px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-semibold border border-amber-200">
-                    로컬 E2EE 보안 가동 중
-                  </span>
-                  <span className="hidden lg:inline ml-2 text-slate-500 text-[11px]">
-                    DART 8,500+ 기업 실공시 &amp; 주소록 인맥 실시간 교차 매칭
-                  </span>
-                </div>
+                <button
+                  onClick={() => setIsDisclosureAlertOpen(true)}
+                  className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-700 font-semibold text-[11px] border border-slate-200/90 shadow-2xs transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95"
+                >
+                  <span>공시 레이더 확인</span>
+                </button>
               </div>
-              <button
-                onClick={() => setIsDisclosureAlertOpen(true)}
-                className="hidden sm:flex items-center gap-1 px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 text-slate-700 font-semibold text-[11px] border border-slate-200/90 shadow-2xs transition-all cursor-pointer whitespace-nowrap shrink-0 active:scale-95"
-              >
-                <span>공시 레이더 확인</span>
-              </button>
-            </div>
+            )}
 
-            {/* GraphRAG Search Interface */}
-            <section>
-              <GraphSearchBar
-                query={searchQuery}
-                onQueryChange={setSearchQuery}
-                onExecuteSearch={handleExecuteSearch}
-                onResetSearch={handleResetSearch}
-                searchResult={searchResult}
-                selectedClusterId={selectedClusterId}
-                onSelectCluster={setSelectedClusterId}
-              />
-            </section>
+            {/* GraphRAG Search Interface (비일반 회원 전용: 일반 회원은 자체 동문 검색바 사용) */}
+            {userRole !== 'general' && (
+              <section>
+                <GraphSearchBar
+                  query={searchQuery}
+                  onQueryChange={setSearchQuery}
+                  onExecuteSearch={handleExecuteSearch}
+                  onResetSearch={handleResetSearch}
+                  searchResult={searchResult}
+                  selectedClusterId={selectedClusterId}
+                  onSelectCluster={setSelectedClusterId}
+                />
+              </section>
+            )}
 
             {/* Dynamic Multi-dimensional Views with Code Splitting & Error Isolation */}
             <section className="animate-in fade-in duration-200 min-h-[520px]">
