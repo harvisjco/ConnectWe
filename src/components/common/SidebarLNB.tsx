@@ -1,13 +1,16 @@
 import React from 'react';
 import { Person } from '../../types/network';
+import { UserRole, USER_ROLES } from '../../types/userRole';
 import { 
   LayoutDashboard, Building2, GitBranch, ShieldAlert,
   Briefcase, TrendingUp, Gift, Users,
   Share2, Orbit, Compass, Clock,
-  Sparkles, ChevronLeft, ChevronRight, X
+  Sparkles, ChevronLeft, ChevronRight, X,
+  GraduationCap, Crown, EyeOff, ShieldCheck
 } from 'lucide-react';
 
 export type NavViewType = 
+  | 'general'
   | 'command' | 'company' | 'orgchart' | 'audit'
   | 'deals' | 'promotion' | 'referral' | 'team'
   | 'canvas' | 'galaxy' | 'proximity' | 'timeline' | 'age';
@@ -16,6 +19,7 @@ interface SidebarLNBProps {
   activeView: NavViewType;
   onSelectView: (view: NavViewType) => void;
   people: Person[];
+  userRole?: UserRole;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
   isOpenMobile: boolean;
@@ -44,6 +48,7 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
   activeView,
   onSelectView,
   people,
+  userRole = 'general',
   isCollapsed,
   onToggleCollapse,
   isOpenMobile,
@@ -55,96 +60,207 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
   const staleCoreCount = people.filter(p => p.isStale && p.closeness <= 3).length;
   const todayBirthdayCount = people.filter(p => p.id === 'p_1' || p.id === 'p_6').length;
 
-  const sections: NavSection[] = [
-    {
-      title: '네트워크 인텔리전스',
-      tag: 'CORE',
-      tagColor: '',
-      items: [
-        {
-          id: 'command',
-          label: '대시보드 총괄 관제',
-          icon: LayoutDashboard,
-          badge: todayBirthdayCount > 0 
-            ? { text: `생일 ${todayBirthdayCount}`, variant: 'action-pink' } 
-            : staleCoreCount > 0 
-              ? { text: `소통 환기 ${staleCoreCount}`, variant: 'action-amber' }
+  // 회원 등급별 네비게이션 섹션 동적 구성
+  let sections: NavSection[] = [];
+
+  if (userRole === 'general') {
+    // 🟢 일반 회원: 심플 동문 주소록 & 커뮤니티 + 팀 협업
+    sections = [
+      {
+        title: '동문 & 소모임 커뮤니티',
+        tag: 'ALUMNI',
+        tagColor: '',
+        items: [
+          {
+            id: 'general',
+            label: '동문 주소록 & 소모임',
+            icon: GraduationCap,
+            badge: todayBirthdayCount > 0 
+              ? { text: `생일 ${todayBirthdayCount}`, variant: 'action-pink' } 
               : undefined
-        },
-        {
-          id: 'company',
-          label: 'DART 상장사 공시 팩트',
-          icon: Building2,
-          badge: dartFactCount > 0 ? { text: `${dartFactCount}`, variant: 'subtle' } : undefined
-        },
-        {
-          id: 'orgchart',
-          label: '기업 지배구조 & 조직도',
-          icon: GitBranch
-        },
-        {
-          id: 'audit',
-          label: '동문 & 인맥 건강도',
-          icon: ShieldAlert
-        }
-      ]
-    },
-    {
-      title: '비즈니스 & 딜 실행',
-      tag: 'BIZ',
-      tagColor: '',
-      items: [
-        {
-          id: 'deals',
-          label: '딜 파이프라인 칸반',
-          icon: Briefcase,
-          badge: { text: '3', variant: 'action-amber' }
-        },
-        {
-          id: 'promotion',
-          label: '정기 승진 & 인사 레이더',
-          icon: TrendingUp
-        },
-        {
-          id: 'referral',
-          label: '추천 감사 리워드',
-          icon: Gift
-        },
-        {
-          id: 'team',
-          label: '팀 네트워크 협업',
-          icon: Users
-        }
-      ]
-    },
-    {
-      title: '다차원 공간 & 시계열',
-      tag: 'SPACE',
-      tagColor: '',
-      items: [
-        {
-          id: 'canvas',
-          label: '2D 관계망 캔버스',
-          icon: Share2
-        },
-        {
-          id: 'galaxy',
-          label: '3D 은하수 우주 뷰',
-          icon: Orbit
-        },
-        {
-          id: 'proximity',
-          label: '지리적 근접 레이더',
-          icon: Compass
-        },
-        {
-          id: 'timeline',
-          label: '타임라인 & 세대 분석',
-          icon: Clock
-        }
-      ]
-    }
-  ];
+          },
+          {
+            id: 'team',
+            label: '팀 네트워크 협업',
+            icon: Users
+          }
+        ]
+      }
+    ];
+  } else if (userRole === 'hidden') {
+    // 🟣 Hidden 회원: 상업적/정치적 은어를 품격 높은 비즈니스 언어로 순화
+    sections = [
+      {
+        title: '관계 여정 & 소통 관리',
+        tag: 'TOUCH',
+        tagColor: '',
+        items: [
+          {
+            id: 'command',
+            label: '관계 현황 요약',
+            icon: LayoutDashboard,
+            badge: todayBirthdayCount > 0 
+              ? { text: `생일 ${todayBirthdayCount}`, variant: 'action-pink' } 
+              : staleCoreCount > 0 
+                ? { text: `소통 환기 ${staleCoreCount}`, variant: 'action-amber' }
+                : undefined
+          },
+          {
+            id: 'proximity',
+            label: '지역별 접점 & 티타임',
+            icon: Compass
+          },
+          {
+            id: 'timeline',
+            label: '소통 여정 & 관계 히스토리',
+            icon: Clock
+          }
+        ]
+      },
+      {
+        title: '비즈니스 파트너십 & 협력',
+        tag: 'PARTNER',
+        tagColor: '',
+        items: [
+          {
+            id: 'deals',
+            label: '비즈니스 파트너십 & 프로젝트',
+            icon: Briefcase,
+            badge: { text: '3', variant: 'action-amber' }
+          },
+          {
+            id: 'promotion',
+            label: '주요 인사 & 축하 소식',
+            icon: TrendingUp
+          },
+          {
+            id: 'referral',
+            label: '상생 인재 매칭 & 협력',
+            icon: Gift
+          },
+          {
+            id: 'team',
+            label: '팀 네트워크 협업',
+            icon: Users
+          }
+        ]
+      },
+      {
+        title: '다차원 인맥 지도',
+        tag: 'MAP',
+        tagColor: '',
+        items: [
+          {
+            id: 'canvas',
+            label: '2D 관계망 지도',
+            icon: Share2
+          },
+          {
+            id: 'galaxy',
+            label: '3D 다차원 연결망',
+            icon: Orbit
+          }
+        ]
+      }
+    ];
+  } else {
+    // 👑 마스터 등급: 전체 고급 기능 및 C-Level 총괄 사령탑
+    sections = [
+      {
+        title: '👑 마스터 전용 총괄 관제',
+        tag: 'ADMIN',
+        tagColor: '',
+        items: [
+          {
+            id: 'command',
+            label: '사령탑 대시보드 총괄 관제',
+            icon: LayoutDashboard,
+            badge: todayBirthdayCount > 0 
+              ? { text: `생일 ${todayBirthdayCount}`, variant: 'action-pink' } 
+              : staleCoreCount > 0 
+                ? { text: `소통 환기 ${staleCoreCount}`, variant: 'action-amber' }
+                : undefined
+          },
+          {
+            id: 'company',
+            label: 'DART 상장사 공시 팩트',
+            icon: Building2,
+            badge: dartFactCount > 0 ? { text: `${dartFactCount}`, variant: 'subtle' } : undefined
+          },
+          {
+            id: 'orgchart',
+            label: '기업 지배구조 & 조직도',
+            icon: GitBranch
+          },
+          {
+            id: 'audit',
+            label: '동문 & 인맥 건강도 감사',
+            icon: ShieldAlert
+          }
+        ]
+      },
+      {
+        title: '비즈니스 & 딜 실행',
+        tag: 'BIZ',
+        tagColor: '',
+        items: [
+          {
+            id: 'deals',
+            label: '딜 파이프라인 칸반',
+            icon: Briefcase,
+            badge: { text: '3', variant: 'action-amber' }
+          },
+          {
+            id: 'promotion',
+            label: '정기 승진 & 인사 레이더',
+            icon: TrendingUp
+          },
+          {
+            id: 'referral',
+            label: '추천 감사 리워드 (바운티)',
+            icon: Gift
+          },
+          {
+            id: 'team',
+            label: '팀 네트워크 협업 풀',
+            icon: Users
+          }
+        ]
+      },
+      {
+        title: '다차원 공간 & 시계열',
+        tag: 'SPACE',
+        tagColor: '',
+        items: [
+          {
+            id: 'canvas',
+            label: '2D 관계망 캔버스',
+            icon: Share2
+          },
+          {
+            id: 'galaxy',
+            label: '3D 은하수 우주 뷰',
+            icon: Orbit
+          },
+          {
+            id: 'proximity',
+            label: '지리적 근접 레이더',
+            icon: Compass
+          },
+          {
+            id: 'timeline',
+            label: '타임라인 & 세대 분석',
+            icon: Clock
+          },
+          {
+            id: 'general',
+            label: '동문 주소록 & 소모임 (일반 뷰)',
+            icon: GraduationCap
+          }
+        ]
+      }
+    ];
+  }
 
   const renderBadge = (badge: NavItem['badge'], isActive: boolean) => {
     if (!badge) return null;
@@ -167,11 +283,18 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
       {/* LNB Top Header */}
       <div className="flex items-center justify-between px-3 py-3 border-b border-slate-200/80 dark:border-slate-800/80 shrink-0">
         <div className="flex items-center gap-2 overflow-hidden">
-          <span className="w-2 h-2 rounded-full bg-slate-800 shrink-0" />
+          <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${
+            userRole === 'master' ? 'bg-amber-500 animate-pulse' : userRole === 'hidden' ? 'bg-indigo-600' : 'bg-emerald-500'
+          }`} />
           {!isCollapsed && (
-            <span className="text-xs font-bold tracking-tight text-slate-800 dark:text-slate-200 truncate">
-              ConnectWe 콘솔
-            </span>
+            <div className="flex items-center gap-1.5 truncate">
+              <span className="text-xs font-bold tracking-tight text-slate-800 dark:text-slate-200">
+                ConnectWe
+              </span>
+              <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md ${USER_ROLES[userRole].colorScheme.bg} ${USER_ROLES[userRole].colorScheme.text} border ${USER_ROLES[userRole].colorScheme.border}`}>
+                {USER_ROLES[userRole].badgeLabel}
+              </span>
+            </div>
           )}
         </div>
         {/* Desktop Collapse Button */}

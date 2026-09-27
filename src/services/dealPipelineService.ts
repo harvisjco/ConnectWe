@@ -153,8 +153,11 @@ export function generateMockDeals(people: Person[]): BusinessDeal[] {
 /**
  * 로컬 스토리지 로드 및 저장
  */
-export function loadDealsFromStorage(people: Person[]): BusinessDeal[] {
+export function loadDealsFromStorage(people: Person[] = []): BusinessDeal[] {
   try {
+    if (typeof localStorage === 'undefined') {
+      return generateMockDeals(people);
+    }
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) {
       const mocks = generateMockDeals(people);
@@ -176,3 +179,5 @@ export function saveDealsToStorage(deals: BusinessDeal[]): void {
     console.error('Failed to save deals:', e);
   }
 }
+
+export const loadBusinessDeals = loadDealsFromStorage;

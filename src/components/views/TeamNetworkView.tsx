@@ -3,7 +3,8 @@ import { Person } from '../../types/network';
 import { TeamMember, TeamSharedContact } from '../../types/teamNetwork';
 import { 
   Users, ShieldCheck, Search, Share2, 
-  Copy, Building2, Lock, LayoutList, LayoutGrid
+  Copy, Building2, Lock, LayoutList, LayoutGrid,
+  UserPlus, Link2, CheckCircle2, HelpCircle, ArrowRight
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -19,6 +20,9 @@ export const TeamNetworkView: React.FC<TeamNetworkViewProps> = ({
   onShowToast
 }) => {
   const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [isGuideOpen, setIsGuideOpen] = useState(true);
+  const teamInviteCode = 'CW-TEAM-7829-X';
 
   // 팀 멤버 시뮬레이션
   const teamMembers: TeamMember[] = [
@@ -204,11 +208,77 @@ export const TeamNetworkView: React.FC<TeamNetworkViewProps> = ({
           </span>
         }
         actions={
-          <div className="px-3.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200/90 text-slate-600 font-medium text-xs font-mono">
-            팀 총 공유 인맥: <strong className="text-indigo-600 font-bold ml-1">{sharedContacts.length}명</strong>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setIsInviteModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all active:scale-95"
+            >
+              <UserPlus className="w-3.5 h-3.5" />
+              팀원 초대 & 코드 복사
+            </button>
+            <div className="px-3.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200/90 text-slate-600 font-medium text-xs font-mono">
+              팀 총 공유 인맥: <strong className="text-indigo-600 font-bold ml-1">{sharedContacts.length}명</strong>
+            </div>
           </div>
         }
       />
+
+      {/* 3단계 팀 협업 공유 인터랙티브 가이드 배너 */}
+      {isGuideOpen && (
+        <div className="p-5 rounded-2xl bg-gradient-to-r from-indigo-50/90 via-sky-50/80 to-emerald-50/80 border border-indigo-200/80 dark:border-indigo-900/40 relative">
+          <button
+            onClick={() => setIsGuideOpen(false)}
+            className="absolute top-4 right-4 text-xs text-slate-400 hover:text-slate-600 font-bold"
+            title="가이드 닫기"
+          >
+            ✕
+          </button>
+          
+          <div className="flex items-center gap-2 mb-2">
+            <span className="p-1 rounded-lg bg-indigo-600 text-white text-xs">
+              <HelpCircle className="w-3.5 h-3.5" />
+            </span>
+            <h4 className="text-sm font-bold text-slate-900 dark:text-slate-100">
+              팀 네트워크 협업: 팀원들과 함께 쓰는 3단계 프로세스
+            </h4>
+          </div>
+          <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
+            ConnectWe는 팀원의 사생활과 개인 연락처를 침해하지 않으면서도, 조직 전체의 비즈니스 연결력을 극대화하도록 설계되었습니다.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="bg-white/80 dark:bg-slate-900/80 p-3.5 rounded-xl border border-indigo-100 dark:border-indigo-950 space-y-1.5 shadow-2xs">
+              <div className="flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold flex items-center justify-center">1</span>
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200">초대 코드 공유</span>
+              </div>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                팀 고유 워크스페이스 코드(<strong className="text-indigo-600">{teamInviteCode}</strong>)를 복사해 사내 메신저나 슬랙으로 팀원들을 초대합니다.
+              </p>
+            </div>
+
+            <div className="bg-white/80 dark:bg-slate-900/80 p-3.5 rounded-xl border border-indigo-100 dark:border-indigo-950 space-y-1.5 shadow-2xs">
+              <div className="flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-sky-600 text-white text-[11px] font-bold flex items-center justify-center">2</span>
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200">PII 마스킹 자동 보호</span>
+              </div>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                팀원들이 연결되면 개인 휴대전화번호·이메일은 마스킹(010-****-1234) 처리되어 유출 걱정 없이 안전하게 보관됩니다.
+              </p>
+            </div>
+
+            <div className="bg-white/80 dark:bg-slate-900/80 p-3.5 rounded-xl border border-indigo-100 dark:border-indigo-950 space-y-1.5 shadow-2xs">
+              <div className="flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-emerald-600 text-white text-[11px] font-bold flex items-center justify-center">3</span>
+                <span className="text-xs font-bold text-slate-800 dark:text-slate-200">따뜻한 소개(Warm Intro)</span>
+              </div>
+              <p className="text-[11px] text-slate-500 leading-relaxed">
+                만나고 싶은 고객사나 임원이 보이면, 해당 인맥을 가진 팀원에게 [소개 요청] 버튼으로 예의 바르게 브릿지 미팅을 요청합니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 2. 팀원 필터 & 검색 바 + 뷰 모드 스위처 */}
       <div className="p-4 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
@@ -477,6 +547,80 @@ export const TeamNetworkView: React.FC<TeamNetworkViewProps> = ({
               >
                 <Copy className="w-3.5 h-3.5 text-indigo-300" />
                 <span>문구 복사 및 완료</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5. 팀원 초대 & 워크스페이스 코드 모달 */}
+      {isInviteModalOpen && (
+        <div 
+          onClick={() => setIsInviteModalOpen(false)}
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-md rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 space-y-4 shadow-2xl"
+          >
+            <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+              <div className="flex items-center gap-2">
+                <UserPlus className="w-5 h-5 text-indigo-600" />
+                <h3 className="text-base font-bold text-slate-900 dark:text-slate-100">
+                  팀원 초대 & 워크스페이스 코드
+                </h3>
+              </div>
+              <button 
+                onClick={() => setIsInviteModalOpen(false)} 
+                className="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg text-lg font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+              동료 팀원들에게 이 코드를 전달하면, 서로의 인맥 풀을 마스킹 상태로 결합하여 함께 탐색할 수 있습니다.
+            </p>
+
+            <div className="p-4 rounded-2xl bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800 space-y-2">
+              <span className="text-[11px] font-semibold text-indigo-700 dark:text-indigo-300 block">
+                팀 전용 워크스페이스 공유 코드
+              </span>
+              <div className="flex items-center justify-between bg-white dark:bg-slate-900 p-2.5 rounded-xl border border-indigo-200 dark:border-indigo-800">
+                <span className="font-mono font-bold text-indigo-600 dark:text-indigo-400 text-sm tracking-wider">
+                  {teamInviteCode}
+                </span>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(teamInviteCode);
+                    onShowToast(`팀 워크스페이스 코드(${teamInviteCode})가 복사되었습니다!`);
+                  }}
+                  className="px-3 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center gap-1 active:scale-95"
+                >
+                  <Copy className="w-3 h-3" />
+                  코드 복사
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-1.5 pt-2">
+              <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 block">
+                슬랙 / 잔디 / 카카오톡 초대 메시지
+              </span>
+              <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl text-xs text-slate-600 dark:text-slate-400 leading-relaxed border border-slate-200 dark:border-slate-800">
+                {`[ConnectWe 팀 네트워크 초대]\n우리 팀의 소중한 인맥을 안전하게 공유하고, 필요한 C-Level 임원 소개를 요청할 수 있는 팀 워크스페이스에 초대합니다.\n\n• 초대 코드: ${teamInviteCode}\n• 접속 링크: https://connectwe.app/workspace/join`}
+              </div>
+              <button
+                onClick={() => {
+                  const inviteMsg = `[ConnectWe 팀 네트워크 초대]\n우리 팀의 소중한 인맥을 안전하게 공유하고, 필요한 C-Level 임원 소개를 요청할 수 있는 팀 워크스페이스에 초대합니다.\n\n• 초대 코드: ${teamInviteCode}\n• 접속 링크: https://connectwe.app/workspace/join`;
+                  navigator.clipboard.writeText(inviteMsg);
+                  onShowToast('팀 초대 전체 문구가 클립보드에 복사되었습니다!');
+                  setIsInviteModalOpen(false);
+                }}
+                className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-95"
+              >
+                <Link2 className="w-3.5 h-3.5 text-indigo-300" />
+                초대 메시지 전체 복사
               </button>
             </div>
           </div>

@@ -36,6 +36,7 @@ interface ExecutiveCommandCenterViewProps {
   onOpenTeaBundle?: (clusterId?: GeoClusterId) => void;
   onOpenWarmIntroConnector?: (personA?: Person, personB?: Person) => void;
   onOpenWeeklyBrief?: () => void;
+  onOpenMeetingBriefing?: (person: Person) => void;
   onShowToast: (msg: string) => void;
   onNavigateView: (viewKey: string) => void;
 }
@@ -53,6 +54,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
   onOpenTeaBundle,
   onOpenWarmIntroConnector,
   onOpenWeeklyBrief,
+  onOpenMeetingBriefing,
   onShowToast,
   onNavigateView,
 }) => {
@@ -183,6 +185,20 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
           >
             <Camera className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             <span>명함 실시간 스캔</span>
+          </button>
+        )}
+
+        {onOpenMeetingBriefing && (
+          <button
+            onClick={() => {
+              const defaultTarget = people.find(p => p.sourceType === 'DART_FACT') || people[0];
+              if (defaultTarget) onOpenMeetingBriefing(defaultTarget);
+            }}
+            className="px-3 py-1.5 rounded-xl bg-purple-50/80 hover:bg-purple-100/90 text-purple-800 dark:bg-purple-950/40 dark:text-purple-300 font-semibold text-xs border border-purple-200/80 dark:border-purple-800/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 shrink-0 cursor-pointer"
+            title="미팅 10분 전 DART 공시, 공통 알럼나이 1촌, 딜 파이프라인, 아이스브레이킹 스마트 브리핑"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+            <span>미팅 10분 전 브리핑</span>
           </button>
         )}
 

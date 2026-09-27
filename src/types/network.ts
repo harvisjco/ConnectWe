@@ -30,14 +30,17 @@ export interface AcademicBackground {
 export interface DartFactInfo {
   corpCode: string;
   stockName: string;
+  stockCode?: string;
   isPublicDirector: boolean;
   registeredRole: string; // 예: 사내이사, 미등기임원, 대표이사
+  registeredTitle?: string;
   registeredTerm?: string;
   verifiedAt: string;
   ownershipShares?: number;
   rceptNo?: string;
   remuneration?: string;
   reportLabel?: string;
+  notes?: string;
 }
 
 export type ActivityLogType = 'call' | 'meeting' | 'email' | 'note';
@@ -61,6 +64,7 @@ export interface Person {
   email: string;
   directPhone?: string;
   birthYear?: number;
+  birthday?: string; // MM-DD 예: '05-18'
   estimatedAgeGroup: AgeGroup;
   isAgeEstimated: boolean;
   primaryDomain: string; // 예: 'AI/LLM', '클라우드 인프라', 'VC 투자', '반도체 설계', 'M&A/재무'
@@ -77,6 +81,16 @@ export interface Person {
   activityLogs?: ActivityLog[];
   address?: string;
   website?: string;
+  pastCompanies?: string[];
+  clubs?: string[];
+  educationLevels?: {
+    elementary?: string;
+    middle?: string;
+    high?: string;
+    university?: string;
+    gradSchool?: string;
+    major?: string;
+  };
 }
 
 export interface CompanySummary {

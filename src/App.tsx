@@ -58,6 +58,7 @@ import { ExecutiveWeeklyBriefModal } from './components/modals/ExecutiveWeeklyBr
 import { DataVaultModal } from './components/modals/DataVaultModal';
 import { RelationshipHeatmapModal } from './components/modals/RelationshipHeatmapModal';
 import { GratitudeSettlementModal } from './components/modals/GratitudeSettlementModal';
+import { MeetingPrepRoomModal } from './components/radar/MeetingPrepRoomModal';
 import { BusinessDeal } from './services/dealPipelineService';
 import { maskPerson } from './services/privacyShieldService';
 import { GeoClusterId } from './services/geoProximityService';
@@ -127,6 +128,7 @@ export const App: React.FC = () => {
   const [isCopilotOpen, setIsCopilotOpen] = useState(false);
   const [bridgeTargetPerson, setBridgeTargetPerson] = useState<Person | null>(null);
   const [dossierTargetPerson, setDossierTargetPerson] = useState<Person | null>(null);
+  const [meetingPrepTargetPerson, setMeetingPrepTargetPerson] = useState<Person | null>(null);
   const [cadenceTarget, setCadenceTarget] = useState<{ person: Person; daysSince: number } | null>(null);
   const [teaBundleClusterId, setTeaBundleClusterId] = useState<GeoClusterId | null>(null);
   const [warmIntroConnectorTargets, setWarmIntroConnectorTargets] = useState<{ personA?: Person; personB?: Person } | null>(null);
@@ -363,6 +365,7 @@ export const App: React.FC = () => {
                   onOpenTeaBundle={(clusterId) => setTeaBundleClusterId(clusterId || 'gangnam_teheran')}
                   onOpenWarmIntroConnector={(personA, personB) => setWarmIntroConnectorTargets({ personA, personB })}
                   onOpenWeeklyBrief={() => setIsWeeklyBriefOpen(true)}
+                  onOpenMeetingBriefing={(target) => setMeetingPrepTargetPerson(target)}
                   onShowToast={showToast}
                   onNavigateView={handleNavigateView}
                 />
@@ -496,6 +499,22 @@ export const App: React.FC = () => {
         onOpenFollowUp={(target) => {
           setFollowUpTargetPerson(target);
           setDebriefResultForFollowUp(undefined);
+        }}
+        onOpenMeetingBriefing={(target) => {
+          setSelectedPerson(null);
+          setMeetingPrepTargetPerson(target);
+        }}
+      />
+
+      {/* C-Level Meeting Prep Room Modal (1-Page Brief) */}
+      <MeetingPrepRoomModal
+        isOpen={!!meetingPrepTargetPerson}
+        person={meetingPrepTargetPerson}
+        allPeople={people}
+        onClose={() => setMeetingPrepTargetPerson(null)}
+        onSelectPerson={(p) => {
+          setMeetingPrepTargetPerson(null);
+          setSelectedPerson(p);
         }}
       />
 
