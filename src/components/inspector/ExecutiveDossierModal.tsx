@@ -100,6 +100,15 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
 
   const icebreakers = generateIcebreakers();
 
+  // ESC 키 닫기 핸들러
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   // 인쇄 실행
   const handlePrint = () => {
     window.print();
@@ -108,6 +117,7 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
 
   return (
     <div 
+      data-testid="executive-dossier-modal"
       onClick={onClose}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200"
     >
@@ -137,8 +147,10 @@ export const ExecutiveDossierModal: React.FC<ExecutiveDossierModalProps> = ({
               <span>A4 리포트 인쇄 / PDF</span>
             </button>
             <button
+              data-testid="close-dossier-modal"
               onClick={onClose}
               className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
+              title="닫기 (ESC)"
             >
               <X className="w-5 h-5" />
             </button>

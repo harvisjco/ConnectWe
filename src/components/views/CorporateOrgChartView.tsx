@@ -28,7 +28,6 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
   people,
   onSelectPerson,
   onOpenWarmIntro,
-  onOpenDossier,
 }) => {
   const corporations = useMemo(() => getAvailableCorporations(), []);
 
@@ -171,11 +170,7 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
         connectionChannel: 'dart',
         memo: `[DART 정기공시 임원] 담당업무: ${node.chargeJob || '-'} | 등기여부: ${node.isRegistered ? '등기' : '미등기'}`
       };
-      if (onOpenDossier) {
-        onOpenDossier(syntheticPerson);
-      } else {
-        onSelectPerson(syntheticPerson);
-      }
+      onSelectPerson(syntheticPerson);
     }
   };
 

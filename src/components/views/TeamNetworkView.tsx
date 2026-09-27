@@ -9,11 +9,13 @@ import { ViewHeader } from '../ui';
 
 interface TeamNetworkViewProps {
   people: Person[];
+  onSelectPerson: (person: Person) => void;
   onShowToast: (msg: string) => void;
 }
 
 export const TeamNetworkView: React.FC<TeamNetworkViewProps> = ({
   people,
+  onSelectPerson,
   onShowToast
 }) => {
   const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
@@ -150,6 +152,43 @@ export const TeamNetworkView: React.FC<TeamNetworkViewProps> = ({
     setRequestTarget(null);
   };
 
+  // 인맥 상세 중앙 딤 모달(PersonInspectorModal) 오픈 핸들러
+  const handlePersonClick = (c: TeamSharedContact) => {
+    const matched = people.find(p => p.name === c.targetName || (p.currentCompany === c.targetCompany && p.currentTitle === c.targetTitle));
+    if (matched) {
+      onSelectPerson(matched);
+    } else {
+      const synthetic: Person = {
+        id: c.id,
+        name: c.targetName,
+        currentCompany: c.targetCompany,
+        currentDepartment: '본사',
+        currentTitle: c.targetTitle,
+        mobile: c.maskedMobile,
+        email: c.maskedEmail,
+        primaryDomain: '경영/임원',
+        sourceType: c.isDartExecutive ? 'DART_FACT' : 'SOURCE_DATA',
+        closeness: 2,
+        isStale: false,
+        skills: [c.targetTitle],
+        careers: [{
+          id: `c-${c.id}`,
+          companyName: c.targetCompany,
+          title: c.targetTitle,
+          startYear: new Date().getFullYear(),
+          isCurrent: true,
+          source: c.isDartExecutive ? 'DART_FACT' : 'SOURCE_DATA'
+        }],
+        academics: [],
+        estimatedAgeGroup: '40s',
+        isAgeEstimated: true,
+        connectionChannel: 'manual',
+        memo: `[팀 공유 인맥] 보유 팀원: ${c.ownerMemberName} | 관계 강도: ${c.relationshipStrength === 'STRONG' ? '높은 신뢰' : '우호적'} | 최근 교류: ${c.lastInteractedAt}`
+      };
+      onSelectPerson(synthetic);
+    }
+  };
+
   return (
     <div className="space-y-4 animate-in fade-in duration-300">
       {/* 1. Standardized Header */}
@@ -261,8 +300,12 @@ export const TeamNetworkView: React.FC<TeamNetworkViewProps> = ({
                   <tr key={c.id} className="hover:bg-slate-50/90 transition-colors">
                     {/* 1. Name & Company */}
                     <td className="py-3 px-3.5 whitespace-nowrap">
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-bold text-slate-900">{c.targetName}</span>
+                      <div 
+                        onClick={() => handlePersonClick(c)}
+                        className="flex items-center gap-1.5 cursor-pointer group"
+                        title="인맥 심층 정보 및 지능형 액션 모달 열기"
+                      >
+                        <span className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{c.targetName}</span>
                         <span className="text-[11px] text-slate-500">({c.targetCompany})</span>
                       </div>
                     </td>
@@ -345,9 +388,13 @@ export const TeamNetworkView: React.FC<TeamNetworkViewProps> = ({
                 </div>
 
                 {/* 인물 정보 */}
-                <div>
+                <div 
+                  onClick={() => handlePersonClick(c)}
+                  className="cursor-pointer group hover:opacity-85 transition-opacity"
+                  title="인맥 심층 정보 및 지능형 액션 모달 열기"
+                >
                   <div className="flex items-baseline justify-between">
-                    <h4 className="text-sm font-bold text-slate-900">{c.targetName}</h4>
+                    <h4 className="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{c.targetName}</h4>
                     <span className="text-xs text-slate-500 font-normal truncate max-w-[140px]">{c.targetTitle}</span>
                   </div>
                   <div className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">

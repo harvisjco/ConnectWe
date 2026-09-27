@@ -137,6 +137,7 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
 
   return (
     <div 
+      data-testid="person-inspector-modal"
       onClick={onClose}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200"
     >
@@ -218,6 +219,7 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
               <Trash2 className="w-4 h-4" />
             </button>
             <button
+              data-testid="close-person-modal"
               onClick={onClose}
               className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
               title="닫기 (ESC)"

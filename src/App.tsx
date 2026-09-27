@@ -422,6 +422,7 @@ export const App: React.FC = () => {
               {activeView === 'team' && (
                 <TeamNetworkView
                   people={people}
+                  onSelectPerson={setSelectedPerson}
                   onShowToast={showToast}
                 />
               )}

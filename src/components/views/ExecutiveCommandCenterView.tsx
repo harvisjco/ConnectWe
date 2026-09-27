@@ -280,9 +280,9 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
               {nearbyPeople.map(p => (
                 <div key={p.id} className="p-2.5 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/70 dark:border-slate-750 flex items-center justify-between gap-2 text-xs">
                   <div 
-                    onClick={() => onOpenDossier ? onOpenDossier(p) : onSelectPerson(p)}
+                    onClick={() => onSelectPerson(p)}
                     className="min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
-                    title="미팅 준비 1-Page 브리프 열기"
+                    title="인맥 심층 정보 및 지능형 액션 모달 열기"
                   >
                     <div className="font-semibold text-slate-800 dark:text-slate-200 truncate flex items-center gap-1">
                       <span>{p.name}</span>
@@ -343,7 +343,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                   onClick={() => {
                     const matched = people.find(p => p.name === uncelebratedPromos[0].personName);
                     if (matched) {
-                      onOpenDossier ? onOpenDossier(matched) : onSelectPerson(matched);
+                      onSelectPerson(matched);
                     }
                   }}
                   className="cursor-pointer group/title"
@@ -566,7 +566,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
             {topConnectors.map(({ person, powerScore, tier }) => (
               <div
                 key={person.id}
-                onClick={() => onOpenDossier ? onOpenDossier(person) : onSelectPerson(person)}
+                onClick={() => onSelectPerson(person)}
                 className="p-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200/70 hover:border-slate-300 cursor-pointer transition-all flex items-center justify-between group active:scale-[0.98]"
               >
                 <div className="min-w-0">

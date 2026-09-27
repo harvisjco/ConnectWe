@@ -223,9 +223,35 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
                         <span className="font-mono text-blue-700 font-bold bg-blue-50 px-1.5 py-0.2 rounded border border-blue-150">
                           {deal.healthScore}%
                         </span>
-                        <span className="text-slate-400 text-[10px]">
-                          키맨 {deal.stakeholders.length}
-                        </span>
+                        {deal.stakeholders.length > 0 ? (
+                          <div className="flex items-center gap-1">
+                            {deal.stakeholders.slice(0, 1).map(s => {
+                              const p = people.find(item => item.id === s.personId);
+                              return (
+                                <button
+                                  key={s.personId}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (p) onSelectPerson(p);
+                                  }}
+                                  className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 hover:bg-indigo-50 text-slate-700 hover:text-indigo-700 border border-slate-200/80 transition-colors font-medium truncate max-w-[80px] cursor-pointer"
+                                  title={`${s.personName} 상세 프로필 모달 열기`}
+                                >
+                                  {s.personName}
+                                </button>
+                              );
+                            })}
+                            {deal.stakeholders.length > 1 && (
+                              <span className="text-slate-400 text-[10px]">
+                                +{deal.stakeholders.length - 1}
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <span className="text-slate-400 text-[10px]">
+                            키맨 0
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -326,9 +352,13 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
                         key={s.personId}
                         className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs"
                       >
-                        <div>
+                        <div 
+                          onClick={() => originalPerson && onSelectPerson(originalPerson)}
+                          className="cursor-pointer hover:opacity-80 transition-opacity"
+                          title="키맨 상세 프로필 모달 열기"
+                        >
                           <div className="flex items-center gap-1.5">
-                            <span className="font-bold text-slate-900">{s.personName}</span>
+                            <span className="font-bold text-slate-900 hover:text-blue-600 transition-colors">{s.personName}</span>
                             <span className="text-slate-500">({s.title})</span>
                             <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold ${
                               s.role === 'DECISION_MAKER' 

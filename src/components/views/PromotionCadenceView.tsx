@@ -26,7 +26,6 @@ interface PromotionCadenceViewProps {
 export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
   people,
   onSelectPerson,
-  onOpenDossier,
   onShowToast
 }) => {
   const [promotions, setPromotions] = useState<PromotionEvent[]>(() => loadPromotionEvents(people));
@@ -216,8 +215,9 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
                         {/* 2. Person & Company */}
                         <td className="py-3 px-3 whitespace-nowrap">
                           <div 
-                            onClick={() => matchedPerson && (onOpenDossier ? onOpenDossier(matchedPerson) : onSelectPerson(matchedPerson))}
+                            onClick={() => matchedPerson && onSelectPerson(matchedPerson)}
                             className="cursor-pointer group flex items-center gap-1.5"
+                            title="인맥 심층 정보 및 지능형 액션 모달 열기"
                           >
                             <span className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
                               {promo.personName}
