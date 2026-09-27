@@ -189,8 +189,10 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
       closeness: 2,
       isStale: false,
       lastContactDate: new Date().toISOString().slice(0, 10),
-      memo: '스마트폰 카메라 명함 스캔으로 등록됨',
-      skills: [editDomain],
+      memo: extracted?.address 
+        ? `명함 스캔 등록 (소재지: ${extracted.address}${extracted.tel ? `, Tel: ${extracted.tel}` : ''})` 
+        : (extracted?.tel ? `명함 스캔 등록 (Tel: ${extracted.tel})` : '명함 지능형 스캔으로 등록됨'),
+      skills: extracted?.englishName ? [editDomain, extracted.englishName] : [editDomain],
       careers: [{
         id: `career-${Date.now()}`,
         companyName: editCompany.trim(),
