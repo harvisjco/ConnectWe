@@ -143,7 +143,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
           </div>
         }
         actions={
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2 shrink-0">
             {onOpenWeeklyBrief && (
               <button
                 onClick={onOpenWeeklyBrief}
@@ -154,86 +154,101 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
                 <span>주간 1-Page 리포트</span>
               </button>
             )}
-            {onOpenTeaBundle && (
-              <button
-                onClick={() => onOpenTeaBundle(selectedClusterId)}
-                className="px-3.5 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-800 font-semibold text-xs border border-sky-200/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
-                title="외근 방문 거점 선택 및 반경 내 인맥 1-Click 티타임 번들러"
-              >
-                <Compass className="w-3.5 h-3.5 text-sky-700" />
-                <span>외근 티타임 번들</span>
-              </button>
-            )}
-            {onOpenWarmIntroConnector && (
-              <button
-                onClick={() => onOpenWarmIntroConnector()}
-                className="px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-800 font-semibold text-xs border border-indigo-200/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
-                title="내 주소록 내 시너지 인연을 잇는 Double Opt-in 지능형 커넥터"
-              >
-                <Share2 className="w-3.5 h-3.5 text-indigo-700" />
-                <span>인연 연결 주선</span>
-              </button>
-            )}
-            {onOpenScanner && (
-              <button
-                onClick={onOpenScanner}
-                className="px-3.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold text-xs border border-emerald-200/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
-                title="스마트폰 실시간 카메라 명함 OCR 및 DART 임원 1초 결합"
-              >
-                <Camera className="w-3.5 h-3.5 text-emerald-700" />
-                <span>명함 실시간 스캔</span>
-              </button>
-            )}
-            {onOpenSalon && (
-              <button
-                onClick={onOpenSalon}
-                className="px-3.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 font-semibold text-xs border border-amber-200/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
-                title="7대 거점 및 인재 클러스터 기반 프라이빗 티 살롱 기획"
-              >
-                <Coffee className="w-3.5 h-3.5 text-amber-700" />
-                <span>프라이빗 살롱 기획</span>
-              </button>
-            )}
-            {onOpenDebrief && (
-              <button
-                onClick={() => {
-                  const defaultTarget = people.find(p => p.closeness === 2) || people[0];
-                  if (defaultTarget) onOpenDebrief(defaultTarget);
-                }}
-                className="px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold text-xs border border-indigo-200/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
-                title="오늘 진행한 미팅 1분 음성/텍스트 회고 및 AI 액션 아이템 추출"
-              >
-                <Mic className="w-3.5 h-3.5 text-indigo-600" />
-                <span>오늘 미팅 1분 회고</span>
-              </button>
-            )}
             {onOpenCloudSync && (
               <button
                 onClick={onOpenCloudSync}
-                className="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-medium text-xs border border-sky-200/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+                className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium text-xs border border-slate-200/90 dark:border-slate-700 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
                 title="Supabase 클라우드 실시간 암호화 백업 & 복원"
               >
-                <Cloud className="w-3.5 h-3.5 text-sky-600" />
-                <span>클라우드 동기화</span>
+                <Cloud className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+                <span className="hidden sm:inline">클라우드 동기화</span>
               </button>
             )}
-            <button
-              onClick={() => onNavigateView('deals')}
-              className="px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
-            >
-              <Briefcase className="w-3.5 h-3.5" />
-              <span>전략 딜 협업 룸</span>
-            </button>
-            <button
-              onClick={() => onNavigateView('audit')}
-              className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 font-medium text-xs border border-slate-200/90 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
-            >
-              <span>20대 기업 커버리지</span>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
-            </button>
           </div>
         }
       />
+
+      {/* 2. Executive Quick Command Toolbar (사령탑 퀵 커맨드 바) */}
+      <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1 -mt-1">
+        <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0 mr-1 flex items-center gap-1">
+          <Zap className="w-3 h-3 text-amber-500" />
+          <span>Quick Actions</span>
+        </span>
+
+        {onOpenScanner && (
+          <button
+            onClick={onOpenScanner}
+            className="px-3 py-1.5 rounded-xl bg-emerald-50/80 hover:bg-emerald-100/90 text-emerald-800 dark:bg-emerald-950/40 dark:text-emerald-300 font-semibold text-xs border border-emerald-200/80 dark:border-emerald-800/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 shrink-0 cursor-pointer"
+            title="스마트폰 실시간 카메라 명함 OCR 및 DART 임원 1초 결합"
+          >
+            <Camera className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>명함 실시간 스캔</span>
+          </button>
+        )}
+
+        {onOpenDebrief && (
+          <button
+            onClick={() => {
+              const defaultTarget = people.find(p => p.closeness === 2) || people[0];
+              if (defaultTarget) onOpenDebrief(defaultTarget);
+            }}
+            className="px-3 py-1.5 rounded-xl bg-indigo-50/80 hover:bg-indigo-100/90 text-indigo-800 dark:bg-indigo-950/40 dark:text-indigo-300 font-semibold text-xs border border-indigo-200/80 dark:border-indigo-800/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 shrink-0 cursor-pointer"
+            title="오늘 진행한 미팅 1분 음성/텍스트 회고 및 AI 액션 아이템 추출"
+          >
+            <Mic className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+            <span>오늘 미팅 1분 회고</span>
+          </button>
+        )}
+
+        {onOpenTeaBundle && (
+          <button
+            onClick={() => onOpenTeaBundle(selectedClusterId)}
+            className="px-3 py-1.5 rounded-xl bg-sky-50/80 hover:bg-sky-100/90 text-sky-800 dark:bg-sky-950/40 dark:text-sky-300 font-semibold text-xs border border-sky-200/80 dark:border-sky-800/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 shrink-0 cursor-pointer"
+            title="외근 방문 거점 선택 및 반경 내 인맥 1-Click 티타임 번들러"
+          >
+            <Compass className="w-3.5 h-3.5 text-sky-600 dark:text-sky-400" />
+            <span>외근 티타임 번들</span>
+          </button>
+        )}
+
+        {onOpenWarmIntroConnector && (
+          <button
+            onClick={() => onOpenWarmIntroConnector()}
+            className="px-3 py-1.5 rounded-xl bg-purple-50/80 hover:bg-purple-100/90 text-purple-800 dark:bg-purple-950/40 dark:text-purple-300 font-semibold text-xs border border-purple-200/80 dark:border-purple-800/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 shrink-0 cursor-pointer"
+            title="내 주소록 내 시너지 인연을 잇는 Double Opt-in 지능형 커넥터"
+          >
+            <Share2 className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+            <span>인연 연결 주선</span>
+          </button>
+        )}
+
+        {onOpenSalon && (
+          <button
+            onClick={onOpenSalon}
+            className="px-3 py-1.5 rounded-xl bg-amber-50/80 hover:bg-amber-100/90 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300 font-semibold text-xs border border-amber-200/80 dark:border-amber-800/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 shrink-0 cursor-pointer"
+            title="7대 거점 및 인재 클러스터 기반 프라이빗 티 살롱 기획"
+          >
+            <Coffee className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+            <span>프라이빗 살롱 기획</span>
+          </button>
+        )}
+
+        <button
+          onClick={() => onNavigateView('deals')}
+          className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-xs border border-slate-200/80 dark:border-slate-700 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 shrink-0 cursor-pointer"
+        >
+          <Briefcase className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
+          <span>전략 딜 협업 룸</span>
+        </button>
+
+        <button
+          onClick={() => onNavigateView('audit')}
+          className="px-3 py-1.5 rounded-xl bg-white hover:bg-slate-50 dark:bg-slate-900 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium text-xs border border-slate-200/90 dark:border-slate-750 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 shrink-0 cursor-pointer"
+        >
+          <span>20대 기업 커버리지</span>
+          <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
+        </button>
+      </div>
 
       {/* 2. Today's 4 Prime Action Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
