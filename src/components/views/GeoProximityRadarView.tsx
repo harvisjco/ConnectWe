@@ -15,12 +15,14 @@ import { ViewHeader } from '../ui';
 interface GeoProximityRadarViewProps {
   people: Person[];
   onSelectPerson: (person: Person) => void;
+  onOpenTeaBundle?: (clusterId: GeoClusterId) => void;
   onShowToast: (msg: string) => void;
 }
 
 export const GeoProximityRadarView: React.FC<GeoProximityRadarViewProps> = ({
   people,
   onSelectPerson,
+  onOpenTeaBundle,
   onShowToast
 }) => {
   const [selectedClusterId, setSelectedClusterId] = useState<GeoClusterId>('gangnam_teheran');
@@ -170,6 +172,17 @@ ${contextualNote}
                 ))}
               </div>
             </div>
+
+            {onOpenTeaBundle && (
+              <button
+                onClick={() => onOpenTeaBundle(selectedClusterId)}
+                className="px-3.5 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-800 border border-sky-200/80 font-semibold text-xs transition-all flex items-center gap-1.5 shadow-2xs active:scale-[0.98] cursor-pointer"
+                title="이 거점 방문 시 함께 만날 최적의 인맥 2~3명 1-Click 번들링"
+              >
+                <Compass className="w-3.5 h-3.5 text-sky-600" />
+                <span>외근 티타임 번들 추천</span>
+              </button>
+            )}
 
             {/* View Mode Switcher */}
             <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs">

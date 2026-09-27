@@ -52,6 +52,9 @@ import { FollowUpComposerModal } from './components/radar/FollowUpComposerModal'
 import { DebriefResult } from './services/meetingDebriefService';
 import { PrivateSalonModal } from './components/modals/PrivateSalonModal';
 import { CadenceGreetingModal } from './components/modals/CadenceGreetingModal';
+import { ProximityTeaBundleModal } from './components/radar/ProximityTeaBundleModal';
+import { WarmIntroConnectorModal } from './components/bridge/WarmIntroConnectorModal';
+import { GeoClusterId } from './services/geoProximityService';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 
 import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2 } from 'lucide-react';
@@ -119,6 +122,8 @@ export const App: React.FC = () => {
   const [bridgeTargetPerson, setBridgeTargetPerson] = useState<Person | null>(null);
   const [dossierTargetPerson, setDossierTargetPerson] = useState<Person | null>(null);
   const [cadenceTarget, setCadenceTarget] = useState<{ person: Person; daysSince: number } | null>(null);
+  const [teaBundleClusterId, setTeaBundleClusterId] = useState<GeoClusterId | null>(null);
+  const [warmIntroConnectorTargets, setWarmIntroConnectorTargets] = useState<{ personA?: Person; personB?: Person } | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // 미축하 영전 건수 (모바일 바텀바 배지용)
@@ -316,6 +321,8 @@ export const App: React.FC = () => {
                   onOpenCloudSync={() => setIsCloudSyncOpen(true)}
                   onOpenScanner={() => setIsCardScannerOpen(true)}
                   onOpenCadenceGreeting={(person, daysSince) => setCadenceTarget({ person, daysSince })}
+                  onOpenTeaBundle={(clusterId) => setTeaBundleClusterId(clusterId || 'gangnam_teheran')}
+                  onOpenWarmIntroConnector={(personA, personB) => setWarmIntroConnectorTargets({ personA, personB })}
                   onShowToast={showToast}
                   onNavigateView={handleNavigateView}
                 />
@@ -401,6 +408,7 @@ export const App: React.FC = () => {
                 <GeoProximityRadarView
                   people={people}
                   onSelectPerson={setSelectedPerson}
+                  onOpenTeaBundle={(clusterId) => setTeaBundleClusterId(clusterId)}
                   onShowToast={showToast}
                 />
               )}
@@ -567,6 +575,33 @@ export const App: React.FC = () => {
           daysSinceLastContact={cadenceTarget.daysSince}
           onUpdatePerson={handleUpdatePerson}
           onClose={() => setCadenceTarget(null)}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* Proximity Tea Bundle Modal (거점 외근 동선 지능형 티타임 번들러) */}
+      {teaBundleClusterId && (
+        <ProximityTeaBundleModal
+          people={people}
+          initialClusterId={teaBundleClusterId}
+          onClose={() => setTeaBundleClusterId(null)}
+          onSelectPerson={setSelectedPerson}
+          onNavigateToProximityMap={(_clusterId) => {
+            setTeaBundleClusterId(null);
+            handleNavigateView('proximity');
+          }}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* Warm Intro Connector Modal (두 인연을 잇는 Double Opt-in 지능형 커넥터) */}
+      {warmIntroConnectorTargets && (
+        <WarmIntroConnectorModal
+          people={people}
+          initialPersonA={warmIntroConnectorTargets.personA}
+          initialPersonB={warmIntroConnectorTargets.personB}
+          onClose={() => setWarmIntroConnectorTargets(null)}
+          onSelectPerson={setSelectedPerson}
           onShowToast={showToast}
         />
       )}

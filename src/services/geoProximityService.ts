@@ -154,3 +154,123 @@ export function getGeoClusterBreakdown(people: Person[]): ClusterMatchResult[] {
     };
   });
 }
+
+export interface ProximityTeaBundleItem {
+  person: Person;
+  daysSinceContact: number;
+  recommendScore: number;
+  matchReasons: string[];
+}
+
+export interface ProximityTeaBundleResult {
+  cluster: GeoCluster;
+  bundleItems: ProximityTeaBundleItem[];
+  totalInCluster: number;
+}
+
+/**
+ * 특정 거점 방문 시 동선에 맞춰 함께 챙길 2~3명의 인연 번들 선별
+ */
+export function getProximityTeaBundles(people: Person[], clusterId: GeoClusterId): ProximityTeaBundleResult {
+  const cluster = GEO_CLUSTERS.find(c => c.id === clusterId) || GEO_CLUSTERS[0];
+  const clusterPeople = people.filter(p => matchPersonToCluster(p) === clusterId);
+
+  const scoredItems: ProximityTeaBundleItem[] = clusterPeople.map(person => {
+    let score = 50;
+    const reasons: string[] = [];
+
+    // 1. 소통 골든타임 경과 일수 계산
+    let daysSince = 30;
+    if (person.lastContactDate) {
+      const last = new Date(person.lastContactDate).getTime();
+      const now = Date.now();
+      daysSince = Math.max(0, Math.floor((now - last) / (1000 * 60 * 60 * 24)));
+    } else {
+      daysSince = 90; // 미기록 시 기본 90일로 처리
+    }
+
+    if (daysSince >= 180) {
+      score += 40;
+      reasons.push(`마지막 교류 후 ${daysSince}일 경과 (소통 주기 최우선 갱신 요망)`);
+    } else if (daysSince >= 60) {
+      score += 25;
+      reasons.push(`마지막 교류 후 ${daysSince}일 경과 (소통 골든타임 도래)`);
+    }
+
+    // 2. 친밀도 (핵심 1촌 우대)
+    if (person.closeness === 2) {
+      score += 20;
+      reasons.push('핵심 교류 1촌 파트너');
+    } else if (person.closeness === 1) {
+      score += 15;
+      reasons.push('직접 연결 1촌 인맥');
+    }
+
+    // 3. DART FACT 공시 임원
+    if (person.sourceType === 'DART_FACT' || !!person.dartInfo?.isPublicDirector) {
+      score += 15;
+      reasons.push('DART 공시 공식 임원 재직');
+    }
+
+    // 4. 알럼나이 또는 풍부한 경력
+    if (person.careers && person.careers.length >= 2) {
+      score += 10;
+      reasons.push(`풍부한 커리어 배경 (${person.careers[0].companyName} 등)`);
+    }
+
+    return {
+      person,
+      daysSinceContact: daysSince,
+      recommendScore: score,
+      matchReasons: reasons
+    };
+  });
+
+  // 추천 점수 내림차순 정렬 후 상위 3명 선별
+  scoredItems.sort((a, b) => b.recommendScore - a.recommendScore);
+
+  return {
+    cluster,
+    bundleItems: scoredItems.slice(0, 3),
+    totalInCluster: clusterPeople.length
+  };
+}
+
+export type ProximityTeaType = 'CASUAL_TEA' | 'LUNCH_MEETING' | 'SYNERGY_TOUCH';
+
+/**
+ * 거점 외근 동선 맞춤형 티타임 제안 카피 생성
+ */
+export function generateProximityTeaCopy(
+  person: Person,
+  cluster: GeoCluster,
+  type: ProximityTeaType = 'CASUAL_TEA',
+  senderName: string = '홍길동'
+): string {
+  const name = person.name;
+  const title = person.currentTitle;
+  const company = person.currentCompany;
+  const locName = cluster.shortName;
+
+  if (type === 'CASUAL_TEA') {
+    return `${name} ${title}님, 평안하신지요? ${senderName}입니다.
+이번 주 ${locName} 인근에 업무 미팅 일정이 예정되어 있어 인사드립니다.
+${company}에서 늘 훌륭한 성과 이끌어주시는 모습 멀리서나마 깊이 응원하고 있습니다.
+혹시 일정 중 이동하시는 동선에 무리가 없으시다면, 인근에서 15~20분 내외로 가볍게 차 한 잔 나누며 안부 여쭙고 싶습니다.
+편하신 날짜나 시간을 편하게 회신해 주시면 감사히 맞추겠습니다. 늘 건강 유의하세요!`;
+  }
+
+  if (type === 'LUNCH_MEETING') {
+    return `${name} ${title}님께, 안녕하십니까. ${senderName}입니다.
+다름이 아니오라 이번 주 ${locName}에 방문 일정이 잡혀, 평소 많은 가르침을 주시는 ${name}님 생각이 나 연락드리게 되었습니다.
+${company}의 최근 역동적인 행보와 관련하여 근황도 여쭙고, 편안한 점심 식사 자리나 여유로운 티타임을 모실 수 있다면 큰 영광이겠습니다.
+점심 일정 중 여유가 되시는 날을 편하게 말씀 주시면 감사하겠습니다.`;
+  }
+
+  // SYNERGY_TOUCH
+  return `${name} ${title}님, 안녕하십니까! ${senderName}입니다.
+이번에 저희 팀에서 추진 중인 프로젝트와 관련하여 ${locName}에 방문하게 되었습니다.
+${company}에서 이끄시는 영역과 시너지를 모색해볼 수 있는 좋은 기회일 것 같아, 현장 방문 길에 15분 정도 가볍게 인사를 나누고 고견을 여쭙고자 합니다.
+부담 없이 편하신 시간에 차 한 잔 나누실 수 있으실지 정중히 여쭙니다. 일정 회신 주시면 조율하겠습니다!`;
+}
+

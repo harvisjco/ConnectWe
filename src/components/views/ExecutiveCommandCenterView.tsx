@@ -33,6 +33,8 @@ interface ExecutiveCommandCenterViewProps {
   onOpenCloudSync?: () => void;
   onOpenScanner?: () => void;
   onOpenCadenceGreeting?: (person: Person, daysSince: number) => void;
+  onOpenTeaBundle?: (clusterId?: GeoClusterId) => void;
+  onOpenWarmIntroConnector?: (personA?: Person, personB?: Person) => void;
   onShowToast: (msg: string) => void;
   onNavigateView: (viewKey: string) => void;
 }
@@ -47,6 +49,8 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
   onOpenCloudSync,
   onOpenScanner,
   onOpenCadenceGreeting,
+  onOpenTeaBundle,
+  onOpenWarmIntroConnector,
   onShowToast,
   onNavigateView,
 }) => {
@@ -138,6 +142,26 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
         }
         actions={
           <div className="flex flex-wrap items-center gap-2 shrink-0">
+            {onOpenTeaBundle && (
+              <button
+                onClick={() => onOpenTeaBundle(selectedClusterId)}
+                className="px-3.5 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-800 font-semibold text-xs border border-sky-200/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+                title="외근 방문 거점 선택 및 반경 내 인맥 1-Click 티타임 번들러"
+              >
+                <Compass className="w-3.5 h-3.5 text-sky-700" />
+                <span>외근 티타임 번들</span>
+              </button>
+            )}
+            {onOpenWarmIntroConnector && (
+              <button
+                onClick={() => onOpenWarmIntroConnector()}
+                className="px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-800 font-semibold text-xs border border-indigo-200/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 cursor-pointer"
+                title="내 주소록 내 시너지 인연을 잇는 Double Opt-in 지능형 커넥터"
+              >
+                <Share2 className="w-3.5 h-3.5 text-indigo-700" />
+                <span>인연 연결 주선</span>
+              </button>
+            )}
             {onOpenScanner && (
               <button
                 onClick={onOpenScanner}
@@ -251,13 +275,24 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
             </div>
           </div>
 
-          <button
-            onClick={() => onNavigateView('proximity')}
-            className="w-full py-2 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-all flex items-center justify-center gap-1 border border-slate-200/80 dark:border-slate-700 active:scale-[0.98] cursor-pointer"
-          >
-            <span>거점 레이더 맵 전체보기</span>
-            <ChevronRight className="w-3.5 h-3.5" />
-          </button>
+          <div className="space-y-2 pt-1">
+            {onOpenTeaBundle && (
+              <button
+                onClick={() => onOpenTeaBundle(selectedClusterId)}
+                className="w-full py-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-800 text-xs font-semibold transition-all flex items-center justify-center gap-1.5 border border-sky-200/80 active:scale-[0.98] cursor-pointer shadow-2xs"
+              >
+                <Compass className="w-3.5 h-3.5 text-sky-600" />
+                <span>이 거점 티타임 번들 추천</span>
+              </button>
+            )}
+            <button
+              onClick={() => onNavigateView('proximity')}
+              className="w-full py-2 rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 text-xs font-semibold transition-all flex items-center justify-center gap-1 border border-slate-200/80 dark:border-slate-700 active:scale-[0.98] cursor-pointer"
+            >
+              <span>거점 레이더 맵 전체보기</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
 
         {/* Card 2: 미축하 영전 감지 */}
