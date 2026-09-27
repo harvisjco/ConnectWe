@@ -18,8 +18,10 @@ import { MeetingRadarBanner } from './components/radar/MeetingRadarBanner';
 import { GraphSearchBar } from './components/search/GraphSearchBar';
 import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { ViewLoadingSkeleton } from './components/common/ViewLoadingSkeleton';
+import { UserRole, getStoredUserRole, saveUserRole } from './types/userRole';
 
-// 11대 멀티 디멘션 뷰 비동기 코드 스플리팅 (Code Splitting via React.lazy)
+// 12대 멀티 디멘션 뷰 비동기 코드 스플리팅 (Code Splitting via React.lazy)
+const GeneralMemberView = React.lazy(() => import('./components/views/GeneralMemberView').then(m => ({ default: m.GeneralMemberView })));
 const CompanyAlumniView = React.lazy(() => import('./components/views/CompanyAlumniView').then(m => ({ default: m.CompanyAlumniView })));
 const CorporateOrgChartView = React.lazy(() => import('./components/views/CorporateOrgChartView').then(m => ({ default: m.CorporateOrgChartView })));
 const TeamNetworkView = React.lazy(() => import('./components/views/TeamNetworkView').then(m => ({ default: m.TeamNetworkView })));
@@ -64,21 +66,19 @@ import { maskPerson } from './services/privacyShieldService';
 import { GeoClusterId } from './services/geoProximityService';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 
-import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2 } from 'lucide-react';
+import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2, GraduationCap } from 'lucide-react';
 
-const quickNavTabs: { id: NavViewType; label: string; icon: any }[] = [
-  { id: 'command', label: '사령탑', icon: Zap },
-  { id: 'company', label: '소중한 인연', icon: Users },
-  { id: 'orgchart', label: '기업 조직도', icon: Building2 },
-  { id: 'deals', label: '전략 딜', icon: Briefcase },
-  { id: 'proximity', label: '외근 레이더', icon: Compass },
-  { id: 'promotion', label: '영전·승진', icon: Award },
-];
 
 export const App: React.FC = () => {
+  // 회원 등급 관리 (일반회원 | Hidden회원 | 마스터)
+  const [userRole, setUserRole] = useState<UserRole>(() => getStoredUserRole());
+
   // 로컬 스토리지 기반 오프라인 퍼스트 상태
   const [people, setPeople] = useState<Person[]>(() => loadPeopleFromStorage());
-  const [activeView, setActiveView] = useState<NavViewType>('command');
+  const [activeView, setActiveView] = useState<NavViewType>(() => {
+    const role = getStoredUserRole();
+    return role === 'general' ? 'general' : 'command';
+  });
   const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
 
   // LNB 사이드바 상태
@@ -92,6 +92,17 @@ export const App: React.FC = () => {
     setActiveView(view);
   };
 
+  // 회원 등급 전환 핸들러
+  const handleSelectUserRole = (newRole: UserRole) => {
+    setUserRole(newRole);
+    saveUserRole(newRole);
+    if (newRole === 'general') {
+      setActiveView('general');
+    } else if (newRole === 'hidden' && activeView === 'general') {
+      setActiveView('command');
+    }
+  };
+
   const handleToggleSidebarCollapse = () => {
     setIsSidebarCollapsed(prev => {
       const next = !prev;
@@ -99,6 +110,33 @@ export const App: React.FC = () => {
       return next;
     });
   };
+
+  // 회원 등급별 퀵 탭 네비게이션
+  const quickNavTabs = React.useMemo(() => {
+    if (userRole === 'general') {
+      return [
+        { id: 'general' as NavViewType, label: '동문 주소록 & 소모임', icon: GraduationCap },
+        { id: 'team' as NavViewType, label: '팀 네트워크 협업', icon: Users },
+      ];
+    }
+    if (userRole === 'hidden') {
+      return [
+        { id: 'command' as NavViewType, label: '관계 현황', icon: Zap },
+        { id: 'deals' as NavViewType, label: '파트너십 & 프로젝트', icon: Briefcase },
+        { id: 'proximity' as NavViewType, label: '티타임 레이더', icon: Compass },
+        { id: 'promotion' as NavViewType, label: '인사·영전 소식', icon: Award },
+        { id: 'team' as NavViewType, label: '팀 협업', icon: Users },
+      ];
+    }
+    return [
+      { id: 'command' as NavViewType, label: '사령탑', icon: Zap },
+      { id: 'company' as NavViewType, label: '공시 팩트', icon: Building2 },
+      { id: 'orgchart' as NavViewType, label: '기업 조직도', icon: Building2 },
+      { id: 'deals' as NavViewType, label: '전략 딜', icon: Briefcase },
+      { id: 'proximity' as NavViewType, label: '외근 레이더', icon: Compass },
+      { id: 'promotion' as NavViewType, label: '영전·승진', icon: Award },
+    ];
+  }, [userRole]);
 
   // 실시간 미팅 레이더 캘린더 상태
   const [meetings, setMeetings] = useState<CalendarMeeting[]>(() => loadMeetingsFromStorage(people));
@@ -245,6 +283,8 @@ export const App: React.FC = () => {
       {/* Top Header */}
       <Header
         people={people}
+        userRole={userRole}
+        onSelectUserRole={handleSelectUserRole}
         onToggleSidebar={() => setIsMobileSidebarOpen(prev => !prev)}
         onOpenImportModal={() => setIsImportModalOpen(true)}
         onOpenAddModal={() => setIsAddModalOpen(true)}
@@ -276,6 +316,7 @@ export const App: React.FC = () => {
           activeView={activeView}
           onSelectView={handleSelectView}
           people={people}
+          userRole={userRole}
           isCollapsed={isSidebarCollapsed}
           onToggleCollapse={handleToggleSidebarCollapse}
           isOpenMobile={isMobileSidebarOpen}
@@ -351,6 +392,15 @@ export const App: React.FC = () => {
             <section className="animate-in fade-in duration-200 min-h-[520px]">
           <ErrorBoundary fallbackTitle="선택된 뷰 컴포넌트 런타임 오류 방어">
             <React.Suspense fallback={<ViewLoadingSkeleton />}>
+              {activeView === 'general' && (
+                <GeneralMemberView
+                  people={people}
+                  onSelectPerson={setSelectedPerson}
+                  onOpenAddModal={() => setIsAddModalOpen(true)}
+                  onShowToast={showToast}
+                />
+              )}
+
               {activeView === 'command' && (
                 <ExecutiveCommandCenterView
                   people={people}

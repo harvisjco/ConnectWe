@@ -1,8 +1,32 @@
-﻿import { Person } from '../types/network';
+import { Person } from '../types/network';
 import { AlumniGroup, Gathering, BirthdayContact } from '../types/community';
 
 const GATHERINGS_STORAGE_KEY = 'connectwe_community_gatherings';
 const BIRTHDAY_SENT_KEY = 'connectwe_birthday_sent_ids';
+
+let inMemoryGatherings: Gathering[] | null = null;
+let inMemoryBirthdaySent = new Set<string>();
+
+function safeGetItem(key: string): string | null {
+  try {
+    if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+      return window.localStorage.getItem(key);
+    }
+  } catch (e) {
+    // fallback
+  }
+  return null;
+}
+
+function safeSetItem(key: string, value: string): void {
+  try {
+    if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+      window.localStorage.setItem(key, value);
+    }
+  } catch (e) {
+    // fallback
+  }
+}
 
 /**
  * 인물 목록으로부터 학연/전공/동아리/재직회사 기반 동문 그룹 자동 추출
@@ -179,25 +203,30 @@ export function getUpcomingBirthdays(people: Person[]): BirthdayContact[] {
 }
 
 export function markBirthdayCongratulated(personId: string): void {
-  try {
-    const raw = localStorage.getItem(BIRTHDAY_SENT_KEY);
-    const set = new Set<string>(raw ? JSON.parse(raw) : []);
-    set.add(personId);
-    localStorage.setItem(BIRTHDAY_SENT_KEY, JSON.stringify(Array.from(set)));
-  } catch (e) {
-    console.error(e);
-  }
+  inMemoryBirthdaySent.add(personId);
+  const raw = safeGetItem(BIRTHDAY_SENT_KEY);
+  const set = new Set<string>(raw ? JSON.parse(raw) : []);
+  set.add(personId);
+  safeSetItem(BIRTHDAY_SENT_KEY, JSON.stringify(Array.from(set)));
 }
 
 /**
  * 기본 모임 및 로컬 스토리지 로드
  */
 export function loadGatherings(): Gathering[] {
-  try {
-    const raw = localStorage.getItem(GATHERINGS_STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch (e) {
-    console.error(e);
+  if (inMemoryGatherings && inMemoryGatherings.length > 0) {
+    return inMemoryGatherings;
+  }
+
+  const raw = safeGetItem(GATHERINGS_STORAGE_KEY);
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      inMemoryGatherings = parsed;
+      return parsed;
+    } catch (e) {
+      // ignore
+    }
   }
 
   const initialMockGatherings: Gathering[] = [
@@ -255,16 +284,14 @@ export function loadGatherings(): Gathering[] {
     }
   ];
 
+  inMemoryGatherings = initialMockGatherings;
   saveGatherings(initialMockGatherings);
   return initialMockGatherings;
 }
 
 export function saveGatherings(gatherings: Gathering[]): void {
-  try {
-    localStorage.setItem(GATHERINGS_STORAGE_KEY, JSON.stringify(gatherings));
-  } catch (e) {
-    console.error(e);
-  }
+  inMemoryGatherings = gatherings;
+  safeSetItem(GATHERINGS_STORAGE_KEY, JSON.stringify(gatherings));
 }
 
 /**

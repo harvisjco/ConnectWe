@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { Person } from '../../types/network';
+import { UserRole, USER_ROLES } from '../../types/userRole';
 import { exportPeopleToVcf } from '../../services/vcardExporter';
 import { exportBackupJson, restoreBackupFromJson, resetStorage } from '../../services/storageService';
 import { batchCrossCheckWithDart } from '../../services/dartFactEngine';
@@ -8,11 +9,14 @@ import {
   Share2, UploadCloud, Download, ShieldCheck, ShieldAlert, Clock, 
   Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
   BarChart2, Lock, Settings, Cloud, Bot, Camera, Calendar, Bell,
-  MoreHorizontal, ChevronDown, PanelLeft, Database, Flame, Gift
+  MoreHorizontal, ChevronDown, PanelLeft, Database, Flame, Gift,
+  Crown, Check
 } from 'lucide-react';
 
 interface HeaderProps {
   people: Person[];
+  userRole?: UserRole;
+  onSelectUserRole?: (role: UserRole) => void;
   onToggleSidebar?: () => void;
   onOpenImportModal: () => void;
   onOpenAddModal: () => void;
@@ -36,6 +40,8 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ 
   people, 
+  userRole = 'general',
+  onSelectUserRole,
   onToggleSidebar,
   onOpenImportModal, 
   onOpenAddModal,
@@ -58,7 +64,9 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const toolsMenuRef = useRef<HTMLDivElement | null>(null);
+  const roleMenuRef = useRef<HTMLDivElement | null>(null);
   const [isToolsOpen, setIsToolsOpen] = useState(false);
+  const [isRoleMenuOpen, setIsRoleMenuOpen] = useState(false);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -66,14 +74,17 @@ export const Header: React.FC<HeaderProps> = ({
       if (toolsMenuRef.current && !toolsMenuRef.current.contains(e.target as Node)) {
         setIsToolsOpen(false);
       }
+      if (roleMenuRef.current && !roleMenuRef.current.contains(e.target as Node)) {
+        setIsRoleMenuOpen(false);
+      }
     };
-    if (isToolsOpen) {
+    if (isToolsOpen || isRoleMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isToolsOpen]);
+  }, [isToolsOpen, isRoleMenuOpen]);
 
   const dartFactCount = people.filter(p => p.sourceType === 'DART_FACT' || p.dartInfo?.isPublicDirector).length;
   const staleCount = people.filter(p => p.isStale).length;
@@ -307,6 +318,69 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden sm:inline">+ 인맥 등록</span>
             <span className="sm:hidden">등록</span>
           </button>
+
+          {/* Member Role Switcher Dropdown */}
+          <div className="relative" ref={roleMenuRef}>
+            <button
+              onClick={() => setIsRoleMenuOpen(prev => !prev)}
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 min-h-[32px] rounded-full border text-xs font-bold transition-all whitespace-nowrap active:scale-[0.98] cursor-pointer ${
+                USER_ROLES[userRole].colorScheme.bg
+              } ${USER_ROLES[userRole].colorScheme.text} ${USER_ROLES[userRole].colorScheme.border}`}
+              title="회원 등급 및 권한 전환"
+            >
+              {userRole === 'master' ? (
+                <Crown className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              ) : userRole === 'hidden' ? (
+                <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+              ) : (
+                <Users className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              )}
+              <span>{USER_ROLES[userRole].badgeLabel}</span>
+              <ChevronDown className={`w-3 h-3 transition-transform duration-200 ${isRoleMenuOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isRoleMenuOpen && (
+              <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-2 z-50 ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-150">
+                <div className="px-2.5 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                  회원 등급 및 권한 설정
+                </div>
+                <div className="space-y-1">
+                  {(['general', 'hidden', 'master'] as UserRole[]).map((r) => {
+                    const cfg = USER_ROLES[r];
+                    const isCurrent = userRole === r;
+                    return (
+                      <button
+                        key={r}
+                        onClick={() => {
+                          setIsRoleMenuOpen(false);
+                          if (onSelectUserRole) onSelectUserRole(r);
+                          onShowToast(`회원 등급이 '${cfg.badgeLabel}'으로 전환되었습니다.`);
+                        }}
+                        className={`w-full text-left p-2.5 rounded-xl text-xs transition-all flex items-start justify-between ${
+                          isCurrent
+                            ? `${cfg.colorScheme.bg} border ${cfg.colorScheme.border} font-bold`
+                            : 'hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300'
+                        }`}
+                      >
+                        <div className="space-y-0.5">
+                          <div className="flex items-center gap-1.5 font-bold">
+                            {r === 'master' && <Crown className="w-3.5 h-3.5 text-amber-500" />}
+                            {r === 'hidden' && <Sparkles className="w-3.5 h-3.5 text-indigo-500" />}
+                            {r === 'general' && <Users className="w-3.5 h-3.5 text-emerald-500" />}
+                            <span>{cfg.label}</span>
+                          </div>
+                          <p className="text-[11px] text-slate-500 font-normal leading-tight">
+                            {cfg.description}
+                          </p>
+                        </div>
+                        {isCurrent && <Check className="w-4 h-4 text-emerald-600 shrink-0 ml-1 mt-0.5" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
 
 
 

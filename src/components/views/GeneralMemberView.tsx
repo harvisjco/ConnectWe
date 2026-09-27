@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { Person } from '../../types/network';
-import { AlumniGroup, Gathering, BirthdayContact } from '../../types/community';
+import { Gathering, BirthdayContact } from '../../types/community';
 import { 
   extractAlumniGroups, 
   getUpcomingBirthdays, 
@@ -12,7 +12,7 @@ import {
 } from '../../services/communityService';
 import { 
   Users, Cake, Calendar, Plus, Search, 
-  Check, Copy, Phone, Mail, Building2, 
+  Check, Copy, Phone, Mail, 
   GraduationCap, Clock, MapPin, DollarSign
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
@@ -141,6 +141,7 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
   return (
     <div className="space-y-6">
       <ViewHeader
+        icon={GraduationCap}
         title="동문 네트워크 & 소모임 커뮤니티"
         subtitle="소중한 학연·동아리·직장 동문 주소록을 손쉽게 정리하고, 생일을 챙기며 소모임 활동을 즐기는 공간입니다."
         actions={

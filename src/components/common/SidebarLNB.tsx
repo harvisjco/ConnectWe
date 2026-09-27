@@ -6,7 +6,7 @@ import {
   Briefcase, TrendingUp, Gift, Users,
   Share2, Orbit, Compass, Clock,
   Sparkles, ChevronLeft, ChevronRight, X,
-  GraduationCap, Crown, EyeOff, ShieldCheck
+  GraduationCap
 } from 'lucide-react';
 
 export type NavViewType = 

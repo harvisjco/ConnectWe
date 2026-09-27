@@ -4,7 +4,7 @@ import { TeamMember, TeamSharedContact } from '../../types/teamNetwork';
 import { 
   Users, ShieldCheck, Search, Share2, 
   Copy, Building2, Lock, LayoutList, LayoutGrid,
-  UserPlus, Link2, CheckCircle2, HelpCircle, ArrowRight
+  UserPlus, Link2, HelpCircle
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
