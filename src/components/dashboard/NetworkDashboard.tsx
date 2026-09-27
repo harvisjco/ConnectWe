@@ -2,12 +2,14 @@ import React, { useEffect, useRef, useMemo } from 'react';
 import { Person } from '../../types/network';
 import { getTopSuperConnectors } from '../../services/centralityEngine';
 import { identifyTalentCluster, TalentClusterId } from '../../services/talentClusterEngine';
-import { X, TrendingUp, Users, Shield, AlertTriangle, Zap, Sparkles, Rocket, Cpu, Briefcase, Building2 } from 'lucide-react';
+import { calculateTieStrength, TIE_STRENGTH_CONFIG, TieStrengthLevel } from '../../services/tieStrengthService';
+import { X, TrendingUp, Users, Shield, AlertTriangle, Zap, Sparkles, Rocket, Cpu, Briefcase, Building2, Flame, ChevronRight } from 'lucide-react';
 
 interface NetworkDashboardProps {
   people: Person[];
   onClose: () => void;
   onSelectPerson: (person: Person) => void;
+  onOpenHeatmap?: () => void;
 }
 
 // Canvas 도넛 차트 그리기
@@ -65,9 +67,29 @@ export const NetworkDashboard: React.FC<NetworkDashboardProps> = ({
   people,
   onClose,
   onSelectPerson,
+  onOpenHeatmap,
 }) => {
   const donutDomainRef = useRef<HTMLCanvasElement>(null);
   const donutTitleRef = useRef<HTMLCanvasElement>(null);
+
+  // 관계 결속도(Tie Strength) 5단계 온도 분포 집계
+  const tieStrengthStats = useMemo(() => {
+    const counts: Record<TieStrengthLevel, number> = {
+      DIAMOND: 0,
+      HOT: 0,
+      WARM: 0,
+      COOL: 0,
+      CHILLY: 0
+    };
+    let coolingDownCount = 0;
+    for (const p of people) {
+      if (p.closeness === 1) continue;
+      const detail = calculateTieStrength(p);
+      counts[detail.level] += 1;
+      if (detail.isCoolingDown) coolingDownCount += 1;
+    }
+    return { counts, coolingDownCount };
+  }, [people]);
 
   // 산업군(primaryDomain) 분포
   const domainDist = useMemo(() => {
@@ -215,6 +237,56 @@ export const NetworkDashboard: React.FC<NetworkDashboardProps> = ({
             <KpiCard icon={<Shield className="w-4 h-4 text-emerald-400" />} label="DART 검증" value={`${dartVerified}명`} sub={`검증률 ${total ? Math.round((dartVerified / total) * 100) : 0}%`} accent="emerald" />
             <KpiCard icon={<TrendingUp className="w-4 h-4 text-amber-400" />} label="최근 30일 소통" value={`${contactStats.d30}명`} sub="활성 인맥" accent="amber" />
             <KpiCard icon={<AlertTriangle className="w-4 h-4 text-rose-400" />} label="소통 환기 필요" value={`${contactStats.stale}명`} sub="180일+ 미소통" accent="rose" />
+          </div>
+
+          {/* C-Level 관계 결속도(Tie Strength) 5단계 온도 요약 위젯 */}
+          <div className="bg-slate-800/40 border border-slate-700/80 rounded-2xl p-5 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Flame className="w-4 h-4 text-amber-400" />
+                <h3 className="text-sm font-bold text-white tracking-tight">
+                  C-Level 인맥 관계 결속도 &amp; 5단계 온도 분포
+                </h3>
+                {tieStrengthStats.coolingDownCount > 0 && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 border border-rose-500/30 font-bold">
+                    급랭 주의 {tieStrengthStats.coolingDownCount}명
+                  </span>
+                )}
+              </div>
+              {onOpenHeatmap && (
+                <button
+                  onClick={() => {
+                    onClose();
+                    onOpenHeatmap();
+                  }}
+                  className="flex items-center gap-1 text-xs font-bold text-indigo-400 hover:text-indigo-300 transition-colors cursor-pointer group"
+                >
+                  <span>산업군 매트릭스 히트맵 열기</span>
+                  <ChevronRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </button>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 pt-1">
+              {(['DIAMOND', 'HOT', 'WARM', 'COOL', 'CHILLY'] as TieStrengthLevel[]).map(lvl => {
+                const cfg = TIE_STRENGTH_CONFIG[lvl];
+                const count = tieStrengthStats.counts[lvl];
+                return (
+                  <div
+                    key={lvl}
+                    className="p-3 rounded-xl bg-slate-850/80 border border-slate-750 flex flex-col justify-between"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-base">{cfg.emoji}</span>
+                      <span className="text-base font-bold font-mono text-white">{count}명</span>
+                    </div>
+                    <div className="text-xs font-semibold text-slate-300 mt-1">
+                      {cfg.label.split(' ')[0]}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* 5대 인재 클러스터 (Superpower Edge) 포트폴리오 */}

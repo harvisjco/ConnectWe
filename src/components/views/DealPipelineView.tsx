@@ -10,7 +10,7 @@ import {
 } from '../../services/dealPipelineService';
 import { 
   Briefcase, Plus, ShieldCheck, 
-  X, Trash2, FileText, Send
+  X, Trash2, FileText, Send, Gift
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -19,6 +19,7 @@ interface DealPipelineViewProps {
   onSelectPerson: (person: Person) => void;
   onOpenDossier?: (person: Person) => void;
   onOpenBridgeModal?: (person: Person) => void;
+  onOpenGratitudeSettlement?: (deal: BusinessDeal) => void;
   onShowToast: (msg: string) => void;
 }
 
@@ -36,6 +37,7 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
   onSelectPerson,
   onOpenDossier,
   onOpenBridgeModal,
+  onOpenGratitudeSettlement,
   onShowToast
 }) => {
   const [deals, setDeals] = useState<BusinessDeal[]>(() => loadDealsFromStorage(people));
@@ -381,12 +383,28 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
             {/* Footer */}
             <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
               <span>목표 클로징: <strong className="text-slate-700 font-mono">{activeDealForDetail.expectedCloseDate}</strong></span>
-              <button
-                onClick={() => setActiveDealForDetail(null)}
-                className="px-4 py-2 rounded-xl bg-slate-900 text-white font-semibold text-xs hover:bg-slate-800 transition-colors"
-              >
-                확인 완료
-              </button>
+              <div className="flex items-center gap-2">
+                {onOpenGratitudeSettlement && (
+                  <button
+                    onClick={() => {
+                      const deal = activeDealForDetail;
+                      setActiveDealForDetail(null);
+                      onOpenGratitudeSettlement(deal);
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                    title="이 딜 성사에 기여한 추천인에게 감사 선물 및 리워드 정산 등록"
+                  >
+                    <Gift className="w-3.5 h-3.5" />
+                    <span>추천 감사 답례 등록</span>
+                  </button>
+                )}
+                <button
+                  onClick={() => setActiveDealForDetail(null)}
+                  className="px-4 py-2 rounded-xl bg-slate-900 text-white font-semibold text-xs hover:bg-slate-800 transition-colors"
+                >
+                  확인 완료
+                </button>
+              </div>
             </div>
           </div>
         </div>

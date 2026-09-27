@@ -8,7 +8,7 @@ import {
   Share2, UploadCloud, Download, ShieldCheck, ShieldAlert, Clock, 
   Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
   BarChart2, Lock, Settings, Cloud, Bot, Camera, Calendar, Bell,
-  MoreHorizontal, ChevronDown, PanelLeft, Database
+  MoreHorizontal, ChevronDown, PanelLeft, Database, Flame, Gift
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -25,6 +25,8 @@ interface HeaderProps {
   onOpenCardScanner?: () => void;
   onOpenCalendarModal?: () => void;
   onOpenDisclosureAlertModal?: () => void;
+  onOpenHeatmap?: () => void;
+  onOpenGratitudeSettlement?: () => void;
   isShieldActive?: boolean;
   onToggleShield?: () => void;
   onOpenDataVault?: () => void;
@@ -46,6 +48,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenCardScanner,
   onOpenCalendarModal,
   onOpenDisclosureAlertModal,
+  onOpenHeatmap,
+  onOpenGratitudeSettlement,
   isShieldActive = false,
   onToggleShield,
   onOpenDataVault,
@@ -363,6 +367,15 @@ export const Header: React.FC<HeaderProps> = ({
                         <span>캘린더 미팅 레이더</span>
                       </button>
                     )}
+                    {onOpenHeatmap && (
+                      <button
+                        onClick={() => { setIsToolsOpen(false); onOpenHeatmap(); }}
+                        className="w-full flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors"
+                      >
+                        <Flame className="w-4 h-4 text-amber-500 dark:text-amber-400" />
+                        <span>관계 결속도 &amp; 온도 히트맵</span>
+                      </button>
+                    )}
                   </div>
                 </div>
 
@@ -454,7 +467,7 @@ export const Header: React.FC<HeaderProps> = ({
                   {onOpenDataVault && (
                     <button
                       onClick={() => { setIsToolsOpen(false); onOpenDataVault(); }}
-                      className="w-full flex items-center justify-between px-2.5 py-2 mb-1.5 rounded-xl text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50/80 hover:bg-indigo-100/80 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/50 border border-indigo-200/80 dark:border-indigo-800/80 transition-colors"
+                      className="w-full flex items-center justify-between px-2.5 py-2 mb-1 rounded-xl text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50/80 hover:bg-indigo-100/80 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/50 border border-indigo-200/80 dark:border-indigo-800/80 transition-colors"
                       title="Excel 호환 BOM CSV 다운로드 & AES-256 암호화 볼트 내보내기/복원"
                     >
                       <div className="flex items-center gap-2">
@@ -462,6 +475,19 @@ export const Header: React.FC<HeaderProps> = ({
                         <span>데이터 볼트 (Excel CSV / AES-256)</span>
                       </div>
                       <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-200/60 dark:bg-indigo-800/60 font-bold">VIP</span>
+                    </button>
+                  )}
+                  {onOpenGratitudeSettlement && (
+                    <button
+                      onClick={() => { setIsToolsOpen(false); onOpenGratitudeSettlement(); }}
+                      className="w-full flex items-center justify-between px-2.5 py-2 mb-1.5 rounded-xl text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-50/80 hover:bg-emerald-100/80 dark:bg-emerald-950/40 dark:hover:bg-emerald-900/50 border border-emerald-200/80 dark:border-emerald-800/80 transition-colors"
+                      title="성사된 비즈니스 딜 추천인 감사 선물 & 리워드 정산 대시보드"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Gift className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                        <span>추천 감사 리워드 &amp; 딜 답례 정산</span>
+                      </div>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-200/60 dark:bg-emerald-800/60 font-bold">감사</span>
                     </button>
                   )}
                   <div className="grid grid-cols-2 gap-1.5 pt-1">

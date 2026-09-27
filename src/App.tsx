@@ -56,6 +56,9 @@ import { ProximityTeaBundleModal } from './components/radar/ProximityTeaBundleMo
 import { WarmIntroConnectorModal } from './components/bridge/WarmIntroConnectorModal';
 import { ExecutiveWeeklyBriefModal } from './components/modals/ExecutiveWeeklyBriefModal';
 import { DataVaultModal } from './components/modals/DataVaultModal';
+import { RelationshipHeatmapModal } from './components/modals/RelationshipHeatmapModal';
+import { GratitudeSettlementModal } from './components/modals/GratitudeSettlementModal';
+import { BusinessDeal } from './services/dealPipelineService';
 import { maskPerson } from './services/privacyShieldService';
 import { GeoClusterId } from './services/geoProximityService';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
@@ -129,6 +132,9 @@ export const App: React.FC = () => {
   const [warmIntroConnectorTargets, setWarmIntroConnectorTargets] = useState<{ personA?: Person; personB?: Person } | null>(null);
   const [isWeeklyBriefOpen, setIsWeeklyBriefOpen] = useState(false);
   const [isDataVaultOpen, setIsDataVaultOpen] = useState(false);
+  const [isHeatmapOpen, setIsHeatmapOpen] = useState(false);
+  const [isGratitudeOpen, setIsGratitudeOpen] = useState(false);
+  const [gratitudeTargetDeal, setGratitudeTargetDeal] = useState<BusinessDeal | null>(null);
   const [isShieldActive, setIsShieldActive] = useState<boolean>(() => {
     return localStorage.getItem('connectwe_privacy_shield') === 'true';
   });
@@ -249,6 +255,11 @@ export const App: React.FC = () => {
         onOpenCardScanner={() => setIsCardScannerOpen(true)}
         onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
         onOpenDisclosureAlertModal={() => setIsDisclosureAlertOpen(true)}
+        onOpenHeatmap={() => setIsHeatmapOpen(true)}
+        onOpenGratitudeSettlement={() => {
+          setGratitudeTargetDeal(null);
+          setIsGratitudeOpen(true);
+        }}
         isShieldActive={isShieldActive}
         onToggleShield={handleToggleShield}
         onOpenDataVault={() => setIsDataVaultOpen(true)}
@@ -429,6 +440,10 @@ export const App: React.FC = () => {
                   onSelectPerson={setSelectedPerson}
                   onOpenDossier={(target) => setDossierTargetPerson(target)}
                   onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
+                  onOpenGratitudeSettlement={(deal) => {
+                    setGratitudeTargetDeal(deal);
+                    setIsGratitudeOpen(true);
+                  }}
                   onShowToast={showToast}
                 />
               )}
@@ -530,6 +545,7 @@ export const App: React.FC = () => {
           people={people}
           onClose={() => setIsDashboardOpen(false)}
           onSelectPerson={setSelectedPerson}
+          onOpenHeatmap={() => setIsHeatmapOpen(true)}
         />
       )}
 
@@ -652,6 +668,31 @@ export const App: React.FC = () => {
           people={people}
           onUpdatePeople={setPeople}
           onClose={() => setIsDataVaultOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* C-Level Relationship Tie Strength & Temperature Heatmap Modal */}
+      {isHeatmapOpen && (
+        <RelationshipHeatmapModal
+          people={people}
+          meetings={meetings}
+          onClose={() => setIsHeatmapOpen(false)}
+          onSelectPerson={setSelectedPerson}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* Business Deal Referral Reward & Gratitude Settlement Dashboard Modal */}
+      {isGratitudeOpen && (
+        <GratitudeSettlementModal
+          people={people}
+          initialDeal={gratitudeTargetDeal}
+          onClose={() => {
+            setIsGratitudeOpen(false);
+            setGratitudeTargetDeal(null);
+          }}
+          onSelectPerson={setSelectedPerson}
           onShowToast={showToast}
         />
       )}
