@@ -138,3 +138,24 @@ export async function decryptData(
     throw new Error('복호화 실패: 패스프레이즈가 일치하지 않거나 암호문이 손상되었습니다.');
   }
 }
+
+/**
+ * 임의의 JavaScript 객체를 JSON 직렬화 후 AES-256-GCM으로 암호화
+ */
+export async function encryptObject<T>(data: T, passphrase: string): Promise<string> {
+  const jsonStr = JSON.stringify(data);
+  return encryptData(jsonStr, passphrase);
+}
+
+/**
+ * AES-256-GCM 암호문을 복호화하여 JavaScript 객체로 역직렬화
+ */
+export async function decryptObject<T>(cipherBase64: string, passphrase: string): Promise<T> {
+  const plainText = await decryptData(cipherBase64, passphrase);
+  try {
+    return JSON.parse(plainText) as T;
+  } catch (err) {
+    throw new Error('복호화된 데이터가 유효한 JSON 형식이 아닙니다.');
+  }
+}
+

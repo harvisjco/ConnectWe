@@ -5,10 +5,10 @@ import { exportBackupJson, restoreBackupFromJson, resetStorage } from '../../ser
 import { batchCrossCheckWithDart } from '../../services/dartFactEngine';
 import { pickContactsFromDevice } from '../../services/contactPicker';
 import { 
-  Share2, UploadCloud, Download, ShieldCheck, Clock, 
+  Share2, UploadCloud, Download, ShieldCheck, ShieldAlert, Clock, 
   Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
   BarChart2, Lock, Settings, Cloud, Bot, Camera, Calendar, Bell,
-  MoreHorizontal, ChevronDown, PanelLeft
+  MoreHorizontal, ChevronDown, PanelLeft, Database
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -25,6 +25,9 @@ interface HeaderProps {
   onOpenCardScanner?: () => void;
   onOpenCalendarModal?: () => void;
   onOpenDisclosureAlertModal?: () => void;
+  isShieldActive?: boolean;
+  onToggleShield?: () => void;
+  onOpenDataVault?: () => void;
   onUpdatePeople: (people: Person[]) => void;
   onShowToast: (msg: string) => void;
 }
@@ -43,6 +46,9 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenCardScanner,
   onOpenCalendarModal,
   onOpenDisclosureAlertModal,
+  isShieldActive = false,
+  onToggleShield,
+  onOpenDataVault,
   onUpdatePeople,
   onShowToast
 }) => {
@@ -262,6 +268,31 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </button>
 
+          {/* Executive NDA Privacy Shield Mode Toggle */}
+          {onToggleShield && (
+            <button
+              onClick={onToggleShield}
+              className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border text-xs font-bold transition-all cursor-pointer whitespace-nowrap min-h-[32px] active:scale-[0.98] ${
+                isShieldActive
+                  ? 'bg-amber-500 hover:bg-amber-450 text-slate-950 border-amber-400 shadow-md ring-2 ring-amber-400/40 animate-pulse'
+                  : 'bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 border-slate-200/90 dark:border-slate-700 text-slate-700 dark:text-slate-200 shadow-2xs'
+              }`}
+              title={isShieldActive ? "VIP 프라이버시 쉴드 해제 (실명/연락처 복원)" : "VIP 대외비 프라이버시 쉴드 활성화 (화면 공유/대중교통 안심 모드)"}
+            >
+              {isShieldActive ? (
+                <>
+                  <ShieldAlert className="w-3.5 h-3.5 text-slate-950" />
+                  <span>대외비 쉴드 ON</span>
+                </>
+              ) : (
+                <>
+                  <ShieldCheck className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
+                  <span className="hidden sm:inline">대외비 쉴드</span>
+                </>
+              )}
+            </button>
+          )}
+
           {/* Add Person CTA - Premium Dark Slate Pill Button */}
           <button
             onClick={onOpenAddModal}
@@ -420,6 +451,19 @@ export const Header: React.FC<HeaderProps> = ({
                   <div className="px-2 py-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                     내보내기 및 데이터 관리
                   </div>
+                  {onOpenDataVault && (
+                    <button
+                      onClick={() => { setIsToolsOpen(false); onOpenDataVault(); }}
+                      className="w-full flex items-center justify-between px-2.5 py-2 mb-1.5 rounded-xl text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50/80 hover:bg-indigo-100/80 dark:bg-indigo-950/40 dark:hover:bg-indigo-900/50 border border-indigo-200/80 dark:border-indigo-800/80 transition-colors"
+                      title="Excel 호환 BOM CSV 다운로드 & AES-256 암호화 볼트 내보내기/복원"
+                    >
+                      <div className="flex items-center gap-2">
+                        <Database className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                        <span>데이터 볼트 (Excel CSV / AES-256)</span>
+                      </div>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-200/60 dark:bg-indigo-800/60 font-bold">VIP</span>
+                    </button>
+                  )}
                   <div className="grid grid-cols-2 gap-1.5 pt-1">
                     <button
                       onClick={() => { setIsToolsOpen(false); handleExportVcf(); }}

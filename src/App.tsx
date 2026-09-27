@@ -55,6 +55,8 @@ import { CadenceGreetingModal } from './components/modals/CadenceGreetingModal';
 import { ProximityTeaBundleModal } from './components/radar/ProximityTeaBundleModal';
 import { WarmIntroConnectorModal } from './components/bridge/WarmIntroConnectorModal';
 import { ExecutiveWeeklyBriefModal } from './components/modals/ExecutiveWeeklyBriefModal';
+import { DataVaultModal } from './components/modals/DataVaultModal';
+import { maskPerson } from './services/privacyShieldService';
 import { GeoClusterId } from './services/geoProximityService';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 
@@ -126,7 +128,21 @@ export const App: React.FC = () => {
   const [teaBundleClusterId, setTeaBundleClusterId] = useState<GeoClusterId | null>(null);
   const [warmIntroConnectorTargets, setWarmIntroConnectorTargets] = useState<{ personA?: Person; personB?: Person } | null>(null);
   const [isWeeklyBriefOpen, setIsWeeklyBriefOpen] = useState(false);
+  const [isDataVaultOpen, setIsDataVaultOpen] = useState(false);
+  const [isShieldActive, setIsShieldActive] = useState<boolean>(() => {
+    return localStorage.getItem('connectwe_privacy_shield') === 'true';
+  });
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // VIP 프라이버시 쉴드 모드 토글
+  const handleToggleShield = () => {
+    setIsShieldActive(prev => {
+      const next = !prev;
+      localStorage.setItem('connectwe_privacy_shield', String(next));
+      showToast(next ? '🔒 VIP 대외비 프라이버시 쉴드가 활성화되었습니다. (민감정보 마스킹)' : 'VIP 프라이버시 쉴드가 해제되었습니다.');
+      return next;
+    });
+  };
 
   // 미축하 영전 건수 (모바일 바텀바 배지용)
   const uncelebratedPromosCount = React.useMemo(() => {
@@ -194,9 +210,16 @@ export const App: React.FC = () => {
 
   // 현재 표출 대상 인물 (검색 결과 및 5대 클러스터 퀵 필터 복합 적용)
   const basePeople = searchResult ? searchResult.matchedPeople : people;
-  const displayPeople = selectedClusterId
+  const rawFilteredPeople = selectedClusterId
     ? basePeople.filter(p => identifyTalentCluster(p).id === selectedClusterId)
     : basePeople;
+  
+  // VIP 프라이버시 쉴드 활성화 시 표시용 인맥 데이터 실시간 마스킹
+  const displayPeople = React.useMemo(() => {
+    if (!isShieldActive) return rawFilteredPeople;
+    return rawFilteredPeople.map(p => maskPerson(p, true));
+  }, [rawFilteredPeople, isShieldActive]);
+
   const highlightNodeIds = searchResult ? searchResult.highlightNodeIds : [];
   const mePerson = people.find(p => p.closeness === 1);
   const imminentMeeting = getImminentMeeting(meetings);
@@ -226,6 +249,9 @@ export const App: React.FC = () => {
         onOpenCardScanner={() => setIsCardScannerOpen(true)}
         onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
         onOpenDisclosureAlertModal={() => setIsDisclosureAlertOpen(true)}
+        isShieldActive={isShieldActive}
+        onToggleShield={handleToggleShield}
+        onOpenDataVault={() => setIsDataVaultOpen(true)}
         onUpdatePeople={setPeople}
         onShowToast={showToast}
       />
@@ -616,6 +642,16 @@ export const App: React.FC = () => {
           meetings={meetings}
           onClose={() => setIsWeeklyBriefOpen(false)}
           onSelectPerson={setSelectedPerson}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* Excel BOM CSV & AES-256 Encrypted Data Vault Modal */}
+      {isDataVaultOpen && (
+        <DataVaultModal
+          people={people}
+          onUpdatePeople={setPeople}
+          onClose={() => setIsDataVaultOpen(false)}
           onShowToast={showToast}
         />
       )}
