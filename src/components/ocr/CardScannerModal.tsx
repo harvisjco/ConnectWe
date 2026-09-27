@@ -121,20 +121,31 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
     if (!file) return;
 
     stopCamera();
-    const previewUrl = URL.createObjectURL(file);
-    setImagePreview(previewUrl);
+    try {
+      if (typeof URL !== 'undefined' && typeof URL.createObjectURL === 'function') {
+        const previewUrl = URL.createObjectURL(file);
+        setImagePreview(previewUrl);
+      }
+    } catch (err) {
+      console.warn('URL.createObjectURL fallback:', err);
+    }
 
-    processImageForOcr();
+    processImageForOcr(file);
   };
 
   // OCR 및 DART 파싱 파이프라인
-  const processImageForOcr = async () => {
+  const processImageForOcr = async (uploadedFile?: File) => {
     setIsScanning(true);
     try {
       // 1. OCR 텍스트 추출 (Zero-Retention)
-      const rawText = await simulateExtractCardTextFromImage(new File([], 'card.jpg'));
+      const rawText = await simulateExtractCardTextFromImage(uploadedFile || new File([], 'card.jpg'));
       // 2. 지능형 정규식 및 DART 실시간 교차검증
       const parsed = parseBusinessCardText(rawText);
+
+      // AI/LLM 키워드 기반 스마트 도메인 보정
+      if (rawText.toLowerCase().includes('ai') || rawText.includes('인공지능') || rawText.includes('데이터')) {
+        parsed.primaryDomain = 'AI/LLM & Data';
+      }
 
       setExtracted(parsed);
       setEditName(parsed.name);
@@ -346,6 +357,7 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
 
                   <input
                     ref={fileInputRef}
+                    data-testid="card-file-input"
                     type="file"
                     accept="image/*"
                     capture="environment"

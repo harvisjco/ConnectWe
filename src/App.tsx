@@ -404,6 +404,7 @@ export const App: React.FC = () => {
                   people={people}
                   onSelectPerson={setSelectedPerson}
                   onOpenAddModal={() => setIsAddModalOpen(true)}
+                  onOpenCardScanner={() => setIsCardScannerOpen(true)}
                   onShowToast={showToast}
                   onSelectUserRole={handleSelectUserRole}
                 />

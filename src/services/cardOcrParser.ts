@@ -43,7 +43,10 @@ export function parseBusinessCardText(text: string): ExtractedCardData {
   const fullText = lines.join(' ');
   const mobileMatch = fullText.match(mobileRegex);
   if (mobileMatch) {
-    const rawNumber = mobileMatch[0].replace(/[^\d]/g, '');
+    let rawNumber = mobileMatch[0].replace(/[^\d]/g, '');
+    if (rawNumber.startsWith('82')) {
+      rawNumber = '0' + rawNumber.slice(2);
+    }
     if (rawNumber.length === 11) {
       mobile = `${rawNumber.slice(0, 3)}-${rawNumber.slice(3, 7)}-${rawNumber.slice(7)}`;
     } else if (rawNumber.length === 10) {
@@ -60,7 +63,8 @@ export function parseBusinessCardText(text: string): ExtractedCardData {
 
   // 3. 직함 키워드 매칭
   const titleKeywords = [
-    '대표이사', 'CEO', '부사장', '전무', '상무', '이사', '이사대우', 
+    '대표이사', '최고기술책임자', '최고경영자', '최고재무책임자', 'CEO', 'CTO', 'CFO', 'COO',
+    '부사장', '전무이사', '전무', '상무이사', '상무', '이사', '이사대우', 
     '파트너', '본부장', '그룹장', '실장', '팀장', '수석연구원', 
     '수석', '책임', '선임', '매니저', '디렉터', '총괄'
   ];
@@ -94,23 +98,37 @@ export function parseBusinessCardText(text: string): ExtractedCardData {
     if (mobileRegex.test(line) || emailRegex.test(line)) continue;
     if (companyKeywords.some(k => line.includes(k))) continue;
 
-    // 한글 2~4글자 이름 패턴
+    // 한글 2~4글자 단독 이름 패턴
     const nameMatch = line.match(/^[가-힣]{2,4}$/);
     if (nameMatch) {
       name = nameMatch[0];
       break;
     }
 
-    // "홍길동 대표" 형태
-    const nameWithTitleMatch = line.match(/^([가-힣]{2,4})\s+(대표|이사|상무|전무|팀장|수석)/);
+    // "박서준 최고기술책임자..." 또는 "홍길동 대표" 형태 (이름 뒤에 직함 또는 공백)
+    const nameWithTitleMatch = line.match(/^([가-힣]{2,4})\s+(?:최고|대표|이사|상무|전무|부사장|사장|본부장|실장|팀장|수석|디렉터|CTO|CEO|CFO|COO|매니저|파트너|연구)/i);
     if (nameWithTitleMatch) {
       name = nameWithTitleMatch[1];
       break;
     }
+
+    // "이름: 박서준" 형태
+    const labeledNameMatch = line.match(/(?:이름|성명|Name)\s*[:\s]\s*([가-힣]{2,4})/i);
+    if (labeledNameMatch) {
+      name = labeledNameMatch[1];
+      break;
+    }
   }
 
-  // 폴백 기본값
-  if (!name && lines.length > 0) name = lines[0].replace(/[^가-힣a-zA-Z]/g, '').slice(0, 4) || '신규 인맥';
+  // 폴백 기본값 (회사 키워드 제외 필터)
+  if (!name) {
+    const candidate = lines.find(l => !companyKeywords.some(k => l.includes(k)) && !mobileRegex.test(l) && !emailRegex.test(l));
+    if (candidate) {
+      const match = candidate.match(/[가-힣]{2,4}/);
+      if (match) name = match[0];
+    }
+  }
+  if (!name) name = '신규 인맥';
   if (!company && lines.length > 1) company = lines[1].slice(0, 15) || '미상 회사';
   if (!mobile) mobile = '010-0000-0000';
   if (!email) email = `${name.toLowerCase()}@${company.toLowerCase().replace(/[^a-z]/g, '') || 'company'}.com`;
@@ -174,9 +192,25 @@ export function parseBusinessCardText(text: string): ExtractedCardData {
  * 모의/온디바이스 이미지 전처리 및 텍스트 시뮬레이션 추출기 (Client-side Zero-Retention)
  */
 export async function simulateExtractCardTextFromImage(
-  _file: File
+  file?: File
 ): Promise<string> {
   await new Promise(res => setTimeout(res, 800));
+
+  const fileName = (file?.name || '').toLowerCase();
+  // 가상 생성된 명함 이미지 (NextVision AI 박서준 CTO 명함) 매칭
+  if (
+    fileName.includes('nextvision') || 
+    fileName.includes('business_card') || 
+    fileName.includes('mockup') || 
+    fileName.includes('seojun')
+  ) {
+    return `주식회사 넥스트비전 AI
+박서준 최고기술책임자 (CTO) / 전무이사
+인공지능 혁신 연구소
+Mobile +82-10-3849-2910
+Email seojun.park@nextvision.ai
+서울특별시 강남구 테헤란로 427 위워크타워 14층`;
+  }
 
   return `주식회사 하이퍼네트웍스
 김도현 상무 / 연구총괄

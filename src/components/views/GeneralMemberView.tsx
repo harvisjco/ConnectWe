@@ -14,7 +14,7 @@ import {
 import { 
   Users, Cake, Calendar, Plus, Search, 
   Check, Copy, Phone, Mail, 
-  GraduationCap, Clock, MapPin, DollarSign
+  GraduationCap, Clock, MapPin, DollarSign, Camera
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -22,6 +22,7 @@ interface GeneralMemberViewProps {
   people: Person[];
   onSelectPerson: (person: Person) => void;
   onOpenAddModal: () => void;
+  onOpenCardScanner?: () => void;
   onShowToast: (msg: string) => void;
   onSelectUserRole?: (role: UserRole) => void;
 }
@@ -30,6 +31,7 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
   people,
   onSelectPerson,
   onOpenAddModal,
+  onOpenCardScanner,
   onShowToast,
   onSelectUserRole
 }) => {
@@ -151,11 +153,21 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={onOpenAddModal}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all active:scale-95"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"
             >
               <Plus className="w-3.5 h-3.5" />
-              동문·지인 추가
+              동문·지인 직접 추가
             </button>
+            {onOpenCardScanner && (
+              <button
+                onClick={onOpenCardScanner}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 shadow-2xs transition-all active:scale-95 cursor-pointer"
+                title="카메라 또는 명함 이미지 업로드로 1초 등록"
+              >
+                <Camera className="w-3.5 h-3.5 text-teal-600" />
+                <span>명함 스캔 등록</span>
+              </button>
+            )}
           </div>
         }
       />
