@@ -129,12 +129,12 @@ export const App: React.FC = () => {
       ];
     }
     return [
-      { id: 'command' as NavViewType, label: '사령탑', icon: Zap },
-      { id: 'company' as NavViewType, label: '공시 팩트', icon: Building2 },
+      { id: 'command' as NavViewType, label: '관계 총괄', icon: Zap },
+      { id: 'company' as NavViewType, label: '실공시 팩트', icon: Building2 },
       { id: 'orgchart' as NavViewType, label: '기업 조직도', icon: Building2 },
-      { id: 'deals' as NavViewType, label: '전략 딜', icon: Briefcase },
-      { id: 'proximity' as NavViewType, label: '외근 레이더', icon: Compass },
-      { id: 'promotion' as NavViewType, label: '영전·승진', icon: Award },
+      { id: 'deals' as NavViewType, label: '파트너십·프로젝트', icon: Briefcase },
+      { id: 'proximity' as NavViewType, label: '티타임 레이더', icon: Compass },
+      { id: 'promotion' as NavViewType, label: '인사·영전 소식', icon: Award },
     ];
   }, [userRole]);
 

@@ -22,27 +22,27 @@ interface NavTabItem {
 }
 
 const ALL_TABS: NavTabItem[] = [
-  // 1. 인맥 인텔리전스 (CORE)
-  { id: 'command', label: '사령탑 관제', icon: LayoutDashboard, workspace: 'core' },
+  // 1. 관계 인텔리전스 (CORE)
+  { id: 'command', label: '관계 총괄', icon: LayoutDashboard, workspace: 'core' },
   { id: 'orgchart', label: '기업 지배구조 & 조직도', icon: GitBranch, workspace: 'core' },
   { id: 'company', label: '회사·알럼나이', icon: Building2, workspace: 'core' },
-  { id: 'audit', label: '인맥 건강도', icon: ShieldAlert, workspace: 'core' },
-  { id: 'age', label: '나이대별 분석', icon: Calendar, workspace: 'core' },
-  // 2. 비즈니스 & 딜 실행 (BIZ)
-  { id: 'deals', label: '전략 딜 협업 룸', icon: Briefcase, workspace: 'biz' },
-  { id: 'promotion', label: '영전 골든타임', icon: Award, workspace: 'biz' },
-  { id: 'referral', label: '추천 리워드', icon: Gift, workspace: 'biz' },
-  { id: 'team', label: '팀 인맥', icon: Users, workspace: 'biz' },
-  // 3. 다차원 공간 & 시계열 (SPACE)
-  { id: 'canvas', label: '2D 관계망', icon: Share2, workspace: 'space' },
-  { id: 'galaxy', label: '3D 은하수', icon: Orbit, workspace: 'space' },
-  { id: 'proximity', label: '거점 레이더', icon: Compass, workspace: 'space' },
-  { id: 'timeline', label: '소통 타임라인', icon: Clock, workspace: 'space' },
+  { id: 'audit', label: '네트워크 건전성', icon: ShieldAlert, workspace: 'core' },
+  { id: 'age', label: '경력 단계별 분석', icon: Calendar, workspace: 'core' },
+  // 2. 비즈니스 파트너십 & 협력 (BIZ)
+  { id: 'deals', label: '파트너십 & 프로젝트', icon: Briefcase, workspace: 'biz' },
+  { id: 'promotion', label: '인사·영전 소식', icon: Award, workspace: 'biz' },
+  { id: 'referral', label: '상생 추천 리워드', icon: Gift, workspace: 'biz' },
+  { id: 'team', label: '팀 협업 네트워크', icon: Users, workspace: 'biz' },
+  // 3. 다차원 공간 & 소통 여정 (SPACE)
+  { id: 'canvas', label: '2D 관계망 지도', icon: Share2, workspace: 'space' },
+  { id: 'galaxy', label: '3D 다차원 연결망', icon: Orbit, workspace: 'space' },
+  { id: 'proximity', label: '지역별 티타임', icon: Compass, workspace: 'space' },
+  { id: 'timeline', label: '소통 여정 히스토리', icon: Clock, workspace: 'space' },
 ];
 
 const WORKSPACE_LABELS = {
-  core: { name: '인맥 인텔리전스', tag: 'CORE', badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-500/30' },
-  biz: { name: '비즈니스 & 딜', tag: 'BIZ', badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-500/30' },
+  core: { name: '관계 인텔리전스', tag: 'CORE', badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200 dark:bg-indigo-950/40 dark:text-indigo-300 dark:border-indigo-500/30' },
+  biz: { name: '비즈니스 파트너십', tag: 'BIZ', badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/40 dark:text-emerald-300 dark:border-emerald-500/30' },
   space: { name: '다차원 공간 & 시계열', tag: 'SPACE', badgeColor: 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-950/40 dark:text-purple-300 dark:border-purple-500/30' }
 };
 

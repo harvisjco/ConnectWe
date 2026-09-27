@@ -155,16 +155,16 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
       {/* 1. Header & Control Bar */}
       <ViewHeader
         icon={Briefcase}
-        title="전략 비즈니스 딜 파이프라인 협업 룸"
-        subtitle="비즈니스 딜별 의사결정권자(Key Decision Maker)와 신뢰 지지자(Champion)를 소중한 인맥과 연결하여 프로젝트 성공 가능성을 높입니다."
-        englishTag="C-Level Deal Pipeline"
+        title="비즈니스 파트너십 & 프로젝트 협력 룸"
+        subtitle="프로젝트별 의사결정권자(Key Decision Maker)와 신뢰 지지자(Champion)를 소중한 인맥과 연결하여 상생 협력 성공 가능성을 높입니다."
+        englishTag="Business Partnership & Project"
         actions={
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-900 hover:bg-black dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white font-bold text-xs shadow-xs transition-all active:scale-95 cursor-pointer"
           >
             <Plus className="w-4 h-4 text-white" />
-            <span>신규 딜 생성</span>
+            <span>신규 파트너십 등록</span>
           </button>
         }
       />
@@ -453,7 +453,7 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
                 <Briefcase className="w-4 h-4 text-blue-600" />
-                <span>신규 비즈니스 딜 파이프라인 수립</span>
+                <span>신규 비즈니스 파트너십 프로젝트 수립</span>
               </h3>
               <button onClick={() => setIsAddModalOpen(false)} className="text-slate-400 hover:text-slate-700">
                 <X className="w-5 h-5" />

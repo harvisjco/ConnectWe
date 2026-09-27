@@ -24,31 +24,31 @@ export const MobileBottomBar: React.FC<MobileBottomBarProps> = ({
   const navItems = [
     {
       id: 'command',
-      label: '사령탑',
+      label: '관계 총괄',
       icon: Zap,
       badge: null
     },
     {
       id: 'company',
-      label: 'DART 팩트',
+      label: '실공시 팩트',
       icon: Users,
       badge: null
     },
     {
       id: 'proximity',
-      label: '외근 레이더',
+      label: '티타임 레이더',
       icon: Compass,
       badge: null
     },
     {
       id: 'promotion',
-      label: '영전·승진',
+      label: '인사·영전',
       icon: Award,
       badge: uncelebratedPromosCount > 0 ? uncelebratedPromosCount : null
     },
     {
       id: 'deals',
-      label: '전략 딜',
+      label: '파트너십',
       icon: Briefcase,
       badge: null
     }

@@ -442,7 +442,7 @@ export const Header: React.FC<HeaderProps> = ({
                 {/* Section 1: Executive Analytics */}
                 <div>
                   <div className="px-2 py-1 text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                    경영 사령탑 &amp; 코파일럿
+                    관계 총괄 &amp; 코파일럿
                   </div>
                   <div className="space-y-0.5">
                     <button

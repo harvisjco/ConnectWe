@@ -132,8 +132,8 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
       {/* 1. Standardized Header */}
       <ViewHeader
         icon={Zap}
-        title="오늘의 비즈니스 경영 사령탑"
-        subtitle="오늘의 핵심 딜 파이프라인 · 테헤란로 외근 접점 · DART 공시 영전 레이더"
+        title="경영진 관계 현황 & 파트너십 총괄"
+        subtitle="오늘의 핵심 파트너십 프로젝트 · 지역별 티타임 접점 · DART 실공시 인사 레이더"
         englishTag="Executive Morning Briefing"
         badge={
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800 text-[11px] font-semibold font-mono">
@@ -195,7 +195,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
               if (defaultTarget) onOpenMeetingBriefing(defaultTarget);
             }}
             className="px-3 py-1.5 rounded-xl bg-purple-50/80 hover:bg-purple-100/90 text-purple-800 dark:bg-purple-950/40 dark:text-purple-300 font-semibold text-xs border border-purple-200/80 dark:border-purple-800/80 shadow-2xs transition-all active:scale-[0.98] flex items-center gap-1.5 shrink-0 cursor-pointer"
-            title="미팅 10분 전 DART 공시, 공통 알럼나이 1촌, 딜 파이프라인, 아이스브레이킹 스마트 브리핑"
+            title="미팅 10분 전 DART 실공시, 공통 알럼나이 인연, 파트너십 프로젝트, 아이스브레이킹 스마트 브리핑"
           >
             <Sparkles className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
             <span>미팅 10분 전 브리핑</span>
@@ -559,7 +559,7 @@ export const ExecutiveCommandCenterView: React.FC<ExecutiveCommandCenterViewProp
             onClick={() => onNavigateView('deals')}
             className="w-full py-2 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-semibold transition-all flex items-center justify-center gap-1 border border-slate-200/80 active:scale-[0.98] cursor-pointer"
           >
-            <span>전략 딜 파이프라인 관리</span>
+            <span>파트너십 &amp; 프로젝트 관리</span>
             <ChevronRight className="w-3.5 h-3.5" />
           </button>
         </div>

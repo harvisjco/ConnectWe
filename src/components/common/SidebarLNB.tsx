@@ -175,7 +175,7 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
         items: [
           {
             id: 'command',
-            label: '사령탑 대시보드 총괄 관제',
+            label: '관계 현황 & 파트너십 총괄',
             icon: LayoutDashboard,
             badge: todayBirthdayCount > 0 
               ? { text: `생일 ${todayBirthdayCount}`, variant: 'action-pink' } 
@@ -185,7 +185,7 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
           },
           {
             id: 'company',
-            label: 'DART 상장사 공시 팩트',
+            label: 'DART 상장사 실공시 팩트',
             icon: Building2,
             badge: dartFactCount > 0 ? { text: `${dartFactCount}`, variant: 'subtle' } : undefined
           },
@@ -196,62 +196,62 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
           },
           {
             id: 'audit',
-            label: '동문 & 인맥 건강도 감사',
+            label: '네트워크 건전성 & 신뢰도 점검',
             icon: ShieldAlert
           }
         ]
       },
       {
-        title: '비즈니스 & 딜 실행',
-        tag: 'BIZ',
+        title: '비즈니스 파트너십 & 협력',
+        tag: 'PARTNER',
         tagColor: '',
         items: [
           {
             id: 'deals',
-            label: '딜 파이프라인 칸반',
+            label: '비즈니스 파트너십 & 프로젝트',
             icon: Briefcase,
             badge: { text: '3', variant: 'action-amber' }
           },
           {
             id: 'promotion',
-            label: '정기 승진 & 인사 레이더',
+            label: '주요 인사 & 축하 소식',
             icon: TrendingUp
           },
           {
             id: 'referral',
-            label: '추천 감사 리워드 (바운티)',
+            label: '상생 인재 매칭 & 협력 (추천 리워드)',
             icon: Gift
           },
           {
             id: 'team',
-            label: '팀 네트워크 협업 풀',
+            label: '팀 네트워크 협업',
             icon: Users
           }
         ]
       },
       {
-        title: '다차원 공간 & 시계열',
+        title: '다차원 공간 & 소통 여정',
         tag: 'SPACE',
         tagColor: '',
         items: [
           {
             id: 'canvas',
-            label: '2D 관계망 캔버스',
+            label: '2D 관계망 지도',
             icon: Share2
           },
           {
             id: 'galaxy',
-            label: '3D 은하수 우주 뷰',
+            label: '3D 다차원 연결망',
             icon: Orbit
           },
           {
             id: 'proximity',
-            label: '지리적 근접 레이더',
+            label: '지역별 접점 & 티타임',
             icon: Compass
           },
           {
             id: 'timeline',
-            label: '타임라인 & 세대 분석',
+            label: '소통 여정 & 관계 히스토리',
             icon: Clock
           },
           {

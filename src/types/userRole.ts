@@ -1,4 +1,4 @@
-﻿// ConnectWe 회원 등급 및 권한 관리 시스템 (Role-Based Access Control)
+// ConnectWe 회원 등급 및 권한 관리 시스템 (Role-Based Access Control)
 
 export type UserRole = 'general' | 'hidden' | 'master';
 
@@ -47,7 +47,7 @@ export const USER_ROLES: Record<UserRole, RoleConfig> = {
     role: 'master',
     label: '마스터 관리자 (Super Admin)',
     badgeLabel: '마스터',
-    description: 'C-Level 사령탑 관제, DART 공시 실명, 기업 조직도, 전체 통제',
+    description: 'C-Level 관계 총괄 관제, DART 실공시 팩트, 기업 지배구조 및 전체 권한',
     colorScheme: {
       bg: 'bg-amber-50 dark:bg-amber-950/40',
       text: 'text-amber-700 dark:text-amber-300',
