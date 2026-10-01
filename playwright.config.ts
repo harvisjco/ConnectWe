@@ -9,9 +9,10 @@ export default defineConfig({
   fullyParallel: false,
   reporter: 'list',
   use: {
-    baseURL: 'http://localhost:5174',
+    baseURL: 'http://localhost:5199',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    viewport: { width: 1440, height: 900 }
   },
   projects: [
     {
@@ -21,7 +22,7 @@ export default defineConfig({
   ],
   webServer: {
     command: 'npm run dev',
-    url: 'http://localhost:5174',
+    url: 'http://localhost:5199',
     reuseExistingServer: true,
     timeout: 30 * 1000,
   },

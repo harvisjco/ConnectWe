@@ -10,8 +10,9 @@ export default defineConfig({
     exclude: ['node_modules', 'dist', 'e2e/**'],
   },
   server: {
-    port: 5174,
-    open: true
+    port: 5199,
+    strictPort: true,
+    open: false
   },
   build: {
     chunkSizeWarningLimit: 1600,

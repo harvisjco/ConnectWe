@@ -36,7 +36,6 @@ const InteractionTimelineView = React.lazy(() => import('./components/views/Inte
 const CosmicGalaxy3DView = React.lazy(() => import('./components/views/CosmicGalaxy3DView').then(m => ({ default: m.CosmicGalaxy3DView })));
 const ExecutiveCommandCenterView = React.lazy(() => import('./components/views/ExecutiveCommandCenterView').then(m => ({ default: m.ExecutiveCommandCenterView })));
 import { PersonInspectorModal } from './components/inspector/PersonInspectorModal';
-import { ExecutiveDossierModal } from './components/inspector/ExecutiveDossierModal';
 import { RelationshipCopilotDrawer } from './components/copilot/RelationshipCopilotDrawer';
 import { ImportDataModal } from './components/import/ImportDataModal';
 import { AddPersonModal } from './components/crm/AddPersonModal';
@@ -44,33 +43,27 @@ import { DailyDigestModal } from './components/digest/DailyDigestModal';
 import { DisclosureAlertModal } from './components/digest/DisclosureAlertModal';
 import { DegreesOfSeparationModal } from './components/network/DegreesOfSeparationModal';
 import { NetworkDashboard } from './components/dashboard/NetworkDashboard';
-import { EncryptionSetupModal } from './components/security/EncryptionSetupModal';
 import { UserSettingsModal } from './components/settings/UserSettingsModal';
-import { CloudSyncModal } from './components/settings/CloudSyncModal';
-import { CardScannerModal } from './components/ocr/CardScannerModal';
 import { CalendarImportModal } from './components/radar/CalendarImportModal';
-import { MeetingDebriefModal } from './components/radar/MeetingDebriefModal';
-import { FollowUpComposerModal } from './components/radar/FollowUpComposerModal';
-import { DebriefResult } from './services/meetingDebriefService';
 import { PrivateSalonModal } from './components/modals/PrivateSalonModal';
 import { CadenceGreetingModal } from './components/modals/CadenceGreetingModal';
 import { ProximityTeaBundleModal } from './components/radar/ProximityTeaBundleModal';
-import { WarmIntroConnectorModal } from './components/bridge/WarmIntroConnectorModal';
 import { ExecutiveWeeklyBriefModal } from './components/modals/ExecutiveWeeklyBriefModal';
-import { DataVaultModal } from './components/modals/DataVaultModal';
 import { RelationshipHeatmapModal } from './components/modals/RelationshipHeatmapModal';
 import { GratitudeSettlementModal } from './components/modals/GratitudeSettlementModal';
-import { MeetingPrepRoomModal } from './components/radar/MeetingPrepRoomModal';
 import { BusinessDeal } from './services/dealPipelineService';
 import { maskPerson } from './services/privacyShieldService';
 import { GeoClusterId } from './services/geoProximityService';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 import { GlobalCommandPalette } from './components/common/GlobalCommandPalette';
-import { VoiceDebriefModal } from './components/radar/VoiceDebriefModal';
-import { WarmIntroPathModal } from './components/bridge/WarmIntroPathModal';
-import { BatchCardScannerModal } from './components/ocr/BatchCardScannerModal';
-import { ExecutiveTeaTimeModal } from './components/modals/ExecutiveTeaTimeModal';
 import { offlineSyncService } from './services/offlineSyncService';
+
+// 5대 통합 스튜디오 (The 5 Unified Studios)
+import { SmartCardScannerStudio } from './components/studios/SmartCardScannerStudio';
+import { ExecutiveMeetingStudio } from './components/studios/ExecutiveMeetingStudio';
+import { ExecutiveDebriefStudio } from './components/studios/ExecutiveDebriefStudio';
+import { WarmIntroHubStudio } from './components/studios/WarmIntroHubStudio';
+import { DataVaultSecurityStudio } from './components/studios/DataVaultSecurityStudio';
 
 import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2, GraduationCap } from 'lucide-react';
 
@@ -153,7 +146,6 @@ export const App: React.FC = () => {
   // 미팅 직후 회고 및 24h 팔로업 상태
   const [debriefTargetPerson, setDebriefTargetPerson] = useState<Person | null>(null);
   const [followUpTargetPerson, setFollowUpTargetPerson] = useState<Person | null>(null);
-  const [debriefResultForFollowUp, setDebriefResultForFollowUp] = useState<DebriefResult | undefined>(undefined);
 
   // Search & GraphRAG State
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -171,7 +163,6 @@ export const App: React.FC = () => {
   const [isSalonModalOpen, setIsSalonModalOpen] = useState(false);
   const [isCopilotOpen, setIsCopilotOpen] = useState(false);
   const [bridgeTargetPerson, setBridgeTargetPerson] = useState<Person | null>(null);
-  const [dossierTargetPerson, setDossierTargetPerson] = useState<Person | null>(null);
   const [meetingPrepTargetPerson, setMeetingPrepTargetPerson] = useState<Person | null>(null);
   const [cadenceTarget, setCadenceTarget] = useState<{ person: Person; daysSince: number } | null>(null);
   const [teaBundleClusterId, setTeaBundleClusterId] = useState<GeoClusterId | null>(null);
@@ -318,7 +309,7 @@ export const App: React.FC = () => {
       {userRole !== 'general' && (
         <MeetingRadarBanner
           imminentMeeting={imminentMeeting}
-          onOpenDossier={(target) => setDossierTargetPerson(target)}
+          onOpenDossier={(target) => setMeetingPrepTargetPerson(target)}
           onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
           onOpenDebrief={(target) => setDebriefTargetPerson(target)}
         />
@@ -471,7 +462,7 @@ export const App: React.FC = () => {
                 <ExecutiveCommandCenterView
                   people={people}
                   onSelectPerson={setSelectedPerson}
-                  onOpenDossier={(target) => setDossierTargetPerson(target)}
+                  onOpenDossier={(target) => setMeetingPrepTargetPerson(target)}
                   onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
                   onOpenDebrief={(target) => setDebriefTargetPerson(target)}
                   onOpenSalon={() => setIsSalonModalOpen(true)}
@@ -499,7 +490,7 @@ export const App: React.FC = () => {
                   people={people}
                   onSelectPerson={setSelectedPerson}
                   onOpenWarmIntro={(target) => setBridgeTargetPerson(target)}
-                  onOpenDossier={(target) => setDossierTargetPerson(target)}
+                  onOpenDossier={(target) => setMeetingPrepTargetPerson(target)}
                   onOpenReferralReward={(corpName) => {
                     handleNavigateView('referral');
                     showToast(`[${corpName}] 연계 채용 오픈 포지션 및 추천 리워드 탐색으로 전환되었습니다.`);
@@ -533,7 +524,7 @@ export const App: React.FC = () => {
                 <InteractionTimelineView
                   people={people}
                   onSelectPerson={setSelectedPerson}
-                  onOpenDossier={(target) => setDossierTargetPerson(target)}
+                  onOpenDossier={(target) => setMeetingPrepTargetPerson(target)}
                   onShowToast={showToast}
                 />
               )}
@@ -558,7 +549,7 @@ export const App: React.FC = () => {
                 <DealPipelineView
                   people={people}
                   onSelectPerson={setSelectedPerson}
-                  onOpenDossier={(target) => setDossierTargetPerson(target)}
+                  onOpenDossier={(target) => setMeetingPrepTargetPerson(target)}
                   onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
                   onOpenGratitudeSettlement={(deal) => {
                     setGratitudeTargetDeal(deal);
@@ -581,7 +572,7 @@ export const App: React.FC = () => {
                 <PromotionCadenceView
                   people={people}
                   onSelectPerson={setSelectedPerson}
-                  onOpenDossier={(target) => setDossierTargetPerson(target)}
+                  onOpenDossier={(target) => setMeetingPrepTargetPerson(target)}
                   onShowToast={showToast}
                 />
               )}
@@ -590,7 +581,7 @@ export const App: React.FC = () => {
                 <NetworkAuditReportView
                   people={people}
                   onSelectPerson={setSelectedPerson}
-                  onOpenDossier={(target) => setDossierTargetPerson(target)}
+                  onOpenDossier={(target) => setMeetingPrepTargetPerson(target)}
                   onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
                   onShowToast={showToast}
                 />
@@ -610,11 +601,10 @@ export const App: React.FC = () => {
         onUpdatePerson={handleUpdatePerson}
         onDeletePerson={handleDeletePerson}
         onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
-        onOpenDossier={(target) => setDossierTargetPerson(target)}
+        onOpenDossier={(target) => setMeetingPrepTargetPerson(target)}
         onOpenDebrief={(target) => setDebriefTargetPerson(target)}
         onOpenFollowUp={(target) => {
           setFollowUpTargetPerson(target);
-          setDebriefResultForFollowUp(undefined);
         }}
         onOpenMeetingBriefing={(target) => {
           setSelectedPerson(null);
@@ -637,17 +627,6 @@ export const App: React.FC = () => {
         }}
       />
 
-      {/* C-Level Meeting Prep Room Modal (1-Page Brief) */}
-      <MeetingPrepRoomModal
-        isOpen={!!meetingPrepTargetPerson}
-        person={meetingPrepTargetPerson}
-        allPeople={people}
-        onClose={() => setMeetingPrepTargetPerson(null)}
-        onSelectPerson={(p) => {
-          setMeetingPrepTargetPerson(null);
-          setSelectedPerson(p);
-        }}
-      />
 
       {/* Multi-source Ingestion Modal */}
       {isImportModalOpen && (
@@ -700,13 +679,6 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Encryption Setup Modal */}
-      {isEncryptionModalOpen && (
-        <EncryptionSetupModal
-          onClose={() => setIsEncryptionModalOpen(false)}
-          onShowToast={showToast}
-        />
-      )}
 
       {/* User & DART Settings Modal */}
       {isSettingsModalOpen && (
@@ -718,25 +690,6 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* 1-Page Executive Dossier Meeting Strategy Modal */}
-      {dossierTargetPerson && (
-        <ExecutiveDossierModal
-          person={dossierTargetPerson}
-          people={people}
-          onClose={() => setDossierTargetPerson(null)}
-          onShowToast={showToast}
-        />
-      )}
-
-      {/* E2EE Cloud Sync Modal */}
-      {isCloudSyncOpen && (
-        <CloudSyncModal
-          people={people}
-          onUpdatePeople={setPeople}
-          onClose={() => setIsCloudSyncOpen(false)}
-          onShowToast={showToast}
-        />
-      )}
 
       {/* Private Salon & Tea Hosting Modal */}
       {isSalonModalOpen && (
@@ -752,17 +705,6 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Card Scanner Modal (1초 명함 OCR & DART 결합) */}
-      {isCardScannerOpen && (
-        <CardScannerModal
-          onSavePerson={(p: Person) => {
-            setPeople(prev => [p, ...prev]);
-            setSelectedPerson(p);
-          }}
-          onClose={() => setIsCardScannerOpen(false)}
-          onShowToast={showToast}
-        />
-      )}
 
       {/* Cadence Greeting Modal (소통 골든타임 안부 레이더) */}
       {cadenceTarget && (
@@ -790,17 +732,6 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Warm Intro Connector Modal (두 인연을 잇는 Double Opt-in 지능형 커넥터) */}
-      {warmIntroConnectorTargets && (
-        <WarmIntroConnectorModal
-          people={people}
-          initialPersonA={warmIntroConnectorTargets.personA}
-          initialPersonB={warmIntroConnectorTargets.personB}
-          onClose={() => setWarmIntroConnectorTargets(null)}
-          onSelectPerson={setSelectedPerson}
-          onShowToast={showToast}
-        />
-      )}
 
       {/* C-Level Weekly Intelligence 1-Page Brief Modal */}
       {isWeeklyBriefOpen && (
@@ -813,15 +744,6 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Excel BOM CSV & AES-256 Encrypted Data Vault Modal */}
-      {isDataVaultOpen && (
-        <DataVaultModal
-          people={people}
-          onUpdatePeople={setPeople}
-          onClose={() => setIsDataVaultOpen(false)}
-          onShowToast={showToast}
-        />
-      )}
 
       {/* C-Level Relationship Tie Strength & Temperature Heatmap Modal */}
       {isHeatmapOpen && (
@@ -864,36 +786,12 @@ export const App: React.FC = () => {
           meetings={meetings}
           people={people}
           onUpdateMeetings={setMeetings}
-          onOpenDossier={(target) => setDossierTargetPerson(target)}
+          onOpenDossier={(target) => setMeetingPrepTargetPerson(target)}
           onClose={() => setIsCalendarModalOpen(false)}
           onShowToast={showToast}
         />
       )}
 
-      {/* Meeting Debrief Modal (1분 음성/텍스트 회고 & AI 액션 아이템 추출) */}
-      {debriefTargetPerson && (
-        <MeetingDebriefModal
-          person={debriefTargetPerson}
-          onUpdatePerson={handleUpdatePerson}
-          onOpenFollowUpComposer={(p, debrief) => {
-            setDebriefTargetPerson(null);
-            setFollowUpTargetPerson(p);
-            setDebriefResultForFollowUp(debrief);
-          }}
-          onClose={() => setDebriefTargetPerson(null)}
-          onShowToast={showToast}
-        />
-      )}
-
-      {/* 24-Hour Follow-Up Sequence Composer Modal */}
-      {followUpTargetPerson && (
-        <FollowUpComposerModal
-          person={followUpTargetPerson}
-          debrief={debriefResultForFollowUp}
-          onClose={() => setFollowUpTargetPerson(null)}
-          onShowToast={showToast}
-        />
-      )}
 
       {/* Relationship Copilot Drawer */}
       <RelationshipCopilotDrawer
@@ -960,77 +858,107 @@ export const App: React.FC = () => {
         onNavigateView={(v) => handleNavigateView(v)}
       />
 
-      {/* 경영진 티타임 의제 AI 코파일럿 & 원터치 캘린더 초대장 (.ICS) */}
-      {isTeaTimeModalOpen && (
-        <ExecutiveTeaTimeModal
-          people={people}
-          initialTargetPerson={teaTimeTargetPerson}
-          onClose={() => {
-            setIsTeaTimeModalOpen(false);
-            setTeaTimeTargetPerson(null);
-          }}
-          onSelectPerson={setSelectedPerson}
-          onShowToast={showToast}
-        />
-      )}
+      {/* ========================================================
+          5대 통합 스튜디오 (The 5 Unified Executive Studios)
+          ======================================================== */}
 
-      {/* 연속 명함 일괄 스캔 & 실시간 DART 자동 결합 모달 (Batch Card Scanner 2.0) */}
-      {isBatchScannerOpen && (
-        <BatchCardScannerModal
+      {/* Studio 1: 스마트 명함 스캔 스튜디오 (1초 단일 스캔 ↔ 연속 일괄 스캔 & DART 결합) */}
+      {(isCardScannerOpen || isBatchScannerOpen) && (
+        <SmartCardScannerStudio
+          initialMode={isBatchScannerOpen ? 'batch' : 'single'}
+          onSavePerson={(p: Person) => {
+            setPeople(prev => [p, ...prev]);
+            setSelectedPerson(p);
+          }}
           onSaveBatch={(newPeople) => {
             setPeople(prev => [...newPeople, ...prev]);
             if (newPeople.length > 0) {
               setSelectedPerson(newPeople[0]);
             }
           }}
-          onClose={() => setIsBatchScannerOpen(false)}
+          onClose={() => {
+            setIsCardScannerOpen(false);
+            setIsBatchScannerOpen(false);
+          }}
           onShowToast={showToast}
         />
       )}
 
-      {/* C-Level 이동 중 30초 음성 회고 AI (Voice Debrief 2.0) */}
-      {isVoiceDebriefOpen && (
-        <VoiceDebriefModal
-          people={people}
-          targetPerson={voiceDebriefTarget}
+      {/* Studio 2: C-Level 미팅 & 티타임 준비 스튜디오 (1-Page 스마트 브리프 ↔ 3대 의제 & .ICS 캘린더) */}
+      {(!!meetingPrepTargetPerson || isTeaTimeModalOpen) && (
+        <ExecutiveMeetingStudio
+          isOpen={true}
+          initialTab={isTeaTimeModalOpen ? 'teatime' : 'brief'}
+          person={teaTimeTargetPerson || meetingPrepTargetPerson}
+          allPeople={people}
           onClose={() => {
+            setMeetingPrepTargetPerson(null);
+            setIsTeaTimeModalOpen(false);
+            setTeaTimeTargetPerson(null);
+          }}
+          onSelectPerson={(p) => {
+            setMeetingPrepTargetPerson(null);
+            setIsTeaTimeModalOpen(false);
+            setTeaTimeTargetPerson(null);
+            setSelectedPerson(p);
+          }}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* Studio 3: 미팅 회고 & 후속 소통 스튜디오 (🎙️ 30초 음성 모드 ↔ ⌨️ 1분 텍스트 모드 & 감사 서신) */}
+      {(!!debriefTargetPerson || isVoiceDebriefOpen || !!followUpTargetPerson) && (
+        <ExecutiveDebriefStudio
+          isOpen={true}
+          initialMode={isVoiceDebriefOpen ? 'voice' : 'text'}
+          person={debriefTargetPerson || voiceDebriefTarget || followUpTargetPerson}
+          people={people}
+          onClose={() => {
+            setDebriefTargetPerson(null);
             setIsVoiceDebriefOpen(false);
             setVoiceDebriefTarget(null);
+            setFollowUpTargetPerson(null);
           }}
           onUpdatePerson={handleUpdatePerson}
           onShowToast={showToast}
         />
       )}
 
-      {/* 최단 신뢰 소개 경로 파인더 (Warm Intro 2.0) */}
-      {isWarmIntroPathOpen && (
-        <WarmIntroPathModal
+      {/* Studio 4: 웜 인트로 & 관계 허브 스튜디오 (최단 신뢰 소개 경로 ↔ Double Opt-in 두 사람 잇기) */}
+      {(isWarmIntroPathOpen || !!warmIntroConnectorTargets) && (
+        <WarmIntroHubStudio
+          isOpen={true}
+          initialTab={warmIntroConnectorTargets ? 'connect_two' : 'find_path'}
           people={people}
-          initialTargetPerson={warmIntroPathTarget}
+          targetPerson={warmIntroPathTarget}
+          personA={warmIntroConnectorTargets?.personA}
+          personB={warmIntroConnectorTargets?.personB}
           onClose={() => {
             setIsWarmIntroPathOpen(false);
             setWarmIntroPathTarget(null);
+            setWarmIntroConnectorTargets(null);
           }}
           onSelectPerson={(p) => {
             setIsWarmIntroPathOpen(false);
+            setWarmIntroPathTarget(null);
+            setWarmIntroConnectorTargets(null);
             setSelectedPerson(p);
           }}
           onShowToast={showToast}
         />
       )}
 
-      {/* C-Level 티타임 의제 AI 코파일럿 & .ICS 원터치 캘린더 생성 모달 */}
-      {isTeaTimeModalOpen && (
-        <ExecutiveTeaTimeModal
+      {/* Studio 5: 데이터 볼트 & 보안 동기화 스튜디오 (BOM CSV/암호화 백업 ↔ AES-256 키 관리 ↔ 클라우드/오프라인 동기화) */}
+      {(isDataVaultOpen || isEncryptionModalOpen || isCloudSyncOpen) && (
+        <DataVaultSecurityStudio
+          isOpen={true}
+          initialTab={isEncryptionModalOpen ? 'crypto' : isCloudSyncOpen ? 'sync' : 'vault'}
           people={people}
-          initialTargetPerson={teaTimeTargetPerson}
+          onUpdatePeople={setPeople}
           onClose={() => {
-            setIsTeaTimeModalOpen(false);
-            setTeaTimeTargetPerson(null);
-          }}
-          onSelectPerson={(p) => {
-            setIsTeaTimeModalOpen(false);
-            setSelectedPerson(p);
+            setIsDataVaultOpen(false);
+            setIsEncryptionModalOpen(false);
+            setIsCloudSyncOpen(false);
           }}
           onShowToast={showToast}
         />
