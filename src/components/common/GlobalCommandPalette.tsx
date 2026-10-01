@@ -91,80 +91,83 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
     });
 
     // 2. 스마트 C-Level 액션
-    if (onOpenVoiceDebrief && (!q || '음성회고'.includes(q) || 'debrief'.includes(q) || '미팅'.includes(q))) {
-      result.push({
+    const smartActions = [
+      onOpenVoiceDebrief && {
         id: 'action-voice-debrief',
         category: '스마트 액션',
         title: '🎙️ 이동 중 30초 음성 회고 AI (Voice Debrief)',
         subtitle: '마이크 원터치로 요약·액션아이템·딜·감사서신 자동 정리',
         icon: Mic,
         badge: 'C-Level AI',
+        keywords: ['음성', '회고', '음성회고', 'debrief', 'voice', '미팅', '회의'],
         onExecute: () => {
           onOpenVoiceDebrief();
           onClose();
         }
-      });
-    }
-
-    if (onOpenWarmIntroPath && (!q || '소개'.includes(q) || '경로'.includes(q) || 'warm'.includes(q) || 'intro'.includes(q))) {
-      result.push({
+      },
+      onOpenWarmIntroPath && {
         id: 'action-warm-intro',
         category: '스마트 액션',
         title: '🧭 최단 신뢰 소개 경로 파인더 (Warm Intro 2.0)',
-        subtitle: '타깃 인재를 가장 높은 성공 확률로 소개해 줄 최적의 신뢰 가교 탐색',
+        subtitle: '관심 인재를 가장 높은 성공 확률로 소개해 줄 최적의 신뢰 가교 탐색',
         icon: Compass,
         badge: '신뢰 경로',
+        keywords: ['소개', '경로', '소개경로', 'warm', 'intro', '다리', '인연', '가교'],
         onExecute: () => {
           onOpenWarmIntroPath();
           onClose();
         }
-      });
-    }
-
-    if (onOpenWeeklyBrief && (!q || '주간'.includes(q) || '브리프'.includes(q) || 'weekly'.includes(q) || '리포트'.includes(q))) {
-      result.push({
+      },
+      onOpenWeeklyBrief && {
         id: 'action-weekly-brief',
         category: '스마트 액션',
         title: '📊 C-Level 월요 전략 주간 브리프 (Weekly Board Report)',
         subtitle: '핵심 딜, DART 공시 변동, 소통 공백 VIP 1-Page A4 인쇄/PDF 리포트',
         icon: BarChart2,
         badge: '전략 리포트',
+        keywords: ['주간', '브리프', '주간브리프', 'weekly', 'report', '리포트', '보고서', '이사회'],
         onExecute: () => {
           onOpenWeeklyBrief();
           onClose();
         }
-      });
-    }
-
-    if (onOpenBatchCardScanner && (!q || '명함'.includes(q) || '스캔'.includes(q) || 'batch'.includes(q) || '일괄'.includes(q))) {
-      result.push({
+      },
+      onOpenBatchCardScanner && {
         id: 'action-batch-scan',
         category: '스마트 액션',
         title: '📇 연속 명함 일괄 스캔 & 실시간 DART 결합 (Batch Scanner)',
         subtitle: '최대 20장 명함 이미지 일괄 드롭 & 상장사 임원 팩트 자동 매칭',
         icon: UploadCloud,
         badge: '일괄 등록',
+        keywords: ['명함', '스캔', '명함스캔', 'batch', '일괄', '카드', 'dart'],
         onExecute: () => {
           onOpenBatchCardScanner();
           onClose();
         }
-      });
-    }
-
-    if (onOpenTeaTimeModal && (!q || '티타임'.includes(q) || '의제'.includes(q) || 'agenda'.includes(q) || 'ics'.includes(q) || '캘린더'.includes(q))) {
-      result.push({
+      },
+      onOpenTeaTimeModal && {
         id: 'action-tea-time',
         category: '스마트 액션',
         title: '☕ 경영진 티타임 의제 AI 코파일럿 & 캘린더 초대 (.ICS)',
         subtitle: 'DART 팩트 기반 3대 맞춤 의제 카드 자동 생성 & 표준 캘린더 초대장 원클릭',
         icon: Coffee,
         badge: '의제 코파일럿',
+        keywords: ['티타임', '의제', 'teatime', 'agenda', 'ics', '캘린더', '초대장', '커피'],
         onExecute: () => {
           onOpenTeaTimeModal();
           onClose();
         }
-      });
-    }
+      }
+    ].filter(Boolean) as Array<CommandAction & { keywords: string[] }>;
+
+    smartActions.forEach(action => {
+      const isMatch = !q || 
+        action.title.toLowerCase().includes(q) || 
+        action.subtitle.toLowerCase().includes(q) || 
+        action.keywords.some(kw => kw.toLowerCase().includes(q) || q.includes(kw.toLowerCase()));
+      if (isMatch) {
+        result.push(action);
+      }
+    });
 
     // 3. 인물 검색 및 1초 브리핑 액션 (상위 6명)
     const matchedPeople = people.filter(p => {

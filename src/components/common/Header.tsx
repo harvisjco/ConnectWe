@@ -84,6 +84,11 @@ export const Header: React.FC<HeaderProps> = ({
   const [isOfflinePopoverOpen, setIsOfflinePopoverOpen] = useState(false);
   const [offlineState, setOfflineState] = useState<OfflineSyncState>(() => offlineSyncService.getState());
 
+  const isMac = React.useMemo(() => {
+    if (typeof window === 'undefined' || typeof navigator === 'undefined') return true;
+    return /Mac|iPhone|iPod|iPad/i.test(navigator.userAgent || '');
+  }, []);
+
   // Subscribe to offline sync changes
   useEffect(() => {
     const unsubscribe = offlineSyncService.subscribe((state) => {
@@ -431,13 +436,13 @@ export const Header: React.FC<HeaderProps> = ({
           {onOpenCommandPalette && (
             <button
               onClick={onOpenCommandPalette}
-              title="초고속 스포트라이트 검색 (⌘K / Ctrl+K)"
+              title={`초고속 스포트라이트 검색 (${isMac ? '⌘K' : 'Ctrl+K'})`}
               className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-slate-100 hover:bg-slate-200/80 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-200/90 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-[0.98] shadow-2xs cursor-pointer whitespace-nowrap min-h-[32px]"
             >
               <Search className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
               <span className="hidden md:inline">빠른 검색</span>
               <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono font-bold bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md text-slate-500 shadow-2xs">
-                ⌘K
+                {isMac ? '⌘K' : 'Ctrl+K'}
               </kbd>
             </button>
           )}
@@ -501,6 +506,108 @@ export const Header: React.FC<HeaderProps> = ({
               <span>티타임 코파일럿</span>
             </button>
           )}
+
+          {/* Responsive Executive Suite More Menu (화면 너비 축소 시 C-Level 도구 완벽 접근 보장) */}
+          <div className="relative" ref={toolsMenuRef}>
+            <button
+              onClick={() => setIsToolsOpen(prev => !prev)}
+              title="경영진 도구 모음 (티타임, 명함 일괄, 소개 경로, CSV)"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-full bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-200/90 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-[0.98] shadow-2xs cursor-pointer min-h-[32px]"
+            >
+              <MoreHorizontal className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+              <span className="hidden xl:hidden md:inline text-[11px] font-bold">C-Suite</span>
+            </button>
+
+            {isToolsOpen && (
+              <div 
+                onMouseDown={e => e.stopPropagation()}
+                className="absolute right-0 mt-2 w-64 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-2 z-50 ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-150"
+              >
+                <div className="px-2.5 py-1 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                  C-Level 전략 무기 모음
+                </div>
+                <div className="space-y-1">
+                  {onOpenTeaTimeModal && (
+                    <button
+                      onClick={() => {
+                        setIsToolsOpen(false);
+                        onOpenTeaTimeModal();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-amber-950/40 hover:text-amber-900 transition-colors text-left cursor-pointer"
+                    >
+                      <Coffee className="w-4 h-4 text-amber-600 shrink-0" />
+                      <div>
+                        <div className="font-bold text-slate-900 dark:text-white">티타임 의제 & 캘린더 (.ICS)</div>
+                        <div className="text-[10px] text-slate-400">맞춤 3대 아젠다 & 1클릭 초대</div>
+                      </div>
+                    </button>
+                  )}
+
+                  {onOpenBatchCardScanner && (
+                    <button
+                      onClick={() => {
+                        setIsToolsOpen(false);
+                        onOpenBatchCardScanner();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 hover:text-indigo-900 transition-colors text-left cursor-pointer"
+                    >
+                      <UploadCloud className="w-4 h-4 text-indigo-600 shrink-0" />
+                      <div>
+                        <div className="font-bold text-slate-900 dark:text-white">연속 명함 일괄 스캔</div>
+                        <div className="text-[10px] text-slate-400">최대 20장 일괄 & DART 임원 결합</div>
+                      </div>
+                    </button>
+                  )}
+
+                  {onOpenWarmIntroPath && (
+                    <button
+                      onClick={() => {
+                        setIsToolsOpen(false);
+                        onOpenWarmIntroPath();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 hover:text-indigo-900 transition-colors text-left cursor-pointer"
+                    >
+                      <Compass className="w-4 h-4 text-indigo-600 shrink-0" />
+                      <div>
+                        <div className="font-bold text-slate-900 dark:text-white">최단 신뢰 소개 경로 파인더</div>
+                        <div className="text-[10px] text-slate-400">관심 인재 연결 최적 가교 탐색</div>
+                      </div>
+                    </button>
+                  )}
+
+                  {onOpenWeeklyBrief && (
+                    <button
+                      onClick={() => {
+                        setIsToolsOpen(false);
+                        onOpenWeeklyBrief();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-left cursor-pointer"
+                    >
+                      <BarChart2 className="w-4 h-4 text-indigo-600 shrink-0" />
+                      <div>
+                        <div className="font-bold text-slate-900 dark:text-white">C-Level 주간 전략 브리프</div>
+                        <div className="text-[10px] text-slate-400">월요 경영진 1-Page 보고서</div>
+                      </div>
+                    </button>
+                  )}
+
+                  <button
+                    onClick={() => {
+                      setIsToolsOpen(false);
+                      handleExportCsv();
+                    }}
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-left cursor-pointer border-t border-slate-100 dark:border-slate-800 pt-2"
+                  >
+                    <Download className="w-4 h-4 text-slate-500 shrink-0" />
+                    <div>
+                      <div className="font-bold text-slate-900 dark:text-white">엑셀 BOM CSV 다운로드</div>
+                      <div className="text-[10px] text-slate-400">UTF-8 with BOM 무손실 내보내기</div>
+                    </div>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* CSV Export Button Shortcut (GoodPartner Style) */}
           <button

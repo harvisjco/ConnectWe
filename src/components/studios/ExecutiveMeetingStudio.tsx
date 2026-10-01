@@ -33,7 +33,16 @@ export const ExecutiveMeetingStudio: React.FC<ExecutiveMeetingStudioProps> = ({
   onShowToast
 }) => {
   const [activeTab, setActiveTab] = useState<'brief' | 'teatime'>(initialTab);
+  const [currentPerson, setCurrentPerson] = useState<Person | null>(person || (allPeople.length > 0 ? allPeople[0] : null));
   const printRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (person) {
+      setCurrentPerson(person);
+    } else if (!currentPerson && allPeople.length > 0) {
+      setCurrentPerson(allPeople[0]);
+    }
+  }, [person, allPeople]);
 
   // 티타임 설정 상태
   const [meetingDateStr, setMeetingDateStr] = useState<string>(() => {
@@ -58,17 +67,17 @@ export const ExecutiveMeetingStudio: React.FC<ExecutiveMeetingStudioProps> = ({
 
   // 스마트 브리핑 데이터
   const briefing: MeetingBriefing | null = useMemo(() => {
-    if (!person) return null;
-    return generateMeetingBriefing(person, allPeople);
-  }, [person, allPeople]);
+    if (!currentPerson) return null;
+    return generateMeetingBriefing(currentPerson, allPeople);
+  }, [currentPerson, allPeople]);
 
   // 티타임 아젠다 데이터
   const teaTimeAgenda: TeaTimeAgendaResult | null = useMemo(() => {
-    if (!person) return null;
-    return generateTeaTimeAgenda(person);
-  }, [person]);
+    if (!currentPerson) return null;
+    return generateTeaTimeAgenda(currentPerson);
+  }, [currentPerson]);
 
-  if (!isOpen || !person) return null;
+  if (!isOpen || !currentPerson) return null;
 
   // 인쇄 핸들러
   const handlePrint = () => {
@@ -91,13 +100,13 @@ export const ExecutiveMeetingStudio: React.FC<ExecutiveMeetingStudioProps> = ({
     const agendaSummary = teaTimeAgenda.strategicAgendaList.map(a => `■ ${a.title}`).join('\n');
 
     downloadIcsFile({
-      title: `${person.currentCompany} ${person.name} ${person.currentTitle} 티타임 회동`,
+      title: `${currentPerson.currentCompany} ${currentPerson.name} ${currentPerson.currentTitle} 티타임 회동`,
       description: `[ConnectWe C-Level 회동]\n\n■ 주요 아젠다:\n${agendaSummary}\n\n■ 장소: ${selectedVenue}`,
       location: selectedVenue,
       startDate: dateObj,
       durationMinutes,
-      attendeeName: person.name,
-      attendeeEmail: person.email,
+      attendeeName: currentPerson.name,
+      attendeeEmail: currentPerson.email,
       organizerName: 'ConnectWe Executive Member'
     });
 
@@ -109,7 +118,7 @@ export const ExecutiveMeetingStudio: React.FC<ExecutiveMeetingStudioProps> = ({
     if (!teaTimeAgenda) return;
     const dateObj = new Date(meetingDateStr);
     const agendaSummary = teaTimeAgenda.strategicAgendaList.map(a => `■ ${a.title}\n  - ${a.description}`).join('\n\n');
-    const letter = generateInvitationLetter(person, dateObj, selectedVenue, agendaSummary);
+    const letter = generateInvitationLetter(currentPerson, dateObj, selectedVenue, agendaSummary);
 
     navigator.clipboard.writeText(letter);
     setIsCopiedLetter(true);
@@ -156,19 +165,38 @@ export const ExecutiveMeetingStudio: React.FC<ExecutiveMeetingStudioProps> = ({
 
         {/* Target Person Info Bar & Mode Tabs */}
         <div className="px-4 sm:px-6 py-2.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs shrink-0">
-          {/* Target Profile Snippet */}
+          {/* Target Profile Snippet & Switcher */}
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white font-bold text-xs flex items-center justify-center">
-              {person.name[0]}
+            <div className="w-7 h-7 rounded-lg bg-indigo-600 text-white font-bold text-xs flex items-center justify-center shrink-0">
+              {currentPerson.name[0]}
             </div>
-            <div>
-              <span className="font-black text-slate-900">{person.name}</span>
-              <span className="text-slate-500 ml-1.5 font-medium">{person.currentCompany} · {person.currentTitle}</span>
-            </div>
-            {person.sourceType === 'DART_FACT' && (
-              <span className="px-1.5 py-0.2 rounded bg-indigo-100 text-indigo-800 text-[10px] font-bold border border-indigo-200">
-                DART 임원
-              </span>
+            {allPeople.length > 1 ? (
+              <div className="flex items-center gap-1.5">
+                <select
+                  value={currentPerson.id}
+                  onChange={(e) => {
+                    const found = allPeople.find(p => p.id === e.target.value);
+                    if (found) setCurrentPerson(found);
+                  }}
+                  className="bg-white border border-slate-200 rounded-lg px-2 py-1 font-bold text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer shadow-2xs"
+                >
+                  {allPeople.map(p => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} ({p.currentCompany} · {p.currentTitle})
+                    </option>
+                  ))}
+                </select>
+                {currentPerson.sourceType === 'DART_FACT' && (
+                  <span className="px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 text-[10px] font-bold border border-indigo-200 whitespace-nowrap">
+                    DART 임원
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div>
+                <span className="font-black text-slate-900">{currentPerson.name}</span>
+                <span className="text-slate-500 ml-1.5 font-medium">{currentPerson.currentCompany} · {currentPerson.currentTitle}</span>
+              </div>
             )}
           </div>
 
@@ -385,11 +413,24 @@ export const ExecutiveMeetingStudio: React.FC<ExecutiveMeetingStudioProps> = ({
                 </div>
               </div>
 
+              {/* 추천 아이스브레이킹 화두 */}
+              {teaTimeAgenda.icebreakerTopic && (
+                <div className="p-4 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-1.5 text-xs">
+                  <span className="font-black text-amber-950 flex items-center gap-1.5 text-xs">
+                    <Sparkles className="w-4 h-4 text-amber-600" />
+                    <span>추천 아이스브레이킹 화두</span>
+                  </span>
+                  <p className="text-slate-800 text-xs leading-relaxed font-medium bg-white/80 p-3 rounded-xl border border-amber-100">
+                    "{teaTimeAgenda.icebreakerTopic}"
+                  </p>
+                </div>
+              )}
+
               {/* 3대 전략 아젠다 */}
               <div className="space-y-3">
                 <span className="text-xs font-black text-slate-900 flex items-center gap-1.5">
                   <Coffee className="w-4 h-4 text-amber-600" />
-                  <span>맞춤형 3대 전략 비즈니스 의제</span>
+                  <span>C-Level 3대 핵심 비즈니스 아젠다</span>
                 </span>
                 <div className="space-y-2">
                   {teaTimeAgenda.strategicAgendaList.map((agenda, idx) => (
@@ -403,6 +444,26 @@ export const ExecutiveMeetingStudio: React.FC<ExecutiveMeetingStudioProps> = ({
                   ))}
                 </div>
               </div>
+
+              {/* 경영진의 통찰을 돋보이게 하는 품격 질문 3선 */}
+              {teaTimeAgenda.executiveQuestions && teaTimeAgenda.executiveQuestions.length > 0 && (
+                <div className="space-y-2">
+                  <span className="text-xs font-black text-slate-900 flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-indigo-600" />
+                    <span>경영진의 통찰을 돋보이게 하는 품격 질문 3선</span>
+                  </span>
+                  <div className="space-y-1.5">
+                    {teaTimeAgenda.executiveQuestions.map((q, idx) => (
+                      <div key={idx} className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-800 flex items-start gap-2.5">
+                        <span className="w-5 h-5 rounded-lg bg-indigo-100 text-indigo-800 font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                          Q{idx + 1}
+                        </span>
+                        <p className="font-medium text-slate-800 leading-snug">{q}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Actions: .ICS Download & Invitation Letter */}
               <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3 border-t border-slate-100">

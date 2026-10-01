@@ -68,24 +68,28 @@ test.describe('C-Level 차세대 6대 핵심 기능 심층 실전 E2E 테스트 
     await page.screenshot({ path: 'e2e/screenshots/test-02-command-palette.png' });
 
     // 검색어 필터링 테스트
-    await palette.fill('티타임');
+    await paletteInput.fill('티타임');
     await page.waitForTimeout(200);
     await expect(page.locator('text=경영진 티타임 의제 AI 코파일럿')).toBeVisible();
 
     // ESC 키로 닫기
     await page.keyboard.press('Escape');
     await page.waitForTimeout(300);
-    await expect(palette).not.toBeVisible();
+    await expect(paletteInput).not.toBeVisible();
   });
 
-  test('3. ☕ 경영진 티타임 의제 AI 코파일럿 & .ICS 다운로드 검증', async ({ page }) => {
+  test('3. ☕ 경영진 티타임 의제 AI 코파일럿 & .ICS 다운로드 검증 (Meeting Studio)', async ({ page }) => {
     const teaButton = page.locator('button:has-text("티타임 코파일럿")');
     await expect(teaButton).toBeVisible();
     await teaButton.click();
 
-    // 모달 렌더링 확인
-    const modalTitle = page.getByRole('heading', { name: '경영진 티타임 의제 AI 코파일럿' });
+    // 스튜디오 모달 렌더링 확인
+    const modalTitle = page.locator('text=경영진 미팅 & 티타임 스튜디오');
     await expect(modalTitle).toBeVisible();
+
+    // 티타임 3대 아젠다 탭 활성화 확인
+    const teaTimeTab = page.locator('button:has-text("티타임 3대 의제")');
+    await expect(teaTimeTab).toBeVisible();
 
     // 3대 아젠다 및 아이스브레이킹 노출 확인
     await expect(page.locator('text=추천 아이스브레이킹 화두')).toBeVisible();
@@ -93,12 +97,12 @@ test.describe('C-Level 차세대 6대 핵심 기능 심층 실전 E2E 테스트 
     await expect(page.locator('text=경영진의 통찰을 돋보이게 하는 품격 질문 3선')).toBeVisible();
 
     // 서신 복사 버튼 클릭
-    const copyButton = page.locator('button:has-text("초대/확정 서신 복사")');
+    const copyButton = page.locator('button:has-text("품격 확정 서신 복사")');
     await expect(copyButton).toBeVisible();
     await copyButton.click();
 
     // .ics 캘린더 다운로드 버튼 확인
-    const downloadButton = page.locator('button:has-text("캘린더 초대장 (.ics) 다운로드")');
+    const downloadButton = page.locator('button:has-text(".ICS 캘린더 초대장 원클릭 다운로드")');
     await expect(downloadButton).toBeVisible();
 
     await page.screenshot({ path: 'e2e/screenshots/test-03-teatime-modal.png' });
@@ -108,14 +112,14 @@ test.describe('C-Level 차세대 6대 핵심 기능 심층 실전 E2E 테스트 
     await page.waitForTimeout(300);
   });
 
-  test('4. 🎙️ 이동 중 30초 음성 회고 AI 모달 검증', async ({ page }) => {
+  test('4. 🎙️ 미팅 회고 & 감사 서신 스튜디오 검증 (Executive Debrief Studio)', async ({ page }) => {
     const debriefButton = page.locator('button:has-text("음성 회고")');
     await expect(debriefButton).toBeVisible();
     await debriefButton.click();
 
-    const title = page.locator('text=C-Level 이동 중 30초 음성 회고 AI');
+    const title = page.locator('text=미팅 회고 & 감사 서신 스튜디오');
     await expect(title).toBeVisible();
-    await expect(page.locator('text=마이크를 눌러 음성으로 말씀하시거나')).toBeVisible();
+    await expect(page.locator('text=이동 중 음성 모드')).toBeVisible();
 
     await page.screenshot({ path: 'e2e/screenshots/test-04-voice-debrief.png' });
 
@@ -123,14 +127,14 @@ test.describe('C-Level 차세대 6대 핵심 기능 심층 실전 E2E 테스트 
     await page.waitForTimeout(300);
   });
 
-  test('5. 🧭 최단 신뢰 소개 경로 파인더 검증', async ({ page }) => {
+  test('5. 🧭 신뢰 소개 허브 스튜디오 검증 (Warm Intro Hub Studio)', async ({ page }) => {
     const introButton = page.locator('button:has-text("소개 경로")');
     await expect(introButton).toBeVisible();
     await introButton.click();
 
-    const title = page.locator('text=최단 신뢰 소개 경로 파인더');
+    const title = page.locator('text=신뢰 소개 허브 스튜디오');
     await expect(title).toBeVisible();
-    await expect(page.locator('text=신뢰 경로')).toBeVisible();
+    await expect(page.locator('button:has-text("최단 신뢰 소개 경로")')).toBeVisible();
 
     await page.screenshot({ path: 'e2e/screenshots/test-05-warm-intro.png' });
 
@@ -152,14 +156,14 @@ test.describe('C-Level 차세대 6대 핵심 기능 심층 실전 E2E 테스트 
     await page.waitForTimeout(300);
   });
 
-  test('7. 📇 연속 명함 일괄 스캔 & 실시간 DART 결합 모달 검증', async ({ page }) => {
+  test('7. 📇 스마트 명함 스캔 스튜디오 일괄 모드 검증 (Card Scanner Studio)', async ({ page }) => {
     const batchButton = page.locator('button:has-text("명함 일괄")');
     await expect(batchButton).toBeVisible();
     await batchButton.click();
 
-    const title = page.locator('text=연속 명함 일괄 스캔 & 실시간 DART 결합');
+    const title = page.locator('text=명함 원터치 지능형 스캔 & DART 임원 결합');
     await expect(title).toBeVisible();
-    await expect(page.locator('text=명함 이미지 파일들을 여기에 드래그하거나')).toBeVisible();
+    await expect(page.locator('text=연속 일괄 스캔 (여러 장)')).toBeVisible();
 
     await page.screenshot({ path: 'e2e/screenshots/test-07-batch-scanner.png' });
 
@@ -187,10 +191,39 @@ test.describe('C-Level 차세대 6대 핵심 기능 심층 실전 E2E 테스트 
     if (await teaTimeCta.isVisible()) {
       await teaTimeCta.click();
       await page.waitForTimeout(400);
-      await expect(page.locator('text=경영진 티타임 의제 AI 코파일럿')).toBeVisible();
+      await expect(page.locator('text=경영진 미팅 & 티타임 스튜디오')).toBeVisible();
       await page.screenshot({ path: 'e2e/screenshots/test-08-person-inspector-teatime.png' });
       await page.keyboard.press('Escape');
     }
+  });
+
+  test('9. 일반 노트북 화면 (1200x800)에서 헤더 C-Suite 더보기 드롭다운 반응형 완결성 검증', async ({ page }) => {
+    // 1200x800 일반 노트북 해상도로 뷰포트 변경
+    await page.setViewportSize({ width: 1200, height: 800 });
+    await page.waitForTimeout(300);
+
+    // C-Suite 더보기 버튼 클릭
+    const moreBtn = page.locator('header button[title*="경영진 도구 모음"]');
+    await expect(moreBtn).toBeVisible();
+    await moreBtn.click();
+    await page.waitForTimeout(200);
+
+    // 드롭다운 팝오버 렌더링 확인
+    await expect(page.locator('text=C-Level 전략 무기 모음')).toBeVisible();
+    await expect(page.locator('text=티타임 의제 & 캘린더 (.ICS)')).toBeVisible();
+    await expect(page.locator('text=연속 명함 일괄 스캔')).toBeVisible();
+    await expect(page.locator('text=최단 신뢰 소개 경로 파인더')).toBeVisible();
+
+    await page.screenshot({ path: 'e2e/screenshots/test-09-c-suite-more-menu.png' });
+
+    // 드롭다운 내에서 티타임 의제 클릭 시 스튜디오 오픈 확인
+    const menuTeaTime = page.locator('button:has-text("티타임 의제 & 캘린더 (.ICS)")').first();
+    await expect(menuTeaTime).toBeVisible();
+    await menuTeaTime.click();
+    await page.waitForTimeout(500);
+
+    await expect(page.locator('text=경영진 미팅 & 티타임 스튜디오')).toBeVisible();
+    await page.keyboard.press('Escape');
   });
 
   test.afterAll(async () => {

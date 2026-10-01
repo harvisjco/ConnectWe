@@ -889,7 +889,7 @@ export const App: React.FC = () => {
         <ExecutiveMeetingStudio
           isOpen={true}
           initialTab={isTeaTimeModalOpen ? 'teatime' : 'brief'}
-          person={teaTimeTargetPerson || meetingPrepTargetPerson}
+          person={teaTimeTargetPerson || meetingPrepTargetPerson || (people.length > 0 ? people[0] : null)}
           allPeople={people}
           onClose={() => {
             setMeetingPrepTargetPerson(null);
@@ -911,7 +911,7 @@ export const App: React.FC = () => {
         <ExecutiveDebriefStudio
           isOpen={true}
           initialMode={isVoiceDebriefOpen ? 'voice' : 'text'}
-          person={debriefTargetPerson || voiceDebriefTarget || followUpTargetPerson}
+          person={debriefTargetPerson || voiceDebriefTarget || followUpTargetPerson || (people.length > 0 ? people[0] : null)}
           people={people}
           onClose={() => {
             setDebriefTargetPerson(null);

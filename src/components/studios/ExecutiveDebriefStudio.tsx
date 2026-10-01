@@ -53,7 +53,7 @@ export const ExecutiveDebriefStudio: React.FC<ExecutiveDebriefStudioProps> = ({
   onShowToast
 }) => {
   const [activeMode, setActiveMode] = useState<'voice' | 'text'>(initialMode);
-  const [selectedPerson, setSelectedPerson] = useState<Person | null>(person || null);
+  const [selectedPerson, setSelectedPerson] = useState<Person | null>(person || (people.length > 0 ? people[0] : null));
   const [transcript, setTranscript] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -65,8 +65,12 @@ export const ExecutiveDebriefStudio: React.FC<ExecutiveDebriefStudioProps> = ({
   const recognitionRef = useRef<ISpeechRecognition | null>(null);
 
   useEffect(() => {
-    if (person) setSelectedPerson(person);
-  }, [person]);
+    if (person) {
+      setSelectedPerson(person);
+    } else if (!selectedPerson && people.length > 0) {
+      setSelectedPerson(people[0]);
+    }
+  }, [person, people]);
 
   // ESC 키 핸들링
   useEffect(() => {
