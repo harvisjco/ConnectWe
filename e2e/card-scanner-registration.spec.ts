@@ -9,7 +9,7 @@ test('가상 명함 이미지 업로드 및 신규 인맥 등록 전체 플로�
   await expect(page.getByRole('heading', { name: 'ConnectWe' })).toBeVisible();
 
   // 2. [명함 스캔 등록] 버튼 클릭
-  const cardScanButton = page.locator('button:has-text("명함 스캔 등록")').first();
+  const cardScanButton = page.locator('button:has-text("명함 실시간 스캔"), button:has-text("명함 스캔 등록")').first();
   await expect(cardScanButton).toBeVisible();
   await cardScanButton.click();
 

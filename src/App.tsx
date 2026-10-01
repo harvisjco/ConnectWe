@@ -66,6 +66,8 @@ import { maskPerson } from './services/privacyShieldService';
 import { GeoClusterId } from './services/geoProximityService';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 import { GlobalCommandPalette } from './components/common/GlobalCommandPalette';
+import { VoiceDebriefModal } from './components/radar/VoiceDebriefModal';
+import { WarmIntroPathModal } from './components/bridge/WarmIntroPathModal';
 
 import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2, GraduationCap } from 'lucide-react';
 
@@ -180,6 +182,10 @@ export const App: React.FC = () => {
     return localStorage.getItem('connectwe_privacy_shield') === 'true';
   });
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const [isVoiceDebriefOpen, setIsVoiceDebriefOpen] = useState(false);
+  const [voiceDebriefTarget, setVoiceDebriefTarget] = useState<Person | null>(null);
+  const [isWarmIntroPathOpen, setIsWarmIntroPathOpen] = useState(false);
+  const [warmIntroPathTarget, setWarmIntroPathTarget] = useState<Person | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
@@ -303,6 +309,14 @@ export const App: React.FC = () => {
         onSelectUserRole={handleSelectUserRole}
         onToggleSidebar={() => setIsMobileSidebarOpen(prev => !prev)}
         onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
+        onOpenVoiceDebrief={() => {
+          setVoiceDebriefTarget(null);
+          setIsVoiceDebriefOpen(true);
+        }}
+        onOpenWarmIntroPath={() => {
+          setWarmIntroPathTarget(null);
+          setIsWarmIntroPathOpen(true);
+        }}
         onOpenImportModal={() => setIsImportModalOpen(true)}
         onOpenAddModal={() => setIsAddModalOpen(true)}
         onOpenDigestModal={() => setIsDigestModalOpen(true)}
@@ -577,6 +591,16 @@ export const App: React.FC = () => {
         onOpenMeetingBriefing={(target) => {
           setSelectedPerson(null);
           setMeetingPrepTargetPerson(target);
+        }}
+        onOpenVoiceDebrief={(target) => {
+          setSelectedPerson(null);
+          setVoiceDebriefTarget(target);
+          setIsVoiceDebriefOpen(true);
+        }}
+        onOpenWarmIntroPath={(target) => {
+          setSelectedPerson(null);
+          setWarmIntroPathTarget(target);
+          setIsWarmIntroPathOpen(true);
         }}
       />
 
@@ -886,8 +910,47 @@ export const App: React.FC = () => {
         people={people}
         onSelectPerson={setSelectedPerson}
         onOpenMeetingBriefing={(p) => setMeetingPrepTargetPerson(p)}
+        onOpenVoiceDebrief={() => {
+          setVoiceDebriefTarget(null);
+          setIsVoiceDebriefOpen(true);
+        }}
+        onOpenWarmIntroPath={() => {
+          setWarmIntroPathTarget(null);
+          setIsWarmIntroPathOpen(true);
+        }}
         onNavigateView={(v) => handleNavigateView(v)}
       />
+
+      {/* C-Level 이동 중 30초 음성 회고 AI (Voice Debrief 2.0) */}
+      {isVoiceDebriefOpen && (
+        <VoiceDebriefModal
+          people={people}
+          targetPerson={voiceDebriefTarget}
+          onClose={() => {
+            setIsVoiceDebriefOpen(false);
+            setVoiceDebriefTarget(null);
+          }}
+          onUpdatePerson={handleUpdatePerson}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* 최단 신뢰 소개 경로 파인더 (Warm Intro 2.0) */}
+      {isWarmIntroPathOpen && (
+        <WarmIntroPathModal
+          people={people}
+          initialTargetPerson={warmIntroPathTarget}
+          onClose={() => {
+            setIsWarmIntroPathOpen(false);
+            setWarmIntroPathTarget(null);
+          }}
+          onSelectPerson={(p) => {
+            setIsWarmIntroPathOpen(false);
+            setSelectedPerson(p);
+          }}
+          onShowToast={showToast}
+        />
+      )}
 
       {/* PWA Mobile Installation Floating Banner */}
       <PwaInstallBanner />

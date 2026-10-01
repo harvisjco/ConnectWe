@@ -17,7 +17,8 @@ import {
   ShieldCheck, Clock, Edit3, Check, 
   Download, Trash2, Plus, Lock,
   Sparkles, Zap, Cpu, Building2, Rocket,
-  User, MessageSquare, Shield, Send, Copy, AlertTriangle
+  User, MessageSquare, Shield, Send, Copy, AlertTriangle,
+  Mic, Compass
 } from 'lucide-react';
 
 interface PersonInspectorModalProps {
@@ -31,6 +32,8 @@ interface PersonInspectorModalProps {
   onOpenDebrief?: (person: Person) => void;
   onOpenFollowUp?: (person: Person) => void;
   onOpenMeetingBriefing?: (person: Person) => void;
+  onOpenVoiceDebrief?: (person: Person) => void;
+  onOpenWarmIntroPath?: (person: Person) => void;
 }
 
 type InspectorTab = 'profile' | 'timeline' | 'governance';
@@ -44,6 +47,8 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
   onOpenDossier,
   onOpenDebrief,
   onOpenMeetingBriefing,
+  onOpenVoiceDebrief,
+  onOpenWarmIntroPath,
 }) => {
   const [activeTab, setActiveTab] = useState<InspectorTab>('profile');
   const [isEditingMemo, setIsEditingMemo] = useState(false);
@@ -387,6 +392,30 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
                     <span>미팅 직후 빠른 회고 & AI 액션 아이템 추출</span>
                   </button>
                 )}
+
+                {/* 2대 차세대 C-Level 킬러 액션: 음성 회고 & 최단 신뢰 소개 경로 */}
+                <div className="grid grid-cols-2 gap-2">
+                  {onOpenVoiceDebrief && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenVoiceDebrief(person)}
+                      className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer"
+                    >
+                      <Mic className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                      <span>30초 음성 회고</span>
+                    </button>
+                  )}
+                  {onOpenWarmIntroPath && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenWarmIntroPath(person)}
+                      className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer"
+                    >
+                      <Compass className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                      <span>최단 소개 경로 탐색</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* 스마트 메모 & 비즈니스 인사이트 (with E2EE 볼트 동기화) */}

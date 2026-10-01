@@ -4,7 +4,7 @@ import { NavViewType } from './SidebarLNB';
 import { 
   Search, User, Briefcase, Zap, 
   MapPin, Award, Building2, Sparkles, 
-  ArrowRight, X
+  ArrowRight, X, Mic, Compass
 } from 'lucide-react';
 
 interface CommandAction {
@@ -23,6 +23,8 @@ interface GlobalCommandPaletteProps {
   people: Person[];
   onSelectPerson: (person: Person) => void;
   onOpenMeetingBriefing?: (person: Person) => void;
+  onOpenVoiceDebrief?: () => void;
+  onOpenWarmIntroPath?: () => void;
   onNavigateView: (view: NavViewType) => void;
 }
 
@@ -32,6 +34,8 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   people,
   onSelectPerson,
   onOpenMeetingBriefing,
+  onOpenVoiceDebrief,
+  onOpenWarmIntroPath,
   onNavigateView
 }) => {
   const [query, setQuery] = useState('');
@@ -80,7 +84,38 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
       });
     });
 
-    // 2. 인물 검색 및 1초 브리핑 액션 (상위 6명)
+    // 2. 스마트 C-Level 액션
+    if (onOpenVoiceDebrief && (!q || '음성회고'.includes(q) || 'debrief'.includes(q) || '미팅'.includes(q))) {
+      result.push({
+        id: 'action-voice-debrief',
+        category: '스마트 액션',
+        title: '🎙️ 이동 중 30초 음성 회고 AI (Voice Debrief)',
+        subtitle: '마이크 원터치로 요약·액션아이템·딜·감사서신 자동 정리',
+        icon: Mic,
+        badge: 'C-Level AI',
+        onExecute: () => {
+          onOpenVoiceDebrief();
+          onClose();
+        }
+      });
+    }
+
+    if (onOpenWarmIntroPath && (!q || '소개'.includes(q) || '경로'.includes(q) || 'warm'.includes(q) || 'intro'.includes(q))) {
+      result.push({
+        id: 'action-warm-intro',
+        category: '스마트 액션',
+        title: '🧭 최단 신뢰 소개 경로 파인더 (Warm Intro 2.0)',
+        subtitle: '타깃 인재를 가장 높은 성공 확률로 소개해 줄 최적의 신뢰 가교 탐색',
+        icon: Compass,
+        badge: '신뢰 경로',
+        onExecute: () => {
+          onOpenWarmIntroPath();
+          onClose();
+        }
+      });
+    }
+
+    // 3. 인물 검색 및 1초 브리핑 액션 (상위 6명)
     const matchedPeople = people.filter(p => {
       if (!q) return p.closeness <= 2; // 초기에는 1~2촌 핵심 인물 표시
       return (

@@ -10,7 +10,7 @@ import {
   Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
   BarChart2, Lock, Settings, Cloud, Bot, Camera, Calendar, Bell,
   MoreHorizontal, ChevronDown, PanelLeft, Database, Flame, Gift,
-  Crown, Check, Search
+  Crown, Check, Search, Mic, Compass
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -19,6 +19,8 @@ interface HeaderProps {
   onSelectUserRole?: (role: UserRole) => void;
   onToggleSidebar?: () => void;
   onOpenCommandPalette?: () => void;
+  onOpenVoiceDebrief?: () => void;
+  onOpenWarmIntroPath?: () => void;
   onOpenImportModal: () => void;
   onOpenAddModal: () => void;
   onOpenDigestModal: () => void;
@@ -45,6 +47,8 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectUserRole,
   onToggleSidebar,
   onOpenCommandPalette,
+  onOpenVoiceDebrief,
+  onOpenWarmIntroPath,
   onOpenImportModal, 
   onOpenAddModal,
   onOpenDigestModal,
@@ -300,6 +304,30 @@ export const Header: React.FC<HeaderProps> = ({
               <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono font-bold bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md text-slate-500 shadow-2xs">
                 ⌘K
               </kbd>
+            </button>
+          )}
+
+          {/* C-Level Voice Debrief 30s Quick CTA */}
+          {onOpenVoiceDebrief && (
+            <button
+              onClick={onOpenVoiceDebrief}
+              title="이동 중 30초 음성 회고 AI (Voice Debrief)"
+              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs font-bold transition-all active:scale-[0.98] shadow-xs cursor-pointer whitespace-nowrap min-h-[32px]"
+            >
+              <Mic className="w-3.5 h-3.5 text-amber-300" />
+              <span className="hidden sm:inline">음성 회고</span>
+            </button>
+          )}
+
+          {/* C-Level Warm Intro 2.0 Quick CTA */}
+          {onOpenWarmIntroPath && (
+            <button
+              onClick={onOpenWarmIntroPath}
+              title="최단 신뢰 소개 경로 파인더 (Warm Intro 2.0)"
+              className="hidden lg:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-200/90 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-[0.98] shadow-2xs cursor-pointer whitespace-nowrap min-h-[32px]"
+            >
+              <Compass className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+              <span>소개 경로</span>
             </button>
           )}
 
