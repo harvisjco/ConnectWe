@@ -220,11 +220,11 @@ ${contextualNote}
             <div className="p-3 w-12 h-12 mx-auto rounded-full bg-slate-50 border border-slate-200 text-slate-400 flex items-center justify-center shadow-xs">
               <MapPin className="w-6 h-6 text-slate-400" />
             </div>
-            <div className="text-sm font-semibold text-slate-700">
-              해당 거점에 배정된 인맥이 아직 없습니다.
+            <div className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+              새로운 인연을 기대하는 곳: 활동 중인 인맥이 아직 없습니다.
             </div>
             <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
-              새로운 인맥을 추가하거나 DART 공시 임원을 연동하면 소속 회사 및 근무 거점에 맞춰 자동으로 레이더에 탐지됩니다.
+              새로운 인맥을 등록하거나 DART 공시 인재를 연동하시면, 소속 기업 및 근무 거점에 맞추어 자동으로 외근 레이더 접점으로 연결됩니다.
             </p>
           </div>
         ) : viewMode === 'table' ? (

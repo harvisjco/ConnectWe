@@ -11,6 +11,7 @@ import {
   auditExecutiveTone, 
   sanitizeExecutiveTone 
 } from '../../services/executiveToneService';
+import { getGovernanceHistory } from '../../services/dartGovernanceService';
 import { 
   X, Phone, Mail, Briefcase, GraduationCap, 
   ShieldCheck, Clock, Edit3, Check, 
@@ -98,6 +99,11 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
   const clusterProfile = useMemo(() => {
     if (!person) return null;
     return identifyTalentCluster(person);
+  }, [person]);
+
+  const governanceHistory = useMemo(() => {
+    if (!person) return [];
+    return getGovernanceHistory(person);
   }, [person]);
 
   // 서신 실시간 품격 감사 (Audit)
@@ -712,6 +718,31 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
                     {dartStatusMsg}
                   </p>
                 )}
+              </div>
+
+              {/* DART 최근 거버넌스 궤적 타임라인 */}
+              <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                    <Building2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                    <span>최근 공시 거버넌스 궤적 (Audit Trail)</span>
+                  </h4>
+                  <span className="text-[10px] text-slate-400">최근 3개년 팩트</span>
+                </div>
+                <div className="space-y-2.5">
+                  {governanceHistory.map((item) => (
+                    <div key={item.id} className="p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 text-xs space-y-1">
+                      <div className="flex items-center justify-between">
+                        <span className={`px-1.5 py-0.2 rounded text-[10px] font-bold border ${item.badgeStyle}`}>
+                          {item.eventLabel}
+                        </span>
+                        <span className="text-[10px] font-mono text-slate-400">{item.announcedDate}</span>
+                      </div>
+                      <p className="font-bold text-slate-800 dark:text-slate-200 text-xs">{item.headline}</p>
+                      <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">{item.detail}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}

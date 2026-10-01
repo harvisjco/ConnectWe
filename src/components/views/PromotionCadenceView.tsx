@@ -181,7 +181,19 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
       {/* 3. Tab Contents */}
       {activeTab === 'promotions' ? (
         /* Promotions Feed */
-        viewMode === 'table' ? (
+        promotions.length === 0 ? (
+          <div className="p-12 text-center rounded-2xl bg-white dark:bg-slate-900 border border-dashed border-slate-200 dark:border-slate-800 space-y-3">
+            <div className="p-3 w-12 h-12 mx-auto rounded-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-400 flex items-center justify-center shadow-xs">
+              <Award className="w-6 h-6 text-slate-400" />
+            </div>
+            <div className="text-sm font-semibold text-slate-800 dark:text-slate-200">
+              최근 90일간 감지된 영전·승진 공시가 없습니다.
+            </div>
+            <p className="text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
+              모든 주요 협력사의 임원 정기 공시가 최신 상태로 유지되고 있으며, 신규 공시가 등록되면 실시간 레이더에 즉시 반영됩니다.
+            </p>
+          </div>
+        ) : viewMode === 'table' ? (
           /* High-Density Table View */
           <div className="bg-white border border-slate-200/90 rounded-2xl overflow-hidden shadow-xs">
             <div className="overflow-x-auto">

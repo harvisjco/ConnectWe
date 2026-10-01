@@ -69,7 +69,7 @@ export function getStoredUserRole(): UserRole {
   } catch (e) {
     console.error('Failed to read user role from storage:', e);
   }
-  return 'general'; // 기본값은 심플한 일반 회원
+  return 'master'; // 기본값은 C-Level 총괄 사령탑 및 12대 메뉴 마스터 권한
 }
 
 export function saveUserRole(role: UserRole): void {

@@ -1,13 +1,20 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Person, DataSourceType, AgeGroup } from '../../types/network';
+import { ExtractedCardData } from '../../services/cardOcrParser';
 import { 
-  parseBusinessCardText, 
-  simulateExtractCardTextFromImage, 
-  ExtractedCardData 
-} from '../../services/cardOcrParser';
+  getScanQuotaStatus, 
+  rechargeCredits, 
+  setCustomGeminiApiKey, 
+  getCustomGeminiApiKey,
+  QuotaStatus,
+  ScanExecutionMode
+} from '../../services/quotaBillingService';
+import { preprocessCardImage, PreprocessResult } from '../../services/imagePreprocessor';
+import { scanCardWithGeminiVision } from '../../services/geminiVisionOcrService';
 import { 
   Camera, Sparkles, ShieldCheck, 
-  X, RefreshCw, Edit3, UserPlus, Upload, Video
+  X, RefreshCw, Edit3, UserPlus, Upload, Video,
+  Zap, Coins, Key, Sliders, CheckCircle2
 } from 'lucide-react';
 
 interface CardScannerModalProps {
@@ -40,6 +47,15 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
   const [extracted, setExtracted] = useState<ExtractedCardData | null>(null);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
+
+  // 쿼터 및 과금 관리 상태
+  const [quotaStatus, setQuotaStatus] = useState<QuotaStatus>(getScanQuotaStatus());
+  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [customKeyInput, setCustomKeyInput] = useState(getCustomGeminiApiKey() || '');
+  const [enablePreprocess, setEnablePreprocess] = useState(true);
+  const [preprocessedInfo, setPreprocessedInfo] = useState<PreprocessResult | null>(null);
+  const [lastEngineUsed, setLastEngineUsed] = useState<'gemini_vision' | 'local_heuristic' | null>(null);
+  const [lastScanMode, setLastScanMode] = useState<ScanExecutionMode | null>(null);
 
   // 인라인 수정 폼 상태
   const [editName, setEditName] = useState('');
@@ -133,17 +149,42 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
     processImageForOcr(file);
   };
 
-  // OCR 및 DART 파싱 파이프라인
+  // OCR 및 DART 파싱 파이프라인 (Gemini Vision AI + 전처리 + 쿼터 라우팅)
   const processImageForOcr = async (uploadedFile?: File) => {
     setIsScanning(true);
     try {
-      // 1. OCR 텍스트 추출 (Zero-Retention)
-      const rawText = await simulateExtractCardTextFromImage(uploadedFile || new File([], 'card.jpg'));
-      // 2. 지능형 정규식 및 DART 실시간 교차검증
-      const parsed = parseBusinessCardText(rawText);
+      const fileToProcess = uploadedFile || new File([], 'card.jpg');
+
+      let preprocessedBase64: string | undefined = undefined;
+      if (enablePreprocess && uploadedFile && uploadedFile.size > 0) {
+        try {
+          const prep = await preprocessCardImage(uploadedFile, {
+            maxWidth: 1024,
+            maxHeight: 1024,
+            contrastBoost: 1.25,
+            sharpen: true
+          });
+          setPreprocessedInfo(prep);
+          preprocessedBase64 = prep.base64Data;
+        } catch (prepErr) {
+          console.warn('전처리 폴백:', prepErr);
+        }
+      }
+
+      // Gemini Vision AI & 하이브리드 파이프라인 실행
+      const visionResult = await scanCardWithGeminiVision(fileToProcess, preprocessedBase64);
+      const parsed = visionResult.data;
+
+      setLastEngineUsed(visionResult.engine);
+      setLastScanMode(visionResult.executionMode);
+      setQuotaStatus(getScanQuotaStatus());
 
       // AI/LLM 키워드 기반 스마트 도메인 보정
-      if (rawText.toLowerCase().includes('ai') || rawText.includes('인공지능') || rawText.includes('데이터')) {
+      if (
+        parsed.rawText.toLowerCase().includes('ai') || 
+        parsed.rawText.includes('인공지능') || 
+        parsed.rawText.includes('데이터')
+      ) {
         parsed.primaryDomain = 'AI/LLM & Data';
       }
 
@@ -159,7 +200,7 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
       if (parsed.dartMatch?.isMatched) {
         onShowToast(`[${parsed.dartMatch.stockName}] DART 상장사 공시 임원 일치 확인!`);
       } else {
-        onShowToast('명함 텍스트가 성공적으로 파싱되었습니다.');
+        onShowToast(visionResult.quotaMessage);
       }
     } catch (err) {
       console.error('Scan error:', err);
@@ -167,6 +208,21 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
     } finally {
       setIsScanning(false);
     }
+  };
+
+  // 크레딧 충전 핸들러
+  const handleRecharge = (amount: number) => {
+    rechargeCredits(amount);
+    setQuotaStatus(getScanQuotaStatus());
+    onShowToast(`크레딧 ${amount}개가 성공적으로 충전되었습니다.`);
+  };
+
+  // API Key 저장 핸들러
+  const handleSaveApiKey = () => {
+    setCustomGeminiApiKey(customKeyInput);
+    setQuotaStatus(getScanQuotaStatus());
+    setShowSettingsModal(false);
+    onShowToast(customKeyInput.trim() ? '개인 Gemini API 키가 안전하게 등록되었습니다.' : '개인 API 키가 해제되었습니다.');
   };
 
   // 인맥 최종 저장
@@ -258,6 +314,63 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
           >
             <X className="w-5 h-5" />
           </button>
+        </div>
+
+        {/* Sub-Header: Quota Status & Vision Engine Bar */}
+        <div className="px-6 py-2.5 bg-slate-50 border-b border-slate-100 flex flex-wrap items-center justify-between gap-3 text-[11px]">
+          <div className="flex items-center gap-2.5">
+            {/* AI Engine Status */}
+            <div className="flex items-center gap-1.5 font-bold text-slate-700 bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs">
+              <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+              <span>
+                {quotaStatus.customApiKeyActive 
+                  ? 'Gemini Vision (BYOK 무제한)' 
+                  : (quotaStatus.freeScansRemaining > 0 
+                      ? 'Gemini 1.5 Flash Vision' 
+                      : (quotaStatus.paidCredits > 0 ? 'Gemini Vision (크레딧)' : '온디바이스 안심 파서'))}
+              </span>
+            </div>
+
+            {/* Free Quota Badge */}
+            <div className="flex items-center gap-1 text-slate-600 bg-white px-2 py-1 rounded-lg border border-slate-200">
+              <span className="text-slate-400">오늘 무료:</span>
+              <span className="font-bold text-indigo-600">{quotaStatus.freeScansRemaining}</span>
+              <span className="text-slate-400">/{quotaStatus.freeScansLimit}회</span>
+            </div>
+
+            {/* Paid Credit Badge */}
+            <div className="flex items-center gap-1 text-slate-600 bg-white px-2 py-1 rounded-lg border border-slate-200">
+              <Coins className="w-3.5 h-3.5 text-amber-500" />
+              <span className="text-slate-400">크레딧:</span>
+              <span className="font-bold text-slate-900">{quotaStatus.paidCredits}개</span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {/* Preprocessing Toggle */}
+            <button
+              type="button"
+              onClick={() => setEnablePreprocess(!enablePreprocess)}
+              className={`px-2.5 py-1 rounded-lg text-[11px] font-semibold flex items-center gap-1.5 transition-all cursor-pointer ${
+                enablePreprocess 
+                  ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' 
+                  : 'bg-slate-100 text-slate-500 border border-slate-200'
+              }`}
+            >
+              <Sliders className="w-3 h-3" />
+              <span>명암/선명화 전처리 {enablePreprocess ? 'ON' : 'OFF'}</span>
+            </button>
+
+            {/* Settings & Recharge Button */}
+            <button
+              type="button"
+              onClick={() => setShowSettingsModal(true)}
+              className="px-2.5 py-1 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 font-bold transition-all flex items-center gap-1 cursor-pointer"
+            >
+              <Key className="w-3 h-3" />
+              <span>충전/키 설정</span>
+            </button>
+          </div>
         </div>
 
         {/* Body */}
@@ -399,6 +512,26 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
                 </div>
               )}
 
+              {/* Engine & Preprocessing Status Badges */}
+              <div className="flex flex-wrap items-center gap-2 text-[11px]">
+                {lastEngineUsed && (
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 font-bold">
+                    <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                    <span>
+                      {lastEngineUsed === 'gemini_vision' 
+                        ? `Gemini 1.5 Flash Vision AI 분석 (${lastScanMode === 'byok' ? '개인키 무제한' : lastScanMode === 'free' ? '무료 쿼터' : '유료 크레딧'})` 
+                        : '온디바이스 안심 로컬 파서 분석'}
+                    </span>
+                  </div>
+                )}
+                {preprocessedInfo && (
+                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 font-semibold">
+                    <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                    <span>명암/선명화 1024px 전처리 완료</span>
+                  </div>
+                )}
+              </div>
+
               {/* Inline Quick Editor Form */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -524,6 +657,129 @@ export const CardScannerModal: React.FC<CardScannerModalProps> = ({
             )}
           </div>
         </div>
+
+        {/* Gemini Vision Quota & Billing Settings Modal */}
+        {showSettingsModal && (
+          <div 
+            onClick={() => setShowSettingsModal(false)}
+            className="fixed inset-0 z-60 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in"
+          >
+            <div 
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 shadow-2xl space-y-5"
+            >
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+                    <Zap className="w-4 h-4 fill-amber-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900">Gemini Vision AI 쿼터 &amp; 과금 설정</h3>
+                    <p className="text-[11px] text-slate-500">무료 한도 관리 및 고정밀 스캔 크레딧</p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setShowSettingsModal(false)}
+                  className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* 1. Free Quota Status */}
+              <div className="p-3.5 rounded-2xl bg-indigo-50/70 border border-indigo-100 text-xs text-indigo-900 space-y-1">
+                <div className="flex justify-between font-bold">
+                  <span>일일 무료 Gemini 스캔</span>
+                  <span className="text-indigo-700">{quotaStatus.freeScansRemaining} / {quotaStatus.freeScansLimit}회</span>
+                </div>
+                <p className="text-[11px] text-indigo-600">
+                  매일 자정 20회의 무료 고정밀 Vision 스캔이 자동 충전됩니다.
+                </p>
+              </div>
+
+              {/* 2. Paid Credits & Recharge */}
+              <div className="space-y-2">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-bold text-slate-700 flex items-center gap-1.5">
+                    <Coins className="w-3.5 h-3.5 text-amber-500" />
+                    유료 스캔 크레딧 (1건당 1크레딧 = 50원)
+                  </span>
+                  <span className="font-bold text-slate-900">{quotaStatus.paidCredits} 크레딧 보유</span>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleRecharge(20)}
+                    className="p-2.5 rounded-xl border border-slate-200 hover:border-amber-400 hover:bg-amber-50/50 text-center transition-all cursor-pointer"
+                  >
+                    <div className="text-xs font-bold text-slate-900">+20개</div>
+                    <div className="text-[10px] text-slate-500">1,000원</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleRecharge(50)}
+                    className="p-2.5 rounded-xl border border-amber-300 bg-amber-50/40 hover:bg-amber-50 text-center transition-all cursor-pointer"
+                  >
+                    <div className="text-xs font-bold text-amber-900">+50개</div>
+                    <div className="text-[10px] text-amber-700 font-semibold">2,500원</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleRecharge(100)}
+                    className="p-2.5 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 text-center transition-all cursor-pointer"
+                  >
+                    <div className="text-xs font-bold text-slate-900">+100개</div>
+                    <div className="text-[10px] text-slate-500">5,000원</div>
+                  </button>
+                </div>
+              </div>
+
+              {/* 3. BYOK Option */}
+              <div className="space-y-2 pt-2 border-t border-slate-100">
+                <div className="flex justify-between items-center text-xs">
+                  <span className="font-bold text-slate-700 flex items-center gap-1.5">
+                    <Key className="w-3.5 h-3.5 text-slate-500" />
+                    개인 Gemini API Key 등록 (BYOK)
+                  </span>
+                  {quotaStatus.customApiKeyActive && (
+                    <span className="text-[10px] text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                      무제한 활성됨
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11px] text-slate-500 leading-relaxed">
+                  Google AI Studio에서 발급받은 본인 API 키를 등록하시면 크레딧 소모 없이 완전 무료로 무제한 스캔을 이용하실 수 있습니다.
+                </p>
+                <div className="flex gap-2">
+                  <input
+                    type="password"
+                    value={customKeyInput}
+                    onChange={(e) => setCustomKeyInput(e.target.value)}
+                    placeholder="AIzaSy..."
+                    className="flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSaveApiKey}
+                    className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all cursor-pointer"
+                  >
+                    저장
+                  </button>
+                </div>
+              </div>
+
+              <div className="pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowSettingsModal(false)}
+                  className="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-colors cursor-pointer"
+                >
+                  완료
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -241,7 +241,8 @@ input::placeholder {
   button,
   .fixed.bottom-3,
   .fixed.bottom-6,
-  .fixed.bottom-20 {
+  .fixed.bottom-20,
+  [data-testid="global-command-palette"] {
     display: none !important;
   }
 

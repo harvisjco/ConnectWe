@@ -134,7 +134,7 @@ test.describe('Menu-by-Menu Precision Audit & Centered Dim Modal Inspection Loop
       { 
         order: 12, 
         id: 'galaxy', 
-        name: '3D 은하수 우주 뷰', 
+        name: '3D 다차원 연결망', 
         selector: '[data-testid="lnb-galaxy"], [data-testid="tab-galaxy"]', 
         personClick: 'canvas',
         evalNotes: 'Three.js 3D 코스믹 갤럭시 궤도 탐색, Raycaster 행성 클릭 시 중앙 딤 모달 연동'
@@ -150,6 +150,7 @@ test.describe('Menu-by-Menu Precision Audit & Centered Dim Modal Inspection Loop
 
       try {
         const tab = page.locator(menu.selector).first();
+        await tab.scrollIntoViewIfNeeded().catch(() => {});
         if (await tab.isVisible({ timeout: 4000 }).catch(() => false)) {
           await tab.click();
           await page.waitForTimeout(1000);

@@ -3,7 +3,7 @@ import { Person } from '../../types/network';
 import { generateMeetingBriefing, MeetingBriefing } from '../../services/meetingBriefingEngine';
 import { 
   X, Copy, Check, ShieldCheck, Sparkles, Building2, 
-  Users, Handshake, MessageSquare, AlertCircle, ExternalLink 
+  Users, Handshake, MessageSquare, AlertCircle, ExternalLink, Printer 
 } from 'lucide-react';
 
 interface MeetingPrepRoomModalProps {
@@ -88,8 +88,16 @@ export const MeetingPrepRoomModal: React.FC<MeetingPrepRoomModalProps> = ({
 
           <div className="flex items-center gap-2">
             <button
+              onClick={() => window.print()}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm cursor-pointer"
+              title="A4 1-Page 인쇄 및 PDF 저장"
+            >
+              <Printer className="w-3.5 h-3.5 text-slate-500" />
+              <span>A4 인쇄</span>
+            </button>
+            <button
               onClick={handleCopySummary}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm cursor-pointer"
               title="1-Page 텍스트 복사"
             >
               {copied ? (

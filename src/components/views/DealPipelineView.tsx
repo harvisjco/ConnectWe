@@ -188,7 +188,22 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
 
               {/* Deal Cards in this Stage: Compact Summary Mode */}
               <div className="space-y-2.5 flex-1 overflow-y-auto">
-                {stageDeals.map(deal => (
+                {stageDeals.length === 0 ? (
+                  <div 
+                    onClick={() => {
+                      setNewCompany('');
+                      setNewTitle('');
+                      setIsAddModalOpen(true);
+                    }}
+                    className="h-28 border border-dashed border-slate-300/80 hover:border-indigo-400 dark:border-slate-800 rounded-xl flex flex-col items-center justify-center p-3 text-center cursor-pointer transition-colors bg-white/40 dark:bg-slate-900/40 group"
+                  >
+                    <Plus className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors mb-1" />
+                    <span className="text-[11px] font-medium text-slate-400 group-hover:text-indigo-600 transition-colors">
+                      + 새 프로젝트 등록
+                    </span>
+                  </div>
+                ) : (
+                  stageDeals.map(deal => (
                   <div
                     key={deal.id}
                     onClick={() => setActiveDealForDetail(deal)}
@@ -255,7 +270,8 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
                       </div>
                     </div>
                   </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           );

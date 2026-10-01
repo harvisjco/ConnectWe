@@ -65,6 +65,7 @@ import { BusinessDeal } from './services/dealPipelineService';
 import { maskPerson } from './services/privacyShieldService';
 import { GeoClusterId } from './services/geoProximityService';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
+import { GlobalCommandPalette } from './components/common/GlobalCommandPalette';
 
 import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2, GraduationCap } from 'lucide-react';
 
@@ -178,7 +179,20 @@ export const App: React.FC = () => {
   const [isShieldActive, setIsShieldActive] = useState<boolean>(() => {
     return localStorage.getItem('connectwe_privacy_shield') === 'true';
   });
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // VIP 프라이버시 쉴드 모드 토글
   const handleToggleShield = () => {
@@ -288,6 +302,7 @@ export const App: React.FC = () => {
         userRole={userRole}
         onSelectUserRole={handleSelectUserRole}
         onToggleSidebar={() => setIsMobileSidebarOpen(prev => !prev)}
+        onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         onOpenImportModal={() => setIsImportModalOpen(true)}
         onOpenAddModal={() => setIsAddModalOpen(true)}
         onOpenDigestModal={() => setIsDigestModalOpen(true)}
@@ -863,6 +878,16 @@ export const App: React.FC = () => {
           <span>{toastMessage}</span>
         </div>
       )}
+
+      {/* C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) */}
+      <GlobalCommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        people={people}
+        onSelectPerson={setSelectedPerson}
+        onOpenMeetingBriefing={(p) => setMeetingPrepTargetPerson(p)}
+        onNavigateView={(v) => handleNavigateView(v)}
+      />
 
       {/* PWA Mobile Installation Floating Banner */}
       <PwaInstallBanner />
