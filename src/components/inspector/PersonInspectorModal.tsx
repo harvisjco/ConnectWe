@@ -18,7 +18,7 @@ import {
   Download, Trash2, Plus, Lock,
   Sparkles, Zap, Cpu, Building2, Rocket,
   User, MessageSquare, Shield, Send, Copy, AlertTriangle,
-  Mic, Compass
+  Mic, Compass, Coffee
 } from 'lucide-react';
 
 interface PersonInspectorModalProps {
@@ -34,6 +34,7 @@ interface PersonInspectorModalProps {
   onOpenMeetingBriefing?: (person: Person) => void;
   onOpenVoiceDebrief?: (person: Person) => void;
   onOpenWarmIntroPath?: (person: Person) => void;
+  onOpenTeaTimeModal?: (person: Person) => void;
 }
 
 type InspectorTab = 'profile' | 'timeline' | 'governance';
@@ -49,6 +50,7 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
   onOpenMeetingBriefing,
   onOpenVoiceDebrief,
   onOpenWarmIntroPath,
+  onOpenTeaTimeModal,
 }) => {
   const [activeTab, setActiveTab] = useState<InspectorTab>('profile');
   const [isEditingMemo, setIsEditingMemo] = useState(false);
@@ -416,6 +418,18 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
                     </button>
                   )}
                 </div>
+
+                {/* 경영진 티타임 의제 AI 코파일럿 & 캘린더 초대 (.ICS) 원터치 실행 */}
+                {onOpenTeaTimeModal && (
+                  <button
+                    type="button"
+                    onClick={() => onOpenTeaTimeModal(person)}
+                    className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-300/80 dark:border-amber-700/60 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer shadow-2xs"
+                  >
+                    <Coffee className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                    <span>경영진 티타임 의제 AI 코파일럿 & 캘린더 초대 (.ICS)</span>
+                  </button>
+                )}
               </div>
 
               {/* 스마트 메모 & 비즈니스 인사이트 (with E2EE 볼트 동기화) */}

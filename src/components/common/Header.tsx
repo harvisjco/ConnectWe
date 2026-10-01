@@ -5,12 +5,13 @@ import { exportPeopleToVcf } from '../../services/vcardExporter';
 import { exportBackupJson, restoreBackupFromJson, resetStorage } from '../../services/storageService';
 import { batchCrossCheckWithDart } from '../../services/dartFactEngine';
 import { pickContactsFromDevice } from '../../services/contactPicker';
+import { offlineSyncService, OfflineSyncState } from '../../services/offlineSyncService';
 import { 
   Share2, UploadCloud, Download, ShieldCheck, ShieldAlert, Clock, 
   Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
   BarChart2, Lock, Settings, Cloud, Bot, Camera, Calendar, Bell,
   MoreHorizontal, ChevronDown, PanelLeft, Database, Flame, Gift,
-  Crown, Check, Search, Mic, Compass
+  Crown, Check, Search, Mic, Compass, Plane, RefreshCw, Coffee
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -23,6 +24,7 @@ interface HeaderProps {
   onOpenWarmIntroPath?: () => void;
   onOpenWeeklyBrief?: () => void;
   onOpenBatchCardScanner?: () => void;
+  onOpenTeaTimeModal?: (targetPerson?: Person) => void;
   onOpenImportModal: () => void;
   onOpenAddModal: () => void;
   onOpenDigestModal: () => void;
@@ -53,6 +55,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenWarmIntroPath,
   onOpenWeeklyBrief,
   onOpenBatchCardScanner,
+  onOpenTeaTimeModal,
   onOpenImportModal, 
   onOpenAddModal,
   onOpenDigestModal,
@@ -75,8 +78,19 @@ export const Header: React.FC<HeaderProps> = ({
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const toolsMenuRef = useRef<HTMLDivElement | null>(null);
   const roleMenuRef = useRef<HTMLDivElement | null>(null);
+  const offlinePopoverRef = useRef<HTMLDivElement | null>(null);
   const [isToolsOpen, setIsToolsOpen] = useState(false);
   const [isRoleMenuOpen, setIsRoleMenuOpen] = useState(false);
+  const [isOfflinePopoverOpen, setIsOfflinePopoverOpen] = useState(false);
+  const [offlineState, setOfflineState] = useState<OfflineSyncState>(() => offlineSyncService.getState());
+
+  // Subscribe to offline sync changes
+  useEffect(() => {
+    const unsubscribe = offlineSyncService.subscribe((state) => {
+      setOfflineState(state);
+    });
+    return unsubscribe;
+  }, []);
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -87,14 +101,30 @@ export const Header: React.FC<HeaderProps> = ({
       if (roleMenuRef.current && !roleMenuRef.current.contains(e.target as Node)) {
         setIsRoleMenuOpen(false);
       }
+      if (offlinePopoverRef.current && !offlinePopoverRef.current.contains(e.target as Node)) {
+        setIsOfflinePopoverOpen(false);
+      }
     };
-    if (isToolsOpen || isRoleMenuOpen) {
+    if (isToolsOpen || isRoleMenuOpen || isOfflinePopoverOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isToolsOpen, isRoleMenuOpen]);
+  }, [isToolsOpen, isRoleMenuOpen, isOfflinePopoverOpen]);
+
+  const handleManualSync = async () => {
+    if (!offlineState.isOnline) {
+      onShowToast('현재 오프라인 상태입니다. 네트워크 연결 시 자동 동기화됩니다.');
+      return;
+    }
+    const res = await offlineSyncService.syncNow();
+    if (res.success) {
+      onShowToast(`동기화 완료: 로컬 변경 사항 ${res.syncedCount}건이 안전하게 반영되었습니다.`);
+    } else {
+      onShowToast('동기화 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    }
+  };
 
   const dartFactCount = people.filter(p => p.sourceType === 'DART_FACT' || p.dartInfo?.isPublicDirector).length;
   const staleCount = people.filter(p => p.isStale).length;
@@ -224,14 +254,115 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/80">
                 AI 2.0
               </span>
-              <button
-                onClick={onOpenCloudSyncModal}
-                title="Supabase PostgreSQL E2EE Cloud Live 연동 중"
-                className="inline-flex items-center gap-1 text-[11px] px-2 py-1 min-h-[32px] rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-500/30 font-semibold hover:bg-emerald-100 transition-all cursor-pointer whitespace-nowrap active:scale-95 shadow-2xs"
-              >
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                <span>Live</span>
-              </button>
+              {/* Network Live vs Offline Status Badge */}
+              <div className="relative" ref={offlinePopoverRef}>
+                {offlineState.isOnline ? (
+                  <button
+                    onClick={() => setIsOfflinePopoverOpen(prev => !prev)}
+                    title="Supabase PostgreSQL E2EE Cloud Live 연동 중 (클릭하여 동기화 상태 확인)"
+                    className="inline-flex items-center gap-1 text-[11px] px-2 py-1 min-h-[32px] rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-500/30 font-semibold hover:bg-emerald-100 transition-all cursor-pointer whitespace-nowrap active:scale-95 shadow-2xs"
+                  >
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                    <span>Live</span>
+                    {offlineState.pendingCount > 0 && (
+                      <span className="ml-0.5 px-1 py-0.2 rounded-full bg-amber-500 text-white text-[9px] font-bold">
+                        {offlineState.pendingCount}
+                      </span>
+                    )}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setIsOfflinePopoverOpen(prev => !prev)}
+                    title="오프라인 안심 모드 작동 중 (클릭하여 상세 정보 확인)"
+                    className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 min-h-[32px] rounded-full bg-amber-50 text-amber-800 border border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-600/40 font-bold hover:bg-amber-100 transition-all cursor-pointer whitespace-nowrap active:scale-95 shadow-xs animate-pulse"
+                  >
+                    <Plane className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                    <span>오프라인 안심</span>
+                    {offlineState.pendingCount > 0 && (
+                      <span className="ml-0.5 px-1.5 py-0.2 rounded-full bg-amber-600 text-white text-[9px] font-bold">
+                        {offlineState.pendingCount}
+                      </span>
+                    )}
+                  </button>
+                )}
+
+                {/* Offline & Sync Status Popover */}
+                {isOfflinePopoverOpen && (
+                  <div className="absolute left-0 top-full mt-2 w-72 sm:w-80 p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl z-50 animate-in fade-in-50 zoom-in-95 duration-200">
+                    <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-100 dark:border-slate-800">
+                      <div className="flex items-center gap-2">
+                        {offlineState.isOnline ? (
+                          <div className="w-6 h-6 rounded-lg bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+                            <Cloud className="w-3.5 h-3.5" />
+                          </div>
+                        ) : (
+                          <div className="w-6 h-6 rounded-lg bg-amber-100 dark:bg-amber-950/70 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+                            <Plane className="w-3.5 h-3.5" />
+                          </div>
+                        )}
+                        <span className="text-xs font-bold text-slate-900 dark:text-white">
+                          {offlineState.isOnline ? '클라우드 실시간 연동' : '비행기 / 오프라인 안심 모드'}
+                        </span>
+                      </div>
+                      <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
+                        offlineState.isOnline 
+                          ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/80 dark:text-emerald-300' 
+                          : 'bg-amber-50 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300'
+                      }`}>
+                        {offlineState.isOnline ? 'Online' : 'Offline'}
+                      </span>
+                    </div>
+
+                    <p className="text-[11px] leading-relaxed text-slate-600 dark:text-slate-400 mb-3">
+                      {offlineState.isOnline 
+                        ? '모든 데이터가 기기 로컬 암호화 볼트와 클라우드에 실시간 안전 동기화되고 있습니다.'
+                        : '기내 또는 통신 음영 지역에서도 모든 인맥 조회, 검색 및 메모 작성이 AES-256 로컬 볼트에서 100% 안전하게 동작합니다.'}
+                    </p>
+
+                    <div className="space-y-1.5 mb-3 p-2 rounded-xl bg-slate-50 dark:bg-slate-800/60 text-[11px]">
+                      <div className="flex justify-between items-center text-slate-500 dark:text-slate-400">
+                        <span>로컬 볼트 보안:</span>
+                        <span className="font-semibold text-emerald-600 dark:text-emerald-400">AES-256-GCM</span>
+                      </div>
+                      <div className="flex justify-between items-center text-slate-500 dark:text-slate-400">
+                        <span>동기화 대기 항목:</span>
+                        <span className="font-bold text-slate-800 dark:text-slate-200">
+                          {offlineState.pendingCount}건
+                        </span>
+                      </div>
+                      {offlineState.lastSyncedAt && (
+                        <div className="flex justify-between items-center text-slate-500 dark:text-slate-400">
+                          <span>최근 동기화:</span>
+                          <span className="text-slate-700 dark:text-slate-300">
+                            {new Date(offlineState.lastSyncedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleManualSync}
+                        disabled={offlineState.isSyncing || !offlineState.isOnline}
+                        className="flex-1 py-1.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 dark:disabled:bg-slate-800 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
+                      >
+                        <RefreshCw className={`w-3.5 h-3.5 ${offlineState.isSyncing ? 'animate-spin' : ''}`} />
+                        <span>{offlineState.isSyncing ? '동기화 중...' : '지금 동기화'}</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setIsOfflinePopoverOpen(false);
+                          if (onOpenCloudSyncModal) onOpenCloudSyncModal();
+                        }}
+                        className="py-1.5 px-3 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-semibold transition-all cursor-pointer"
+                      >
+                        설정
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div 
                 title="Zero-Knowledge 로컬 E2EE 암호화: 주소록과 인맥 정보는 사용자의 기기에서만 복호화되며 외부 서버로 무단 유출되지 않습니다."
                 className="hidden sm:inline-flex items-center gap-1 text-[11px] px-2 py-1 min-h-[32px] rounded-full bg-slate-100 text-slate-600 border border-slate-200/80 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700 font-medium cursor-help"
@@ -356,6 +487,18 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <UploadCloud className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
               <span>명함 일괄</span>
+            </button>
+          )}
+
+          {/* C-Level Executive Tea-Time Agenda Copilot & .ICS CTA */}
+          {onOpenTeaTimeModal && (
+            <button
+              onClick={() => onOpenTeaTimeModal()}
+              title="경영진 티타임 의제 AI 코파일럿 & 원터치 캘린더 초대장 (.ICS)"
+              className="hidden lg:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-amber-50 hover:bg-amber-100/80 dark:bg-amber-950/60 dark:hover:bg-amber-900/60 border border-amber-300/80 dark:border-amber-700/60 text-xs font-bold text-amber-800 dark:text-amber-200 transition-all active:scale-[0.98] shadow-2xs cursor-pointer whitespace-nowrap min-h-[32px]"
+            >
+              <Coffee className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+              <span>티타임 코파일럿</span>
             </button>
           )}
 

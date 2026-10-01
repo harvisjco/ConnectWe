@@ -4,7 +4,7 @@ import { NavViewType } from './SidebarLNB';
 import { 
   Search, User, Briefcase, Zap, 
   MapPin, Award, Building2, Sparkles, 
-  ArrowRight, X, Mic, Compass, BarChart2, UploadCloud
+  ArrowRight, X, Mic, Compass, BarChart2, UploadCloud, Coffee
 } from 'lucide-react';
 
 interface CommandAction {
@@ -27,6 +27,7 @@ interface GlobalCommandPaletteProps {
   onOpenWarmIntroPath?: () => void;
   onOpenWeeklyBrief?: () => void;
   onOpenBatchCardScanner?: () => void;
+  onOpenTeaTimeModal?: (targetPerson?: Person) => void;
   onNavigateView: (view: NavViewType) => void;
 }
 
@@ -40,6 +41,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenWarmIntroPath,
   onOpenWeeklyBrief,
   onOpenBatchCardScanner,
+  onOpenTeaTimeModal,
   onNavigateView
 }) => {
   const [query, setQuery] = useState('');
@@ -144,6 +146,21 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         badge: '일괄 등록',
         onExecute: () => {
           onOpenBatchCardScanner();
+          onClose();
+        }
+      });
+    }
+
+    if (onOpenTeaTimeModal && (!q || '티타임'.includes(q) || '의제'.includes(q) || 'agenda'.includes(q) || 'ics'.includes(q) || '캘린더'.includes(q))) {
+      result.push({
+        id: 'action-tea-time',
+        category: '스마트 액션',
+        title: '☕ 경영진 티타임 의제 AI 코파일럿 & 캘린더 초대 (.ICS)',
+        subtitle: 'DART 팩트 기반 3대 맞춤 의제 카드 자동 생성 & 표준 캘린더 초대장 원클릭',
+        icon: Coffee,
+        badge: '의제 코파일럿',
+        onExecute: () => {
+          onOpenTeaTimeModal();
           onClose();
         }
       });

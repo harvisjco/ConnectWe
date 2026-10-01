@@ -69,6 +69,8 @@ import { GlobalCommandPalette } from './components/common/GlobalCommandPalette';
 import { VoiceDebriefModal } from './components/radar/VoiceDebriefModal';
 import { WarmIntroPathModal } from './components/bridge/WarmIntroPathModal';
 import { BatchCardScannerModal } from './components/ocr/BatchCardScannerModal';
+import { ExecutiveTeaTimeModal } from './components/modals/ExecutiveTeaTimeModal';
+import { offlineSyncService } from './services/offlineSyncService';
 
 import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2, GraduationCap } from 'lucide-react';
 
@@ -188,6 +190,8 @@ export const App: React.FC = () => {
   const [isWarmIntroPathOpen, setIsWarmIntroPathOpen] = useState(false);
   const [warmIntroPathTarget, setWarmIntroPathTarget] = useState<Person | null>(null);
   const [isBatchScannerOpen, setIsBatchScannerOpen] = useState(false);
+  const [isTeaTimeModalOpen, setIsTeaTimeModalOpen] = useState(false);
+  const [teaTimeTargetPerson, setTeaTimeTargetPerson] = useState<Person | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
@@ -200,6 +204,22 @@ export const App: React.FC = () => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // 오프라인 / 온라인 네트워크 전환 리스너
+  useEffect(() => {
+    let prevOnline = offlineSyncService.getState().isOnline;
+    const unsubscribe = offlineSyncService.subscribe((state) => {
+      if (prevOnline !== state.isOnline) {
+        if (!state.isOnline) {
+          showToast('✈️ 오프라인 안심 모드로 전환되었습니다. 기내에서도 모든 조회가 가능합니다.');
+        } else {
+          showToast('🟢 네트워크가 복원되었습니다. 로컬 변경 사항이 안전하게 자동 동기화됩니다.');
+        }
+        prevOnline = state.isOnline;
+      }
+    });
+    return unsubscribe;
   }, []);
 
   // VIP 프라이버시 쉴드 모드 토글
@@ -329,6 +349,10 @@ export const App: React.FC = () => {
         onOpenCopilot={() => setIsCopilotOpen(true)}
         onOpenCardScanner={() => setIsCardScannerOpen(true)}
         onOpenBatchCardScanner={() => setIsBatchScannerOpen(true)}
+        onOpenTeaTimeModal={(target) => {
+          setTeaTimeTargetPerson(target || null);
+          setIsTeaTimeModalOpen(true);
+        }}
         onOpenWeeklyBrief={() => setIsWeeklyBriefOpen(true)}
         onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
         onOpenDisclosureAlertModal={() => setIsDisclosureAlertOpen(true)}
@@ -605,6 +629,11 @@ export const App: React.FC = () => {
           setSelectedPerson(null);
           setWarmIntroPathTarget(target);
           setIsWarmIntroPathOpen(true);
+        }}
+        onOpenTeaTimeModal={(target) => {
+          setSelectedPerson(null);
+          setTeaTimeTargetPerson(target);
+          setIsTeaTimeModalOpen(true);
         }}
       />
 
@@ -924,8 +953,26 @@ export const App: React.FC = () => {
         }}
         onOpenWeeklyBrief={() => setIsWeeklyBriefOpen(true)}
         onOpenBatchCardScanner={() => setIsBatchScannerOpen(true)}
+        onOpenTeaTimeModal={(target) => {
+          setTeaTimeTargetPerson(target || null);
+          setIsTeaTimeModalOpen(true);
+        }}
         onNavigateView={(v) => handleNavigateView(v)}
       />
+
+      {/* 경영진 티타임 의제 AI 코파일럿 & 원터치 캘린더 초대장 (.ICS) */}
+      {isTeaTimeModalOpen && (
+        <ExecutiveTeaTimeModal
+          people={people}
+          initialTargetPerson={teaTimeTargetPerson}
+          onClose={() => {
+            setIsTeaTimeModalOpen(false);
+            setTeaTimeTargetPerson(null);
+          }}
+          onSelectPerson={setSelectedPerson}
+          onShowToast={showToast}
+        />
+      )}
 
       {/* 연속 명함 일괄 스캔 & 실시간 DART 자동 결합 모달 (Batch Card Scanner 2.0) */}
       {isBatchScannerOpen && (
@@ -966,6 +1013,23 @@ export const App: React.FC = () => {
           }}
           onSelectPerson={(p) => {
             setIsWarmIntroPathOpen(false);
+            setSelectedPerson(p);
+          }}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* C-Level 티타임 의제 AI 코파일럿 & .ICS 원터치 캘린더 생성 모달 */}
+      {isTeaTimeModalOpen && (
+        <ExecutiveTeaTimeModal
+          people={people}
+          initialTargetPerson={teaTimeTargetPerson}
+          onClose={() => {
+            setIsTeaTimeModalOpen(false);
+            setTeaTimeTargetPerson(null);
+          }}
+          onSelectPerson={(p) => {
+            setIsTeaTimeModalOpen(false);
             setSelectedPerson(p);
           }}
           onShowToast={showToast}
