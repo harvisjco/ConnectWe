@@ -21,6 +21,8 @@ interface HeaderProps {
   onOpenCommandPalette?: () => void;
   onOpenVoiceDebrief?: () => void;
   onOpenWarmIntroPath?: () => void;
+  onOpenWeeklyBrief?: () => void;
+  onOpenBatchCardScanner?: () => void;
   onOpenImportModal: () => void;
   onOpenAddModal: () => void;
   onOpenDigestModal: () => void;
@@ -49,6 +51,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenCommandPalette,
   onOpenVoiceDebrief,
   onOpenWarmIntroPath,
+  onOpenWeeklyBrief,
+  onOpenBatchCardScanner,
   onOpenImportModal, 
   onOpenAddModal,
   onOpenDigestModal,
@@ -328,6 +332,30 @@ export const Header: React.FC<HeaderProps> = ({
             >
               <Compass className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
               <span>소개 경로</span>
+            </button>
+          )}
+
+          {/* C-Level Executive Weekly Board Report CTA */}
+          {onOpenWeeklyBrief && (
+            <button
+              onClick={onOpenWeeklyBrief}
+              title="C-Level 월요 전략 인텔리전스 1-Page 주간 리포트"
+              className="hidden sm:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-200/90 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-[0.98] shadow-2xs cursor-pointer whitespace-nowrap min-h-[32px]"
+            >
+              <BarChart2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+              <span>주간 브리프</span>
+            </button>
+          )}
+
+          {/* Batch Card Scanner CTA */}
+          {onOpenBatchCardScanner && (
+            <button
+              onClick={onOpenBatchCardScanner}
+              title="연속 명함 일괄 스캔 & 실시간 DART 결합 (최대 20장)"
+              className="hidden xl:flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 border border-slate-200/90 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-200 transition-all active:scale-[0.98] shadow-2xs cursor-pointer whitespace-nowrap min-h-[32px]"
+            >
+              <UploadCloud className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+              <span>명함 일괄</span>
             </button>
           )}
 

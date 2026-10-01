@@ -68,6 +68,7 @@ import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 import { GlobalCommandPalette } from './components/common/GlobalCommandPalette';
 import { VoiceDebriefModal } from './components/radar/VoiceDebriefModal';
 import { WarmIntroPathModal } from './components/bridge/WarmIntroPathModal';
+import { BatchCardScannerModal } from './components/ocr/BatchCardScannerModal';
 
 import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2, GraduationCap } from 'lucide-react';
 
@@ -186,6 +187,7 @@ export const App: React.FC = () => {
   const [voiceDebriefTarget, setVoiceDebriefTarget] = useState<Person | null>(null);
   const [isWarmIntroPathOpen, setIsWarmIntroPathOpen] = useState(false);
   const [warmIntroPathTarget, setWarmIntroPathTarget] = useState<Person | null>(null);
+  const [isBatchScannerOpen, setIsBatchScannerOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
@@ -326,6 +328,8 @@ export const App: React.FC = () => {
         onOpenCloudSyncModal={() => setIsCloudSyncOpen(true)}
         onOpenCopilot={() => setIsCopilotOpen(true)}
         onOpenCardScanner={() => setIsCardScannerOpen(true)}
+        onOpenBatchCardScanner={() => setIsBatchScannerOpen(true)}
+        onOpenWeeklyBrief={() => setIsWeeklyBriefOpen(true)}
         onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
         onOpenDisclosureAlertModal={() => setIsDisclosureAlertOpen(true)}
         onOpenHeatmap={() => setIsHeatmapOpen(true)}
@@ -918,8 +922,24 @@ export const App: React.FC = () => {
           setWarmIntroPathTarget(null);
           setIsWarmIntroPathOpen(true);
         }}
+        onOpenWeeklyBrief={() => setIsWeeklyBriefOpen(true)}
+        onOpenBatchCardScanner={() => setIsBatchScannerOpen(true)}
         onNavigateView={(v) => handleNavigateView(v)}
       />
+
+      {/* 연속 명함 일괄 스캔 & 실시간 DART 자동 결합 모달 (Batch Card Scanner 2.0) */}
+      {isBatchScannerOpen && (
+        <BatchCardScannerModal
+          onSaveBatch={(newPeople) => {
+            setPeople(prev => [...newPeople, ...prev]);
+            if (newPeople.length > 0) {
+              setSelectedPerson(newPeople[0]);
+            }
+          }}
+          onClose={() => setIsBatchScannerOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
 
       {/* C-Level 이동 중 30초 음성 회고 AI (Voice Debrief 2.0) */}
       {isVoiceDebriefOpen && (

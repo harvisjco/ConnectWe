@@ -41,6 +41,8 @@ export interface WeeklyBriefingSummary {
     name: string;
     count: number;
   }[];
+  recentVoiceDebriefCount: number;
+  availableIntroPathCount: number;
 }
 
 /**
@@ -115,6 +117,13 @@ export function getWeeklyBriefingSummary(
       count: c.people.length
     }));
 
+  // 7. 최근 음성 회고 및 최단 소개 경로 가용성 집계
+  const recentVoiceDebriefCount = people.filter(p => 
+    p.activityLogs?.some(a => a.type === 'meeting' && (a.title.includes('음성 회고') || a.title.includes('회고')))
+  ).length;
+
+  const availableIntroPathCount = people.filter(p => p.closeness >= 2).length;
+
   return {
     periodLabel,
     generatedDate,
@@ -124,7 +133,9 @@ export function getWeeklyBriefingSummary(
     uncelebratedPromotions,
     cadenceAlerts,
     activeDeals,
-    topClusterDistribution
+    topClusterDistribution,
+    recentVoiceDebriefCount,
+    availableIntroPathCount
   };
 }
 

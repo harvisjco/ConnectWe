@@ -4,7 +4,7 @@ import { NavViewType } from './SidebarLNB';
 import { 
   Search, User, Briefcase, Zap, 
   MapPin, Award, Building2, Sparkles, 
-  ArrowRight, X, Mic, Compass
+  ArrowRight, X, Mic, Compass, BarChart2, UploadCloud
 } from 'lucide-react';
 
 interface CommandAction {
@@ -25,6 +25,8 @@ interface GlobalCommandPaletteProps {
   onOpenMeetingBriefing?: (person: Person) => void;
   onOpenVoiceDebrief?: () => void;
   onOpenWarmIntroPath?: () => void;
+  onOpenWeeklyBrief?: () => void;
+  onOpenBatchCardScanner?: () => void;
   onNavigateView: (view: NavViewType) => void;
 }
 
@@ -36,6 +38,8 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenMeetingBriefing,
   onOpenVoiceDebrief,
   onOpenWarmIntroPath,
+  onOpenWeeklyBrief,
+  onOpenBatchCardScanner,
   onNavigateView
 }) => {
   const [query, setQuery] = useState('');
@@ -110,6 +114,36 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         badge: '신뢰 경로',
         onExecute: () => {
           onOpenWarmIntroPath();
+          onClose();
+        }
+      });
+    }
+
+    if (onOpenWeeklyBrief && (!q || '주간'.includes(q) || '브리프'.includes(q) || 'weekly'.includes(q) || '리포트'.includes(q))) {
+      result.push({
+        id: 'action-weekly-brief',
+        category: '스마트 액션',
+        title: '📊 C-Level 월요 전략 주간 브리프 (Weekly Board Report)',
+        subtitle: '핵심 딜, DART 공시 변동, 소통 공백 VIP 1-Page A4 인쇄/PDF 리포트',
+        icon: BarChart2,
+        badge: '전략 리포트',
+        onExecute: () => {
+          onOpenWeeklyBrief();
+          onClose();
+        }
+      });
+    }
+
+    if (onOpenBatchCardScanner && (!q || '명함'.includes(q) || '스캔'.includes(q) || 'batch'.includes(q) || '일괄'.includes(q))) {
+      result.push({
+        id: 'action-batch-scan',
+        category: '스마트 액션',
+        title: '📇 연속 명함 일괄 스캔 & 실시간 DART 결합 (Batch Scanner)',
+        subtitle: '최대 20장 명함 이미지 일괄 드롭 & 상장사 임원 팩트 자동 매칭',
+        icon: UploadCloud,
+        badge: '일괄 등록',
+        onExecute: () => {
+          onOpenBatchCardScanner();
           onClose();
         }
       });
