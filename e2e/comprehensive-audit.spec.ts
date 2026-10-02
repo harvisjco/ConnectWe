@@ -22,10 +22,10 @@ test.describe('ConnectWe 종합 브라우저 기능 정밀 진단 (Playwright E2
 
     // 로고 및 뱃지 확인
     await expect(page.getByRole('heading', { name: 'ConnectWe' })).toBeVisible();
-    await expect(page.locator('button[title*="Supabase"]')).toBeVisible();
+    await expect(page.locator('button[title*="동기화"], button[title*="E2EE"]').first()).toBeVisible();
 
     // 오늘의 경영 사령탑 홈 대시보드 렌더링 확인
-    await expect(page.locator('text=오늘의 비즈니스 경영 사령탑')).toBeVisible();
+    await expect(page.locator('text=경영진 관계 현황 & 파트너십 총괄')).toBeVisible();
     await expect(page.locator('text=오늘의 현장 레이더')).toBeVisible();
     await expect(page.locator('text=DART 영전 조기 감지')).toBeVisible();
     await expect(page.locator('text=소통 골든타임 넛지')).toBeVisible();
@@ -88,7 +88,7 @@ test.describe('ConnectWe 종합 브라우저 기능 정밀 진단 (Playwright E2
     if (await cmdBtn.isVisible()) {
       await cmdBtn.click();
       await page.waitForTimeout(300);
-      await expect(page.locator('text=오늘의 비즈니스 경영 사령탑')).toBeVisible();
+      await expect(page.locator('text=경영진 관계 현황 & 파트너십 총괄')).toBeVisible();
     }
   });
 
@@ -98,10 +98,10 @@ test.describe('ConnectWe 종합 브라우저 기능 정밀 진단 (Playwright E2
     await page.waitForTimeout(500);
 
     // 딜 헤더 확인
-    await expect(page.locator('text=전략 비즈니스 딜 파이프라인 협업 룸')).toBeVisible();
+    await expect(page.locator('text=비즈니스 파트너십 & 프로젝트 협력 룸')).toBeVisible();
 
     // 신규 딜 생성 버튼 존재 확인
-    await expect(page.locator('button:has-text("신규 딜 생성")')).toBeVisible();
+    await expect(page.locator('button:has-text("신규 파트너십 등록")')).toBeVisible();
   });
 
   test('5. [거점별 레이더] 6대 거점 칩 전환 및 뷰 토글이 작동해야 한다', async ({ page }) => {
@@ -110,7 +110,7 @@ test.describe('ConnectWe 종합 브라우저 기능 정밀 진단 (Playwright E2
     await page.waitForTimeout(500);
 
     // 거점 레이더 헤더
-    await expect(page.locator('text=전국 6대 비즈니스 거점별 인맥 레이더')).toBeVisible();
+    await expect(page.locator('text=전국 7대 비즈니스 거점별 인맥 레이더')).toBeVisible();
 
     // 판교 칩 클릭
     const pangyoChip = page.locator('button:has-text("판교 테크노밸리")');

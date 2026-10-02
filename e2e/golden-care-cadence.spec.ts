@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('VIP 골든타임 능동형 케어 & 안부 서신 코파일럿 (Golden Care Radar) E2E 검증', () => {
-  test('1. 커맨드 팔레트에서 골든타임 안부 모달 호출, 4대 테마 전환, 클립보드 복사 및 소통 완결 루프 검증', async ({ page }) => {
+  test('1. 커맨드 팔레트에서 골든타임 안부 모달 호출, 4대 테마 전환, 클립보드 복사 및 소통 완결 루프 검증', async ({ page, context }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']).catch(() => {});
     // 1. 앱 접속
     await page.goto('/');
 
@@ -29,12 +30,12 @@ test.describe('VIP 골든타임 능동형 케어 & 안부 서신 코파일럿 (G
 
     // 4. 4대 안부 테마 탭 확인 및 전환
     await expect(page.locator('text=🌱 계절 안부')).toBeVisible();
-    await expect(page.locator('text=🎉 영전/공시 축하')).toBeVisible();
-    await expect(page.locator('text=☕ 가벼운 커피')).toBeVisible();
-    await expect(page.locator('text=🤝 사업 교류')).toBeVisible();
+    await expect(page.locator('text=🎉 영전 & 성과 축하')).toBeVisible();
+    await expect(page.locator('text=☕ 가벼운 커피 안부')).toBeVisible();
+    await expect(page.locator('text=🤝 사업 & 시너지 교류')).toBeVisible();
 
-    // '☕ 가벼운 커피' 탭 클릭
-    await page.locator('button:has-text("☕ 가벼운 커피")').click();
+    // '☕ 가벼운 커피 안부' 탭 클릭
+    await page.locator('button:has-text("☕ 가벼운 커피 안부")').click();
     await expect(page.locator('textarea')).toBeVisible();
 
     // 이메일 장문 서신 모드로 전환
