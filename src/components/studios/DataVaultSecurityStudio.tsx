@@ -47,7 +47,11 @@ export const DataVaultSecurityStudio: React.FC<DataVaultSecurityStudioProps> = (
   const [isRestoring, setIsRestoring] = useState(false);
 
   // --- TAB 2: 암호화 마스터 키 상태 ---
-  const [isCryptoSet, setIsCryptoSet] = useState(() => Boolean(localStorage.getItem('connectwe_encrypted')));
+  const [isCryptoSet, setIsCryptoSet] = useState(() => 
+    typeof window !== 'undefined' && typeof window.localStorage !== 'undefined' 
+      ? Boolean(window.localStorage.getItem('connectwe_encrypted')) 
+      : false
+  );
   const [newMasterPassword, setNewMasterPassword] = useState('');
   const [confirmMasterPassword, setConfirmMasterPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -59,7 +63,9 @@ export const DataVaultSecurityStudio: React.FC<DataVaultSecurityStudioProps> = (
   const [offlineState, setOfflineState] = useState<OfflineSyncState>(offlineSyncService.getState());
 
   useEffect(() => {
-    setIsCryptoSet(Boolean(localStorage.getItem('connectwe_encrypted')));
+    if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+      setIsCryptoSet(Boolean(window.localStorage.getItem('connectwe_encrypted')));
+    }
   }, [isOpen]);
 
   useEffect(() => {
@@ -350,7 +356,7 @@ export const DataVaultSecurityStudio: React.FC<DataVaultSecurityStudioProps> = (
                 <div className="p-5 rounded-2xl border border-indigo-150 bg-indigo-50/30 space-y-3 text-xs">
                   <div className="flex items-center gap-2">
                     <Lock className="w-4 h-4 text-indigo-600" />
-                    <span className="font-bold text-slate-900">AES-256 군사등급 암호화 볼트 백업 (.cwe)</span>
+                    <span className="font-bold text-slate-900">AES-256 엔터프라이즈 암호화 볼트 백업 (.cwe)</span>
                   </div>
                   <p className="text-[11px] text-slate-500">
                     인맥 정보, 미팅 이력, DART 데이터를 비밀번호로 암호화하여 파일로 안전하게 보관합니다.

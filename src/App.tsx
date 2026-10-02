@@ -56,7 +56,10 @@ import { maskPerson } from './services/privacyShieldService';
 import { GeoClusterId } from './services/geoProximityService';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 import { GlobalCommandPalette } from './components/common/GlobalCommandPalette';
-import { offlineSyncService } from './services/offlineSyncService';
+import { offlineSyncService, OfflineSyncState } from './services/offlineSyncService';
+import { GoldenCareModal } from './components/modals/GoldenCareModal';
+import { detectGoldenCareTargets } from './services/goldenCareService';
+
 
 // 5대 통합 스튜디오 (The 5 Unified Studios)
 import { SmartCardScannerStudio } from './components/studios/SmartCardScannerStudio';
@@ -183,7 +186,19 @@ export const App: React.FC = () => {
   const [isBatchScannerOpen, setIsBatchScannerOpen] = useState(false);
   const [isTeaTimeModalOpen, setIsTeaTimeModalOpen] = useState(false);
   const [teaTimeTargetPerson, setTeaTimeTargetPerson] = useState<Person | null>(null);
+  const [isGoldenCareOpen, setIsGoldenCareOpen] = useState(false);
+  const [goldenCareTargetPerson, setGoldenCareTargetPerson] = useState<Person | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const handleOpenGoldenCare = (person?: Person) => {
+    if (person) {
+      setGoldenCareTargetPerson(person);
+    } else {
+      const targets = detectGoldenCareTargets(people);
+      setGoldenCareTargetPerson(targets.length > 0 ? targets[0].person : (people[0] || null));
+    }
+    setIsGoldenCareOpen(true);
+  };
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
   useEffect(() => {
@@ -200,7 +215,7 @@ export const App: React.FC = () => {
   // 오프라인 / 온라인 네트워크 전환 리스너
   useEffect(() => {
     let prevOnline = offlineSyncService.getState().isOnline;
-    const unsubscribe = offlineSyncService.subscribe((state) => {
+    const unsubscribe = offlineSyncService.subscribe((state: OfflineSyncState) => {
       if (prevOnline !== state.isOnline) {
         if (!state.isOnline) {
           showToast('✈️ 오프라인 안심 모드로 전환되었습니다. 기내에서도 모든 조회가 가능합니다.');
@@ -344,6 +359,7 @@ export const App: React.FC = () => {
           setTeaTimeTargetPerson(target || null);
           setIsTeaTimeModalOpen(true);
         }}
+        onOpenGoldenCare={handleOpenGoldenCare}
         onOpenWeeklyBrief={() => setIsWeeklyBriefOpen(true)}
         onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
         onOpenDisclosureAlertModal={() => setIsDisclosureAlertOpen(true)}
@@ -468,7 +484,7 @@ export const App: React.FC = () => {
                   onOpenSalon={() => setIsSalonModalOpen(true)}
                   onOpenCloudSync={() => setIsCloudSyncOpen(true)}
                   onOpenScanner={() => setIsCardScannerOpen(true)}
-                  onOpenCadenceGreeting={(person, daysSince) => setCadenceTarget({ person, daysSince })}
+                  onOpenCadenceGreeting={(person) => handleOpenGoldenCare(person)}
                   onOpenTeaBundle={(clusterId) => setTeaBundleClusterId(clusterId || 'gangnam_teheran')}
                   onOpenWarmIntroConnector={(personA, personB) => setWarmIntroConnectorTargets({ personA, personB })}
                   onOpenWeeklyBrief={() => setIsWeeklyBriefOpen(true)}
@@ -525,6 +541,7 @@ export const App: React.FC = () => {
                   people={people}
                   onSelectPerson={setSelectedPerson}
                   onOpenDossier={(target) => setMeetingPrepTargetPerson(target)}
+                  onOpenGoldenCare={handleOpenGoldenCare}
                   onShowToast={showToast}
                 />
               )}
@@ -625,6 +642,10 @@ export const App: React.FC = () => {
           setTeaTimeTargetPerson(target);
           setIsTeaTimeModalOpen(true);
         }}
+        onOpenGoldenCare={(target) => {
+          setSelectedPerson(null);
+          handleOpenGoldenCare(target);
+        }}
       />
 
 
@@ -714,6 +735,26 @@ export const App: React.FC = () => {
           onUpdatePerson={handleUpdatePerson}
           onClose={() => setCadenceTarget(null)}
           onShowToast={showToast}
+        />
+      )}
+
+      {/* Proactive Golden Care Radar & 4-Theme Message Composer Modal */}
+      {(isGoldenCareOpen || !!goldenCareTargetPerson) && (
+        <GoldenCareModal
+          isOpen={true}
+          person={goldenCareTargetPerson || (people.length > 0 ? people[0] : null)}
+          onClose={() => {
+            setIsGoldenCareOpen(false);
+            setGoldenCareTargetPerson(null);
+          }}
+          onUpdatePerson={handleUpdatePerson}
+          onShowToast={showToast}
+          onOpenMeetingStudio={(p: Person) => {
+            setIsGoldenCareOpen(false);
+            setGoldenCareTargetPerson(null);
+            setTeaTimeTargetPerson(p);
+            setIsTeaTimeModalOpen(true);
+          }}
         />
       )}
 
@@ -840,7 +881,7 @@ export const App: React.FC = () => {
         onClose={() => setIsCommandPaletteOpen(false)}
         people={people}
         onSelectPerson={setSelectedPerson}
-        onOpenMeetingBriefing={(p) => setMeetingPrepTargetPerson(p)}
+        onOpenMeetingBriefing={(p: Person) => setMeetingPrepTargetPerson(p)}
         onOpenVoiceDebrief={() => {
           setVoiceDebriefTarget(null);
           setIsVoiceDebriefOpen(true);
@@ -851,11 +892,12 @@ export const App: React.FC = () => {
         }}
         onOpenWeeklyBrief={() => setIsWeeklyBriefOpen(true)}
         onOpenBatchCardScanner={() => setIsBatchScannerOpen(true)}
-        onOpenTeaTimeModal={(target) => {
+        onOpenTeaTimeModal={(target?: Person) => {
           setTeaTimeTargetPerson(target || null);
           setIsTeaTimeModalOpen(true);
         }}
-        onNavigateView={(v) => handleNavigateView(v)}
+        onOpenGoldenCare={() => handleOpenGoldenCare()}
+        onNavigateView={(v: NavViewType) => handleNavigateView(v)}
       />
 
       {/* ========================================================

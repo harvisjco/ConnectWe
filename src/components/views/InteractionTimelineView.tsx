@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Person } from '../../types/network';
 import { 
   Users, CheckCircle2, AlertTriangle, Sparkles, Search, Clock,
-  LayoutList, LayoutGrid
+  LayoutList, LayoutGrid, BellRing
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -10,6 +10,7 @@ interface InteractionTimelineViewProps {
   people: Person[];
   onSelectPerson: (person: Person) => void;
   onOpenDossier: (person: Person) => void;
+  onOpenGoldenCare?: (person: Person) => void;
   onShowToast: (msg: string) => void;
 }
 
@@ -17,6 +18,7 @@ export const InteractionTimelineView: React.FC<InteractionTimelineViewProps> = (
   people,
   onSelectPerson,
   onOpenDossier,
+  onOpenGoldenCare,
   onShowToast
 }) => {
   const [filterType, setFilterType] = useState<'all' | 'stale' | 'recent'>('all');
@@ -274,6 +276,16 @@ export const InteractionTimelineView: React.FC<InteractionTimelineViewProps> = (
                       {/* 6. Actions */}
                       <td className="py-3 px-3 whitespace-nowrap text-right">
                         <div className="inline-flex items-center gap-1.5">
+                          {onOpenGoldenCare && (
+                            <button
+                              onClick={() => onOpenGoldenCare(person)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer"
+                              title="VIP 골든타임 안부 서신 코파일럿"
+                            >
+                              <BellRing className="w-3 h-3 text-amber-600" />
+                              <span>안부 전송</span>
+                            </button>
+                          )}
                           <button
                             onClick={() => onOpenDossier(person)}
                             className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer"
@@ -339,6 +351,17 @@ export const InteractionTimelineView: React.FC<InteractionTimelineViewProps> = (
 
                 {/* 액션 버튼 */}
                 <div className="flex items-center gap-1.5 pt-2 border-t border-slate-100">
+                  {onOpenGoldenCare && (
+                    <button
+                      onClick={() => onOpenGoldenCare(person)}
+                      className="px-2.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-amber-800 text-xs font-bold transition-all shadow-2xs active:scale-95 cursor-pointer flex items-center gap-1"
+                      title="VIP 골든타임 안부 서신 코파일럿"
+                    >
+                      <BellRing className="w-3.5 h-3.5 text-amber-600" />
+                      <span>안부</span>
+                    </button>
+                  )}
+
                   <button
                     onClick={() => onOpenDossier(person)}
                     className="flex-1 flex items-center justify-center gap-1 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all active:scale-95 shadow-2xs cursor-pointer"

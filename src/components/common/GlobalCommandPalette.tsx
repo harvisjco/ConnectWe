@@ -4,7 +4,7 @@ import { NavViewType } from './SidebarLNB';
 import { 
   Search, User, Briefcase, Zap, 
   MapPin, Award, Building2, Sparkles, 
-  ArrowRight, X, Mic, Compass, BarChart2, UploadCloud, Coffee
+  ArrowRight, X, Mic, Compass, BarChart2, UploadCloud, Coffee, Bell
 } from 'lucide-react';
 
 interface CommandAction {
@@ -28,6 +28,7 @@ interface GlobalCommandPaletteProps {
   onOpenWeeklyBrief?: () => void;
   onOpenBatchCardScanner?: () => void;
   onOpenTeaTimeModal?: (targetPerson?: Person) => void;
+  onOpenGoldenCare?: (targetPerson?: Person) => void;
   onNavigateView: (view: NavViewType) => void;
 }
 
@@ -42,6 +43,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenWeeklyBrief,
   onOpenBatchCardScanner,
   onOpenTeaTimeModal,
+  onOpenGoldenCare,
   onNavigateView
 }) => {
   const [query, setQuery] = useState('');
@@ -154,6 +156,19 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         keywords: ['티타임', '의제', 'teatime', 'agenda', 'ics', '캘린더', '초대장', '커피'],
         onExecute: () => {
           onOpenTeaTimeModal();
+          onClose();
+        }
+      },
+      onOpenGoldenCare && {
+        id: 'action-golden-care',
+        category: '스마트 액션',
+        title: '🔔 VIP 골든타임 능동형 케어 & 4대 안부 서신 코파일럿',
+        subtitle: '60/90/180일 소통 공백 VIP 맞춤 서신 자동 합성 및 데스크톱 알림',
+        icon: Bell,
+        badge: '골든 케어',
+        keywords: ['안부', '골든타임', '소통', '서신', '카톡', '문자', '이메일', '공백', 'care', 'cadence'],
+        onExecute: () => {
+          onOpenGoldenCare();
           onClose();
         }
       }

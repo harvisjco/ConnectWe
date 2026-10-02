@@ -589,6 +589,7 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
                       <option value="meeting">미팅 / 면담</option>
                       <option value="email">이메일 송수신</option>
                       <option value="note">특이사항 기록</option>
+                      <option value="message">안부 / 메시지</option>
                     </select>
                   </div>
                   <div>
@@ -648,6 +649,7 @@ export const PersonInspectorDrawer: React.FC<PersonInspectorDrawerProps> = ({
                         {log.type === 'meeting' && '미팅/면담'}
                         {log.type === 'email' && '이메일'}
                         {log.type === 'note' && '메모'}
+                        {log.type === 'message' && '안부/메시지'}
                         <span>: {log.title}</span>
                       </span>
                       <span className="text-[11px] text-slate-500 font-mono">{log.loggedAt}</span>

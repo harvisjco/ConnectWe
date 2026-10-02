@@ -6,6 +6,7 @@ import { exportBackupJson, restoreBackupFromJson, resetStorage } from '../../ser
 import { batchCrossCheckWithDart } from '../../services/dartFactEngine';
 import { pickContactsFromDevice } from '../../services/contactPicker';
 import { offlineSyncService, OfflineSyncState } from '../../services/offlineSyncService';
+import { detectGoldenCareTargets } from '../../services/goldenCareService';
 import { 
   Share2, UploadCloud, Download, ShieldCheck, ShieldAlert, Clock, 
   Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
@@ -25,6 +26,7 @@ interface HeaderProps {
   onOpenWeeklyBrief?: () => void;
   onOpenBatchCardScanner?: () => void;
   onOpenTeaTimeModal?: (targetPerson?: Person) => void;
+  onOpenGoldenCare?: (targetPerson?: Person) => void;
   onOpenImportModal: () => void;
   onOpenAddModal: () => void;
   onOpenDigestModal: () => void;
@@ -56,6 +58,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenWeeklyBrief,
   onOpenBatchCardScanner,
   onOpenTeaTimeModal,
+  onOpenGoldenCare,
   onOpenImportModal, 
   onOpenAddModal,
   onOpenDigestModal,
@@ -133,6 +136,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   const dartFactCount = people.filter(p => p.sourceType === 'DART_FACT' || p.dartInfo?.isPublicDirector).length;
   const staleCount = people.filter(p => p.isStale).length;
+  const goldenCareTargets = React.useMemo(() => detectGoldenCareTargets(people), [people]);
 
   // CSV 다운로드 (BOM \uFEFF 필수 적용 + PII 마스킹 옵션)
   const handleExportCsv = () => {
@@ -393,7 +397,21 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-slate-500 dark:text-slate-400">네트워크</span>
               <span className="font-bold text-slate-900 dark:text-white">{people.length}명</span>
             </div>
-            {staleCount > 0 && (
+            {goldenCareTargets.length > 0 ? (
+              <>
+                <span className="text-slate-300 dark:text-slate-700">·</span>
+                <button
+                  type="button"
+                  onClick={() => onOpenGoldenCare?.(goldenCareTargets[0].person)}
+                  className="flex items-center gap-1.5 hover:opacity-80 transition-opacity cursor-pointer"
+                  title="VIP 골든타임 능동형 안부 케어 열기"
+                >
+                  <Bell className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                  <span className="text-amber-700 dark:text-amber-400 font-medium">골든 케어</span>
+                  <span className="font-bold text-amber-700 dark:text-amber-300 font-mono">{goldenCareTargets.length}명</span>
+                </button>
+              </>
+            ) : staleCount > 0 ? (
               <>
                 <span className="text-slate-300 dark:text-slate-700">·</span>
                 <div className="flex items-center gap-1.5">
@@ -402,7 +420,7 @@ export const Header: React.FC<HeaderProps> = ({
                   <span className="font-bold text-amber-700 dark:text-amber-300">{staleCount}명</span>
                 </div>
               </>
-            )}
+            ) : null}
           </div>
         ) : (
           <div className="hidden lg:flex items-center gap-3 px-3.5 py-1 rounded-full bg-slate-100/70 dark:bg-slate-950/80 border border-slate-200/70 dark:border-slate-800 text-xs whitespace-nowrap">
@@ -417,7 +435,21 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="text-emerald-700 dark:text-emerald-400 font-medium">DART 공시</span>
               <span className="font-bold text-emerald-700 dark:text-emerald-300">{dartFactCount}명</span>
             </div>
-            {staleCount > 0 && (
+            {goldenCareTargets.length > 0 ? (
+              <>
+                <span className="text-slate-300 dark:text-slate-700">·</span>
+                <button
+                  type="button"
+                  onClick={() => onOpenGoldenCare?.(goldenCareTargets[0].person)}
+                  className="flex items-center gap-1.5 hover:opacity-80 transition-opacity cursor-pointer"
+                  title="VIP 골든타임 능동형 안부 케어 열기"
+                >
+                  <Bell className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                  <span className="text-amber-700 dark:text-amber-400 font-medium">골든 케어</span>
+                  <span className="font-bold text-amber-700 dark:text-amber-300 font-mono">{goldenCareTargets.length}명</span>
+                </button>
+              </>
+            ) : staleCount > 0 ? (
               <>
                 <span className="text-slate-300 dark:text-slate-700">·</span>
                 <div className="flex items-center gap-1.5">
@@ -426,7 +458,7 @@ export const Header: React.FC<HeaderProps> = ({
                   <span className="font-bold text-amber-700 dark:text-amber-300">{staleCount}명</span>
                 </div>
               </>
-            )}
+            ) : null}
           </div>
         )}
 
@@ -527,6 +559,29 @@ export const Header: React.FC<HeaderProps> = ({
                   C-Level 전략 무기 모음
                 </div>
                 <div className="space-y-1">
+                  {onOpenGoldenCare && (
+                    <button
+                      onClick={() => {
+                        setIsToolsOpen(false);
+                        onOpenGoldenCare();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-amber-50 dark:hover:bg-amber-950/40 hover:text-amber-900 transition-colors text-left cursor-pointer"
+                    >
+                      <Bell className="w-4 h-4 text-amber-600 shrink-0" />
+                      <div>
+                        <div className="font-bold text-slate-900 dark:text-white flex items-center gap-1.5">
+                          <span>VIP 골든타임 능동형 안부 케어</span>
+                          {goldenCareTargets.length > 0 && (
+                            <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800">
+                              {goldenCareTargets.length}명
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-[10px] text-slate-400">60/90/180일 소통 공백 VIP 맞춤 서신</div>
+                      </div>
+                    </button>
+                  )}
+
                   {onOpenTeaTimeModal && (
                     <button
                       onClick={() => {

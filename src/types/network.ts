@@ -43,7 +43,7 @@ export interface DartFactInfo {
   notes?: string;
 }
 
-export type ActivityLogType = 'call' | 'meeting' | 'email' | 'note';
+export type ActivityLogType = 'call' | 'meeting' | 'email' | 'note' | 'message';
 
 export interface ActivityLog {
   id: string;
