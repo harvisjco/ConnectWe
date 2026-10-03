@@ -4,7 +4,9 @@ test.describe('C-Level Phase 3: 비즈니스 파트너십 KPI 파이프라인 & 
   test.beforeEach(async ({ page, context }) => {
     test.setTimeout(60000);
     await context.grantPermissions(['clipboard-read', 'clipboard-write']).catch(() => {});
+    await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/');
+    await page.waitForLoadState('networkidle');
     // 페이지 로드 완료 확인
     await expect(page.getByRole('heading', { name: 'ConnectWe' })).toBeVisible({ timeout: 15000 });
 
@@ -21,11 +23,12 @@ test.describe('C-Level Phase 3: 비즈니스 파트너십 KPI 파이프라인 & 
     const partnershipTab = page.locator('[data-testid="lnb-deals"], [data-testid="tab-deals"]').first();
     await expect(partnershipTab).toBeVisible({ timeout: 10000 });
     await partnershipTab.click();
+    await page.waitForTimeout(500);
 
     // 1. 헤더 및 Executive KPI 메트릭 바 확인
-    await expect(page.locator('text=비즈니스 파트너십 & 프로젝트 협력 룸, text=비즈니스 파트너십').first()).toBeVisible({ timeout: 10000 });
     const kpiBar = page.locator('[data-testid="executive-pipeline-kpi-bar"]');
-    await expect(kpiBar).toBeVisible();
+    await expect(kpiBar).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('text=비즈니스 파트너십').first()).toBeVisible({ timeout: 10000 });
 
     // 4대 지표 텍스트 확인
     await expect(kpiBar.locator('text=총 파이프라인 규모')).toBeVisible();
