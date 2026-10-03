@@ -25,6 +25,8 @@ export default defineConfig({
           'vendor-lucide': ['lucide-react'],
           // Three.js 3D 렌더링 엔진 분리
           'vendor-three': ['three'],
+          // Supabase 클라우드 클라이언트 분리
+          'vendor-supabase': ['@supabase/supabase-js'],
         },
       },
     },

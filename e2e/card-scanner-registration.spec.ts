@@ -33,5 +33,5 @@ test('가상 명함 이미지 업로드 및 신규 인맥 등록 전체 플로�
   // 7. 모달 닫힘 및 주소록에 '박서준' 신규 인맥 카드 노출 확인
   await expect(page.locator('text=명함 원터치 지능형 스캔')).not.toBeVisible();
   await expect(page.locator('text=박서준').first()).toBeVisible();
-  await expect(page.locator('text=넥스트비전').first()).toBeVisible();
+  await expect(page.getByText('넥스트비전', { exact: false }).first()).toBeVisible();
 });

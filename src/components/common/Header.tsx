@@ -14,7 +14,7 @@ import {
   BarChart2, Lock, Settings, Cloud, Bot, Camera, Calendar, Bell,
   MoreHorizontal, ChevronDown, PanelLeft, Database, Flame, Gift,
   Crown, Check, Search, Mic, Compass, Plane, RefreshCw, Coffee,
-  LogIn, LogOut, Headphones
+  LogIn, LogOut, Headphones, GitMerge
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -31,6 +31,7 @@ interface HeaderProps {
   onOpenGoldenCare?: (targetPerson?: Person) => void;
   onOpenProtocol?: (targetPerson?: Person) => void;
   onOpenAudioBriefing?: (targetPerson?: Person) => void;
+  onOpenCrossBoardSynergy?: (targetCorp?: string) => void;
   onOpenImportModal: () => void;
   onOpenAddModal: () => void;
   onOpenDigestModal: () => void;
@@ -68,6 +69,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenGoldenCare,
   onOpenProtocol,
   onOpenAudioBriefing,
+  onOpenCrossBoardSynergy,
   onOpenImportModal, 
   onOpenAddModal,
   onOpenDigestModal,
@@ -627,6 +629,22 @@ export const Header: React.FC<HeaderProps> = ({
                       <div>
                         <div className="font-bold text-slate-900 dark:text-white">에어팟 30초 오디오 브리핑</div>
                         <div className="text-[10px] text-slate-400">미팅 10분 전 핸즈프리 음성 팩트체크</div>
+                      </div>
+                    </button>
+                  )}
+
+                  {onOpenCrossBoardSynergy && (
+                    <button
+                      onClick={() => {
+                        setIsToolsOpen(false);
+                        onOpenCrossBoardSynergy();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-violet-50 dark:hover:bg-violet-950/40 hover:text-violet-900 transition-colors text-left cursor-pointer"
+                    >
+                      <GitMerge className="w-4 h-4 text-violet-600 shrink-0" />
+                      <div>
+                        <div className="font-bold text-slate-900 dark:text-white">크로스 보드 시너지 시뮬레이터</div>
+                        <div className="text-[10px] text-slate-400">전략적 M&A·이사회 겹침망 & 3대 신뢰 가교</div>
                       </div>
                     </button>
                   )}

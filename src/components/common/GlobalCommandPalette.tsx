@@ -5,7 +5,7 @@ import {
   Search, User, Briefcase, Zap, 
   MapPin, Award, Building2, Sparkles, 
   ArrowRight, X, Mic, Compass, BarChart2, UploadCloud, Coffee, Bell,
-  Gift, Headphones
+  Gift, Headphones, GitMerge
 } from 'lucide-react';
 
 interface CommandAction {
@@ -32,6 +32,7 @@ interface GlobalCommandPaletteProps {
   onOpenGoldenCare?: (targetPerson?: Person) => void;
   onOpenProtocol?: (targetPerson?: Person) => void;
   onOpenAudioBriefing?: (targetPerson?: Person) => void;
+  onOpenCrossBoardSynergy?: (targetCorp?: string) => void;
   onNavigateView: (view: NavViewType) => void;
 }
 
@@ -49,6 +50,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenGoldenCare,
   onOpenProtocol,
   onOpenAudioBriefing,
+  onOpenCrossBoardSynergy,
   onNavigateView
 }) => {
   const [query, setQuery] = useState('');
@@ -200,6 +202,19 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         keywords: ['오디오', '브리핑', '에어팟', '음성', 'tts', '팟캐스트', '핸즈프리', 'audio', 'briefing'],
         onExecute: () => {
           onOpenAudioBriefing();
+          onClose();
+        }
+      },
+      onOpenCrossBoardSynergy && {
+        id: 'action-cross-board',
+        category: '스마트 액션',
+        title: '🏢 전략적 M&A & 크로스 보드 시뮬레이터 (Cross-Board Simulator)',
+        subtitle: '기업 간 이사회 겹침망·사외이사·알럼나이 분석 & 3대 신뢰 가교 경로 도출',
+        icon: GitMerge,
+        badge: 'M&A 시너지',
+        keywords: ['시너지', '크로스보드', '합작', '제휴', 'm&a', '이사회', '알럼나이', '지분', 'synergy', 'board', 'cross'],
+        onExecute: () => {
+          onOpenCrossBoardSynergy();
           onClose();
         }
       }

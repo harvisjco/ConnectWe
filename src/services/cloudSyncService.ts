@@ -5,6 +5,7 @@ import { BusinessDeal, loadDealsFromStorage, saveDealsToStorage } from './dealPi
 import { PromotionEvent, loadPromotionEvents, savePromotionEvents } from './promotionRadarService';
 import { PrivateSalonSession } from '../types/salon';
 import { loadSalonSessions, saveSalonSessions } from './salonService';
+import { getActiveUserId } from './authService';
 
 export interface CloudVaultPayload {
   version: number;
@@ -33,6 +34,15 @@ export interface SyncStatus {
 
 const SYNC_META_KEY = 'connectwe_cloud_sync_meta_v1';
 const SYNC_CONFIG_KEY = 'connectwe_cloud_sync_config_v1';
+
+/**
+ * 테넌트(사용자)별 고유 볼트 ID 산출
+ */
+export function getTenantVaultId(userId?: string): string {
+  const uid = userId || getActiveUserId();
+  if (uid) return `connectwe_vault_${uid}`;
+  return 'connectwe_master_vault';
+}
 
 export function getCloudSyncConfig(): CloudSyncConfig {
   try {
@@ -73,18 +83,19 @@ export function aggregateLocalVault(people: Person[]): CloudVaultPayload {
 }
 
 /**
- * Supabase 클라우드로 종단간 암호화(E2EE) 백업 업로드
+ * Supabase 클라우드로 종단간 암호화(E2EE) 백업 업로드 (사용자별 완전 격리)
  */
 export async function uploadEncryptedVaultToCloud(
   payload: CloudVaultPayload,
-  passphrase: string = 'connectwe-default-vault-key'
+  passphrase: string = 'connectwe-default-vault-key',
+  userId?: string
 ): Promise<{ success: boolean; message: string; timestamp: string }> {
   try {
     const jsonStr = JSON.stringify(payload);
     const cipherBase64 = await encryptData(jsonStr, passphrase);
 
     const conn = await checkSupabaseConnection();
-    const vaultId = 'connectwe_master_vault';
+    const vaultId = getTenantVaultId(userId);
     const record = {
       vault_id: vaultId,
       encrypted_ciphertext: cipherBase64,
@@ -92,6 +103,7 @@ export async function uploadEncryptedVaultToCloud(
       updated_at: new Date().toISOString()
     };
 
+    localStorage.setItem(`connectwe_local_e2ee_vault_${vaultId}`, JSON.stringify(record));
     localStorage.setItem('connectwe_local_e2ee_vault', JSON.stringify(record));
 
     if (conn.connected) {
@@ -139,27 +151,30 @@ export async function uploadEncryptedVaultToCloud(
  */
 export async function pushEncryptedBackupToCloud(
   people: Person[],
-  passphrase?: string
+  passphrase?: string,
+  userId?: string
 ): Promise<{ success: boolean; message: string; timestamp: string }> {
   const payload = aggregateLocalVault(people);
-  return uploadEncryptedVaultToCloud(payload, passphrase);
+  return uploadEncryptedVaultToCloud(payload, passphrase, userId);
 }
 
 /**
- * Supabase 클라우드 또는 로컬 암호화 볼트에서 복원
+ * Supabase 클라우드 또는 로컬 암호화 볼트에서 복원 (사용자별 테넌트 격리)
  */
 export async function downloadAndRestoreVault(
-  passphrase: string = 'connectwe-default-vault-key'
+  passphrase: string = 'connectwe-default-vault-key',
+  userId?: string
 ): Promise<{ success: boolean; message: string; people?: Person[]; payload?: CloudVaultPayload }> {
   try {
     let cipherBase64: string | null = null;
+    const vaultId = getTenantVaultId(userId);
 
     const conn = await checkSupabaseConnection();
     if (conn.connected) {
       const { data, error } = await supabase
         .from('user_vaults')
         .select('*')
-        .eq('vault_id', 'connectwe_master_vault')
+        .eq('vault_id', vaultId)
         .single();
 
       if (!error && data) {
@@ -168,10 +183,16 @@ export async function downloadAndRestoreVault(
     }
 
     if (!cipherBase64) {
-      const raw = localStorage.getItem('connectwe_local_e2ee_vault');
-      if (raw) {
-        const parsed = JSON.parse(raw);
+      const tenantRaw = localStorage.getItem(`connectwe_local_e2ee_vault_${vaultId}`);
+      if (tenantRaw) {
+        const parsed = JSON.parse(tenantRaw);
         cipherBase64 = parsed.encrypted_ciphertext;
+      } else {
+        const masterRaw = localStorage.getItem('connectwe_local_e2ee_vault');
+        if (masterRaw) {
+          const parsed = JSON.parse(masterRaw);
+          cipherBase64 = parsed.encrypted_ciphertext;
+        }
       }
     }
 
@@ -208,9 +229,10 @@ export async function downloadAndRestoreVault(
  * 구버전 호환용 pull 함수
  */
 export async function pullEncryptedBackupFromCloud(
-  passphrase?: string
+  passphrase?: string,
+  userId?: string
 ): Promise<{ success: boolean; message: string; people?: Person[]; payload?: CloudVaultPayload }> {
-  return downloadAndRestoreVault(passphrase);
+  return downloadAndRestoreVault(passphrase, userId);
 }
 
 export function loadSyncMeta(): SyncStatus {

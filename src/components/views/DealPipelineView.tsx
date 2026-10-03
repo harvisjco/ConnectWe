@@ -10,7 +10,7 @@ import {
 } from '../../services/dealPipelineService';
 import { 
   Briefcase, Plus, ShieldCheck, 
-  X, Trash2, FileText, Send, Gift
+  X, Trash2, FileText, Send, Gift, GitMerge
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -20,6 +20,7 @@ interface DealPipelineViewProps {
   onOpenDossier?: (person: Person) => void;
   onOpenBridgeModal?: (person: Person) => void;
   onOpenGratitudeSettlement?: (deal: BusinessDeal) => void;
+  onOpenCrossBoardSynergy?: (targetCorp?: string) => void;
   onShowToast: (msg: string) => void;
 }
 
@@ -38,6 +39,7 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
   onOpenDossier,
   onOpenBridgeModal,
   onOpenGratitudeSettlement,
+  onOpenCrossBoardSynergy,
   onShowToast
 }) => {
   const [deals, setDeals] = useState<BusinessDeal[]>(() => loadDealsFromStorage(people));
@@ -430,6 +432,20 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
             <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
               <span>목표 클로징: <strong className="text-slate-700 font-mono">{activeDealForDetail.expectedCloseDate}</strong></span>
               <div className="flex items-center gap-2">
+                {onOpenCrossBoardSynergy && (
+                  <button
+                    onClick={() => {
+                      const corp = activeDealForDetail.targetCompany;
+                      setActiveDealForDetail(null);
+                      onOpenCrossBoardSynergy(corp);
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-violet-50 hover:bg-violet-100 text-violet-700 border border-violet-200 text-xs font-bold transition-all cursor-pointer shadow-2xs"
+                    title="양사 이사회 겹침망 및 3대 신뢰 가교 경로 분석"
+                  >
+                    <GitMerge className="w-3.5 h-3.5" />
+                    <span>크로스 보드 시너지</span>
+                  </button>
+                )}
                 {onOpenGratitudeSettlement && (
                   <button
                     onClick={() => {

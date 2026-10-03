@@ -6,6 +6,11 @@ import {
 } from './quotaBillingService';
 import { crossCheckPersonWithDart } from './dartFactEngine';
 import { Person, DataSourceType } from '../types/network';
+import { 
+  computeCardFingerprint, 
+  getCachedOcrResult, 
+  cacheOcrResult 
+} from './cardOcrCache';
 
 export interface GeminiScanResult {
   data: ExtractedCardData;
@@ -17,6 +22,7 @@ export interface GeminiScanResult {
 
 /**
  * Gemini Flash Vision AI 기반 명함 인식 및 구조화 파이프라인
+ * 0. 이미지 지문(Fingerprint) 기반 고속 캐시 점검 (동일 명함 재스캔 시 토큰 0 소모)
  * 1. 쿼터/과금 상태 확인 (무료 차감 ➔ 크레딧 차감 ➔ 부족 시 온디바이스 폴백)
  * 2. Gemini 1.5/2.0 Flash Vision API 호출 (JSON Schema 프롬프트)
  * 3. DART 금융감독원 공시 실시간 교차검증 연동
@@ -26,6 +32,13 @@ export async function scanCardWithGeminiVision(
   file: File,
   preprocessedBase64?: string
 ): Promise<GeminiScanResult> {
+  // 0. 이미지 지문 계산 및 중복 캐시 점검 (토큰 소모 0회 즉시 복원)
+  const fingerprint = await computeCardFingerprint(preprocessedBase64 || file);
+  const cached = getCachedOcrResult(fingerprint);
+  if (cached) {
+    return cached;
+  }
+
   // 1. 쿼터 소모 라우팅
   const quotaResult = consumeScanQuota();
 
@@ -33,13 +46,15 @@ export async function scanCardWithGeminiVision(
   if (!quotaResult.allowed) {
     const rawText = await simulateExtractCardTextFromImage(file);
     const localData = parseBusinessCardText(rawText);
-    return {
+    const result: GeminiScanResult = {
       data: localData,
       engine: 'local_heuristic',
       executionMode: 'fallback_local',
       quotaMessage: quotaResult.message,
       isFallback: true
     };
+    cacheOcrResult(fingerprint, result);
+    return result;
   }
 
   // 2. 사용 가능한 API Key 탐색 (사용자 BYOK 키 우선 -> 환경변수)
@@ -51,13 +66,15 @@ export async function scanCardWithGeminiVision(
   if (!activeApiKey) {
     const rawText = await simulateExtractCardTextFromImage(file);
     const localData = parseBusinessCardText(rawText);
-    return {
+    const result: GeminiScanResult = {
       data: localData,
       engine: 'local_heuristic',
       executionMode: quotaResult.mode,
       quotaMessage: `${quotaResult.message} (Gemini API 키 미설정으로 온디바이스 고정밀 파서가 안전하게 수행되었습니다.)`,
       isFallback: true
     };
+    cacheOcrResult(fingerprint, result);
+    return result;
   }
 
   // 3. 이미지 Base64 준비
@@ -88,13 +105,15 @@ export async function scanCardWithGeminiVision(
   if (!base64Content) {
     const rawText = await simulateExtractCardTextFromImage(file);
     const localData = parseBusinessCardText(rawText);
-    return {
+    const result: GeminiScanResult = {
       data: localData,
       engine: 'local_heuristic',
       executionMode: quotaResult.mode,
       quotaMessage: `${quotaResult.message} (이미지 읽기 오류로 로컬 파서 전환)`,
       isFallback: true
     };
+    cacheOcrResult(fingerprint, result);
+    return result;
   }
 
   // 4. Gemini 1.5 Flash Vision API 호출
@@ -225,13 +244,15 @@ export async function scanCardWithGeminiVision(
       } : undefined
     };
 
-    return {
+    const successResult: GeminiScanResult = {
       data: extracted,
       engine: 'gemini_vision',
       executionMode: quotaResult.mode,
       quotaMessage: quotaResult.message,
       isFallback: false
     };
+    cacheOcrResult(fingerprint, successResult);
+    return successResult;
   } catch (err) {
     console.warn('Gemini Vision API 호출 실패, 온디바이스 로컬 파서로 안전하게 대체합니다:', err);
 
@@ -239,12 +260,14 @@ export async function scanCardWithGeminiVision(
     const rawText = await simulateExtractCardTextFromImage(file);
     const localData = parseBusinessCardText(rawText);
 
-    return {
+    const fallbackResult: GeminiScanResult = {
       data: localData,
       engine: 'local_heuristic',
       executionMode: quotaResult.mode,
       quotaMessage: `${quotaResult.message} (네트워크 상태에 따라 온디바이스 로컬 파서가 즉시 완료했습니다.)`,
       isFallback: true
     };
+    cacheOcrResult(fingerprint, fallbackResult);
+    return fallbackResult;
   }
 }

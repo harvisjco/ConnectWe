@@ -13,7 +13,7 @@ import {
   Calendar, ShieldCheck,
   ChevronDown, ChevronUp, Copy, Printer, Check, Eye, EyeOff, Layers,
   ExternalLink, GitCompare, TrendingUp, UserPlus, ArrowDown,
-  Crown, Zap, Briefcase, Users, DollarSign
+  Crown, Zap, Briefcase, Users, DollarSign, GitMerge
 } from 'lucide-react';
 
 interface CorporateOrgChartViewProps {
@@ -22,12 +22,14 @@ interface CorporateOrgChartViewProps {
   onOpenWarmIntro?: (target: Person, bridge?: Person) => void;
   onOpenDossier?: (target: Person) => void;
   onOpenReferralReward?: (corpName: string, domain?: string) => void;
+  onOpenCrossBoardSynergy?: (targetCorp?: string) => void;
 }
 
 export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
   people,
   onSelectPerson,
   onOpenWarmIntro,
+  onOpenCrossBoardSynergy,
 }) => {
   const corporations = useMemo(() => getAvailableCorporations(), []);
 
@@ -311,24 +313,37 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
             </span>
           }
           actions={
-            <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200 self-start md:self-auto">
-              <span className="text-[11px] text-slate-500 px-2 font-medium flex items-center gap-1">
-                <Calendar className="w-3.5 h-3.5 text-slate-500" />
-                <span>연도:</span>
-              </span>
-              {yearlySnapshots.map(snap => (
+            <div className="flex items-center gap-2 flex-wrap">
+              {onOpenCrossBoardSynergy && (
                 <button
-                  key={snap.year}
-                  onClick={() => setSelectedYear(snap.year)}
-                  className={`px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
-                    selectedYear === snap.year
-                      ? 'bg-white text-slate-900 font-semibold shadow-xs'
-                      : 'text-slate-600 hover:text-slate-900 font-medium'
-                  }`}
+                  type="button"
+                  onClick={() => onOpenCrossBoardSynergy(selectedCorpName)}
+                  className="px-3 py-1.5 rounded-xl bg-violet-50 hover:bg-violet-100 dark:bg-violet-950/50 dark:hover:bg-violet-900/50 text-violet-700 dark:text-violet-300 border border-violet-200 dark:border-violet-800 text-xs font-semibold flex items-center gap-1.5 shadow-2xs transition-all cursor-pointer"
+                  title="이사회 겹침망 및 3대 신뢰 가교 경로 분석"
                 >
-                  {snap.year}년
+                  <GitMerge className="w-3.5 h-3.5 text-violet-600" />
+                  <span>크로스 보드 시너지</span>
                 </button>
-              ))}
+              )}
+              <div className="flex items-center gap-1 p-1 bg-slate-100 rounded-xl border border-slate-200 self-start md:self-auto">
+                <span className="text-[11px] text-slate-500 px-2 font-medium flex items-center gap-1">
+                  <Calendar className="w-3.5 h-3.5 text-slate-500" />
+                  <span>연도:</span>
+                </span>
+                {yearlySnapshots.map(snap => (
+                  <button
+                    key={snap.year}
+                    onClick={() => setSelectedYear(snap.year)}
+                    className={`px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
+                      selectedYear === snap.year
+                        ? 'bg-white text-slate-900 font-semibold shadow-xs'
+                        : 'text-slate-600 hover:text-slate-900 font-medium'
+                    }`}
+                  >
+                    {snap.year}년
+                  </button>
+                ))}
+              </div>
             </div>
           }
         />

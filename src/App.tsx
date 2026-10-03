@@ -35,42 +35,44 @@ const NetworkCanvasView = React.lazy(() => import('./components/views/NetworkCan
 const InteractionTimelineView = React.lazy(() => import('./components/views/InteractionTimelineView').then(m => ({ default: m.InteractionTimelineView })));
 const CosmicGalaxy3DView = React.lazy(() => import('./components/views/CosmicGalaxy3DView').then(m => ({ default: m.CosmicGalaxy3DView })));
 const ExecutiveCommandCenterView = React.lazy(() => import('./components/views/ExecutiveCommandCenterView').then(m => ({ default: m.ExecutiveCommandCenterView })));
-import { PersonInspectorModal } from './components/inspector/PersonInspectorModal';
-import { RelationshipCopilotDrawer } from './components/copilot/RelationshipCopilotDrawer';
-import { ImportDataModal } from './components/import/ImportDataModal';
-import { AddPersonModal } from './components/crm/AddPersonModal';
-import { DailyDigestModal } from './components/digest/DailyDigestModal';
-import { DisclosureAlertModal } from './components/digest/DisclosureAlertModal';
-import { DegreesOfSeparationModal } from './components/network/DegreesOfSeparationModal';
-import { NetworkDashboard } from './components/dashboard/NetworkDashboard';
-import { UserSettingsModal } from './components/settings/UserSettingsModal';
-import { CalendarImportModal } from './components/radar/CalendarImportModal';
-import { PrivateSalonModal } from './components/modals/PrivateSalonModal';
-import { CadenceGreetingModal } from './components/modals/CadenceGreetingModal';
-import { ProximityTeaBundleModal } from './components/radar/ProximityTeaBundleModal';
-import { ExecutiveWeeklyBriefModal } from './components/modals/ExecutiveWeeklyBriefModal';
-import { RelationshipHeatmapModal } from './components/modals/RelationshipHeatmapModal';
-import { GratitudeSettlementModal } from './components/modals/GratitudeSettlementModal';
+// 모달 및 서브시스템 비동기 레이지 로딩 (On-Demand Bundle Splitting)
+const PersonInspectorModal = React.lazy(() => import('./components/inspector/PersonInspectorModal').then(m => ({ default: m.PersonInspectorModal })));
+const RelationshipCopilotDrawer = React.lazy(() => import('./components/copilot/RelationshipCopilotDrawer').then(m => ({ default: m.RelationshipCopilotDrawer })));
+const ImportDataModal = React.lazy(() => import('./components/import/ImportDataModal').then(m => ({ default: m.ImportDataModal })));
+const AddPersonModal = React.lazy(() => import('./components/crm/AddPersonModal').then(m => ({ default: m.AddPersonModal })));
+const DailyDigestModal = React.lazy(() => import('./components/digest/DailyDigestModal').then(m => ({ default: m.DailyDigestModal })));
+const DisclosureAlertModal = React.lazy(() => import('./components/digest/DisclosureAlertModal').then(m => ({ default: m.DisclosureAlertModal })));
+const DegreesOfSeparationModal = React.lazy(() => import('./components/network/DegreesOfSeparationModal').then(m => ({ default: m.DegreesOfSeparationModal })));
+const NetworkDashboard = React.lazy(() => import('./components/dashboard/NetworkDashboard').then(m => ({ default: m.NetworkDashboard })));
+const UserSettingsModal = React.lazy(() => import('./components/settings/UserSettingsModal').then(m => ({ default: m.UserSettingsModal })));
+const CalendarImportModal = React.lazy(() => import('./components/radar/CalendarImportModal').then(m => ({ default: m.CalendarImportModal })));
+const PrivateSalonModal = React.lazy(() => import('./components/modals/PrivateSalonModal').then(m => ({ default: m.PrivateSalonModal })));
+const CadenceGreetingModal = React.lazy(() => import('./components/modals/CadenceGreetingModal').then(m => ({ default: m.CadenceGreetingModal })));
+const ProximityTeaBundleModal = React.lazy(() => import('./components/radar/ProximityTeaBundleModal').then(m => ({ default: m.ProximityTeaBundleModal })));
+const ExecutiveWeeklyBriefModal = React.lazy(() => import('./components/modals/ExecutiveWeeklyBriefModal').then(m => ({ default: m.ExecutiveWeeklyBriefModal })));
+const RelationshipHeatmapModal = React.lazy(() => import('./components/modals/RelationshipHeatmapModal').then(m => ({ default: m.RelationshipHeatmapModal })));
+const GratitudeSettlementModal = React.lazy(() => import('./components/modals/GratitudeSettlementModal').then(m => ({ default: m.GratitudeSettlementModal })));
+const GoldenCareModal = React.lazy(() => import('./components/modals/GoldenCareModal').then(m => ({ default: m.GoldenCareModal })));
+const ExecutiveProtocolModal = React.lazy(() => import('./components/modals/ExecutiveProtocolModal').then(m => ({ default: m.ExecutiveProtocolModal })));
+const AmbientAudioBriefingModal = React.lazy(() => import('./components/modals/AmbientAudioBriefingModal').then(m => ({ default: m.AmbientAudioBriefingModal })));
+const CrossBoardSynergyModal = React.lazy(() => import('./components/modals/CrossBoardSynergyModal').then(m => ({ default: m.CrossBoardSynergyModal })));
+const GlobalCommandPalette = React.lazy(() => import('./components/common/GlobalCommandPalette').then(m => ({ default: m.GlobalCommandPalette })));
+const AuthModal = React.lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
+
+// 5대 통합 스튜디오 (The 5 Unified Studios) 비동기 레이지 로딩
+const SmartCardScannerStudio = React.lazy(() => import('./components/studios/SmartCardScannerStudio').then(m => ({ default: m.SmartCardScannerStudio })));
+const ExecutiveMeetingStudio = React.lazy(() => import('./components/studios/ExecutiveMeetingStudio').then(m => ({ default: m.ExecutiveMeetingStudio })));
+const ExecutiveDebriefStudio = React.lazy(() => import('./components/studios/ExecutiveDebriefStudio').then(m => ({ default: m.ExecutiveDebriefStudio })));
+const WarmIntroHubStudio = React.lazy(() => import('./components/studios/WarmIntroHubStudio').then(m => ({ default: m.WarmIntroHubStudio })));
+const DataVaultSecurityStudio = React.lazy(() => import('./components/studios/DataVaultSecurityStudio').then(m => ({ default: m.DataVaultSecurityStudio })));
+
 import { BusinessDeal } from './services/dealPipelineService';
 import { maskPerson } from './services/privacyShieldService';
 import { GeoClusterId } from './services/geoProximityService';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
-import { GlobalCommandPalette } from './components/common/GlobalCommandPalette';
 import { offlineSyncService, OfflineSyncState } from './services/offlineSyncService';
-import { GoldenCareModal } from './components/modals/GoldenCareModal';
 import { detectGoldenCareTargets } from './services/goldenCareService';
 import { onAuthStateChange, signOut, AuthUser } from './services/authService';
-import { AuthModal } from './components/auth/AuthModal';
-
-
-// 5대 통합 스튜디오 (The 5 Unified Studios)
-import { SmartCardScannerStudio } from './components/studios/SmartCardScannerStudio';
-import { ExecutiveMeetingStudio } from './components/studios/ExecutiveMeetingStudio';
-import { ExecutiveDebriefStudio } from './components/studios/ExecutiveDebriefStudio';
-import { WarmIntroHubStudio } from './components/studios/WarmIntroHubStudio';
-import { DataVaultSecurityStudio } from './components/studios/DataVaultSecurityStudio';
-import { ExecutiveProtocolModal } from './components/modals/ExecutiveProtocolModal';
-import { AmbientAudioBriefingModal } from './components/modals/AmbientAudioBriefingModal';
 import { ProtocolEventType } from './services/executiveProtocolService';
 
 import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2, GraduationCap } from 'lucide-react';
@@ -223,6 +225,14 @@ export const App: React.FC = () => {
   const handleOpenAudioBriefing = (person?: Person) => {
     setAudioBriefingTargetPerson(person || (people.length > 0 ? people[0] : null));
     setIsAudioBriefingOpen(true);
+  };
+
+  const [isCrossBoardOpen, setIsCrossBoardOpen] = useState(false);
+  const [crossBoardTargetCorp, setCrossBoardTargetCorp] = useState<string>('삼성전자');
+
+  const handleOpenCrossBoardSynergy = (targetCorp?: string) => {
+    if (targetCorp) setCrossBoardTargetCorp(targetCorp);
+    setIsCrossBoardOpen(true);
   };
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
@@ -406,6 +416,7 @@ export const App: React.FC = () => {
         onOpenGoldenCare={handleOpenGoldenCare}
         onOpenProtocol={(target?: Person) => handleOpenProtocol(target)}
         onOpenAudioBriefing={(target?: Person) => handleOpenAudioBriefing(target)}
+        onOpenCrossBoardSynergy={(corp?: string) => handleOpenCrossBoardSynergy(corp)}
         onOpenWeeklyBrief={() => setIsWeeklyBriefOpen(true)}
         onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
         onOpenDisclosureAlertModal={() => setIsDisclosureAlertOpen(true)}
@@ -560,6 +571,7 @@ export const App: React.FC = () => {
                     handleNavigateView('referral');
                     showToast(`[${corpName}] 연계 채용 오픈 포지션 및 추천 리워드 탐색으로 전환되었습니다.`);
                   }}
+                  onOpenCrossBoardSynergy={handleOpenCrossBoardSynergy}
                 />
               )}
 
@@ -621,6 +633,7 @@ export const App: React.FC = () => {
                     setGratitudeTargetDeal(deal);
                     setIsGratitudeOpen(true);
                   }}
+                  onOpenCrossBoardSynergy={handleOpenCrossBoardSynergy}
                   onShowToast={showToast}
                 />
               )}
@@ -660,10 +673,12 @@ export const App: React.FC = () => {
         </main>
       </div>
 
-      {/* Apple-styled Centered Dim Inspector Modal */}
-      <PersonInspectorModal
-        person={selectedPerson}
-        allPeople={people}
+      {/* On-Demand Lazy Loaded Modals & Studios with Suspense Boundary */}
+      <React.Suspense fallback={null}>
+        {selectedPerson && (
+          <PersonInspectorModal
+            person={selectedPerson}
+            allPeople={people}
         onClose={() => setSelectedPerson(null)}
         onUpdatePerson={handleUpdatePerson}
         onDeletePerson={handleDeletePerson}
@@ -705,6 +720,7 @@ export const App: React.FC = () => {
           handleOpenAudioBriefing(target);
         }}
       />
+      )}
 
 
       {/* Multi-source Ingestion Modal */}
@@ -840,6 +856,23 @@ export const App: React.FC = () => {
             setIsAudioBriefingOpen(false);
             setAudioBriefingTargetPerson(null);
           }}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* 전략적 M&A & 크로스 보드 시너지 시뮬레이터 모달 */}
+      {isCrossBoardOpen && (
+        <CrossBoardSynergyModal
+          isOpen={true}
+          people={people}
+          initialTargetCorp={crossBoardTargetCorp}
+          onSelectPerson={setSelectedPerson}
+          onOpenTeaTimeModal={(target) => {
+            setIsCrossBoardOpen(false);
+            setTeaTimeTargetPerson(target || null);
+            setIsTeaTimeModalOpen(true);
+          }}
+          onClose={() => setIsCrossBoardOpen(false)}
           onShowToast={showToast}
         />
       )}
@@ -985,6 +1018,7 @@ export const App: React.FC = () => {
         onOpenGoldenCare={() => handleOpenGoldenCare()}
         onOpenProtocol={(target) => handleOpenProtocol(target)}
         onOpenAudioBriefing={(target) => handleOpenAudioBriefing(target)}
+        onOpenCrossBoardSynergy={(corp?: string) => handleOpenCrossBoardSynergy(corp)}
         onNavigateView={(v: NavViewType) => handleNavigateView(v)}
       />
 
@@ -1109,6 +1143,7 @@ export const App: React.FC = () => {
         }}
         onShowToast={showToast}
       />
+      </React.Suspense>
 
       {/* PWA Mobile Installation Floating Banner */}
       <PwaInstallBanner />
