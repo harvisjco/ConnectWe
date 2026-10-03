@@ -3,7 +3,8 @@ import { Person } from '../../types/network';
 import { 
   downloadCsvWithBom, 
   downloadEncryptedVault, 
-  restoreFromEncryptedVault 
+  restoreFromEncryptedVault,
+  parseCsvWithBom
 } from '../../services/dataVaultService';
 import { 
   encryptData, 
@@ -16,8 +17,15 @@ import {
 import { checkSupabaseConnection } from '../../services/supabaseClient';
 import { offlineSyncService, OfflineSyncState } from '../../services/offlineSyncService';
 import { 
+  isBiometricSupported,
+  hasRegisteredBiometricKey,
+  registerBiometricKey,
+  unlockVaultWithBiometric,
+  clearBiometricKey
+} from '../../services/biometricAuthService';
+import { 
   X, Database, Lock, Cloud, Download, Upload, ShieldCheck, 
-  KeyRound, RefreshCw, Plane, Eye, EyeOff
+  KeyRound, RefreshCw, Plane, Eye, EyeOff, Fingerprint, FileSpreadsheet, Sparkles
 } from 'lucide-react';
 
 export interface DataVaultSecurityStudioProps {
@@ -45,8 +53,10 @@ export const DataVaultSecurityStudio: React.FC<DataVaultSecurityStudioProps> = (
   const [restoreFile, setRestoreFile] = useState<File | null>(null);
   const [restorePassword, setRestorePassword] = useState('');
   const [isRestoring, setIsRestoring] = useState(false);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [isParsingCsv, setIsParsingCsv] = useState(false);
 
-  // --- TAB 2: 암호화 마스터 키 상태 ---
+  // --- TAB 2: 암호화 마스터 키 및 생체인증 상태 ---
   const [isCryptoSet, setIsCryptoSet] = useState(() => 
     typeof window !== 'undefined' && typeof window.localStorage !== 'undefined' 
       ? Boolean(window.localStorage.getItem('connectwe_encrypted')) 
@@ -55,12 +65,19 @@ export const DataVaultSecurityStudio: React.FC<DataVaultSecurityStudioProps> = (
   const [newMasterPassword, setNewMasterPassword] = useState('');
   const [confirmMasterPassword, setConfirmMasterPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isBioSupported, setIsBioSupported] = useState(false);
+  const [hasBioKey, setHasBioKey] = useState(() => hasRegisteredBiometricKey());
 
   // --- TAB 3: 클라우드 & 오프라인 동기화 상태 ---
   const [isSupabaseConnected, setIsSupabaseConnected] = useState<boolean | null>(null);
   const [isSyncingCloud, setIsSyncingCloud] = useState(false);
   const [cloudPassword, setCloudPassword] = useState('');
   const [offlineState, setOfflineState] = useState<OfflineSyncState>(offlineSyncService.getState());
+
+  useEffect(() => {
+    isBiometricSupported().then(setIsBioSupported);
+    setHasBioKey(hasRegisteredBiometricKey());
+  }, [isOpen]);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
@@ -132,6 +149,67 @@ export const DataVaultSecurityStudio: React.FC<DataVaultSecurityStudioProps> = (
       alert('복원 실패: 비밀번호가 일치하지 않거나 파일이 손상되었습니다.');
     } finally {
       setIsRestoring(false);
+    }
+  };
+
+  // Excel UTF-8 BOM CSV 파일로부터 인맥 직접 복원
+  const handleRestoreFromCsv = async () => {
+    if (!csvFile) {
+      alert('가져올 CSV 파일을 먼저 선택해 주세요.');
+      return;
+    }
+    setIsParsingCsv(true);
+    try {
+      const text = await csvFile.text();
+      const imported = parseCsvWithBom(text);
+      if (imported.length === 0) {
+        alert('CSV 파일에서 유효한 인맥 행을 추출하지 못했습니다.');
+        return;
+      }
+      onUpdatePeople(imported);
+      onShowToast(`CSV 가져오기 완료: 총 ${imported.length}명의 인맥이 안전하게 복구되었습니다.`);
+      setCsvFile(null);
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      alert(`CSV 가져오기 실패: ${msg}`);
+    } finally {
+      setIsParsingCsv(false);
+    }
+  };
+
+  // Touch ID / Face ID 생체인증 키 등록
+  const handleRegisterBiometric = async (passwordToRegister?: string) => {
+    const pw = passwordToRegister || vaultPassword || prompt('생체인증(Touch ID/Face ID)으로 연동할 볼트 암호를 입력하세요:');
+    if (!pw) return;
+
+    const res = await registerBiometricKey(pw);
+    if (res.success) {
+      setHasBioKey(true);
+      onShowToast(res.message);
+    } else {
+      alert(res.message);
+    }
+  };
+
+  // 생체인증 원터치 암호 자동 입력
+  const handleBiometricQuickUnlock = async () => {
+    const res = await unlockVaultWithBiometric();
+    if (res.success && res.passphrase) {
+      setVaultPassword(res.passphrase);
+      setRestorePassword(res.passphrase);
+      setCloudPassword(res.passphrase);
+      onShowToast('⚡ 생체인증이 확인되어 비밀번호가 자동으로 입력되었습니다.');
+    } else {
+      alert(res.message);
+    }
+  };
+
+  // 생체인증 키 해제
+  const handleClearBiometric = () => {
+    if (confirm('등록된 생체인증(Touch ID/Face ID) 키를 기기에서 삭제하시겠습니까?')) {
+      clearBiometricKey();
+      setHasBioKey(false);
+      onShowToast('생체인증 키가 안전하게 해제되었습니다.');
     }
   };
 
@@ -330,39 +408,85 @@ export const DataVaultSecurityStudio: React.FC<DataVaultSecurityStudioProps> = (
           {/* TAB 1: CSV & 암호화 볼트 백업/복원 */}
           {activeTab === 'vault' && (
             <div className="space-y-6">
-              {/* Option A: Excel BOM CSV Export */}
-              <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <Download className="w-4 h-4 text-emerald-600" />
-                    <span className="text-xs font-bold text-slate-900">엑셀 호환 CSV (UTF-8 with BOM) 다운로드</span>
+              {/* Option A: Excel BOM CSV 양방향 파이프라인 (내보내기 & 불러오기) */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* CSV 내보내기 */}
+                <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 flex flex-col justify-between gap-3">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Download className="w-4 h-4 text-emerald-600" />
+                      <span className="text-xs font-bold text-slate-900">엑셀 호환 CSV (UTF-8 BOM) 다운로드</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                      Windows Excel에서 한글 깨짐 없이 즉시 열람 가능한 BOM(\uFEFF) 탑재 표준 CSV입니다. (현재 인맥 {people.length}명)
+                    </p>
                   </div>
-                  <p className="text-[11px] text-slate-500">
-                    Microsoft Excel 등에서 한글 깨짐 없이 즉시 열람 가능한 최상단 BOM(\uFEFF) 삽입 표준 CSV 포맷입니다. (총 {people.length}명)
-                  </p>
+                  <button
+                    type="button"
+                    onClick={handleExportCsv}
+                    className="w-full py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-800 font-bold text-xs shadow-2xs cursor-pointer active:scale-95 transition-all flex items-center justify-center gap-1.5"
+                  >
+                    <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>CSV 파일로 저장 ({people.length}명)</span>
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={handleExportCsv}
-                  className="px-5 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-slate-800 font-bold text-xs shadow-2xs whitespace-nowrap cursor-pointer active:scale-95 transition-all"
-                >
-                  CSV 내보내기 ({people.length}명)
-                </button>
+
+                {/* CSV 불러오기 */}
+                <div className="p-5 rounded-2xl border border-emerald-200/80 bg-emerald-50/30 flex flex-col justify-between gap-3">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Upload className="w-4 h-4 text-emerald-700" />
+                      <span className="text-xs font-bold text-slate-900">CSV 인맥 직접 불러오기 & 복원</span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 leading-relaxed">
+                      이전에 저장한 CSV 또는 타사 주소록 CSV를 한글 깨짐 없이 정밀 파싱하여 인맥으로 즉시 복구합니다.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <input 
+                      type="file" 
+                      accept=".csv,text/csv"
+                      onChange={e => setCsvFile(e.target.files?.[0] || null)}
+                      className="w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:bg-emerald-100 file:text-emerald-800 hover:file:bg-emerald-200 cursor-pointer"
+                    />
+                    <button
+                      type="button"
+                      disabled={isParsingCsv || !csvFile}
+                      onClick={handleRestoreFromCsv}
+                      className="w-full py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 disabled:bg-slate-200 disabled:text-slate-400 text-white font-bold text-xs shadow-2xs cursor-pointer active:scale-95 transition-all flex items-center justify-center gap-1.5"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>{isParsingCsv ? 'CSV 파싱 중...' : 'CSV 인맥으로 복원 실행'}</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
-              {/* Option B: AES-256 Encrypted Vault (.cwe) Export & Import */}
+              {/* Option B: AES-256 Encrypted Vault (.cwvault) Export & Import */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Export Encrypted */}
                 <div className="p-5 rounded-2xl border border-indigo-150 bg-indigo-50/30 space-y-3 text-xs">
                   <div className="flex items-center gap-2">
                     <Lock className="w-4 h-4 text-indigo-600" />
-                    <span className="font-bold text-slate-900">AES-256 엔터프라이즈 암호화 볼트 백업 (.cwe)</span>
+                    <span className="font-bold text-slate-900">AES-256 엔터프라이즈 암호화 볼트 백업 (.cwvault)</span>
                   </div>
                   <p className="text-[11px] text-slate-500">
                     인맥 정보, 미팅 이력, DART 데이터를 비밀번호로 암호화하여 파일로 안전하게 보관합니다.
                   </p>
                   <div>
-                    <label className="text-[11px] font-bold text-slate-600 block mb-1">암호화 비밀번호 설정</label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-[11px] font-bold text-slate-600">암호화 비밀번호 설정</label>
+                      {hasBioKey && (
+                        <button
+                          type="button"
+                          onClick={handleBiometricQuickUnlock}
+                          className="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-0.5 cursor-pointer"
+                        >
+                          <Fingerprint className="w-3 h-3" />
+                          <span>생체인증 자동완성</span>
+                        </button>
+                      )}
+                    </div>
                     <input 
                       type="password" 
                       value={vaultPassword}
@@ -386,24 +510,39 @@ export const DataVaultSecurityStudio: React.FC<DataVaultSecurityStudioProps> = (
                 <div className="p-5 rounded-2xl border border-slate-200 bg-white space-y-3 text-xs">
                   <div className="flex items-center gap-2">
                     <Upload className="w-4 h-4 text-purple-600" />
-                    <span className="font-bold text-slate-900">암호화 볼트 복원 (.cwe 파일 열기)</span>
+                    <span className="font-bold text-slate-900">암호화 볼트 복원 (.cwvault 파일 열기)</span>
                   </div>
                   <p className="text-[11px] text-slate-500">
-                    이전에 백업해 둔 .cwe 파일을 선택하고 비밀번호를 입력하여 데이터를 복원합니다.
+                    이전에 백업해 둔 .cwvault 파일을 선택하고 비밀번호를 입력하여 데이터를 복원합니다.
                   </p>
                   <input 
                     type="file" 
-                    accept=".cwe,.json"
+                    accept=".cwvault,.cwe,.json"
                     onChange={e => setRestoreFile(e.target.files?.[0] || null)}
                     className="w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:bg-slate-100 file:text-slate-700 hover:file:bg-slate-200 cursor-pointer"
                   />
-                  <input 
-                    type="password" 
-                    value={restorePassword}
-                    onChange={e => setRestorePassword(e.target.value)}
-                    placeholder="복호화 비밀번호 입력"
-                    className="w-full px-3 py-2 rounded-xl border border-slate-200 font-mono text-xs focus:ring-2 focus:ring-indigo-500"
-                  />
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="text-[11px] font-bold text-slate-600">복호화 비밀번호</label>
+                      {hasBioKey && (
+                        <button
+                          type="button"
+                          onClick={handleBiometricQuickUnlock}
+                          className="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-0.5 cursor-pointer"
+                        >
+                          <Fingerprint className="w-3 h-3" />
+                          <span>생체인증 자동완성</span>
+                        </button>
+                      )}
+                    </div>
+                    <input 
+                      type="password" 
+                      value={restorePassword}
+                      onChange={e => setRestorePassword(e.target.value)}
+                      placeholder="복호화 비밀번호 입력"
+                      className="w-full px-3 py-2 rounded-xl border border-slate-200 font-mono text-xs focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
                   <button
                     type="button"
                     disabled={isRestoring || !restoreFile || !restorePassword.trim()}
@@ -488,6 +627,59 @@ export const DataVaultSecurityStudio: React.FC<DataVaultSecurityStudioProps> = (
                   </button>
                 </div>
               </div>
+
+              {/* WebAuthn 생체인증 무마찰 볼트 연동 카드 */}
+              <div className="p-5 rounded-2xl border border-indigo-150 bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/30 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Fingerprint className="w-4 h-4 text-indigo-600" />
+                    <span className="font-bold text-slate-900">Touch ID / Face ID 생체인증 볼트 연동</span>
+                  </div>
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${
+                    hasBioKey 
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                      : isBioSupported 
+                        ? 'bg-indigo-50 text-indigo-700 border-indigo-200' 
+                        : 'bg-slate-100 text-slate-500 border-slate-200'
+                  }`}>
+                    {hasBioKey ? '🟢 생체인증 연동됨' : isBioSupported ? '하드웨어 지원' : '미지원 기기'}
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-600 leading-relaxed">
+                  WebAuthn 표준 하드웨어 보안 영역(Secure Enclave/TPM)을 활용하여, 긴 암호 입력 없이 기기 지문/얼굴 인식으로 즉시 볼트를 잠금 해제합니다.
+                </p>
+                <div className="flex gap-2 pt-1">
+                  {!hasBioKey ? (
+                    <button
+                      type="button"
+                      onClick={() => handleRegisterBiometric()}
+                      className="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold flex items-center justify-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer"
+                    >
+                      <Fingerprint className="w-3.5 h-3.5" />
+                      <span>생체인증 키 등록 (Touch ID / Face ID)</span>
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        type="button"
+                        onClick={handleBiometricQuickUnlock}
+                        className="flex-1 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold flex items-center justify-center gap-1.5 shadow-2xs active:scale-95 cursor-pointer"
+                      >
+                        <Fingerprint className="w-3.5 h-3.5" />
+                        <span>생체인증 원터치 테스트</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleClearBiometric}
+                        className="px-3.5 py-2.5 rounded-xl border border-rose-200 text-rose-600 hover:bg-rose-50 font-bold active:scale-95 cursor-pointer"
+                        title="생체인증 키 해제"
+                      >
+                        해제
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
           )}
 
@@ -546,7 +738,19 @@ export const DataVaultSecurityStudio: React.FC<DataVaultSecurityStudioProps> = (
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[11px] font-bold text-slate-600 block">클라우드 암호화 백업 비밀번호</label>
+                  <div className="flex items-center justify-between">
+                    <label className="text-[11px] font-bold text-slate-600 block">클라우드 암호화 백업 비밀번호</label>
+                    {hasBioKey && (
+                      <button
+                        type="button"
+                        onClick={handleBiometricQuickUnlock}
+                        className="text-[10px] text-indigo-600 hover:text-indigo-800 font-bold flex items-center gap-0.5 cursor-pointer"
+                      >
+                        <Fingerprint className="w-3 h-3" />
+                        <span>생체인증 자동완성</span>
+                      </button>
+                    )}
+                  </div>
                   <input 
                     type="password" 
                     value={cloudPassword}

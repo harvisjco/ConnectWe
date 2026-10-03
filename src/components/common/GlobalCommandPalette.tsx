@@ -5,7 +5,7 @@ import {
   Search, User, Briefcase, Zap, 
   MapPin, Award, Building2, Sparkles, 
   ArrowRight, X, Mic, Compass, BarChart2, UploadCloud, Coffee, Bell,
-  Gift, Headphones, GitMerge, Users
+  Gift, Headphones, GitMerge, Users, Rocket
 } from 'lucide-react';
 
 interface CommandAction {
@@ -34,6 +34,7 @@ interface GlobalCommandPaletteProps {
   onOpenAudioBriefing?: (targetPerson?: Person) => void;
   onOpenCrossBoardSynergy?: (targetCorp?: string) => void;
   onOpenSquadBuilder?: () => void;
+  onOpenVentureRadar?: () => void;
   onNavigateView: (view: NavViewType) => void;
 }
 
@@ -53,6 +54,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenAudioBriefing,
   onOpenCrossBoardSynergy,
   onOpenSquadBuilder,
+  onOpenVentureRadar,
   onNavigateView
 }) => {
   const [query, setQuery] = useState('');
@@ -230,6 +232,19 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         keywords: ['팀', '스쿼드', '프로젝트', '팀빌더', '인재', '개발자', '디자이너', 'pm', '스킬', 'squad', 'builder'],
         onExecute: () => {
           onOpenSquadBuilder();
+          onClose();
+        }
+      },
+      onOpenVentureRadar && {
+        id: 'action-venture-radar',
+        category: '스마트 액션',
+        title: '🚀 초기 스타트업 창업 & 시드 펀딩 레이더 (파운더스 클럽)',
+        subtitle: '동문·동료의 스텔스 창업, 팁스(TIPS) 선정, 시드 투자 유치 감지 & 파운딩 스쿼드 지원',
+        icon: Rocket,
+        badge: '창업 레이더',
+        keywords: ['창업', '스타트업', '시드', '펀딩', '파운더', 'tips', 'stealth', '스텔스', '투자', 'founder', 'venture'],
+        onExecute: () => {
+          onOpenVentureRadar();
           onClose();
         }
       }

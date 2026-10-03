@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateCsvWithBom, restoreFromEncryptedVault } from '../dataVaultService';
+import { generateCsvWithBom, restoreFromEncryptedVault, parseCsvWithBom } from '../dataVaultService';
 import { encryptObject } from '../cryptoStorage';
 import { Person } from '../../types/network';
 
@@ -111,6 +111,47 @@ describe('dataVaultService - 엑셀 BOM CSV 및 AES-256 데이터 볼트 검증'
       await expect(restoreFromEncryptedVault(invalidPayload, password)).rejects.toThrow(
         '유효한 ConnectWe 볼트 아카이브 형식이 아닙니다.'
       );
+    });
+  });
+
+  describe('parseCsvWithBom (양방향 CSV 파서 & Excel BOM 완벽 지원)', () => {
+    it('generateCsvWithBom으로 생성된 CSV를 완벽하게 양방향 복원한다 (라운드트립 검증)', () => {
+      const csv = generateCsvWithBom(samplePeople);
+      const restored = parseCsvWithBom(csv);
+
+      expect(restored).toHaveLength(2);
+      expect(restored[0].name).toBe('김엔터,프라이즈');
+      expect(restored[0].currentCompany).toBe('테크스타트업 "혁신"');
+      expect(restored[0].currentTitle).toBe('최고전략책임자(CSO)');
+      expect(restored[0].currentDepartment).toBe('전략실');
+      expect(restored[0].mobile).toBe('010-1111-2222');
+      expect(restored[0].sourceType).toBe('DART_FACT');
+      expect(restored[0].closeness).toBe(2);
+
+      expect(restored[1].name).toBe('이수석');
+      expect(restored[1].currentCompany).toBe('글로벌파트너스');
+      expect(restored[1].closeness).toBe(3);
+    });
+
+    it('외부 CRM 형식(이름, 회사, 직책, 휴대폰)의 간단한 CSV도 유연하게 파싱한다', () => {
+      const rawCsv = `이름,회사,직책,휴대폰,이메일
+최강민,카카오모빌리티,본부장,010-9988-7766,km.choi@kakaomobility.com
+서유진,하이퍼엑스,수석연구원,010-5544-3322,yj.seo@hyperx.ai`;
+
+      const result = parseCsvWithBom(rawCsv);
+      expect(result).toHaveLength(2);
+      expect(result[0].name).toBe('최강민');
+      expect(result[0].currentCompany).toBe('카카오모빌리티');
+      expect(result[0].currentTitle).toBe('본부장');
+      expect(result[0].mobile).toBe('010-9988-7766');
+
+      expect(result[1].name).toBe('서유진');
+      expect(result[1].currentCompany).toBe('하이퍼엑스');
+    });
+
+    it('성명 컬럼이 없는 CSV인 경우 명시적 예외를 던진다', () => {
+      const invalidCsv = `회사,직책,연락처\n삼성전자,상무,010-1234-5678`;
+      expect(() => parseCsvWithBom(invalidCsv)).toThrow('[성명] 또는 [이름]');
     });
   });
 });

@@ -185,7 +185,7 @@ describe('5대 통합 스튜디오 (The 5 Unified Studios) 렌더링 및 무결�
       expect(html).toContain('CSV &amp; 암호화 볼트 백업/복원');
       expect(html).toContain('AES-256 마스터 보안 키');
       expect(html).toContain('클라우드 &amp; 오프라인 동기화');
-      expect(html).toContain('UTF-8 with BOM');
+      expect(html).toContain('UTF-8 BOM');
     });
   });
 });

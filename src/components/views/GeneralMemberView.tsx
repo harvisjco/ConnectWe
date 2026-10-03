@@ -14,7 +14,7 @@ import {
 import { 
   Users, Cake, Calendar, Plus, Search, 
   Check, Copy, Phone, Mail, 
-  GraduationCap, Clock, MapPin, DollarSign, Camera, Sparkles
+  GraduationCap, Clock, MapPin, DollarSign, Camera, Sparkles, Rocket
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -24,6 +24,7 @@ interface GeneralMemberViewProps {
   onOpenAddModal: () => void;
   onOpenCardScanner?: () => void;
   onOpenSquadBuilder?: () => void;
+  onOpenVentureRadar?: () => void;
   onShowToast: (msg: string) => void;
   onSelectUserRole?: (role: UserRole) => void;
 }
@@ -34,6 +35,7 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
   onOpenAddModal,
   onOpenCardScanner,
   onOpenSquadBuilder,
+  onOpenVentureRadar,
   onShowToast,
   onSelectUserRole
 }) => {
@@ -161,6 +163,18 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>프로젝트 팀 빌더</span>
+              </button>
+            )}
+            {onOpenVentureRadar && (
+              <button
+                type="button"
+                data-testid="open-venture-radar-btn"
+                onClick={onOpenVentureRadar}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-rose-50 to-indigo-50 hover:from-rose-100 hover:to-indigo-100 text-rose-800 dark:text-rose-300 dark:from-rose-950/40 dark:to-indigo-950/40 border border-rose-200/80 dark:border-rose-800/60 shadow-2xs transition-all active:scale-95 cursor-pointer"
+                title="동문·동료의 스텔스 창업 및 시드 투자 유치 신호 감지"
+              >
+                <Rocket className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+                <span>창업 & 시드 레이더</span>
               </button>
             )}
             <button

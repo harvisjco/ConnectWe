@@ -57,6 +57,7 @@ const ExecutiveProtocolModal = React.lazy(() => import('./components/modals/Exec
 const AmbientAudioBriefingModal = React.lazy(() => import('./components/modals/AmbientAudioBriefingModal').then(m => ({ default: m.AmbientAudioBriefingModal })));
 const CrossBoardSynergyModal = React.lazy(() => import('./components/modals/CrossBoardSynergyModal').then(m => ({ default: m.CrossBoardSynergyModal })));
 const ProjectSquadBuilderModal = React.lazy(() => import('./components/modals/ProjectSquadBuilderModal').then(m => ({ default: m.ProjectSquadBuilderModal })));
+const EarlyStageVentureRadarModal = React.lazy(() => import('./components/modals/EarlyStageVentureRadarModal').then(m => ({ default: m.EarlyStageVentureRadarModal })));
 const GlobalCommandPalette = React.lazy(() => import('./components/common/GlobalCommandPalette').then(m => ({ default: m.GlobalCommandPalette })));
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
 
@@ -239,6 +240,11 @@ export const App: React.FC = () => {
   const [isSquadBuilderOpen, setIsSquadBuilderOpen] = useState(false);
   const handleOpenSquadBuilder = () => {
     setIsSquadBuilderOpen(true);
+  };
+
+  const [isVentureRadarOpen, setIsVentureRadarOpen] = useState(false);
+  const handleOpenVentureRadar = () => {
+    setIsVentureRadarOpen(true);
   };
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
@@ -537,6 +543,7 @@ export const App: React.FC = () => {
                   onOpenAddModal={() => setIsAddModalOpen(true)}
                   onOpenCardScanner={() => setIsCardScannerOpen(true)}
                   onOpenSquadBuilder={handleOpenSquadBuilder}
+                  onOpenVentureRadar={handleOpenVentureRadar}
                   onShowToast={showToast}
                   onSelectUserRole={handleSelectUserRole}
                 />
@@ -902,6 +909,21 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* 초기 스타트업 창업 & 시드 펀딩 레이더 (파운더스 클럽) 모달 */}
+      {isVentureRadarOpen && (
+        <EarlyStageVentureRadarModal
+          isOpen={true}
+          people={people}
+          onSelectPerson={setSelectedPerson}
+          onOpenSquadBuilder={(_signal) => {
+            setIsVentureRadarOpen(false);
+            setIsSquadBuilderOpen(true);
+          }}
+          onClose={() => setIsVentureRadarOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
       {/* Proximity Tea Bundle Modal (거점 외근 동선 지능형 티타임 번들러) */}
       {teaBundleClusterId && (
         <ProximityTeaBundleModal
@@ -1045,6 +1067,7 @@ export const App: React.FC = () => {
         onOpenAudioBriefing={(target) => handleOpenAudioBriefing(target)}
         onOpenCrossBoardSynergy={(corp?: string) => handleOpenCrossBoardSynergy(corp)}
         onOpenSquadBuilder={handleOpenSquadBuilder}
+        onOpenVentureRadar={handleOpenVentureRadar}
         onNavigateView={(v: NavViewType) => handleNavigateView(v)}
       />
 

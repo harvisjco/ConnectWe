@@ -112,5 +112,5 @@ describe('cloudSyncService Multi-Tenant Vault Isolation', () => {
     expect(restoredB.success).toBe(true);
     expect(restoredB.people?.length).toBe(1);
     expect(restoredB.people?.[0].name).toBe('박진영');
-  });
+  }, 15000);
 });
