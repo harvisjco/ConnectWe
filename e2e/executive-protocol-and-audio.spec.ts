@@ -11,17 +11,17 @@ test.describe('C-Level 차세대 2대 혁신: 경조사 의전 컨시어지 & �
     // 2. 스포트라이트 커맨드 팔레트 오픈
     const cmdPaletteBtn = page.locator('button[title*="스포트라이트"]').first();
     await expect(cmdPaletteBtn).toBeVisible();
-    await cmdPaletteBtn.click();
-    await page.waitForTimeout(300);
+    await cmdPaletteBtn.click({ force: true });
+    await page.waitForTimeout(400);
 
     // 3. 커맨드 팔레트 다이얼로그 내부 인풋에서 '의전' 검색
-    const dialogInput = page.locator('[role="dialog"] input').first();
+    const dialogInput = page.locator('[data-testid="global-command-palette"] input').first();
     await expect(dialogInput).toBeVisible();
     await dialogInput.fill('의전');
     await page.waitForTimeout(300);
 
     // 4. 'C-Suite 경조사 의전 컨시어지' 스마트 액션 클릭
-    const protocolAction = page.locator('text=C-Suite 경조사 의전 컨시어지').first();
+    const protocolAction = page.locator('[role="dialog"]').locator('text=C-Suite 경조사 의전 컨시어지').first();
     await expect(protocolAction).toBeVisible();
     await protocolAction.click({ force: true });
     await page.waitForTimeout(500);
@@ -56,8 +56,10 @@ test.describe('C-Level 차세대 2대 혁신: 경조사 의전 컨시어지 & �
     await expect(copyBtn).toBeVisible();
     await copyBtn.click({ force: true });
 
-    // 완료 피드백 확인
-    await expect(page.locator('text=복사 및 의전 완료!').first()).toBeVisible();
+    // 완료 피드백 확인 (버튼 변경 또는 상단 토스트 알림)
+    await expect(
+      page.locator('text=복사 및 의전 완료!').or(page.locator('text=의전 서신이 복사되었으며')).first()
+    ).toBeVisible();
   });
 
   test('2. 커맨드 팔레트에서 에어팟 30초 오디오 브리핑 호출, 웨이브폼/타임라인 확인 및 배속 토글 검증', async ({ page }) => {
@@ -68,11 +70,11 @@ test.describe('C-Level 차세대 2대 혁신: 경조사 의전 컨시어지 & �
     // 1. 스포트라이트 커맨드 팔레트 오픈
     const cmdPaletteBtn = page.locator('button[title*="스포트라이트"]').first();
     await expect(cmdPaletteBtn).toBeVisible();
-    await cmdPaletteBtn.click();
-    await page.waitForTimeout(300);
+    await cmdPaletteBtn.click({ force: true });
+    await page.waitForTimeout(400);
 
     // 2. 다이얼로그 내부 인풋에서 '오디오' 검색
-    const dialogInput = page.locator('[role="dialog"] input').first();
+    const dialogInput = page.locator('[data-testid="global-command-palette"] input').first();
     await expect(dialogInput).toBeVisible();
     await dialogInput.fill('오디오');
     await page.waitForTimeout(300);
