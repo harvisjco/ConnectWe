@@ -81,3 +81,123 @@ export function getGovernanceHistory(person: Person): GovernanceHistoryItem[] {
 
   return history;
 }
+
+export interface GovernanceSimulationEvent {
+  id: string;
+  personId: string;
+  personName: string;
+  company: string;
+  eventType: GovernanceEventType;
+  announcedDate: string;
+  headline: string;
+  detail: string;
+  roleChange?: {
+    previousRole: string;
+    newRole: string;
+  };
+  isBoardAppointment?: boolean;
+}
+
+export interface AffectedDealImpact {
+  dealId: string;
+  dealTitle: string;
+  targetCompany: string;
+  previousHealth: number;
+  newHealth: number;
+  healthDelta: number;
+}
+
+export interface GovernanceImpactResult {
+  event: GovernanceSimulationEvent;
+  affectedDeals: AffectedDealImpact[];
+  newSynergyPath?: string;
+  actionableRecommendation: string;
+}
+
+const STORAGE_GOV_SIM_KEY = 'connectwe_governance_simulations_v1';
+
+/**
+ * DART 공시 시뮬레이션 이벤트가 네트워크 및 비즈니스 딜에 미치는 파급 효과 분석
+ */
+export function simulateGovernanceImpact(
+  event: GovernanceSimulationEvent,
+  people: Person[],
+  deals: any[]
+): GovernanceImpactResult {
+  const targetPerson = people.find(p => p.id === event.personId);
+  const targetName = targetPerson?.name || event.personName;
+  const targetCompany = targetPerson?.currentCompany || event.company;
+  const affectedDeals: AffectedDealImpact[] = [];
+
+  // 관련된 딜 탐색 및 영향 계산
+  deals.forEach(deal => {
+    const isMatched = deal.targetCompany.toLowerCase().includes(targetCompany.toLowerCase()) ||
+      deal.stakeholders.some((s: any) => s.personId === event.personId);
+
+    if (isMatched) {
+      const prevScore = deal.healthScore;
+      // DART 공시 신규 선임 또는 장내매수 책임경영 시 건전도 보너스 부여
+      let boost = 0;
+      if (event.eventType === 'APPOINTMENT') boost = 15;
+      else if (event.eventType === 'SHARE_ACQUISITION') boost = 10;
+      else if (event.eventType === 'CONCURRENT_OFFICE') boost = 12;
+      else boost = 5;
+
+      const newScore = Math.min(100, prevScore + boost);
+      affectedDeals.push({
+        dealId: deal.id,
+        dealTitle: deal.title,
+        targetCompany: deal.targetCompany,
+        previousHealth: prevScore,
+        newHealth: newScore,
+        healthDelta: newScore - prevScore
+      });
+    }
+  });
+
+  // 열린 신뢰 가교 경로 및 C-Level 실행 조언 도출
+  const orgContext = targetPerson?.currentDepartment ? ` (${targetPerson.currentDepartment})` : '';
+  let newSynergyPath = `${targetCompany}${orgContext} 이사회 및 경영 거버넌스 직통 신뢰 채널 확보`;
+  let recommendation = `신규 공시 팩트에 기반하여 ${targetName} 님께 축하 인사를 전하고, C-Level 1-Page 미팅 브리프를 준비하여 전략적 파트너십을 조율하십시오.`;
+
+  if (event.eventType === 'APPOINTMENT') {
+    recommendation = `대표이사/임원 선임 공시는 최고의 소통 모멘텀입니다. 축하 서신 및 화환 리본을 전송하고, 2주 내 티타임 일정을 정중히 제안하세요.`;
+  } else if (event.eventType === 'SHARE_ACQUISITION') {
+    recommendation = `책임경영 지분 확대는 사업 확장의 강력한 신호입니다. 추진 중인 프로젝트 파트너십의 의사결정 속도가 가속화될 수 있습니다.`;
+  }
+
+  const result: GovernanceImpactResult = {
+    event,
+    affectedDeals,
+    newSynergyPath,
+    actionableRecommendation: recommendation
+  };
+
+  saveGovernanceSimulation(event);
+  return result;
+}
+
+/**
+ * 시뮬레이션 이벤트 로컬 보관 및 조회
+ */
+export function loadGovernanceSimulations(): GovernanceSimulationEvent[] {
+  if (typeof localStorage === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(STORAGE_GOV_SIM_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function saveGovernanceSimulation(event: GovernanceSimulationEvent): void {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    const list = loadGovernanceSimulations();
+    const filtered = list.filter(e => e.id !== event.id);
+    localStorage.setItem(STORAGE_GOV_SIM_KEY, JSON.stringify([event, ...filtered].slice(0, 20)));
+  } catch {
+    // Fallback
+  }
+}
+

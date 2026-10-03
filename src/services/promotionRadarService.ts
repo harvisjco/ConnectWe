@@ -108,6 +108,37 @@ export function savePromotionEvents(events: PromotionEvent[]): void {
 }
 
 /**
+ * 신규 승진/영전 이벤트 등록
+ */
+export function addPromotionEvent(events: PromotionEvent[], newEvent: PromotionEvent): PromotionEvent[] {
+  const filtered = events.filter(e => e.id !== newEvent.id);
+  const updated = [newEvent, ...filtered];
+  savePromotionEvents(updated);
+  return updated;
+}
+
+/**
+ * 축전 발송 완료 상태 토글
+ */
+export function toggleCongratulatedStatus(events: PromotionEvent[], eventId: string): PromotionEvent[] {
+  const today = new Date().toISOString().split('T')[0];
+  const updated = events.map(e => {
+    if (e.id === eventId) {
+      const willBeCongratulated = !e.isCongratulated;
+      return {
+        ...e,
+        isCongratulated: willBeCongratulated,
+        congratulatedAt: willBeCongratulated ? today : undefined
+      };
+    }
+    return e;
+  });
+  savePromotionEvents(updated);
+  return updated;
+}
+
+
+/**
  * 소통 주기 이탈 (Cadence Drift) 인맥 감지
  * - 친밀도 1~2촌: 60일 이상 무연락 시 경고
  * - 친밀도 3촌: 120일 이상 무연락 시 경고

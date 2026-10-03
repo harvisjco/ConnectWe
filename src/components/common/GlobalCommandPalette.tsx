@@ -35,6 +35,7 @@ interface GlobalCommandPaletteProps {
   onOpenCrossBoardSynergy?: (targetCorp?: string) => void;
   onOpenSquadBuilder?: () => void;
   onOpenVentureRadar?: () => void;
+  onOpenKnowledgeExchange?: () => void;
   onNavigateView: (view: NavViewType) => void;
 }
 
@@ -55,6 +56,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenCrossBoardSynergy,
   onOpenSquadBuilder,
   onOpenVentureRadar,
+  onOpenKnowledgeExchange,
   onNavigateView
 }) => {
   const [query, setQuery] = useState('');
@@ -245,6 +247,19 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         keywords: ['창업', '스타트업', '시드', '펀딩', '파운더', 'tips', 'stealth', '스텔스', '투자', 'founder', 'venture'],
         onExecute: () => {
           onOpenVentureRadar();
+          onClose();
+        }
+      },
+      onOpenKnowledgeExchange && {
+        id: 'action-knowledge-exchange',
+        category: '스마트 액션',
+        title: '☕ 실무 슈퍼파워 지식 교환 & 캐주얼 멘토링 팟 (Peer Knowledge Pods)',
+        subtitle: '쿠버네티스·LLM·디자인시스템·과금모델 실무 난제 해결 지인과 1:1 자문 티타임 연결',
+        icon: Coffee,
+        badge: '지식 교환',
+        keywords: ['멘토', '멘토링', '커피챗', '슈퍼파워', '지식교환', '자문', '티타임', 'mentor', 'peer', 'pod'],
+        onExecute: () => {
+          onOpenKnowledgeExchange();
           onClose();
         }
       }

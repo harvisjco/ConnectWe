@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { generateCongratulationMessages, PromotionEvent, getCadenceAlerts } from '../promotionRadarService';
+import { 
+  generateCongratulationMessages, 
+  PromotionEvent, 
+  getCadenceAlerts,
+  addPromotionEvent,
+  toggleCongratulatedStatus
+} from '../promotionRadarService';
 import { Person } from '../../types/network';
 
 describe('promotionRadarService - 영전 축전 및 소통 주기 진단', () => {
@@ -58,4 +64,44 @@ describe('promotionRadarService - 영전 축전 및 소통 주기 진단', () =>
     expect(alerts[0].daysSinceLastContact).toBeGreaterThanOrEqual(60);
     expect(alerts[0].urgency).toBe('MEDIUM');
   });
+
+  it('신규 승진 이벤트를 추가하고 축하 완료 상태를 토글할 수 있어야 한다', () => {
+    const initialEvents: PromotionEvent[] = [
+      {
+        id: 'promo-init-1',
+        personId: 'p_init',
+        personName: '박창업',
+        companyName: '루닛',
+        previousTitle: '이사',
+        newTitle: '상무',
+        promotionType: 'PROMOTION',
+        announcedDate: '2026-04-01',
+        isCongratulated: false
+      }
+    ];
+
+    const newEvent: PromotionEvent = {
+      id: 'promo-init-2',
+      personId: 'p_init2',
+      personName: '이혁신',
+      companyName: '업스테이지',
+      previousTitle: '헤드',
+      newTitle: '부사장',
+      promotionType: 'PROMOTION',
+      announcedDate: '2026-04-05',
+      isCongratulated: false
+    };
+
+    const added = addPromotionEvent(initialEvents, newEvent);
+    expect(added.length).toBe(2);
+    expect(added[0].id).toBe('promo-init-2');
+
+    const toggled = toggleCongratulatedStatus(added, 'promo-init-2');
+    expect(toggled.find(e => e.id === 'promo-init-2')?.isCongratulated).toBe(true);
+    expect(toggled.find(e => e.id === 'promo-init-2')?.congratulatedAt).toBeDefined();
+
+    const toggledBack = toggleCongratulatedStatus(toggled, 'promo-init-2');
+    expect(toggledBack.find(e => e.id === 'promo-init-2')?.isCongratulated).toBe(false);
+  });
 });
+

@@ -3,10 +3,10 @@ import { Person } from '../../types/network';
 import { 
   PromotionEvent, 
   loadPromotionEvents, 
-  savePromotionEvents, 
   getCadenceAlerts, 
   generateCongratulationMessages,
-  CongratulationMessagePreset
+  CongratulationMessagePreset,
+  toggleCongratulatedStatus
 } from '../../services/promotionRadarService';
 import { 
   Award, ShieldCheck, Copy, Check, 
@@ -47,20 +47,8 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
 
   // 축하 완료 토글
   const handleToggleCongratulated = (id: string) => {
-    const updated = promotions.map(p => {
-      if (p.id === id) {
-        const nextState = !p.isCongratulated;
-        return {
-          ...p,
-          isCongratulated: nextState,
-          congratulatedAt: nextState ? new Date().toISOString().split('T')[0] : undefined
-        };
-      }
-      return p;
-    });
-
+    const updated = toggleCongratulatedStatus(promotions, id);
     setPromotions(updated);
-    savePromotionEvents(updated);
     onShowToast('축하 상태가 업데이트되었습니다.');
   };
 

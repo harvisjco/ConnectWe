@@ -181,3 +181,121 @@ export function saveDealsToStorage(deals: BusinessDeal[]): void {
 }
 
 export const loadBusinessDeals = loadDealsFromStorage;
+
+export interface PipelineMetrics {
+  totalDeals: number;
+  activeDeals: number;
+  wonDeals: number;
+  totalPipelineVolume: number;
+  formattedTotalVolume: string;
+  weightedPipelineVolume: number;
+  formattedWeightedVolume: string;
+  avgHealthScore: number;
+  keymanCoverage: number;
+}
+
+/**
+ * 딜 금액 문자열에서 원 단위 숫자 추출 (예: "35억원" -> 3,500,000,000)
+ */
+export function parseDealAmount(dealSizeStr?: string): number {
+  if (!dealSizeStr) return 0;
+  const sanitized = dealSizeStr.replace(/,/g, '').trim();
+
+  // 1. "X.X억원" 또는 "X억원"
+  const ukMatch = sanitized.match(/([\d.]+)\s*억/);
+  if (ukMatch) {
+    const val = parseFloat(ukMatch[1]);
+    if (!isNaN(val)) return Math.round(val * 100000000);
+  }
+
+  // 2. "X천만원" 또는 "X만원"
+  const manMatch = sanitized.match(/([\d.]+)\s*만/);
+  if (manMatch) {
+    const val = parseFloat(manMatch[1]);
+    if (!isNaN(val)) return Math.round(val * 10000);
+  }
+
+  // 3. 단순 숫자만 있을 때
+  const numOnly = sanitized.match(/^[\d.]+/);
+  if (numOnly) {
+    const val = parseFloat(numOnly[0]);
+    if (!isNaN(val) && val > 0) return val;
+  }
+
+  return 0;
+}
+
+/**
+ * 원 단위 금액을 품격 있는 한국어 억/만원 단위로 변환
+ */
+export function formatAmountKorean(amount: number): string {
+  if (!amount || amount <= 0) return '규모 협의 중';
+
+  if (amount >= 100000000) {
+    const uk = (amount / 100000000).toFixed(1).replace(/\.0$/, '');
+    return `${uk}억원`;
+  }
+  if (amount >= 10000) {
+    const man = Math.round(amount / 10000);
+    return `${man.toLocaleString()}만원`;
+  }
+  return `${amount.toLocaleString()}원`;
+}
+
+/**
+ * C-Level 경영진을 위한 파이프라인 정량 지표 집계
+ */
+export function calculatePipelineMetrics(deals: BusinessDeal[]): PipelineMetrics {
+  if (!deals || deals.length === 0) {
+    return {
+      totalDeals: 0,
+      activeDeals: 0,
+      wonDeals: 0,
+      totalPipelineVolume: 0,
+      formattedTotalVolume: '0원',
+      weightedPipelineVolume: 0,
+      formattedWeightedVolume: '0원',
+      avgHealthScore: 0,
+      keymanCoverage: 0
+    };
+  }
+
+  const totalDeals = deals.length;
+  const wonDeals = deals.filter(d => d.stage === 'WON').length;
+  const activeDeals = totalDeals - wonDeals;
+
+  let totalPipelineVolume = 0;
+  let weightedPipelineVolume = 0;
+  let healthSum = 0;
+  let dealsWithKeyman = 0;
+
+  deals.forEach(deal => {
+    const amount = parseDealAmount(deal.dealSize);
+    totalPipelineVolume += amount;
+    weightedPipelineVolume += amount * (deal.healthScore / 100);
+    healthSum += deal.healthScore;
+
+    const hasKeyman = deal.stakeholders.some(
+      s => s.role === 'DECISION_MAKER' || s.role === 'CHAMPION'
+    );
+    if (hasKeyman) {
+      dealsWithKeyman += 1;
+    }
+  });
+
+  const avgHealthScore = Math.round(healthSum / totalDeals);
+  const keymanCoverage = Math.round((dealsWithKeyman / totalDeals) * 100);
+
+  return {
+    totalDeals,
+    activeDeals,
+    wonDeals,
+    totalPipelineVolume,
+    formattedTotalVolume: formatAmountKorean(totalPipelineVolume),
+    weightedPipelineVolume: Math.round(weightedPipelineVolume),
+    formattedWeightedVolume: formatAmountKorean(Math.round(weightedPipelineVolume)),
+    avgHealthScore,
+    keymanCoverage
+  };
+}
+

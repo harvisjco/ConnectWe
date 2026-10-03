@@ -58,6 +58,7 @@ const AmbientAudioBriefingModal = React.lazy(() => import('./components/modals/A
 const CrossBoardSynergyModal = React.lazy(() => import('./components/modals/CrossBoardSynergyModal').then(m => ({ default: m.CrossBoardSynergyModal })));
 const ProjectSquadBuilderModal = React.lazy(() => import('./components/modals/ProjectSquadBuilderModal').then(m => ({ default: m.ProjectSquadBuilderModal })));
 const EarlyStageVentureRadarModal = React.lazy(() => import('./components/modals/EarlyStageVentureRadarModal').then(m => ({ default: m.EarlyStageVentureRadarModal })));
+const KnowledgeExchangeModal = React.lazy(() => import('./components/modals/KnowledgeExchangeModal').then(m => ({ default: m.KnowledgeExchangeModal })));
 const GlobalCommandPalette = React.lazy(() => import('./components/common/GlobalCommandPalette').then(m => ({ default: m.GlobalCommandPalette })));
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
 
@@ -245,6 +246,11 @@ export const App: React.FC = () => {
   const [isVentureRadarOpen, setIsVentureRadarOpen] = useState(false);
   const handleOpenVentureRadar = () => {
     setIsVentureRadarOpen(true);
+  };
+
+  const [isKnowledgeExchangeOpen, setIsKnowledgeExchangeOpen] = useState(false);
+  const handleOpenKnowledgeExchange = () => {
+    setIsKnowledgeExchangeOpen(true);
   };
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
@@ -544,6 +550,7 @@ export const App: React.FC = () => {
                   onOpenCardScanner={() => setIsCardScannerOpen(true)}
                   onOpenSquadBuilder={handleOpenSquadBuilder}
                   onOpenVentureRadar={handleOpenVentureRadar}
+                  onOpenKnowledgeExchange={handleOpenKnowledgeExchange}
                   onShowToast={showToast}
                   onSelectUserRole={handleSelectUserRole}
                 />
@@ -924,6 +931,22 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* 실무 슈퍼파워 지식 교환 & 캐주얼 멘토링 팟 모달 */}
+      {isKnowledgeExchangeOpen && (
+        <KnowledgeExchangeModal
+          isOpen={true}
+          people={people}
+          onSelectPerson={setSelectedPerson}
+          onOpenTeaTimeStudio={(person) => {
+            setIsKnowledgeExchangeOpen(false);
+            setTeaTimeTargetPerson(person);
+            setIsTeaTimeModalOpen(true);
+          }}
+          onClose={() => setIsKnowledgeExchangeOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
       {/* Proximity Tea Bundle Modal (거점 외근 동선 지능형 티타임 번들러) */}
       {teaBundleClusterId && (
         <ProximityTeaBundleModal
@@ -1068,6 +1091,7 @@ export const App: React.FC = () => {
         onOpenCrossBoardSynergy={(corp?: string) => handleOpenCrossBoardSynergy(corp)}
         onOpenSquadBuilder={handleOpenSquadBuilder}
         onOpenVentureRadar={handleOpenVentureRadar}
+        onOpenKnowledgeExchange={handleOpenKnowledgeExchange}
         onNavigateView={(v: NavViewType) => handleNavigateView(v)}
       />
 

@@ -14,7 +14,7 @@ import {
 import { 
   Users, Cake, Calendar, Plus, Search, 
   Check, Copy, Phone, Mail, 
-  GraduationCap, Clock, MapPin, DollarSign, Camera, Sparkles, Rocket
+  GraduationCap, Clock, MapPin, DollarSign, Camera, Sparkles, Rocket, Coffee
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -25,6 +25,7 @@ interface GeneralMemberViewProps {
   onOpenCardScanner?: () => void;
   onOpenSquadBuilder?: () => void;
   onOpenVentureRadar?: () => void;
+  onOpenKnowledgeExchange?: () => void;
   onShowToast: (msg: string) => void;
   onSelectUserRole?: (role: UserRole) => void;
 }
@@ -36,6 +37,7 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
   onOpenCardScanner,
   onOpenSquadBuilder,
   onOpenVentureRadar,
+  onOpenKnowledgeExchange,
   onShowToast,
   onSelectUserRole
 }) => {
@@ -175,6 +177,18 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
               >
                 <Rocket className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
                 <span>창업 & 시드 레이더</span>
+              </button>
+            )}
+            {onOpenKnowledgeExchange && (
+              <button
+                type="button"
+                data-testid="open-knowledge-exchange-btn"
+                onClick={onOpenKnowledgeExchange}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-amber-50 to-indigo-50 hover:from-amber-100 hover:to-indigo-100 text-amber-900 dark:text-amber-200 dark:from-amber-950/40 dark:to-indigo-950/40 border border-amber-200/80 dark:border-amber-800/60 shadow-2xs transition-all active:scale-95 cursor-pointer"
+                title="실무 슈퍼파워 지식 교환 & 1:1 캐주얼 멘토링 팟"
+              >
+                <Coffee className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                <span>실무 지식 교환 팟</span>
               </button>
             )}
             <button

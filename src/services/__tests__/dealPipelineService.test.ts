@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { calculateDealHealthScore, DealStakeholder } from '../dealPipelineService';
+import { 
+  calculateDealHealthScore, 
+  DealStakeholder,
+  parseDealAmount,
+  formatAmountKorean,
+  calculatePipelineMetrics
+} from '../dealPipelineService';
 
 describe('dealPipelineService - calculateDealHealthScore', () => {
   it('스테이크홀더가 없을 경우 건전도 점수는 기본 15점이어야 한다', () => {
@@ -59,4 +65,68 @@ describe('dealPipelineService - calculateDealHealthScore', () => {
     const score = calculateDealHealthScore(stakeholders);
     expect(score).toBe(100);
   });
+
+  it('딜 규모 문자열을 원 단위 숫자로 정확히 파싱해야 한다', () => {
+    expect(parseDealAmount('35억원 (연간)')).toBe(3500000000);
+    expect(parseDealAmount('8.5억원')).toBe(850000000);
+    expect(parseDealAmount('5000만원')).toBe(50000000);
+    expect(parseDealAmount('전략적 제휴')).toBe(0);
+  });
+
+  it('원 단위 금액을 한국어 억/만원 포맷으로 품격 있게 변환해야 한다', () => {
+    expect(formatAmountKorean(3500000000)).toBe('35억원');
+    expect(formatAmountKorean(850000000)).toBe('8.5억원');
+    expect(formatAmountKorean(50000000)).toBe('5,000만원');
+    expect(formatAmountKorean(0)).toBe('규모 협의 중');
+  });
+
+  it('파이프라인 지표가 올바르게 합산 및 가중 계산되어야 한다', () => {
+    const deals = [
+      {
+        id: 'deal-1',
+        title: '대형 딜',
+        targetCompany: '삼성전자',
+        targetIndustry: 'IT',
+        dealSize: '10억원',
+        stage: 'PROPOSAL' as const,
+        expectedCloseDate: '2026-12-31',
+        stakeholders: [
+          {
+            personId: 'p1',
+            personName: '김대표',
+            company: '삼성전자',
+            title: '대표이사',
+            role: 'DECISION_MAKER' as const,
+            closeness: 1,
+            isDartExecutive: true
+          }
+        ],
+        healthScore: 80
+      },
+      {
+        id: 'deal-2',
+        title: '완료된 딜',
+        targetCompany: '카카오',
+        targetIndustry: 'IT',
+        dealSize: '5억원',
+        stage: 'WON' as const,
+        expectedCloseDate: '2026-10-31',
+        stakeholders: [],
+        healthScore: 50
+      }
+    ];
+
+    const metrics = calculatePipelineMetrics(deals);
+    expect(metrics.totalDeals).toBe(2);
+    expect(metrics.wonDeals).toBe(1);
+    expect(metrics.activeDeals).toBe(1);
+    expect(metrics.totalPipelineVolume).toBe(1500000000); // 15억원
+    expect(metrics.formattedTotalVolume).toBe('15억원');
+    // 10억 * 0.8 + 5억 * 0.5 = 8억 + 2.5억 = 10.5억
+    expect(metrics.weightedPipelineVolume).toBe(1050000000);
+    expect(metrics.formattedWeightedVolume).toBe('10.5억원');
+    expect(metrics.avgHealthScore).toBe(65);
+    expect(metrics.keymanCoverage).toBe(50);
+  });
 });
+
