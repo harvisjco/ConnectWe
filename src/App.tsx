@@ -59,6 +59,8 @@ import { GlobalCommandPalette } from './components/common/GlobalCommandPalette';
 import { offlineSyncService, OfflineSyncState } from './services/offlineSyncService';
 import { GoldenCareModal } from './components/modals/GoldenCareModal';
 import { detectGoldenCareTargets } from './services/goldenCareService';
+import { onAuthStateChange, signOut, AuthUser } from './services/authService';
+import { AuthModal } from './components/auth/AuthModal';
 
 
 // 5대 통합 스튜디오 (The 5 Unified Studios)
@@ -67,6 +69,9 @@ import { ExecutiveMeetingStudio } from './components/studios/ExecutiveMeetingStu
 import { ExecutiveDebriefStudio } from './components/studios/ExecutiveDebriefStudio';
 import { WarmIntroHubStudio } from './components/studios/WarmIntroHubStudio';
 import { DataVaultSecurityStudio } from './components/studios/DataVaultSecurityStudio';
+import { ExecutiveProtocolModal } from './components/modals/ExecutiveProtocolModal';
+import { AmbientAudioBriefingModal } from './components/modals/AmbientAudioBriefingModal';
+import { ProtocolEventType } from './services/executiveProtocolService';
 
 import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2, GraduationCap } from 'lucide-react';
 
@@ -75,7 +80,11 @@ export const App: React.FC = () => {
   // 회원 등급 관리 (일반회원 | Hidden회원 | 마스터)
   const [userRole, setUserRole] = useState<UserRole>(() => getStoredUserRole());
 
-  // 로컬 스토리지 기반 오프라인 퍼스트 상태
+  // Supabase Auth 사용자 및 인증 모달 상태
+  const [authUser, setAuthUser] = useState<AuthUser | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  // 로컬 스토리지 기반 오프라인 퍼스트 상태 (사용자별 완전 격리)
   const [people, setPeople] = useState<Person[]>(() => loadPeopleFromStorage());
   const [activeView, setActiveView] = useState<NavViewType>(() => {
     const role = getStoredUserRole();
@@ -188,6 +197,11 @@ export const App: React.FC = () => {
   const [teaTimeTargetPerson, setTeaTimeTargetPerson] = useState<Person | null>(null);
   const [isGoldenCareOpen, setIsGoldenCareOpen] = useState(false);
   const [goldenCareTargetPerson, setGoldenCareTargetPerson] = useState<Person | null>(null);
+  const [isProtocolOpen, setIsProtocolOpen] = useState(false);
+  const [protocolTargetPerson, setProtocolTargetPerson] = useState<Person | null>(null);
+  const [protocolInitialType, setProtocolInitialType] = useState<ProtocolEventType>('CONDOLENCE');
+  const [isAudioBriefingOpen, setIsAudioBriefingOpen] = useState(false);
+  const [audioBriefingTargetPerson, setAudioBriefingTargetPerson] = useState<Person | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const handleOpenGoldenCare = (person?: Person) => {
@@ -198,6 +212,17 @@ export const App: React.FC = () => {
       setGoldenCareTargetPerson(targets.length > 0 ? targets[0].person : (people[0] || null));
     }
     setIsGoldenCareOpen(true);
+  };
+
+  const handleOpenProtocol = (person?: Person, initialType?: ProtocolEventType) => {
+    setProtocolTargetPerson(person || (people.length > 0 ? people[0] : null));
+    if (initialType) setProtocolInitialType(initialType);
+    setIsProtocolOpen(true);
+  };
+
+  const handleOpenAudioBriefing = (person?: Person) => {
+    setAudioBriefingTargetPerson(person || (people.length > 0 ? people[0] : null));
+    setIsAudioBriefingOpen(true);
   };
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
@@ -228,6 +253,25 @@ export const App: React.FC = () => {
     return unsubscribe;
   }, []);
 
+  // Supabase Auth 세션 구독 및 사용자 변경 시 인맥 스위칭
+  useEffect(() => {
+    const unsubscribe = onAuthStateChange((user) => {
+      setAuthUser(user);
+      if (user) {
+        const userPeople = loadPeopleFromStorage(user.id);
+        setPeople(userPeople);
+      }
+    });
+    return unsubscribe;
+  }, []);
+
+  const handleSignOut = async () => {
+    await signOut();
+    setAuthUser(null);
+    showToast('안전하게 로그아웃되었습니다. 게스트 모드로 전환됩니다.');
+    setPeople(loadPeopleFromStorage('guest'));
+  };
+
   // VIP 프라이버시 쉴드 모드 토글
   const handleToggleShield = () => {
     setIsShieldActive(prev => {
@@ -243,10 +287,10 @@ export const App: React.FC = () => {
     return loadPromotionEvents(people).filter(p => !p.isCongratulated).length;
   }, [people]);
 
-  // people 상태 변경 시 자동 영속화
+  // people 상태 변경 시 자동 영속화 (현재 로그인 사용자 볼트에 격리 저장)
   useEffect(() => {
-    savePeopleToStorage(people);
-  }, [people]);
+    savePeopleToStorage(people, authUser?.id);
+  }, [people, authUser]);
 
   // Toast 헬퍼
   const showToast = (msg: string) => {
@@ -360,6 +404,8 @@ export const App: React.FC = () => {
           setIsTeaTimeModalOpen(true);
         }}
         onOpenGoldenCare={handleOpenGoldenCare}
+        onOpenProtocol={(target?: Person) => handleOpenProtocol(target)}
+        onOpenAudioBriefing={(target?: Person) => handleOpenAudioBriefing(target)}
         onOpenWeeklyBrief={() => setIsWeeklyBriefOpen(true)}
         onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
         onOpenDisclosureAlertModal={() => setIsDisclosureAlertOpen(true)}
@@ -371,6 +417,9 @@ export const App: React.FC = () => {
         isShieldActive={isShieldActive}
         onToggleShield={handleToggleShield}
         onOpenDataVault={() => setIsDataVaultOpen(true)}
+        authUser={authUser}
+        onOpenAuthModal={() => setIsAuthModalOpen(true)}
+        onSignOut={handleSignOut}
         onUpdatePeople={setPeople}
         onShowToast={showToast}
       />
@@ -589,7 +638,8 @@ export const App: React.FC = () => {
                 <PromotionCadenceView
                   people={people}
                   onSelectPerson={setSelectedPerson}
-                  onOpenDossier={(target) => setMeetingPrepTargetPerson(target)}
+                  onOpenDossier={(target: Person) => setMeetingPrepTargetPerson(target)}
+                  onOpenProtocol={(target: Person) => handleOpenProtocol(target, 'CONGRATULATION_PROMOTION')}
                   onShowToast={showToast}
                 />
               )}
@@ -645,6 +695,14 @@ export const App: React.FC = () => {
         onOpenGoldenCare={(target) => {
           setSelectedPerson(null);
           handleOpenGoldenCare(target);
+        }}
+        onOpenProtocol={(target) => {
+          setSelectedPerson(null);
+          handleOpenProtocol(target);
+        }}
+        onOpenAudioBriefing={(target) => {
+          setSelectedPerson(null);
+          handleOpenAudioBriefing(target);
         }}
       />
 
@@ -755,6 +813,34 @@ export const App: React.FC = () => {
             setTeaTimeTargetPerson(p);
             setIsTeaTimeModalOpen(true);
           }}
+        />
+      )}
+
+      {/* C-Suite 경조사 의전 & 정중 서신 컨시어지 모달 */}
+      {(isProtocolOpen || !!protocolTargetPerson) && (
+        <ExecutiveProtocolModal
+          isOpen={true}
+          person={protocolTargetPerson || (people.length > 0 ? people[0] : null)}
+          initialEventType={protocolInitialType}
+          onClose={() => {
+            setIsProtocolOpen(false);
+            setProtocolTargetPerson(null);
+          }}
+          onUpdatePerson={handleUpdatePerson}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* 에어팟 앰비언트 30초 오디오 브리핑 모달 */}
+      {(isAudioBriefingOpen || !!audioBriefingTargetPerson) && (
+        <AmbientAudioBriefingModal
+          isOpen={true}
+          person={audioBriefingTargetPerson || (people.length > 0 ? people[0] : null)}
+          onClose={() => {
+            setIsAudioBriefingOpen(false);
+            setAudioBriefingTargetPerson(null);
+          }}
+          onShowToast={showToast}
         />
       )}
 
@@ -897,6 +983,8 @@ export const App: React.FC = () => {
           setIsTeaTimeModalOpen(true);
         }}
         onOpenGoldenCare={() => handleOpenGoldenCare()}
+        onOpenProtocol={(target) => handleOpenProtocol(target)}
+        onOpenAudioBriefing={(target) => handleOpenAudioBriefing(target)}
         onNavigateView={(v: NavViewType) => handleNavigateView(v)}
       />
 
@@ -944,6 +1032,7 @@ export const App: React.FC = () => {
             setTeaTimeTargetPerson(null);
             setSelectedPerson(p);
           }}
+          onOpenAudioBriefing={(p) => handleOpenAudioBriefing(p)}
           onShowToast={showToast}
         />
       )}
@@ -1001,6 +1090,49 @@ export const App: React.FC = () => {
             setIsDataVaultOpen(false);
             setIsEncryptionModalOpen(false);
             setIsCloudSyncOpen(false);
+          }}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* Executive Multi-Tenant Auth Modal */}
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onAuthSuccess={(user, updatedPeople) => {
+          setAuthUser(user);
+          if (updatedPeople) {
+            setPeople(updatedPeople);
+          } else {
+            setPeople(loadPeopleFromStorage(user.id));
+          }
+        }}
+        onShowToast={showToast}
+      />
+
+      {/* Executive Protocol & Gift Compliance Modal */}
+      {isProtocolOpen && (
+        <ExecutiveProtocolModal
+          isOpen={true}
+          person={protocolTargetPerson}
+          initialEventType={protocolInitialType}
+          onUpdatePerson={handleUpdatePerson}
+          onClose={() => {
+            setIsProtocolOpen(false);
+            setProtocolTargetPerson(null);
+          }}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* Ambient Audio Briefing Modal */}
+      {isAudioBriefingOpen && (
+        <AmbientAudioBriefingModal
+          isOpen={true}
+          person={audioBriefingTargetPerson}
+          onClose={() => {
+            setIsAudioBriefingOpen(false);
+            setAudioBriefingTargetPerson(null);
           }}
           onShowToast={showToast}
         />

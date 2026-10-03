@@ -18,7 +18,7 @@ import {
   Download, Trash2, Plus, Lock,
   Sparkles, Zap, Cpu, Building2, Rocket,
   User, MessageSquare, Shield, Send, Copy, AlertTriangle,
-  Mic, Compass, Coffee, BellRing
+  Mic, Compass, Coffee, BellRing, Gift, Headphones
 } from 'lucide-react';
 
 interface PersonInspectorModalProps {
@@ -36,6 +36,8 @@ interface PersonInspectorModalProps {
   onOpenWarmIntroPath?: (person: Person) => void;
   onOpenTeaTimeModal?: (person: Person) => void;
   onOpenGoldenCare?: (person: Person) => void;
+  onOpenProtocol?: (person: Person) => void;
+  onOpenAudioBriefing?: (person: Person) => void;
 }
 
 type InspectorTab = 'profile' | 'timeline' | 'governance';
@@ -53,6 +55,8 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
   onOpenWarmIntroPath,
   onOpenTeaTimeModal,
   onOpenGoldenCare,
+  onOpenProtocol,
+  onOpenAudioBriefing,
 }) => {
   const [activeTab, setActiveTab] = useState<InspectorTab>('profile');
   const [isEditingMemo, setIsEditingMemo] = useState(false);
@@ -450,6 +454,30 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
                     <span>VIP 골든타임 능동형 안부 서신 코파일럿 (4대 테마)</span>
                   </button>
                 )}
+
+                {/* 2대 C-Level 차세대 혁신: 에어팟 오디오 브리핑 & 경조사 의전 컨시어지 */}
+                <div className="grid grid-cols-2 gap-2">
+                  {onOpenAudioBriefing && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenAudioBriefing(person)}
+                      className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:hover:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer shadow-2xs"
+                    >
+                      <Headphones className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                      <span>에어팟 30초 오디오</span>
+                    </button>
+                  )}
+                  {onOpenProtocol && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenProtocol(person)}
+                      className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer shadow-2xs"
+                    >
+                      <Gift className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+                      <span>C-Suite 의전 서신</span>
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* 스마트 메모 & 비즈니스 인사이트 (with E2EE 볼트 동기화) */}

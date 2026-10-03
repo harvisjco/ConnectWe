@@ -4,7 +4,8 @@ import { NavViewType } from './SidebarLNB';
 import { 
   Search, User, Briefcase, Zap, 
   MapPin, Award, Building2, Sparkles, 
-  ArrowRight, X, Mic, Compass, BarChart2, UploadCloud, Coffee, Bell
+  ArrowRight, X, Mic, Compass, BarChart2, UploadCloud, Coffee, Bell,
+  Gift, Headphones
 } from 'lucide-react';
 
 interface CommandAction {
@@ -29,6 +30,8 @@ interface GlobalCommandPaletteProps {
   onOpenBatchCardScanner?: () => void;
   onOpenTeaTimeModal?: (targetPerson?: Person) => void;
   onOpenGoldenCare?: (targetPerson?: Person) => void;
+  onOpenProtocol?: (targetPerson?: Person) => void;
+  onOpenAudioBriefing?: (targetPerson?: Person) => void;
   onNavigateView: (view: NavViewType) => void;
 }
 
@@ -44,6 +47,8 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenBatchCardScanner,
   onOpenTeaTimeModal,
   onOpenGoldenCare,
+  onOpenProtocol,
+  onOpenAudioBriefing,
   onNavigateView
 }) => {
   const [query, setQuery] = useState('');
@@ -169,6 +174,32 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         keywords: ['안부', '골든타임', '소통', '서신', '카톡', '문자', '이메일', '공백', 'care', 'cadence'],
         onExecute: () => {
           onOpenGoldenCare();
+          onClose();
+        }
+      },
+      onOpenProtocol && {
+        id: 'action-protocol',
+        category: '스마트 액션',
+        title: '🎁 C-Suite 경조사 의전 컨시어지 & 정중 서신',
+        subtitle: '부고·혼사·영전·명절·생신 감지 & 청탁금지법 안심 가이드 & 리본 축문',
+        icon: Gift,
+        badge: '경조사 의전',
+        keywords: ['경조사', '의전', '부고', '조의', '결혼', '축의', '영전', '명절', '화환', '김영란법', '청탁금지법', 'protocol'],
+        onExecute: () => {
+          onOpenProtocol();
+          onClose();
+        }
+      },
+      onOpenAudioBriefing && {
+        id: 'action-audio-briefing',
+        category: '스마트 액션',
+        title: '🎧 에어팟 앰비언트 30초 오디오 브리핑 (라디오 모드)',
+        subtitle: '미팅 10분 전 차량 이동 중 핸즈프리 3단계 음성 팩트체크 (TTS)',
+        icon: Headphones,
+        badge: '에어팟 브리핑',
+        keywords: ['오디오', '브리핑', '에어팟', '음성', 'tts', '팟캐스트', '핸즈프리', 'audio', 'briefing'],
+        onExecute: () => {
+          onOpenAudioBriefing();
           onClose();
         }
       }

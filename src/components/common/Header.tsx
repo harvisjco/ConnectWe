@@ -7,12 +7,14 @@ import { batchCrossCheckWithDart } from '../../services/dartFactEngine';
 import { pickContactsFromDevice } from '../../services/contactPicker';
 import { offlineSyncService, OfflineSyncState } from '../../services/offlineSyncService';
 import { detectGoldenCareTargets } from '../../services/goldenCareService';
+import { AuthUser } from '../../services/authService';
 import { 
   Share2, UploadCloud, Download, ShieldCheck, ShieldAlert, Clock, 
   Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
   BarChart2, Lock, Settings, Cloud, Bot, Camera, Calendar, Bell,
   MoreHorizontal, ChevronDown, PanelLeft, Database, Flame, Gift,
-  Crown, Check, Search, Mic, Compass, Plane, RefreshCw, Coffee
+  Crown, Check, Search, Mic, Compass, Plane, RefreshCw, Coffee,
+  LogIn, LogOut, Headphones
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -27,6 +29,8 @@ interface HeaderProps {
   onOpenBatchCardScanner?: () => void;
   onOpenTeaTimeModal?: (targetPerson?: Person) => void;
   onOpenGoldenCare?: (targetPerson?: Person) => void;
+  onOpenProtocol?: (targetPerson?: Person) => void;
+  onOpenAudioBriefing?: (targetPerson?: Person) => void;
   onOpenImportModal: () => void;
   onOpenAddModal: () => void;
   onOpenDigestModal: () => void;
@@ -43,6 +47,9 @@ interface HeaderProps {
   isShieldActive?: boolean;
   onToggleShield?: () => void;
   onOpenDataVault?: () => void;
+  authUser?: AuthUser | null;
+  onOpenAuthModal?: () => void;
+  onSignOut?: () => void;
   onUpdatePeople: (people: Person[]) => void;
   onShowToast: (msg: string) => void;
 }
@@ -59,6 +66,8 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenBatchCardScanner,
   onOpenTeaTimeModal,
   onOpenGoldenCare,
+  onOpenProtocol,
+  onOpenAudioBriefing,
   onOpenImportModal, 
   onOpenAddModal,
   onOpenDigestModal,
@@ -75,6 +84,9 @@ export const Header: React.FC<HeaderProps> = ({
   isShieldActive = false,
   onToggleShield,
   onOpenDataVault,
+  authUser,
+  onOpenAuthModal,
+  onSignOut,
   onUpdatePeople,
   onShowToast
 }) => {
@@ -82,9 +94,11 @@ export const Header: React.FC<HeaderProps> = ({
   const toolsMenuRef = useRef<HTMLDivElement | null>(null);
   const roleMenuRef = useRef<HTMLDivElement | null>(null);
   const offlinePopoverRef = useRef<HTMLDivElement | null>(null);
+  const userMenuRef = useRef<HTMLDivElement | null>(null);
   const [isToolsOpen, setIsToolsOpen] = useState(false);
   const [isRoleMenuOpen, setIsRoleMenuOpen] = useState(false);
   const [isOfflinePopoverOpen, setIsOfflinePopoverOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [offlineState, setOfflineState] = useState<OfflineSyncState>(() => offlineSyncService.getState());
 
   const isMac = React.useMemo(() => {
@@ -112,14 +126,17 @@ export const Header: React.FC<HeaderProps> = ({
       if (offlinePopoverRef.current && !offlinePopoverRef.current.contains(e.target as Node)) {
         setIsOfflinePopoverOpen(false);
       }
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setIsUserMenuOpen(false);
+      }
     };
-    if (isToolsOpen || isRoleMenuOpen || isOfflinePopoverOpen) {
+    if (isToolsOpen || isRoleMenuOpen || isOfflinePopoverOpen || isUserMenuOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isToolsOpen, isRoleMenuOpen, isOfflinePopoverOpen]);
+  }, [isToolsOpen, isRoleMenuOpen, isOfflinePopoverOpen, isUserMenuOpen]);
 
   const handleManualSync = async () => {
     if (!offlineState.isOnline) {
@@ -582,6 +599,38 @@ export const Header: React.FC<HeaderProps> = ({
                     </button>
                   )}
 
+                  {onOpenProtocol && (
+                    <button
+                      onClick={() => {
+                        setIsToolsOpen(false);
+                        onOpenProtocol();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-rose-50 dark:hover:bg-rose-950/40 hover:text-rose-900 transition-colors text-left cursor-pointer"
+                    >
+                      <Gift className="w-4 h-4 text-rose-600 shrink-0" />
+                      <div>
+                        <div className="font-bold text-slate-900 dark:text-white">C-Suite 경조사 의전 컨시어지</div>
+                        <div className="text-[10px] text-slate-400">부고·혼사·영전·명절 & 청탁금지법 가이드</div>
+                      </div>
+                    </button>
+                  )}
+
+                  {onOpenAudioBriefing && (
+                    <button
+                      onClick={() => {
+                        setIsToolsOpen(false);
+                        onOpenAudioBriefing();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-indigo-50 dark:hover:bg-indigo-950/40 hover:text-indigo-900 transition-colors text-left cursor-pointer"
+                    >
+                      <Headphones className="w-4 h-4 text-indigo-600 shrink-0" />
+                      <div>
+                        <div className="font-bold text-slate-900 dark:text-white">에어팟 30초 오디오 브리핑</div>
+                        <div className="text-[10px] text-slate-400">미팅 10분 전 핸즈프리 음성 팩트체크</div>
+                      </div>
+                    </button>
+                  )}
+
                   {onOpenTeaTimeModal && (
                     <button
                       onClick={() => {
@@ -724,6 +773,82 @@ export const Header: React.FC<HeaderProps> = ({
             <span className="hidden sm:inline">+ 인맥 등록</span>
             <span className="sm:hidden">등록</span>
           </button>
+
+          {/* Executive Multi-Tenant Auth Profile Button & Popover */}
+          <div className="relative" ref={userMenuRef}>
+            {authUser ? (
+              <button
+                type="button"
+                onClick={() => setIsUserMenuOpen(prev => !prev)}
+                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 min-h-[32px] rounded-full border border-emerald-300 dark:border-emerald-700 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-200 text-xs font-bold transition-all active:scale-[0.98] shadow-2xs hover:shadow-xs cursor-pointer whitespace-nowrap"
+                title={`로그인 계정: ${authUser.email} (개인 인맥 볼트 격리 활성화)`}
+              >
+                <div className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] font-black shrink-0 shadow-2xs">
+                  {(authUser.name || authUser.email)[0].toUpperCase()}
+                </div>
+                <span className="hidden md:inline max-w-[85px] truncate">{authUser.name || authUser.email.split('@')[0]}</span>
+                <span className="text-[10px] px-1.5 py-0.2 rounded-full bg-emerald-200/80 dark:bg-emerald-900/80 text-emerald-900 dark:text-emerald-100 font-extrabold hidden lg:inline">
+                  격리됨
+                </span>
+                <ChevronDown className={`w-3 h-3 text-emerald-700 dark:text-emerald-300 transition-transform duration-200 ${isUserMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={onOpenAuthModal}
+                className="flex items-center gap-1.5 px-3 py-1.5 min-h-[32px] rounded-full border border-indigo-200 dark:border-indigo-800 bg-indigo-50/80 hover:bg-indigo-100 dark:bg-indigo-950/50 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 text-xs font-bold transition-all active:scale-[0.98] shadow-2xs cursor-pointer whitespace-nowrap"
+                title="개인별 안전 인맥 격리 로그인 / 회원가입"
+              >
+                <LogIn className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                <span className="hidden sm:inline">로그인</span>
+              </button>
+            )}
+
+            {/* User Profile & Account Popover */}
+            {isUserMenuOpen && authUser && (
+              <div className="absolute right-0 mt-2 w-72 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-2xl p-3 z-50 ring-1 ring-black/5 animate-in fade-in zoom-in-95 duration-150 space-y-3">
+                <div className="flex items-center gap-2.5 pb-2.5 border-b border-slate-100 dark:border-slate-800">
+                  <div className="w-9 h-9 rounded-2xl bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-400/30 flex items-center justify-center font-bold text-sm shrink-0">
+                    {(authUser.name || authUser.email)[0].toUpperCase()}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                      {authUser.name || '경영진'}
+                    </p>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
+                      {authUser.email}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Privacy Badge */}
+                <div className="p-2.5 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/80 text-[11px] space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold text-emerald-800 dark:text-emerald-300">
+                    <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                    <span>개인 인맥 격리 볼트 연결됨</span>
+                  </div>
+                  <p className="text-[10px] text-emerald-700/80 dark:text-emerald-400/80 leading-tight">
+                    다른 사용자나 게스트가 고객님의 인맥 및 메모에 접근할 수 없습니다. (Zero-Knowledge)
+                  </p>
+                </div>
+
+                {/* Logout Button */}
+                {onSignOut && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsUserMenuOpen(false);
+                      onSignOut();
+                    }}
+                    className="w-full py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-rose-50 dark:hover:bg-rose-950/30 hover:border-rose-200 dark:hover:border-rose-900/50 text-slate-600 dark:text-slate-300 hover:text-rose-600 dark:hover:text-rose-300 text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>로그아웃 (안전 분리)</span>
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
 
           {/* Member Role Switcher Dropdown */}
           <div className="relative" ref={roleMenuRef}>

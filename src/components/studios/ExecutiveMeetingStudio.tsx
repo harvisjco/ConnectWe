@@ -10,7 +10,7 @@ import {
 import { 
   X, Sparkles, Building2, Coffee, Calendar,
   Copy, Check, Clock,
-  Printer, Download, ShieldCheck, ArrowRight, Users
+  Printer, Download, ShieldCheck, ArrowRight, Users, Headphones
 } from 'lucide-react';
 
 export interface ExecutiveMeetingStudioProps {
@@ -20,6 +20,7 @@ export interface ExecutiveMeetingStudioProps {
   allPeople?: Person[];
   onClose: () => void;
   onSelectPerson?: (person: Person) => void;
+  onOpenAudioBriefing?: (person: Person) => void;
   onShowToast: (msg: string) => void;
 }
 
@@ -30,6 +31,7 @@ export const ExecutiveMeetingStudio: React.FC<ExecutiveMeetingStudioProps> = ({
   allPeople = [],
   onClose,
   onSelectPerson,
+  onOpenAudioBriefing,
   onShowToast
 }) => {
   const [activeTab, setActiveTab] = useState<'brief' | 'teatime'>(initialTab);
@@ -226,6 +228,18 @@ export const ExecutiveMeetingStudio: React.FC<ExecutiveMeetingStudioProps> = ({
               <Coffee className="w-3.5 h-3.5" />
               <span>티타임 3대 의제 &amp; .ICS 캘린더</span>
             </button>
+
+            {onOpenAudioBriefing && (
+              <button
+                type="button"
+                onClick={() => onOpenAudioBriefing(currentPerson)}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 transition-all cursor-pointer shadow-2xs"
+                title="에어팟 30초 오디오 브리핑 열기"
+              >
+                <Headphones className="w-3.5 h-3.5 text-indigo-600" />
+                <span className="hidden sm:inline">에어팟 30초 오디오</span>
+              </button>
+            )}
           </div>
         </div>
 

@@ -1,47 +1,102 @@
 import { Person, ActivityLog } from '../types/network';
 import { INITIAL_PEOPLE_SEED } from '../data/mockNetworkData';
+import { getActiveUserId } from './authService';
 
-const PEOPLE_STORAGE_KEY = 'connectwe_people_v1';
-const ACTIVITY_LOGS_KEY = 'connectwe_activity_logs_v1';
+export const GUEST_PEOPLE_STORAGE_KEY = 'connectwe_people_v1';
+export const GUEST_ACTIVITY_LOGS_KEY = 'connectwe_activity_logs_v1';
+
+export function getPeopleStorageKey(userId?: string): string {
+  const effectiveId = userId ?? getActiveUserId();
+  if (effectiveId && effectiveId !== 'guest') {
+    return `connectwe_people_usr_${effectiveId}`;
+  }
+  return GUEST_PEOPLE_STORAGE_KEY;
+}
+
+export function getActivityLogsKey(userId?: string): string {
+  const effectiveId = userId ?? getActiveUserId();
+  if (effectiveId && effectiveId !== 'guest') {
+    return `connectwe_activity_logs_usr_${effectiveId}`;
+  }
+  return GUEST_ACTIVITY_LOGS_KEY;
+}
 
 /**
- * 로컬 스토리지에서 인맥 데이터 로드 (없을 경우 초기 시드 반환)
+ * 로컬 스토리지에서 인맥 데이터 로드 (사용자별 완전 격리)
  */
-export function loadPeopleFromStorage(): Person[] {
+export function loadPeopleFromStorage(userId?: string): Person[] {
+  if (typeof localStorage === 'undefined') return INITIAL_PEOPLE_SEED;
+  const key = getPeopleStorageKey(userId);
   try {
-    const raw = localStorage.getItem(PEOPLE_STORAGE_KEY);
+    const raw = localStorage.getItem(key);
     if (!raw) {
-      savePeopleToStorage(INITIAL_PEOPLE_SEED);
-      return INITIAL_PEOPLE_SEED;
+      const effectiveId = userId ?? getActiveUserId();
+      // 게스트 모드일 때만 기본 초기 시드 저장 및 반환
+      if (!effectiveId || effectiveId === 'guest') {
+        savePeopleToStorage(INITIAL_PEOPLE_SEED, 'guest');
+        return INITIAL_PEOPLE_SEED;
+      }
+      return [];
     }
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length > 0) {
+    if (Array.isArray(parsed)) {
       return parsed;
     }
-    return INITIAL_PEOPLE_SEED;
+    return [];
   } catch (err) {
     console.error('Failed to load people from localStorage:', err);
-    return INITIAL_PEOPLE_SEED;
+    return [];
   }
 }
 
 /**
- * 인맥 데이터 로컬 스토리지 저장
+ * 인맥 데이터 로컬 스토리지 저장 (사용자별 완전 격리)
  */
-export function savePeopleToStorage(people: Person[]): void {
+export function savePeopleToStorage(people: Person[], userId?: string): void {
+  if (typeof localStorage === 'undefined') return;
+  const key = getPeopleStorageKey(userId);
   try {
-    localStorage.setItem(PEOPLE_STORAGE_KEY, JSON.stringify(people));
+    localStorage.setItem(key, JSON.stringify(people));
   } catch (err) {
     console.error('Failed to save people to localStorage:', err);
   }
 }
 
 /**
- * 소통 활동 로그 로드
+ * 게스트 모드에서 등록한 인맥을 현재 계정으로 마이그레이션 (선택적 동기화)
  */
-export function loadActivityLogs(): ActivityLog[] {
+export function migrateGuestPeopleToUser(userId: string): { migratedCount: number; people: Person[] } {
+  if (typeof localStorage === 'undefined' || !userId) {
+    return { migratedCount: 0, people: [] };
+  }
   try {
-    const raw = localStorage.getItem(ACTIVITY_LOGS_KEY);
+    const guestRaw = localStorage.getItem(GUEST_PEOPLE_STORAGE_KEY);
+    const guestPeople: Person[] = guestRaw ? JSON.parse(guestRaw) : [];
+    if (!guestPeople.length) {
+      return { migratedCount: 0, people: loadPeopleFromStorage(userId) };
+    }
+
+    const currentPeople = loadPeopleFromStorage(userId);
+    const existingIds = new Set(currentPeople.map(p => p.id));
+    const toMigrate = guestPeople.filter(p => !existingIds.has(p.id));
+
+    const merged = [...currentPeople, ...toMigrate];
+    savePeopleToStorage(merged, userId);
+    return { migratedCount: toMigrate.length, people: merged };
+  } catch (err) {
+    console.error('Failed to migrate guest people:', err);
+    return { migratedCount: 0, people: loadPeopleFromStorage(userId) };
+  }
+}
+
+/**
+ * 소통 활동 로그 로드 (사용자별 완전 격리)
+ */
+export function loadActivityLogs(userId?: string): ActivityLog[] {
+  if (typeof localStorage === 'undefined') return [];
+  const key = getActivityLogsKey(userId);
+  try {
+    const raw = localStorage.getItem(key);
     if (!raw) return [];
     const parsed = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed : [];
@@ -52,11 +107,13 @@ export function loadActivityLogs(): ActivityLog[] {
 }
 
 /**
- * 소통 활동 로그 저장
+ * 소통 활동 로그 저장 (사용자별 완전 격리)
  */
-export function saveActivityLogs(logs: ActivityLog[]): void {
+export function saveActivityLogs(logs: ActivityLog[], userId?: string): void {
+  if (typeof localStorage === 'undefined') return;
+  const key = getActivityLogsKey(userId);
   try {
-    localStorage.setItem(ACTIVITY_LOGS_KEY, JSON.stringify(logs));
+    localStorage.setItem(key, JSON.stringify(logs));
   } catch (err) {
     console.error('Failed to save activity logs to localStorage:', err);
   }

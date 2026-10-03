@@ -20,12 +20,14 @@ interface PromotionCadenceViewProps {
   people: Person[];
   onSelectPerson: (person: Person) => void;
   onOpenDossier?: (person: Person) => void;
+  onOpenProtocol?: (person: Person) => void;
   onShowToast: (msg: string) => void;
 }
 
 export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
   people,
   onSelectPerson,
+  onOpenProtocol,
   onShowToast
 }) => {
   const [promotions, setPromotions] = useState<PromotionEvent[]>(() => loadPromotionEvents(people));
@@ -279,7 +281,17 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
                         </td>
 
                         {/* 6. Action Button */}
-                        <td className="py-3 px-3 whitespace-nowrap text-right">
+                        <td className="py-3 px-3 whitespace-nowrap text-right space-x-1.5">
+                          {onOpenProtocol && matchedPerson && (
+                            <button
+                              onClick={() => onOpenProtocol(matchedPerson)}
+                              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold text-xs border border-rose-200 shadow-2xs transition-all active:scale-95 cursor-pointer"
+                              title="C-Suite 영전 의전 서신 & 청탁금지법 가이드 열기"
+                            >
+                              <Gift className="w-3 h-3 text-rose-600" />
+                              <span>의전 서신</span>
+                            </button>
+                          )}
                           <button
                             onClick={() => setActivePromoForMessage(promo)}
                             className="inline-flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-2xs transition-all active:scale-95"
@@ -360,13 +372,26 @@ export const PromotionCadenceView: React.FC<PromotionCadenceViewProps> = ({
                       {promo.isCongratulated ? '✓ 축하 완료' : '● 미축하'}
                     </button>
 
-                    <button
-                      onClick={() => setActivePromoForMessage(promo)}
-                      className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-2xs transition-all active:scale-95"
-                    >
-                      <Gift className="w-3.5 h-3.5 text-amber-300" />
-                      <span>축전 생성</span>
-                    </button>
+                    <div className="flex items-center gap-1.5">
+                      {onOpenProtocol && matchedPerson && (
+                        <button
+                          type="button"
+                          onClick={() => onOpenProtocol(matchedPerson)}
+                          className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold text-xs border border-rose-200 shadow-2xs transition-all active:scale-95 cursor-pointer"
+                          title="C-Suite 영전 의전 서신 & 청탁금지법 가이드 열기"
+                        >
+                          <Gift className="w-3.5 h-3.5 text-rose-600" />
+                          <span>의전 서신</span>
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setActivePromoForMessage(promo)}
+                        className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs shadow-2xs transition-all active:scale-95"
+                      >
+                        <Gift className="w-3.5 h-3.5 text-amber-300" />
+                        <span>축전 생성</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               );
