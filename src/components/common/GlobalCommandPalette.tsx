@@ -5,7 +5,7 @@ import {
   Search, User, Briefcase, Zap, 
   MapPin, Award, Building2, Sparkles, 
   ArrowRight, X, Mic, Compass, BarChart2, UploadCloud, Coffee, Bell,
-  Gift, Headphones, GitMerge
+  Gift, Headphones, GitMerge, Users
 } from 'lucide-react';
 
 interface CommandAction {
@@ -33,6 +33,7 @@ interface GlobalCommandPaletteProps {
   onOpenProtocol?: (targetPerson?: Person) => void;
   onOpenAudioBriefing?: (targetPerson?: Person) => void;
   onOpenCrossBoardSynergy?: (targetCorp?: string) => void;
+  onOpenSquadBuilder?: () => void;
   onNavigateView: (view: NavViewType) => void;
 }
 
@@ -51,6 +52,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenProtocol,
   onOpenAudioBriefing,
   onOpenCrossBoardSynergy,
+  onOpenSquadBuilder,
   onNavigateView
 }) => {
   const [query, setQuery] = useState('');
@@ -215,6 +217,19 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         keywords: ['시너지', '크로스보드', '합작', '제휴', 'm&a', '이사회', '알럼나이', '지분', 'synergy', 'board', 'cross'],
         onExecute: () => {
           onOpenCrossBoardSynergy();
+          onClose();
+        }
+      },
+      onOpenSquadBuilder && {
+        id: 'action-squad-builder',
+        category: '스마트 액션',
+        title: '🎯 스마트 프로젝트 팀 빌더 & 스킬 매칭 스튜디오',
+        subtitle: '실무 인재(개발/디자인/PM/마케팅) 보유 스킬 매칭 & 가상 스쿼드 편성',
+        icon: Users,
+        badge: '팀 빌더',
+        keywords: ['팀', '스쿼드', '프로젝트', '팀빌더', '인재', '개발자', '디자이너', 'pm', '스킬', 'squad', 'builder'],
+        onExecute: () => {
+          onOpenSquadBuilder();
           onClose();
         }
       }

@@ -32,6 +32,7 @@ interface HeaderProps {
   onOpenProtocol?: (targetPerson?: Person) => void;
   onOpenAudioBriefing?: (targetPerson?: Person) => void;
   onOpenCrossBoardSynergy?: (targetCorp?: string) => void;
+  onOpenSquadBuilder?: () => void;
   onOpenImportModal: () => void;
   onOpenAddModal: () => void;
   onOpenDigestModal: () => void;
@@ -70,6 +71,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenProtocol,
   onOpenAudioBriefing,
   onOpenCrossBoardSynergy,
+  onOpenSquadBuilder,
   onOpenImportModal, 
   onOpenAddModal,
   onOpenDigestModal,
@@ -645,6 +647,22 @@ export const Header: React.FC<HeaderProps> = ({
                       <div>
                         <div className="font-bold text-slate-900 dark:text-white">크로스 보드 시너지 시뮬레이터</div>
                         <div className="text-[10px] text-slate-400">전략적 M&A·이사회 겹침망 & 3대 신뢰 가교</div>
+                      </div>
+                    </button>
+                  )}
+
+                  {onOpenSquadBuilder && (
+                    <button
+                      onClick={() => {
+                        setIsToolsOpen(false);
+                        onOpenSquadBuilder();
+                      }}
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-sky-50 dark:hover:bg-sky-950/40 hover:text-sky-900 transition-colors text-left cursor-pointer"
+                    >
+                      <Users className="w-4 h-4 text-sky-600 shrink-0" />
+                      <div>
+                        <div className="font-bold text-slate-900 dark:text-white">스마트 프로젝트 팀 빌더</div>
+                        <div className="text-[10px] text-slate-400">실무 인재 스킬 매칭 & 가상 스쿼드 편성</div>
                       </div>
                     </button>
                   )}

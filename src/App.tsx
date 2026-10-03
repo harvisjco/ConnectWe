@@ -56,6 +56,7 @@ const GoldenCareModal = React.lazy(() => import('./components/modals/GoldenCareM
 const ExecutiveProtocolModal = React.lazy(() => import('./components/modals/ExecutiveProtocolModal').then(m => ({ default: m.ExecutiveProtocolModal })));
 const AmbientAudioBriefingModal = React.lazy(() => import('./components/modals/AmbientAudioBriefingModal').then(m => ({ default: m.AmbientAudioBriefingModal })));
 const CrossBoardSynergyModal = React.lazy(() => import('./components/modals/CrossBoardSynergyModal').then(m => ({ default: m.CrossBoardSynergyModal })));
+const ProjectSquadBuilderModal = React.lazy(() => import('./components/modals/ProjectSquadBuilderModal').then(m => ({ default: m.ProjectSquadBuilderModal })));
 const GlobalCommandPalette = React.lazy(() => import('./components/common/GlobalCommandPalette').then(m => ({ default: m.GlobalCommandPalette })));
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
 
@@ -233,6 +234,11 @@ export const App: React.FC = () => {
   const handleOpenCrossBoardSynergy = (targetCorp?: string) => {
     if (targetCorp) setCrossBoardTargetCorp(targetCorp);
     setIsCrossBoardOpen(true);
+  };
+
+  const [isSquadBuilderOpen, setIsSquadBuilderOpen] = useState(false);
+  const handleOpenSquadBuilder = () => {
+    setIsSquadBuilderOpen(true);
   };
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
@@ -417,6 +423,7 @@ export const App: React.FC = () => {
         onOpenProtocol={(target?: Person) => handleOpenProtocol(target)}
         onOpenAudioBriefing={(target?: Person) => handleOpenAudioBriefing(target)}
         onOpenCrossBoardSynergy={(corp?: string) => handleOpenCrossBoardSynergy(corp)}
+        onOpenSquadBuilder={handleOpenSquadBuilder}
         onOpenWeeklyBrief={() => setIsWeeklyBriefOpen(true)}
         onOpenCalendarModal={() => setIsCalendarModalOpen(true)}
         onOpenDisclosureAlertModal={() => setIsDisclosureAlertOpen(true)}
@@ -529,6 +536,7 @@ export const App: React.FC = () => {
                   onSelectPerson={setSelectedPerson}
                   onOpenAddModal={() => setIsAddModalOpen(true)}
                   onOpenCardScanner={() => setIsCardScannerOpen(true)}
+                  onOpenSquadBuilder={handleOpenSquadBuilder}
                   onShowToast={showToast}
                   onSelectUserRole={handleSelectUserRole}
                 />
@@ -611,6 +619,7 @@ export const App: React.FC = () => {
                 <TeamNetworkView
                   people={people}
                   onSelectPerson={setSelectedPerson}
+                  onOpenSquadBuilder={handleOpenSquadBuilder}
                   onShowToast={showToast}
                 />
               )}
@@ -877,6 +886,22 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* 스마트 프로젝트 팀 빌더 & 스킬 매칭 스튜디오 모달 */}
+      {isSquadBuilderOpen && (
+        <ProjectSquadBuilderModal
+          isOpen={true}
+          people={people}
+          onSelectPerson={setSelectedPerson}
+          onOpenTeaTimeStudio={(person) => {
+            setIsSquadBuilderOpen(false);
+            setTeaTimeTargetPerson(person);
+            setIsTeaTimeModalOpen(true);
+          }}
+          onClose={() => setIsSquadBuilderOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
       {/* Proximity Tea Bundle Modal (거점 외근 동선 지능형 티타임 번들러) */}
       {teaBundleClusterId && (
         <ProximityTeaBundleModal
@@ -1019,6 +1044,7 @@ export const App: React.FC = () => {
         onOpenProtocol={(target) => handleOpenProtocol(target)}
         onOpenAudioBriefing={(target) => handleOpenAudioBriefing(target)}
         onOpenCrossBoardSynergy={(corp?: string) => handleOpenCrossBoardSynergy(corp)}
+        onOpenSquadBuilder={handleOpenSquadBuilder}
         onNavigateView={(v: NavViewType) => handleNavigateView(v)}
       />
 

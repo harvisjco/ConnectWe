@@ -14,7 +14,7 @@ import {
 import { 
   Users, Cake, Calendar, Plus, Search, 
   Check, Copy, Phone, Mail, 
-  GraduationCap, Clock, MapPin, DollarSign, Camera
+  GraduationCap, Clock, MapPin, DollarSign, Camera, Sparkles
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -23,6 +23,7 @@ interface GeneralMemberViewProps {
   onSelectPerson: (person: Person) => void;
   onOpenAddModal: () => void;
   onOpenCardScanner?: () => void;
+  onOpenSquadBuilder?: () => void;
   onShowToast: (msg: string) => void;
   onSelectUserRole?: (role: UserRole) => void;
 }
@@ -32,6 +33,7 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
   onSelectPerson,
   onOpenAddModal,
   onOpenCardScanner,
+  onOpenSquadBuilder,
   onShowToast,
   onSelectUserRole
 }) => {
@@ -151,6 +153,16 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
         subtitle="소중한 학연·동아리·직장 동문 주소록을 손쉽게 정리하고, 생일을 챙기며 소모임 활동을 즐기는 공간입니다."
         actions={
           <div className="flex items-center gap-2">
+            {onOpenSquadBuilder && (
+              <button
+                onClick={onOpenSquadBuilder}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-700 hover:to-sky-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"
+                title="프로젝트 스쿼드 가상 편성 및 스킬 매칭"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>프로젝트 팀 빌더</span>
+              </button>
+            )}
             <button
               onClick={onOpenAddModal}
               className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"

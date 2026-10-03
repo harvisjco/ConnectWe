@@ -4,19 +4,21 @@ import { TeamMember, TeamSharedContact } from '../../types/teamNetwork';
 import { 
   Users, ShieldCheck, Search, Share2, 
   Copy, Building2, Lock, LayoutList, LayoutGrid,
-  UserPlus, Link2, HelpCircle
+  UserPlus, Link2, HelpCircle, Sparkles
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
 interface TeamNetworkViewProps {
   people: Person[];
   onSelectPerson: (person: Person) => void;
+  onOpenSquadBuilder?: () => void;
   onShowToast: (msg: string) => void;
 }
 
 export const TeamNetworkView: React.FC<TeamNetworkViewProps> = ({
   people,
   onSelectPerson,
+  onOpenSquadBuilder,
   onShowToast
 }) => {
   const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
@@ -209,9 +211,18 @@ export const TeamNetworkView: React.FC<TeamNetworkViewProps> = ({
         }
         actions={
           <div className="flex items-center gap-2">
+            {onOpenSquadBuilder && (
+              <button
+                onClick={onOpenSquadBuilder}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-700 hover:to-sky-700 text-white shadow-sm transition-all active:scale-95"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                스마트 프로젝트 팀 빌더
+              </button>
+            )}
             <button
               onClick={() => setIsInviteModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition-all active:scale-95"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 shadow-sm transition-all active:scale-95"
             >
               <UserPlus className="w-3.5 h-3.5" />
               팀원 초대 & 코드 복사
