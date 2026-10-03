@@ -6,7 +6,7 @@ import {
   MapPin, Award, Building2, Sparkles, 
   ArrowRight, X, Mic, Compass, BarChart2, UploadCloud, Coffee, Bell,
   Gift, Headphones, GitMerge, Users, Rocket, Layers, BookOpen, QrCode,
-  Heart, Globe, HelpCircle, Calendar
+  Heart, Globe, HelpCircle, Calendar, Wifi
 } from 'lucide-react';
 
 interface CommandAction {
@@ -41,6 +41,7 @@ interface GlobalCommandPaletteProps {
   onOpenPeerTrustCareer?: (tab?: 'endorsements' | 'digitalCard' | 'roulette' | 'careerPath') => void;
   onOpenNetworkVitality?: (tab?: 'vitality' | 'meetup' | 'bilingual' | 'sos') => void;
   onOpenExecutiveElegance?: (tab?: 'scheduler' | 'trip' | 'memory' | 'showcase') => void;
+  onOpenMeetingGuardGovernance?: (tab?: 'governance' | 'talent' | 'offline' | 'followup') => void;
   onNavigateView: (view: NavViewType) => void;
 }
 
@@ -66,6 +67,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenPeerTrustCareer,
   onOpenNetworkVitality,
   onOpenExecutiveElegance,
+  onOpenMeetingGuardGovernance,
   onNavigateView
 }) => {
   const [query, setQuery] = useState('');
@@ -477,6 +479,58 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         keywords: ['쇼케이스', '프로덕트', '포트폴리오', '레퍼런스', '아키텍처', '성과', 'showcase', 'product', 'portfolio'],
         onExecute: () => {
           onOpenExecutiveElegance('showcase');
+          onClose();
+        }
+      },
+      onOpenMeetingGuardGovernance && {
+        id: 'action-guard-governance',
+        category: '스마트 액션',
+        title: '🏛️ C-Level 이사회 거버넌스 팩트체크 & 주총 의결권 시뮬레이터 (Governance Intelligence)',
+        subtitle: '사외이사 겸직 규제(상법상 2개사 초과 불가) 검증, 주총 3대 안건 분석 & 5% 지분 변동 공시 레이더',
+        icon: Building2,
+        badge: '거버넌스',
+        keywords: ['거버넌스', '이사회', '사외이사', '주총', '의결권', '주주총회', '공시', '지분', 'dart', 'governance'],
+        onExecute: () => {
+          onOpenMeetingGuardGovernance('governance');
+          onClose();
+        }
+      },
+      onOpenMeetingGuardGovernance && {
+        id: 'action-guard-talent',
+        category: '스마트 액션',
+        title: '🤝 글로벌 핵심 인재 스카우팅 & 탤런트 풀 큐레이터 (Executive Talent Curator)',
+        subtitle: 'CTO·AI Lab Lead·CPO·CFO 핵심 임원 승계 풀, 동료 실전 검증 평판 & 비공개 티타임 서신',
+        icon: Users,
+        badge: '인재 영입',
+        keywords: ['인재', '스카우팅', '채용', 'cto', 'cfo', 'cpo', 'ai', '임원', '승계', 'talent', 'curator'],
+        onExecute: () => {
+          onOpenMeetingGuardGovernance('talent');
+          onClose();
+        }
+      },
+      onOpenMeetingGuardGovernance && {
+        id: 'action-guard-offline',
+        category: '스마트 액션',
+        title: '⚡ 초고속 오프라인 우선 PWA & IndexedDB CRDT 동기화 (Offline-First Stream)',
+        subtitle: '기내 모드에서도 10,000+ 인맥 그래프 0.01초 열람, 양방향 무손실 CRDT 자동 병합',
+        icon: Wifi,
+        badge: '오프라인 볼트',
+        keywords: ['오프라인', '기내', 'pwa', 'crdt', '동기화', '무손실', '볼트', 'offline', 'sync', 'flight'],
+        onExecute: () => {
+          onOpenMeetingGuardGovernance('offline');
+          onClose();
+        }
+      },
+      onOpenMeetingGuardGovernance && {
+        id: 'action-guard-followup',
+        category: '스마트 액션',
+        title: '🎙️ 미팅 가드 24h/2h 에티켓 리마인더 & 3분 감사 팔로업 (Meeting Guard & Follow-Up)',
+        subtitle: '미팅 24시간/2시간 전 품격 에티켓 알림 & 미팅 직후 3분 감사 서신·약속 이행 체크리스트 자동화',
+        icon: Bell,
+        badge: '미팅 가드',
+        keywords: ['미팅', '리마인더', '감사', '팔로업', '약속', '노쇼', '서신', 'followup', 'meeting', 'guard'],
+        onExecute: () => {
+          onOpenMeetingGuardGovernance('followup');
           onClose();
         }
       }

@@ -63,6 +63,7 @@ const PeerSynergyHubModal = React.lazy(() => import('./components/modals/PeerSyn
 const PeerTrustCareerModal = React.lazy(() => import('./components/modals/PeerTrustCareerModal').then(m => ({ default: m.PeerTrustCareerModal })));
 const NetworkVitalityModal = React.lazy(() => import('./components/modals/NetworkVitalityModal').then(m => ({ default: m.NetworkVitalityModal })));
 const ExecutiveEleganceModal = React.lazy(() => import('./components/modals/ExecutiveEleganceModal').then(m => ({ default: m.ExecutiveEleganceModal })));
+const MeetingGuardGovernanceModal = React.lazy(() => import('./components/modals/MeetingGuardGovernanceModal').then(m => ({ default: m.MeetingGuardGovernanceModal })));
 const GlobalCommandPalette = React.lazy(() => import('./components/common/GlobalCommandPalette').then(m => ({ default: m.GlobalCommandPalette })));
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
 
@@ -283,6 +284,13 @@ export const App: React.FC = () => {
   const handleOpenExecutiveElegance = (tab: 'scheduler' | 'trip' | 'memory' | 'showcase' = 'scheduler') => {
     setExecutiveEleganceInitialTab(tab);
     setIsExecutiveEleganceOpen(true);
+  };
+
+  const [isMeetingGuardGovernanceOpen, setIsMeetingGuardGovernanceOpen] = useState(false);
+  const [meetingGuardGovernanceInitialTab, setMeetingGuardGovernanceInitialTab] = useState<'governance' | 'talent' | 'offline' | 'followup'>('governance');
+  const handleOpenMeetingGuardGovernance = (tab: 'governance' | 'talent' | 'offline' | 'followup' = 'governance') => {
+    setMeetingGuardGovernanceInitialTab(tab);
+    setIsMeetingGuardGovernanceOpen(true);
   };
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
@@ -587,6 +595,7 @@ export const App: React.FC = () => {
                   onOpenPeerTrustCareer={handleOpenPeerTrustCareer}
                   onOpenNetworkVitality={handleOpenNetworkVitality}
                   onOpenExecutiveElegance={handleOpenExecutiveElegance}
+                  onOpenMeetingGuardGovernance={handleOpenMeetingGuardGovernance}
                   onShowToast={showToast}
                   onSelectUserRole={handleSelectUserRole}
                 />
@@ -1032,6 +1041,19 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* C-Level 거버넌스 & 미팅 가드 스튜디오 (사외이사 겸직 규제 / 주총 의결권 / 핵심 인재 승계 / 오프라인 CRDT / 3분 팔로업) */}
+      {isMeetingGuardGovernanceOpen && (
+        <MeetingGuardGovernanceModal
+          isOpen={true}
+          initialTab={meetingGuardGovernanceInitialTab}
+          people={people}
+          selectedPerson={selectedPerson}
+          onSelectPerson={setSelectedPerson}
+          onClose={() => setIsMeetingGuardGovernanceOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
       {/* Proximity Tea Bundle Modal (거점 외근 동선 지능형 티타임 번들러) */}
       {teaBundleClusterId && (
         <ProximityTeaBundleModal
@@ -1181,6 +1203,7 @@ export const App: React.FC = () => {
         onOpenPeerTrustCareer={handleOpenPeerTrustCareer}
         onOpenNetworkVitality={handleOpenNetworkVitality}
         onOpenExecutiveElegance={handleOpenExecutiveElegance}
+        onOpenMeetingGuardGovernance={handleOpenMeetingGuardGovernance}
         onNavigateView={(v: NavViewType) => handleNavigateView(v)}
       />
 

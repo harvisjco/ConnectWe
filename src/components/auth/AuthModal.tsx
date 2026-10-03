@@ -330,19 +330,6 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </>
               )}
             </button>
-
-            {activeTab === 'signin' && (
-              <button
-                type="button"
-                onClick={handleBiometricQuickLogin}
-                disabled={isLoading}
-                className="w-full py-2 px-3 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50/70 hover:bg-indigo-100 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
-                data-testid="biometric-login-btn"
-              >
-                <Fingerprint className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                <span>지문 / Face ID 생체인증 빠른 로그인</span>
-              </button>
-            )}
           </form>
 
           {/* 데모 계정 간편 체험 CTA */}

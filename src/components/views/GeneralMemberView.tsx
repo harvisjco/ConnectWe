@@ -15,7 +15,7 @@ import {
   Users, Cake, Calendar, Plus, Search, 
   Check, Copy, Phone, Mail, 
   GraduationCap, Clock, MapPin, DollarSign, Camera, Sparkles, Rocket, Coffee,
-  Award, Heart
+  Award, Heart, ShieldCheck
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -31,6 +31,7 @@ interface GeneralMemberViewProps {
   onOpenPeerTrustCareer?: (tab?: 'endorsements' | 'digitalCard' | 'roulette' | 'careerPath') => void;
   onOpenNetworkVitality?: (tab?: 'vitality' | 'meetup' | 'bilingual' | 'sos') => void;
   onOpenExecutiveElegance?: (tab?: 'scheduler' | 'trip' | 'memory' | 'showcase') => void;
+  onOpenMeetingGuardGovernance?: (tab?: 'governance' | 'talent' | 'offline' | 'followup') => void;
   onShowToast: (msg: string) => void;
   onSelectUserRole?: (role: UserRole) => void;
 }
@@ -47,6 +48,7 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
   onOpenPeerTrustCareer,
   onOpenNetworkVitality,
   onOpenExecutiveElegance,
+  onOpenMeetingGuardGovernance,
   onShowToast,
   onSelectUserRole
 }) => {
@@ -246,6 +248,18 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
               >
                 <Sparkles className="w-3.5 h-3.5 text-amber-200" />
                 <span>품격 & 쇼케이스 스튜디오</span>
+              </button>
+            )}
+            {onOpenMeetingGuardGovernance && (
+              <button
+                type="button"
+                data-testid="open-meeting-guard-governance-btn"
+                onClick={() => onOpenMeetingGuardGovernance('governance')}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-blue-700 via-indigo-600 to-emerald-600 hover:from-blue-800 hover:to-emerald-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"
+                title="사외이사 겸직 규제·주총 의결권 시뮬레이션, 핵심 인재 승계 풀, 오프라인 무손실 CRDT 및 미팅 3분 사후 팔로업"
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-blue-200" />
+                <span>거버넌스 & 미팅 가드</span>
               </button>
             )}
             <button

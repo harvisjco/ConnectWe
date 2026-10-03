@@ -312,12 +312,14 @@ export const Header: React.FC<HeaderProps> = ({
                 AI 2.0
               </span>
               {/* Network Live vs Offline Status Badge */}
+              {/* Network Live vs Offline Status Badge */}
               <div className="relative" ref={offlinePopoverRef} data-testid="offline-sync-badge">
                 {offlineState.isOnline ? (
                   <button
+                    data-testid="offline-badge-btn"
                     onClick={() => setIsOfflinePopoverOpen(prev => !prev)}
                     title="Supabase PostgreSQL E2EE Cloud Live 연동 중 (클릭하여 동기화 상태 확인)"
-                    className="inline-flex items-center gap-1 text-[11px] px-2 py-1 min-h-[32px] rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-500/30 font-semibold hover:bg-emerald-100 transition-all cursor-pointer whitespace-nowrap active:scale-95 shadow-2xs"
+                    className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 min-h-[32px] rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 dark:bg-emerald-950/60 dark:text-emerald-400 dark:border-emerald-500/30 font-semibold hover:bg-emerald-100 transition-all cursor-pointer whitespace-nowrap active:scale-95 shadow-2xs"
                   >
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                     <span>Live</span>
@@ -359,7 +361,7 @@ export const Header: React.FC<HeaderProps> = ({
                           </div>
                         )}
                         <span className="text-xs font-bold text-slate-900 dark:text-white">
-                          {offlineState.isOnline ? '클라우드 실시간 연동' : '비행기 / 오프라인 안심 모드'}
+                          네트워크 & 데이터 안심 동기화
                         </span>
                       </div>
                       <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${
@@ -373,7 +375,7 @@ export const Header: React.FC<HeaderProps> = ({
 
                     <p className="text-[11px] leading-relaxed text-slate-600 dark:text-slate-400 mb-3">
                       {offlineState.isOnline 
-                        ? '모든 데이터가 기기 로컬 암호화 볼트와 클라우드에 실시간 안전 동기화되고 있습니다.'
+                        ? '클라우드와 완벽 동기화됨: 모든 데이터가 기기 로컬 암호화 볼트와 클라우드에 실시간 안전 동기화되고 있습니다.'
                         : '기내 또는 통신 음영 지역에서도 모든 인맥 조회, 검색 및 메모 작성이 AES-256 로컬 볼트에서 100% 안전하게 동작합니다.'}
                     </p>
 
@@ -400,14 +402,16 @@ export const Header: React.FC<HeaderProps> = ({
 
                     <div className="flex gap-2">
                       <button
+                        type="button"
                         onClick={handleManualSync}
                         disabled={offlineState.isSyncing || !offlineState.isOnline}
                         className="flex-1 py-1.5 px-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 dark:disabled:bg-slate-800 text-white text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-xs"
                       >
                         <RefreshCw className={`w-3.5 h-3.5 ${offlineState.isSyncing ? 'animate-spin' : ''}`} />
-                        <span>{offlineState.isSyncing ? '동기화 중...' : '지금 동기화'}</span>
+                        <span>{offlineState.isSyncing ? '동기화 중...' : '지금 수동 동기화'}</span>
                       </button>
                       <button
+                        type="button"
                         onClick={() => {
                           setIsOfflinePopoverOpen(false);
                           if (onOpenCloudSyncModal) onOpenCloudSyncModal();
@@ -839,7 +843,7 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* Executive Multi-Tenant Auth Profile Button & Popover */}
-          <div className="relative" ref={userMenuRef}>
+          <div className="relative flex items-center gap-1.5" ref={userMenuRef}>
             {/* Global Language Switcher (KO / EN / JA) */}
             <button
               type="button"

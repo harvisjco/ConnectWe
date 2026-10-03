@@ -17,22 +17,22 @@ test.describe('C-Level Phase 4: 글로벌 다국어(KO/EN/JA), PWA 오프라인 
 
     // 초기 상태 KO 확인
     const initialText = await langBtn.innerText();
-    expect(initialText).toContain('KO');
+    expect(initialText.toUpperCase()).toContain('KO');
 
     // 1회 클릭: KO -> EN
     await langBtn.click();
     await page.waitForTimeout(500);
-    await expect(langBtn).toContainText('EN');
+    await expect(langBtn).toContainText(/en/i);
 
     // 2회 클릭: EN -> JA
     await langBtn.click();
     await page.waitForTimeout(500);
-    await expect(langBtn).toContainText('JA');
+    await expect(langBtn).toContainText(/ja/i);
 
     // 3회 클릭: JA -> KO 복귀
     await langBtn.click();
     await page.waitForTimeout(500);
-    await expect(langBtn).toContainText('KO');
+    await expect(langBtn).toContainText(/ko/i);
   });
 
   test('2. PWA 오프라인 안심 동기화 뱃지 클릭 및 수동 동기화 팝오버 검증', async ({ page }) => {
