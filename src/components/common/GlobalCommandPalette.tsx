@@ -5,7 +5,7 @@ import {
   Search, User, Briefcase, Zap, 
   MapPin, Award, Building2, Sparkles, 
   ArrowRight, X, Mic, Compass, BarChart2, UploadCloud, Coffee, Bell,
-  Gift, Headphones, GitMerge, Users, Rocket
+  Gift, Headphones, GitMerge, Users, Rocket, Layers, BookOpen
 } from 'lucide-react';
 
 interface CommandAction {
@@ -36,6 +36,7 @@ interface GlobalCommandPaletteProps {
   onOpenSquadBuilder?: () => void;
   onOpenVentureRadar?: () => void;
   onOpenKnowledgeExchange?: () => void;
+  onOpenPeerSynergy?: (tab?: 'tech' | 'referral' | 'guild' | 'notes') => void;
   onNavigateView: (view: NavViewType) => void;
 }
 
@@ -57,6 +58,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenSquadBuilder,
   onOpenVentureRadar,
   onOpenKnowledgeExchange,
+  onOpenPeerSynergy,
   onNavigateView
 }) => {
   const [query, setQuery] = useState('');
@@ -260,6 +262,58 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         keywords: ['멘토', '멘토링', '커피챗', '슈퍼파워', '지식교환', '자문', '티타임', 'mentor', 'peer', 'pod'],
         onExecute: () => {
           onOpenKnowledgeExchange();
+          onClose();
+        }
+      },
+      onOpenPeerSynergy && {
+        id: 'action-peer-synergy-tech',
+        category: '스마트 액션',
+        title: '🌐 내 인맥의 실무 테크 스택 랜드스케이프 (Tech Ecosystem)',
+        subtitle: 'React·K8s·PyTorch·Figma 등 프로덕션 검증 스택 보유 지인 탐색 & 1:1 기술 자문',
+        icon: Layers,
+        badge: '테크 스택',
+        keywords: ['테크', '기술', '스택', '개발', '프론트엔드', '백엔드', '인프라', 'k8s', 'react', 'tech', 'stack'],
+        onExecute: () => {
+          onOpenPeerSynergy('tech');
+          onClose();
+        }
+      },
+      onOpenPeerSynergy && {
+        id: 'action-peer-synergy-referral',
+        category: '스마트 액션',
+        title: '🎯 신뢰 기반 따뜻한 사내 채용 & 인재 추천 브릿지 (Warm Referral)',
+        subtitle: '지인 재직사(네이버·토스·하이퍼클라우드) 실무 포지션 & 사내추천 정중 서신 생성',
+        icon: Briefcase,
+        badge: '사내 추천',
+        keywords: ['채용', '이직', '추천', '사내추천', '포지션', '일자리', '커리어', 'referral', 'career'],
+        onExecute: () => {
+          onOpenPeerSynergy('referral');
+          onClose();
+        }
+      },
+      onOpenPeerSynergy && {
+        id: 'action-peer-synergy-guild',
+        category: '스마트 액션',
+        title: '🚀 사이드 프로젝트 & 기술 스터디 길드 매칭 (Study Guilds)',
+        subtitle: '퇴근 후/주말 AI 에이전트 토이 프로젝트, 디자인 시스템 스터디 팟 개설 및 모집',
+        icon: Rocket,
+        badge: '스터디 팟',
+        keywords: ['스터디', '사이드', '프로젝트', '길드', '토이', '모임', 'study', 'guild', 'side'],
+        onExecute: () => {
+          onOpenPeerSynergy('guild');
+          onClose();
+        }
+      },
+      onOpenPeerSynergy && {
+        id: 'action-peer-synergy-notes',
+        category: '스마트 액션',
+        title: '📝 커피챗 실무 인사이트 & 상호 회고 노트 볼트 (Insight Vault)',
+        subtitle: '커피챗 후 3대 실무 배운 점(Key Takeaways) 기록 & 감사 피드백 카드 즉시 생성',
+        icon: BookOpen,
+        badge: '인사이트 볼트',
+        keywords: ['인사이트', '회고', '메모', '노트', '배운점', '피드백', '감사', 'insight', 'notes'],
+        onExecute: () => {
+          onOpenPeerSynergy('notes');
           onClose();
         }
       }

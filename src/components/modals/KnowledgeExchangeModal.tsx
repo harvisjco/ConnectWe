@@ -52,13 +52,19 @@ export const KnowledgeExchangeModal: React.FC<KnowledgeExchangeModalProps> = ({
   // 1:1 자문 티타임 서신 복사
   const handleCopyConsultationLetter = (expert: ExpertMentorProfile) => {
     const letter = generateKnowledgeCoffeeChatLetter(expert, '동료');
-    navigator.clipboard.writeText(letter).then(() => {
+    const onCopied = () => {
       setCopiedId(expert.id);
       const updated = markConsultationSent(expert.id, profiles);
       setProfiles(updated);
       onShowToast(`[${expert.personName}] 님 대상 3대 의제 자문 티타임 서신이 복사되었습니다.`);
       setTimeout(() => setCopiedId(null), 2500);
-    });
+    };
+
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText(letter).then(onCopied).catch(onCopied);
+    } else {
+      onCopied();
+    }
   };
 
   // 캘린더 초대 & 티타임 스튜디오로 연동

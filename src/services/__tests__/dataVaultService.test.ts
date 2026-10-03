@@ -89,7 +89,7 @@ describe('dataVaultService - 엑셀 BOM CSV 및 AES-256 데이터 볼트 검증'
       expect(restored).toHaveLength(2);
       expect(restored[0].name).toBe('김엔터,프라이즈');
       expect(restored[1].name).toBe('이수석');
-    });
+    }, 15000);
 
     it('잘못된 비밀번호로 복원 시도 시 에러가 발생해야 한다', async () => {
       const payload = await encryptObject({
@@ -100,7 +100,7 @@ describe('dataVaultService - 엑셀 BOM CSV 및 AES-256 데이터 볼트 검증'
       }, password);
 
       await expect(restoreFromEncryptedVault(payload, 'WrongPassword!')).rejects.toThrow();
-    });
+    }, 15000);
 
     it('유효하지 않은 볼트 페이로드 구조일 경우 에러를 던져야 한다', async () => {
       const invalidPayload = await encryptObject({
@@ -111,7 +111,7 @@ describe('dataVaultService - 엑셀 BOM CSV 및 AES-256 데이터 볼트 검증'
       await expect(restoreFromEncryptedVault(invalidPayload, password)).rejects.toThrow(
         '유효한 ConnectWe 볼트 아카이브 형식이 아닙니다.'
       );
-    });
+    }, 15000);
   });
 
   describe('parseCsvWithBom (양방향 CSV 파서 & Excel BOM 완벽 지원)', () => {

@@ -59,6 +59,7 @@ const CrossBoardSynergyModal = React.lazy(() => import('./components/modals/Cros
 const ProjectSquadBuilderModal = React.lazy(() => import('./components/modals/ProjectSquadBuilderModal').then(m => ({ default: m.ProjectSquadBuilderModal })));
 const EarlyStageVentureRadarModal = React.lazy(() => import('./components/modals/EarlyStageVentureRadarModal').then(m => ({ default: m.EarlyStageVentureRadarModal })));
 const KnowledgeExchangeModal = React.lazy(() => import('./components/modals/KnowledgeExchangeModal').then(m => ({ default: m.KnowledgeExchangeModal })));
+const PeerSynergyHubModal = React.lazy(() => import('./components/modals/PeerSynergyHubModal').then(m => ({ default: m.PeerSynergyHubModal })));
 const GlobalCommandPalette = React.lazy(() => import('./components/common/GlobalCommandPalette').then(m => ({ default: m.GlobalCommandPalette })));
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
 
@@ -251,6 +252,13 @@ export const App: React.FC = () => {
   const [isKnowledgeExchangeOpen, setIsKnowledgeExchangeOpen] = useState(false);
   const handleOpenKnowledgeExchange = () => {
     setIsKnowledgeExchangeOpen(true);
+  };
+
+  const [isPeerSynergyOpen, setIsPeerSynergyOpen] = useState(false);
+  const [peerSynergyInitialTab, setPeerSynergyInitialTab] = useState<'tech' | 'referral' | 'guild' | 'notes'>('tech');
+  const handleOpenPeerSynergy = (tab: 'tech' | 'referral' | 'guild' | 'notes' = 'tech') => {
+    setPeerSynergyInitialTab(tab);
+    setIsPeerSynergyOpen(true);
   };
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
@@ -551,6 +559,7 @@ export const App: React.FC = () => {
                   onOpenSquadBuilder={handleOpenSquadBuilder}
                   onOpenVentureRadar={handleOpenVentureRadar}
                   onOpenKnowledgeExchange={handleOpenKnowledgeExchange}
+                  onOpenPeerSynergy={handleOpenPeerSynergy}
                   onShowToast={showToast}
                   onSelectUserRole={handleSelectUserRole}
                 />
@@ -947,6 +956,18 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* 실무 인재 시너지 & 성장 스튜디오 (테크 스택 / 사내 추천 / 스터디 길드 / 인사이트 노트) */}
+      {isPeerSynergyOpen && (
+        <PeerSynergyHubModal
+          isOpen={true}
+          initialTab={peerSynergyInitialTab}
+          people={people}
+          onSelectPerson={setSelectedPerson}
+          onClose={() => setIsPeerSynergyOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
       {/* Proximity Tea Bundle Modal (거점 외근 동선 지능형 티타임 번들러) */}
       {teaBundleClusterId && (
         <ProximityTeaBundleModal
@@ -1092,6 +1113,7 @@ export const App: React.FC = () => {
         onOpenSquadBuilder={handleOpenSquadBuilder}
         onOpenVentureRadar={handleOpenVentureRadar}
         onOpenKnowledgeExchange={handleOpenKnowledgeExchange}
+        onOpenPeerSynergy={handleOpenPeerSynergy}
         onNavigateView={(v: NavViewType) => handleNavigateView(v)}
       />
 

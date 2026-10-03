@@ -26,6 +26,7 @@ interface GeneralMemberViewProps {
   onOpenSquadBuilder?: () => void;
   onOpenVentureRadar?: () => void;
   onOpenKnowledgeExchange?: () => void;
+  onOpenPeerSynergy?: (tab?: 'tech' | 'referral' | 'guild' | 'notes') => void;
   onShowToast: (msg: string) => void;
   onSelectUserRole?: (role: UserRole) => void;
 }
@@ -38,6 +39,7 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
   onOpenSquadBuilder,
   onOpenVentureRadar,
   onOpenKnowledgeExchange,
+  onOpenPeerSynergy,
   onShowToast,
   onSelectUserRole
 }) => {
@@ -189,6 +191,18 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
               >
                 <Coffee className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
                 <span>실무 지식 교환 팟</span>
+              </button>
+            )}
+            {onOpenPeerSynergy && (
+              <button
+                type="button"
+                data-testid="open-peer-synergy-btn"
+                onClick={() => onOpenPeerSynergy('tech')}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"
+                title="테크 스택 랜드스케이프, 사내 채용 추천, 스터디 길드, 커피챗 인사이트 통합 스튜디오"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-violet-200" />
+                <span>실무 시너지 허브</span>
               </button>
             )}
             <button
