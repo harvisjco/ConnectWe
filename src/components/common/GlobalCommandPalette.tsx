@@ -5,7 +5,8 @@ import {
   Search, User, Briefcase, Zap, 
   MapPin, Award, Building2, Sparkles, 
   ArrowRight, X, Mic, Compass, BarChart2, UploadCloud, Coffee, Bell,
-  Gift, Headphones, GitMerge, Users, Rocket, Layers, BookOpen, QrCode
+  Gift, Headphones, GitMerge, Users, Rocket, Layers, BookOpen, QrCode,
+  Heart, Globe, HelpCircle
 } from 'lucide-react';
 
 interface CommandAction {
@@ -38,6 +39,7 @@ interface GlobalCommandPaletteProps {
   onOpenKnowledgeExchange?: () => void;
   onOpenPeerSynergy?: (tab?: 'tech' | 'referral' | 'guild' | 'notes') => void;
   onOpenPeerTrustCareer?: (tab?: 'endorsements' | 'digitalCard' | 'roulette' | 'careerPath') => void;
+  onOpenNetworkVitality?: (tab?: 'vitality' | 'meetup' | 'bilingual' | 'sos') => void;
   onNavigateView: (view: NavViewType) => void;
 }
 
@@ -61,6 +63,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenKnowledgeExchange,
   onOpenPeerSynergy,
   onOpenPeerTrustCareer,
+  onOpenNetworkVitality,
   onNavigateView
 }) => {
   const [query, setQuery] = useState('');
@@ -368,6 +371,58 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         keywords: ['커리어', '성장', '멘토', '스킬', '로드맵', '테크리드', '아키텍트', 'career', 'path', 'gap'],
         onExecute: () => {
           onOpenPeerTrustCareer('careerPath');
+          onClose();
+        }
+      },
+      onOpenNetworkVitality && {
+        id: 'action-vitality-radar',
+        category: '스마트 액션',
+        title: '🌱 관계 생명력 & 시즌별 안부 레이더 (Vitality Radar)',
+        subtitle: '교류 공백기 4단계 자동 진단 & 어색함 없는 환절기·명절·분기 맞춤 안부 서신 생성',
+        icon: Heart,
+        badge: '생명력 레이더',
+        keywords: ['생명력', '안부', '건강도', '소원', '공백', '시즌', '명절', '환절기', 'vitality', 'care'],
+        onExecute: () => {
+          onOpenNetworkVitality('vitality');
+          onClose();
+        }
+      },
+      onOpenNetworkVitality && {
+        id: 'action-vitality-meetup',
+        category: '스마트 액션',
+        title: '📇 현장 밋업 & 컨퍼런스 네트워킹 룸 (Instant Meetup Room)',
+        subtitle: '6자리 룸 코드로 현장 체크인 & 참가자 일괄 디지털 명함 교환 및 감사 방송',
+        icon: Users,
+        badge: '현장 밋업',
+        keywords: ['밋업', '컨퍼런스', '현장', '체크인', '행사', '네트워킹', '룸', 'meetup', 'conference'],
+        onExecute: () => {
+          onOpenNetworkVitality('meetup');
+          onClose();
+        }
+      },
+      onOpenNetworkVitality && {
+        id: 'action-vitality-bilingual',
+        category: '스마트 액션',
+        title: '🎙️ 글로벌 바이링구얼(한·영) 미팅 인텔리전스 (Bilingual Meeting)',
+        subtitle: '해외 VC·파트너 미팅 한·영 브리프 요약 & 실리콘밸리 에티켓 영문 감사 서신 생성',
+        icon: Globe,
+        badge: '글로벌 미팅',
+        keywords: ['글로벌', '영어', '영문', '바이링구얼', 'bilingual', 'vc', '해외', '이메일', '시차'],
+        onExecute: () => {
+          onOpenNetworkVitality('bilingual');
+          onClose();
+        }
+      },
+      onOpenNetworkVitality && {
+        id: 'action-vitality-sos',
+        category: '스마트 액션',
+        title: '🆘 크로스 컴퍼니 실무 난제 SOS 헬프데스크 (Peer Problem-Solving)',
+        subtitle: '클라우드·결제·디자인시스템 실무 난제 비공개 등록 & 경험 보유 1촌/2촌 지인 15분 자문 연결',
+        icon: HelpCircle,
+        badge: '실무 SOS',
+        keywords: ['난제', 'sos', '자문', '헬프데스크', '질문', '막힘', '에러', '인프라', 'help', 'ticket'],
+        onExecute: () => {
+          onOpenNetworkVitality('sos');
           onClose();
         }
       }

@@ -61,6 +61,7 @@ const EarlyStageVentureRadarModal = React.lazy(() => import('./components/modals
 const KnowledgeExchangeModal = React.lazy(() => import('./components/modals/KnowledgeExchangeModal').then(m => ({ default: m.KnowledgeExchangeModal })));
 const PeerSynergyHubModal = React.lazy(() => import('./components/modals/PeerSynergyHubModal').then(m => ({ default: m.PeerSynergyHubModal })));
 const PeerTrustCareerModal = React.lazy(() => import('./components/modals/PeerTrustCareerModal').then(m => ({ default: m.PeerTrustCareerModal })));
+const NetworkVitalityModal = React.lazy(() => import('./components/modals/NetworkVitalityModal').then(m => ({ default: m.NetworkVitalityModal })));
 const GlobalCommandPalette = React.lazy(() => import('./components/common/GlobalCommandPalette').then(m => ({ default: m.GlobalCommandPalette })));
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
 
@@ -267,6 +268,13 @@ export const App: React.FC = () => {
   const handleOpenPeerTrustCareer = (tab: 'endorsements' | 'digitalCard' | 'roulette' | 'careerPath' = 'endorsements') => {
     setPeerTrustCareerInitialTab(tab);
     setIsPeerTrustCareerOpen(true);
+  };
+
+  const [isNetworkVitalityOpen, setIsNetworkVitalityOpen] = useState(false);
+  const [networkVitalityInitialTab, setNetworkVitalityInitialTab] = useState<'vitality' | 'meetup' | 'bilingual' | 'sos'>('vitality');
+  const handleOpenNetworkVitality = (tab: 'vitality' | 'meetup' | 'bilingual' | 'sos' = 'vitality') => {
+    setNetworkVitalityInitialTab(tab);
+    setIsNetworkVitalityOpen(true);
   };
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
@@ -569,6 +577,7 @@ export const App: React.FC = () => {
                   onOpenKnowledgeExchange={handleOpenKnowledgeExchange}
                   onOpenPeerSynergy={handleOpenPeerSynergy}
                   onOpenPeerTrustCareer={handleOpenPeerTrustCareer}
+                  onOpenNetworkVitality={handleOpenNetworkVitality}
                   onShowToast={showToast}
                   onSelectUserRole={handleSelectUserRole}
                 />
@@ -989,6 +998,18 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* 네트워크 생명력 & 밋업·글로벌 스튜디오 (생명력 레이더 / 현장 밋업 룸 / 바이링구얼 미팅 / 실무 SOS) */}
+      {isNetworkVitalityOpen && (
+        <NetworkVitalityModal
+          isOpen={true}
+          initialTab={networkVitalityInitialTab}
+          people={people}
+          onSelectPerson={setSelectedPerson}
+          onClose={() => setIsNetworkVitalityOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
       {/* Proximity Tea Bundle Modal (거점 외근 동선 지능형 티타임 번들러) */}
       {teaBundleClusterId && (
         <ProximityTeaBundleModal
@@ -1136,6 +1157,7 @@ export const App: React.FC = () => {
         onOpenKnowledgeExchange={handleOpenKnowledgeExchange}
         onOpenPeerSynergy={handleOpenPeerSynergy}
         onOpenPeerTrustCareer={handleOpenPeerTrustCareer}
+        onOpenNetworkVitality={handleOpenNetworkVitality}
         onNavigateView={(v: NavViewType) => handleNavigateView(v)}
       />
 

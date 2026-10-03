@@ -15,7 +15,7 @@ import {
   Users, Cake, Calendar, Plus, Search, 
   Check, Copy, Phone, Mail, 
   GraduationCap, Clock, MapPin, DollarSign, Camera, Sparkles, Rocket, Coffee,
-  Award, QrCode
+  Award, QrCode, Heart
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -29,6 +29,7 @@ interface GeneralMemberViewProps {
   onOpenKnowledgeExchange?: () => void;
   onOpenPeerSynergy?: (tab?: 'tech' | 'referral' | 'guild' | 'notes') => void;
   onOpenPeerTrustCareer?: (tab?: 'endorsements' | 'digitalCard' | 'roulette' | 'careerPath') => void;
+  onOpenNetworkVitality?: (tab?: 'vitality' | 'meetup' | 'bilingual' | 'sos') => void;
   onShowToast: (msg: string) => void;
   onSelectUserRole?: (role: UserRole) => void;
 }
@@ -43,6 +44,7 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
   onOpenKnowledgeExchange,
   onOpenPeerSynergy,
   onOpenPeerTrustCareer,
+  onOpenNetworkVitality,
   onShowToast,
   onSelectUserRole
 }) => {
@@ -218,6 +220,18 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
               >
                 <Award className="w-3.5 h-3.5 text-amber-200" />
                 <span>신뢰 & 커리어 스튜디오</span>
+              </button>
+            )}
+            {onOpenNetworkVitality && (
+              <button
+                type="button"
+                data-testid="open-network-vitality-btn"
+                onClick={() => onOpenNetworkVitality('vitality')}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 hover:from-emerald-700 hover:to-sky-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"
+                title="관계 생명력 4단계 진단, 시즌별 안부 서신, 현장 밋업 룸, 글로벌 미팅 브리프, 실무 SOS 헬프데스크"
+              >
+                <Heart className="w-3.5 h-3.5 text-emerald-200" />
+                <span>관계 생명력 & 밋업 룸</span>
               </button>
             )}
             <button
