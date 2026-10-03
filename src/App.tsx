@@ -62,6 +62,7 @@ const KnowledgeExchangeModal = React.lazy(() => import('./components/modals/Know
 const PeerSynergyHubModal = React.lazy(() => import('./components/modals/PeerSynergyHubModal').then(m => ({ default: m.PeerSynergyHubModal })));
 const PeerTrustCareerModal = React.lazy(() => import('./components/modals/PeerTrustCareerModal').then(m => ({ default: m.PeerTrustCareerModal })));
 const NetworkVitalityModal = React.lazy(() => import('./components/modals/NetworkVitalityModal').then(m => ({ default: m.NetworkVitalityModal })));
+const ExecutiveEleganceModal = React.lazy(() => import('./components/modals/ExecutiveEleganceModal').then(m => ({ default: m.ExecutiveEleganceModal })));
 const GlobalCommandPalette = React.lazy(() => import('./components/common/GlobalCommandPalette').then(m => ({ default: m.GlobalCommandPalette })));
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
 
@@ -275,6 +276,13 @@ export const App: React.FC = () => {
   const handleOpenNetworkVitality = (tab: 'vitality' | 'meetup' | 'bilingual' | 'sos' = 'vitality') => {
     setNetworkVitalityInitialTab(tab);
     setIsNetworkVitalityOpen(true);
+  };
+
+  const [isExecutiveEleganceOpen, setIsExecutiveEleganceOpen] = useState(false);
+  const [executiveEleganceInitialTab, setExecutiveEleganceInitialTab] = useState<'scheduler' | 'trip' | 'memory' | 'showcase'>('scheduler');
+  const handleOpenExecutiveElegance = (tab: 'scheduler' | 'trip' | 'memory' | 'showcase' = 'scheduler') => {
+    setExecutiveEleganceInitialTab(tab);
+    setIsExecutiveEleganceOpen(true);
   };
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
@@ -578,6 +586,7 @@ export const App: React.FC = () => {
                   onOpenPeerSynergy={handleOpenPeerSynergy}
                   onOpenPeerTrustCareer={handleOpenPeerTrustCareer}
                   onOpenNetworkVitality={handleOpenNetworkVitality}
+                  onOpenExecutiveElegance={handleOpenExecutiveElegance}
                   onShowToast={showToast}
                   onSelectUserRole={handleSelectUserRole}
                 />
@@ -1010,6 +1019,19 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* 비즈니스 품격 & 글로벌 쇼케이스 스튜디오 (티타임 조율기 .ICS / 거점 출장 인맥 레이더 / 감동 메모 / 프로덕트 쇼케이스) */}
+      {isExecutiveEleganceOpen && (
+        <ExecutiveEleganceModal
+          isOpen={true}
+          initialTab={executiveEleganceInitialTab}
+          people={people}
+          selectedPerson={selectedPerson}
+          onSelectPerson={setSelectedPerson}
+          onClose={() => setIsExecutiveEleganceOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
       {/* Proximity Tea Bundle Modal (거점 외근 동선 지능형 티타임 번들러) */}
       {teaBundleClusterId && (
         <ProximityTeaBundleModal
@@ -1158,6 +1180,7 @@ export const App: React.FC = () => {
         onOpenPeerSynergy={handleOpenPeerSynergy}
         onOpenPeerTrustCareer={handleOpenPeerTrustCareer}
         onOpenNetworkVitality={handleOpenNetworkVitality}
+        onOpenExecutiveElegance={handleOpenExecutiveElegance}
         onNavigateView={(v: NavViewType) => handleNavigateView(v)}
       />
 

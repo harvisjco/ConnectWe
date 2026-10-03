@@ -20,7 +20,6 @@ import {
 
 const STORAGE_KEY_ENDORSEMENTS = 'cw_peer_endorsements_vault_v1';
 const STORAGE_KEY_DIGITAL_PROFILE = 'cw_my_digital_card_profile_v1';
-const STORAGE_KEY_ROULETTE_HISTORY = 'cw_coffee_roulette_history_v1';
 
 // ==========================================
 // 1. 피어 실무 보증 태그 & 초기 마스터 데이터

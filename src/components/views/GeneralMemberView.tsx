@@ -15,7 +15,7 @@ import {
   Users, Cake, Calendar, Plus, Search, 
   Check, Copy, Phone, Mail, 
   GraduationCap, Clock, MapPin, DollarSign, Camera, Sparkles, Rocket, Coffee,
-  Award, QrCode, Heart
+  Award, Heart
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -30,6 +30,7 @@ interface GeneralMemberViewProps {
   onOpenPeerSynergy?: (tab?: 'tech' | 'referral' | 'guild' | 'notes') => void;
   onOpenPeerTrustCareer?: (tab?: 'endorsements' | 'digitalCard' | 'roulette' | 'careerPath') => void;
   onOpenNetworkVitality?: (tab?: 'vitality' | 'meetup' | 'bilingual' | 'sos') => void;
+  onOpenExecutiveElegance?: (tab?: 'scheduler' | 'trip' | 'memory' | 'showcase') => void;
   onShowToast: (msg: string) => void;
   onSelectUserRole?: (role: UserRole) => void;
 }
@@ -45,6 +46,7 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
   onOpenPeerSynergy,
   onOpenPeerTrustCareer,
   onOpenNetworkVitality,
+  onOpenExecutiveElegance,
   onShowToast,
   onSelectUserRole
 }) => {
@@ -232,6 +234,18 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
               >
                 <Heart className="w-3.5 h-3.5 text-emerald-200" />
                 <span>관계 생명력 & 밋업 룸</span>
+              </button>
+            )}
+            {onOpenExecutiveElegance && (
+              <button
+                type="button"
+                data-testid="open-executive-elegance-btn"
+                onClick={() => onOpenExecutiveElegance('scheduler')}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-amber-600 via-rose-600 to-indigo-600 hover:from-amber-700 hover:to-indigo-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"
+                title="비즈니스 티타임 3선 서신, .ICS 캘린더 생성, 글로벌 거점 출장 인맥 매핑, 감동 메모 캡슐 & 프로덕트 쇼케이스"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-200" />
+                <span>품격 & 쇼케이스 스튜디오</span>
               </button>
             )}
             <button

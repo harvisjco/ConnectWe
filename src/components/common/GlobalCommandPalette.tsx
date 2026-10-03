@@ -6,7 +6,7 @@ import {
   MapPin, Award, Building2, Sparkles, 
   ArrowRight, X, Mic, Compass, BarChart2, UploadCloud, Coffee, Bell,
   Gift, Headphones, GitMerge, Users, Rocket, Layers, BookOpen, QrCode,
-  Heart, Globe, HelpCircle
+  Heart, Globe, HelpCircle, Calendar
 } from 'lucide-react';
 
 interface CommandAction {
@@ -40,6 +40,7 @@ interface GlobalCommandPaletteProps {
   onOpenPeerSynergy?: (tab?: 'tech' | 'referral' | 'guild' | 'notes') => void;
   onOpenPeerTrustCareer?: (tab?: 'endorsements' | 'digitalCard' | 'roulette' | 'careerPath') => void;
   onOpenNetworkVitality?: (tab?: 'vitality' | 'meetup' | 'bilingual' | 'sos') => void;
+  onOpenExecutiveElegance?: (tab?: 'scheduler' | 'trip' | 'memory' | 'showcase') => void;
   onNavigateView: (view: NavViewType) => void;
 }
 
@@ -64,6 +65,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenPeerSynergy,
   onOpenPeerTrustCareer,
   onOpenNetworkVitality,
+  onOpenExecutiveElegance,
   onNavigateView
 }) => {
   const [query, setQuery] = useState('');
@@ -423,6 +425,58 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         keywords: ['난제', 'sos', '자문', '헬프데스크', '질문', '막힘', '에러', '인프라', 'help', 'ticket'],
         onExecute: () => {
           onOpenNetworkVitality('sos');
+          onClose();
+        }
+      },
+      onOpenExecutiveElegance && {
+        id: 'action-elegance-scheduler',
+        category: '스마트 액션',
+        title: '☕ 비즈니스 품격 일정 조율기 & 스마트 .ICS 번들러 (Executive TeaTime)',
+        subtitle: '기계적 캘린더 링크 대신 3대 추천 시간대 제안 서신 & RFC 5545 표준 .ICS 다운로드',
+        icon: Calendar,
+        badge: '일정 조율기',
+        keywords: ['티타임', '일정', '약속', '캘린더', 'ics', '라운지', '서신', 'scheduler', 'teatime', 'meeting'],
+        onExecute: () => {
+          onOpenExecutiveElegance('scheduler');
+          onClose();
+        }
+      },
+      onOpenExecutiveElegance && {
+        id: 'action-elegance-trip',
+        category: '스마트 액션',
+        title: '✈️ 글로벌 출장 & 지방 외근 지능형 인맥 레이더 (Global Trip Bundler)',
+        subtitle: '8대 전략 거점(샌프란시스코·도쿄·싱가포르·판교 등) 출장 시 현지 인맥 매핑 & 조우 서신',
+        icon: Compass,
+        badge: '출장 레이더',
+        keywords: ['출장', '외근', '글로벌', '샌프란시스코', '도쿄', '싱가포르', '판교', 'trip', 'reunion', 'travel'],
+        onExecute: () => {
+          onOpenExecutiveElegance('trip');
+          onClose();
+        }
+      },
+      onOpenExecutiveElegance && {
+        id: 'action-elegance-memory',
+        category: '스마트 액션',
+        title: '🎁 소소한 감동 메모 캡슐 & 4대 스몰톡 큐카드 (Thoughtful Memory)',
+        subtitle: '커피/차 취향, 주말 취미, 라이프스타일 기록 & 미팅 5분 전 어색함 없는 스몰톡 큐카드',
+        icon: Heart,
+        badge: '감동 메모',
+        keywords: ['메모', '취향', '커피', '취미', '스몰톡', '선물', '큐카드', 'memory', 'capsule', 'smalltalk'],
+        onExecute: () => {
+          onOpenExecutiveElegance('memory');
+          onClose();
+        }
+      },
+      onOpenExecutiveElegance && {
+        id: 'action-elegance-showcase',
+        category: '스마트 액션',
+        title: '🏆 내 프로덕트 & 프로젝트 레퍼런스 쇼케이스 (Product Case Studies)',
+        subtitle: '실제 론칭한 프로덕트·B2B SaaS 아키텍처 성과 카드, 동료 실전 검증 뱃지 & 1-Page 포트폴리오',
+        icon: Briefcase,
+        badge: '쇼케이스',
+        keywords: ['쇼케이스', '프로덕트', '포트폴리오', '레퍼런스', '아키텍처', '성과', 'showcase', 'product', 'portfolio'],
+        onExecute: () => {
+          onOpenExecutiveElegance('showcase');
           onClose();
         }
       }

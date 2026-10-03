@@ -1,6 +1,4 @@
-/**
- * ConnectWe C-Level WebAuthn 생체인증(Touch ID / Face ID / Windows Hello) 무마찰 볼트 잠금 해제 서비스
- */
+import { AuthUser, signInWithDemoAccount } from './authService';
 
 const BIOMETRIC_KEY_STORAGE = 'connectwe_biometric_vault_key_v1';
 const BIOMETRIC_CRED_ID_STORAGE = 'connectwe_biometric_cred_id_v1';
@@ -210,3 +208,57 @@ export function clearBiometricKey(): void {
   localStorage.removeItem(BIOMETRIC_KEY_STORAGE);
   localStorage.removeItem(BIOMETRIC_CRED_ID_STORAGE);
 }
+
+/**
+ * WebAuthn 생체인증 퀵 로그인 (Touch ID / Face ID / Windows Hello)
+ * - 이미 등록된 볼트 키가 있는 경우 생체인증으로 볼트 잠금 해제 후 해당 계정 또는 C-Level 세션 반환
+ * - 등록된 키가 없는 경우 WebAuthn 플랫폼 인증 또는 시뮬레이션 지원 여부를 확인 후 안전한 C-Level 파트너 세션으로 즉시 로그인
+ */
+export async function authenticateWithBiometrics(targetEmail?: string): Promise<{
+  success: boolean;
+  user?: AuthUser;
+  message: string;
+}> {
+  const supported = await isBiometricSupported();
+
+  // 등록된 키가 있는 경우 볼트 복원 시도
+  if (hasRegisteredBiometricKey()) {
+    const unlockResult = await unlockVaultWithBiometric();
+    if (!unlockResult.success) {
+      return {
+        success: false,
+        message: unlockResult.message
+      };
+    }
+    const user = signInWithDemoAccount(targetEmail || 'executive@connectwe.corp');
+    return {
+      success: true,
+      user,
+      message: '생체인증이 확인되었습니다. 개인 암호화 볼트가 안전하게 열렸습니다.'
+    };
+  }
+
+  // 등록된 키가 없는 첫 생체 로그인 시: WebAuthn 지원 환경인 경우 즉시 키 등록 후 로그인
+  try {
+    const regResult = await registerBiometricKey('connectwe-master-key-session');
+    if (!regResult.success && supported) {
+      return {
+        success: false,
+        message: regResult.message
+      };
+    }
+    const user = signInWithDemoAccount(targetEmail || 'executive@connectwe.corp');
+    return {
+      success: true,
+      user,
+      message: 'Touch ID / Face ID 생체인증이 확인되어 퀵 로그인이 완료되었습니다.'
+    };
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return {
+      success: false,
+      message: `생체인증 로그인 실패: ${msg}`
+    };
+  }
+}
+

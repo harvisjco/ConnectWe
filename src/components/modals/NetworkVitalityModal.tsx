@@ -2,14 +2,11 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { Person } from '../../types/network';
 import { 
   Heart, Users, Globe, HelpCircle, X, Check, Copy, Sparkles, 
-  Send, Clock, MapPin, Coffee, ShieldCheck, ArrowRight,
-  TrendingUp, AlertCircle, Building2, UserPlus, MessageSquare
+  Clock, MapPin, Coffee, ShieldCheck, ArrowRight, UserPlus
 } from 'lucide-react';
 import {
   networkVitalityService,
-  SEASON_GREETING_PRESETS,
-  DEFAULT_MEETUP_ROOM,
-  DEFAULT_BILINGUAL_MEETINGS
+  SEASON_GREETING_PRESETS
 } from '../../services/networkVitalityService';
 import {
   VitalityPersonInfo,
@@ -35,7 +32,7 @@ export const NetworkVitalityModal: React.FC<NetworkVitalityModalProps> = ({
   onClose,
   initialTab = 'vitality',
   people,
-  onSelectPerson,
+  onSelectPerson: _onSelectPerson,
   onShowToast
 }) => {
   const [activeTab, setActiveTab] = useState<'vitality' | 'meetup' | 'bilingual' | 'sos'>(initialTab);
@@ -46,7 +43,7 @@ export const NetworkVitalityModal: React.FC<NetworkVitalityModalProps> = ({
   const [copiedGreetingId, setCopiedGreetingId] = useState<string | null>(null);
 
   // 2. 밋업 룸 탭 상태
-  const [roomCode, setRoomCode] = useState('TECH26');
+  const [roomCode] = useState('TECH26');
   const [meetupRoom, setMeetupRoom] = useState<MeetupRoom>(() => networkVitalityService.getMeetupRoom('TECH26'));
   const [isCheckInOpen, setIsCheckInOpen] = useState(false);
   const [newName, setNewName] = useState('김성우');
@@ -59,7 +56,7 @@ export const NetworkVitalityModal: React.FC<NetworkVitalityModalProps> = ({
 
   // 3. 바이링구얼 미팅 탭 상태
   const [bilingualMeetings] = useState<BilingualMeetingSummary[]>(() => networkVitalityService.getBilingualMeetings());
-  const [activeMeeting, setActiveMeeting] = useState<BilingualMeetingSummary>(() => bilingualMeetings[0]);
+  const [activeMeeting] = useState<BilingualMeetingSummary>(() => bilingualMeetings[0]);
   const [copiedEmail, setCopiedEmail] = useState(false);
 
   // 4. 실무 SOS 헬프데스크 탭 상태

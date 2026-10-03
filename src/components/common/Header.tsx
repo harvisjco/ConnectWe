@@ -8,13 +8,14 @@ import { pickContactsFromDevice } from '../../services/contactPicker';
 import { offlineSyncService, OfflineSyncState } from '../../services/offlineSyncService';
 import { detectGoldenCareTargets } from '../../services/goldenCareService';
 import { AuthUser } from '../../services/authService';
+import { i18n, SupportedLocale } from '../../services/i18nService';
 import { 
   Share2, UploadCloud, Download, ShieldCheck, ShieldAlert, Clock, 
   Users, UserPlus, FileDown, RotateCcw, Sparkles, Smartphone,
   BarChart2, Lock, Settings, Cloud, Bot, Camera, Calendar, Bell,
   MoreHorizontal, ChevronDown, PanelLeft, Database, Flame, Gift,
   Crown, Check, Search, Mic, Compass, Plane, RefreshCw, Coffee,
-  LogIn, LogOut, Headphones, GitMerge
+  LogIn, LogOut, Headphones, GitMerge, Globe
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -104,6 +105,7 @@ export const Header: React.FC<HeaderProps> = ({
   const [isOfflinePopoverOpen, setIsOfflinePopoverOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [offlineState, setOfflineState] = useState<OfflineSyncState>(() => offlineSyncService.getState());
+  const [currentLocale, setCurrentLocale] = useState<SupportedLocale>(() => i18n.getLocale());
 
   const isMac = React.useMemo(() => {
     if (typeof window === 'undefined' || typeof navigator === 'undefined') return true;
@@ -117,6 +119,31 @@ export const Header: React.FC<HeaderProps> = ({
     });
     return unsubscribe;
   }, []);
+
+  // Subscribe to locale changes
+  useEffect(() => {
+    const unsubscribe = i18n.subscribe((loc) => {
+      setCurrentLocale(loc);
+    });
+    return unsubscribe;
+  }, []);
+
+  const handleCycleLocale = () => {
+    const next: Record<SupportedLocale, SupportedLocale> = {
+      ko: 'en',
+      en: 'ja',
+      ja: 'ko'
+    };
+    const nextLoc = next[currentLocale] || 'ko';
+    i18n.setLocale(nextLoc);
+    onShowToast(
+      nextLoc === 'ko' 
+        ? '한국어로 변경되었습니다.' 
+        : nextLoc === 'en' 
+        ? 'Switched to English.' 
+        : '日本語に変更されました。'
+    );
+  };
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -285,7 +312,7 @@ export const Header: React.FC<HeaderProps> = ({
                 AI 2.0
               </span>
               {/* Network Live vs Offline Status Badge */}
-              <div className="relative" ref={offlinePopoverRef}>
+              <div className="relative" ref={offlinePopoverRef} data-testid="offline-sync-badge">
                 {offlineState.isOnline ? (
                   <button
                     onClick={() => setIsOfflinePopoverOpen(prev => !prev)}
@@ -302,6 +329,7 @@ export const Header: React.FC<HeaderProps> = ({
                   </button>
                 ) : (
                   <button
+                    data-testid="offline-badge-btn"
                     onClick={() => setIsOfflinePopoverOpen(prev => !prev)}
                     title="오프라인 안심 모드 작동 중 (클릭하여 상세 정보 확인)"
                     className="inline-flex items-center gap-1 text-[11px] px-2.5 py-1 min-h-[32px] rounded-full bg-amber-50 text-amber-800 border border-amber-300 dark:bg-amber-950/60 dark:text-amber-300 dark:border-amber-600/40 font-bold hover:bg-amber-100 transition-all cursor-pointer whitespace-nowrap active:scale-95 shadow-xs animate-pulse"
@@ -812,6 +840,18 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Executive Multi-Tenant Auth Profile Button & Popover */}
           <div className="relative" ref={userMenuRef}>
+            {/* Global Language Switcher (KO / EN / JA) */}
+            <button
+              type="button"
+              data-testid="language-switcher"
+              onClick={handleCycleLocale}
+              className="flex items-center gap-1 px-2.5 py-1 min-h-[32px] rounded-full border border-slate-200 dark:border-slate-700 bg-white hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-200 text-xs font-bold transition-all active:scale-95 shadow-2xs cursor-pointer whitespace-nowrap"
+              title="언어 전환 / Switch Language (KO / EN / JA)"
+            >
+              <Globe className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+              <span className="font-mono text-[11px] uppercase font-extrabold">{currentLocale.toUpperCase()}</span>
+            </button>
+
             {authUser ? (
               <button
                 type="button"

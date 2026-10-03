@@ -204,14 +204,14 @@ class NetworkVitalityService {
     const today = new Date('2026-10-04'); // 기준일
 
     return people.map(person => {
-      // interactionHistory 중 가장 최근 날짜 또는 가상 접점일 계산
-      let lastDateStr = '2026-08-15';
-      if (person.interactionHistory && person.interactionHistory.length > 0) {
-        const sorted = [...person.interactionHistory].sort((a, b) => 
-          new Date(b.date).getTime() - new Date(a.date).getTime()
+      // activityLogs 또는 lastContactDate 기반 가장 최근 접점일 계산
+      let lastDateStr = person.lastContactDate || '2026-08-15';
+      if (person.activityLogs && person.activityLogs.length > 0) {
+        const sorted = [...person.activityLogs].sort((a, b) => 
+          new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime()
         );
-        lastDateStr = sorted[0].date;
-      } else {
+        lastDateStr = sorted[0].loggedAt.slice(0, 10);
+      } else if (!person.lastContactDate) {
         // 인물 ID 기반 결정적 가상 접점일 산출
         const charCode = person.id.charCodeAt(person.id.length - 1) || 0;
         const daysAgo = (charCode % 200) + 10;

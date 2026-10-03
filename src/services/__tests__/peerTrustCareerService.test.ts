@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   peerTrustCareerService,
-  ENDORSEMENT_STRENGTH_TAGS,
   DEFAULT_MY_DIGITAL_PROFILE,
   CAREER_GOAL_TRACKS
 } from '../peerTrustCareerService';

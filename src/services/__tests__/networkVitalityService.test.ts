@@ -1,9 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import {
   networkVitalityService,
-  SEASON_GREETING_PRESETS,
-  DEFAULT_MEETUP_ROOM,
-  DEFAULT_BILINGUAL_MEETINGS
+  DEFAULT_MEETUP_ROOM
 } from '../networkVitalityService';
 import { Person } from '../../types/network';
 
@@ -24,42 +22,24 @@ const MOCK_PEOPLE: Person[] = [
     currentCompany: '토스',
     currentTitle: '프론트엔드 리드',
     closeness: 1,
-    interactionHistory: [{ date: '2026-09-25', note: '커피챗' }],
-    tags: ['개발'],
-    topics: ['React'],
-    strengths: ['프론트'],
-    personality: '신중',
-    communicationStyle: '정중',
-    relationshipGoal: '협력',
-    preferredMeetingType: '온라인',
+    lastContactDate: '2026-09-25',
+    primaryDomain: '개발',
+    skills: ['React'],
     academics: [],
-    experiences: [],
-    projects: [],
-    customFields: [],
-    createdAt: '2026-01-01',
-    updatedAt: '2026-09-25'
-  },
+    careers: [],
+  } as unknown as Person,
   {
     id: 'p-002',
     name: '이동훈',
     currentCompany: '당근마켓',
     currentTitle: '백엔드 아키텍트',
     closeness: 2,
-    interactionHistory: [{ date: '2026-04-10', note: '세미나' }],
-    tags: ['인프라'],
-    topics: ['K8s'],
-    strengths: ['대규모 분산'],
-    personality: '활발',
-    communicationStyle: '직접적',
-    relationshipGoal: '지식교류',
-    preferredMeetingType: '오프라인',
+    lastContactDate: '2026-04-10',
+    primaryDomain: '인프라',
+    skills: ['K8s'],
     academics: [],
-    experiences: [],
-    projects: [],
-    customFields: [],
-    createdAt: '2026-01-01',
-    updatedAt: '2026-04-10'
-  }
+    careers: [],
+  } as unknown as Person,
 ];
 
 describe('networkVitalityService', () => {

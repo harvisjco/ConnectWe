@@ -3,12 +3,11 @@ import { Person } from '../../types/network';
 import { 
   Award, QrCode, Coffee, Compass, Check, Copy, Sparkles, 
   X, Download, Eye, EyeOff, ShieldCheck, HeartHandshake, ArrowRight,
-  User, RefreshCw, Send, MessageSquare, ChevronRight, Bookmark
+  RefreshCw, Send, MessageSquare, ChevronRight, Bookmark
 } from 'lucide-react';
 import {
   peerTrustCareerService,
   ENDORSEMENT_STRENGTH_TAGS,
-  DEFAULT_MY_DIGITAL_PROFILE,
   CAREER_GOAL_TRACKS
 } from '../../services/peerTrustCareerService';
 import {
@@ -33,7 +32,7 @@ export const PeerTrustCareerModal: React.FC<PeerTrustCareerModalProps> = ({
   onClose,
   initialTab = 'endorsements',
   people,
-  onSelectPerson,
+  onSelectPerson: _onSelectPerson,
   onShowToast
 }) => {
   const [activeTab, setActiveTab] = useState<'endorsements' | 'digitalCard' | 'roulette' | 'careerPath'>(initialTab);

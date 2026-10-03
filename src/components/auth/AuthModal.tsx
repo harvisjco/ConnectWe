@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { 
   X, Lock, Mail, User, ShieldCheck, 
-  ArrowRight, Sparkles, Check, AlertCircle, Loader2
+  ArrowRight, Sparkles, Check, AlertCircle, Loader2, Fingerprint
 } from 'lucide-react';
 import { 
   signInWithEmail, 
@@ -9,6 +9,7 @@ import {
   signInWithDemoAccount, 
   AuthUser 
 } from '../../services/authService';
+import { authenticateWithBiometrics } from '../../services/biometricAuthService';
 import { migrateGuestPeopleToUser, loadPeopleFromStorage } from '../../services/storageService';
 import { Person } from '../../types/network';
 
@@ -127,6 +128,24 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
+  const handleBiometricQuickLogin = async () => {
+    setIsLoading(true);
+    setErrorMessage(null);
+    try {
+      const res = await authenticateWithBiometrics(email.trim() || undefined);
+      if (res.success && res.user) {
+        onShowToast(res.message, 'success');
+        handlePostAuthMigration(res.user);
+      } else {
+        setErrorMessage(res.message);
+      }
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : '생체인증 로그인 중 오류가 발생했습니다.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div 
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200"
@@ -197,6 +216,26 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             <div className="p-3 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-900/60 text-xs text-rose-700 dark:text-rose-300 flex items-start gap-2">
               <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
               <span>{errorMessage}</span>
+            </div>
+          )}
+
+          {activeTab === 'signin' && (
+            <div className="space-y-2">
+              <button
+                type="button"
+                onClick={handleBiometricQuickLogin}
+                disabled={isLoading}
+                data-testid="btn-biometric-quick-login"
+                className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-all cursor-pointer active:scale-98 disabled:opacity-50"
+              >
+                <Fingerprint className="w-4 h-4 text-emerald-100" />
+                <span>Touch ID / Face ID 1초 퀵 로그인</span>
+              </button>
+              <div className="relative flex py-1 items-center">
+                <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+                <span className="flex-shrink mx-2 text-[10px] text-slate-400 font-medium">또는 이메일로 계속</span>
+                <div className="flex-grow border-t border-slate-200 dark:border-slate-800"></div>
+              </div>
             </div>
           )}
 
@@ -291,6 +330,19 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </>
               )}
             </button>
+
+            {activeTab === 'signin' && (
+              <button
+                type="button"
+                onClick={handleBiometricQuickLogin}
+                disabled={isLoading}
+                className="w-full py-2 px-3 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50/70 hover:bg-indigo-100 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 text-xs font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer"
+                data-testid="biometric-login-btn"
+              >
+                <Fingerprint className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                <span>지문 / Face ID 생체인증 빠른 로그인</span>
+              </button>
+            )}
           </form>
 
           {/* 데모 계정 간편 체험 CTA */}

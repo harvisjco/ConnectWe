@@ -4,7 +4,8 @@ import {
   hasRegisteredBiometricKey, 
   registerBiometricKey, 
   unlockVaultWithBiometric, 
-  clearBiometricKey 
+  clearBiometricKey,
+  authenticateWithBiometrics 
 } from '../biometricAuthService';
 
 describe('biometricAuthService WebAuthn & Local Key Management', () => {
@@ -55,5 +56,12 @@ describe('biometricAuthService WebAuthn & Local Key Management', () => {
 
     const unlockResult = await unlockVaultWithBiometric();
     expect(unlockResult.success).toBe(false);
+  });
+
+  it('authenticateWithBiometrics 호출 시 WebAuthn/시뮬레이션을 통해 즉시 인증 세션을 반환한다', async () => {
+    const authResult = await authenticateWithBiometrics('c-level@connectwe.corp');
+    expect(authResult.success).toBe(true);
+    expect(authResult.user).toBeDefined();
+    expect(authResult.user?.email).toBe('c-level@connectwe.corp');
   });
 });
