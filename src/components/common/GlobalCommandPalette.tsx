@@ -340,7 +340,15 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
               return (
                 <div
                   key={action.id}
+                  role="button"
+                  tabIndex={0}
                   onClick={() => action.onExecute()}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      action.onExecute();
+                    }
+                  }}
                   onMouseEnter={() => setSelectedIndex(idx)}
                   className={`w-full flex items-center justify-between p-2.5 rounded-xl cursor-pointer transition-all ${
                     isSelected

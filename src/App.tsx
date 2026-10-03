@@ -1110,34 +1110,6 @@ export const App: React.FC = () => {
         onShowToast={showToast}
       />
 
-      {/* Executive Protocol & Gift Compliance Modal */}
-      {isProtocolOpen && (
-        <ExecutiveProtocolModal
-          isOpen={true}
-          person={protocolTargetPerson}
-          initialEventType={protocolInitialType}
-          onUpdatePerson={handleUpdatePerson}
-          onClose={() => {
-            setIsProtocolOpen(false);
-            setProtocolTargetPerson(null);
-          }}
-          onShowToast={showToast}
-        />
-      )}
-
-      {/* Ambient Audio Briefing Modal */}
-      {isAudioBriefingOpen && (
-        <AmbientAudioBriefingModal
-          isOpen={true}
-          person={audioBriefingTargetPerson}
-          onClose={() => {
-            setIsAudioBriefingOpen(false);
-            setAudioBriefingTargetPerson(null);
-          }}
-          onShowToast={showToast}
-        />
-      )}
-
       {/* PWA Mobile Installation Floating Banner */}
       <PwaInstallBanner />
     </div>
