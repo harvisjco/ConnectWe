@@ -11,9 +11,15 @@ import {
   calculateCandidateFit 
 } from '../../services/projectSquadBuilderService';
 import { 
+  findSecondDegreeCandidatesForRole, 
+  generateColleagueIntroRequestMessage, 
+  calculateReferralRewardEst, 
+  SecondDegreeTalentMatch 
+} from '../../services/secondDegreeTalentBridgeService';
+import { 
   X, Sparkles, Users, Cpu, Rocket, Briefcase, 
   TrendingUp, Check, Copy, AlertCircle, 
-  ChevronRight, Coffee, Trash2
+  ChevronRight, Coffee, Trash2, Send, Gift, Link2
 } from 'lucide-react';
 
 interface ProjectSquadBuilderModalProps {
@@ -78,24 +84,73 @@ export const ProjectSquadBuilderModal: React.FC<ProjectSquadBuilderModalProps> =
   // 현재 우측 패널에서 추천 후보를 보고 있는 대상 롤 ID
   const [selectedRoleId, setSelectedRoleId] = useState<SquadRoleId>(activeTemplate.roles[0]);
 
-  // 롤별 추천 후보자 목록
+  // 추천 모드 탭: 1촌 (내 주소록) | 2촌 (사내 동료 공유 인맥)
+  const [candidateTab, setCandidateTab] = useState<'first' | 'second'>('first');
+  const [copiedIntroPeer, setCopiedIntroPeer] = useState<string | null>(null);
+
+  // 1촌 후보자 목록
   const candidatesForActiveRole = useMemo(() => {
     if (!selectedRoleId) return [];
     return findBestCandidatesForRole(people, selectedRoleId, 8);
   }, [people, selectedRoleId]);
+
+  // 2촌 동료 공유 인맥 후보자 목록
+  const secondDegreeCandidates = useMemo(() => {
+    if (!selectedRoleId) return [];
+    return findSecondDegreeCandidatesForRole(selectedRoleId);
+  }, [selectedRoleId]);
 
   // 스쿼드 갭 및 준비도 분석
   const gapAnalysis = useMemo(() => {
     return analyzeSquadGaps(activeTemplate, assignments);
   }, [activeTemplate, assignments]);
 
-  // 슬롯에 인재 배정
+  // 1촌 인재 슬롯 배정
   const handleAssignPerson = (roleId: SquadRoleId, person: Person) => {
     setAssignments(prev => ({
       ...prev,
       [roleId]: person
     }));
     onShowToast(`${person.name} 님이 [${SQUAD_ROLES[roleId]?.label || roleId}] 역할에 배정되었습니다.`);
+  };
+
+  // 2촌 인재 슬롯 가교 배정
+  const handleAssignSecondDegree = (roleId: SquadRoleId, match: SecondDegreeTalentMatch) => {
+    const syntheticPerson: Person = {
+      id: `2nd-${match.contact.id}`,
+      name: match.contact.targetName,
+      currentCompany: match.contact.targetCompany,
+      currentDepartment: '실무',
+      currentTitle: match.contact.targetTitle,
+      mobile: match.contact.maskedMobile,
+      email: match.contact.maskedEmail,
+      primaryDomain: match.contact.primaryDomain || '전문 기술',
+      skills: match.contact.skills || match.matchedSkills,
+      estimatedAgeGroup: '30s',
+      isAgeEstimated: true,
+      sourceType: 'SOURCE_DATA',
+      closeness: 4,
+      connectionChannel: 'manual',
+      isStale: false,
+      careers: [],
+      academics: [],
+      memo: `[2촌 인맥] 가교 동료: ${match.bridgeColleagueName} (${match.bridgeDepartment})`
+    };
+    setAssignments(prev => ({
+      ...prev,
+      [roleId]: syntheticPerson
+    }));
+    onShowToast(`${match.contact.targetName} 님이 [${SQUAD_ROLES[roleId]?.label}] 역할에 2촌 가교로 배정되었습니다.`);
+  };
+
+  // 사내 동료 소개 요청 서신 복사
+  const handleCopyIntroRequest = (roleId: SquadRoleId, match: SecondDegreeTalentMatch) => {
+    const msg = generateColleagueIntroRequestMessage(projectName, roleId, match.contact);
+    navigator.clipboard.writeText(msg).then(() => {
+      setCopiedIntroPeer(match.contact.id);
+      onShowToast(`[${match.bridgeColleagueName}] 님 대상 사내 소개 요청 서신이 복사되었습니다.`);
+      setTimeout(() => setCopiedIntroPeer(null), 2500);
+    });
   };
 
   // 슬롯에서 인재 제거
@@ -340,7 +395,11 @@ ${gapAnalysis.recommendation}
                               >
                                 {assigned.name}
                               </span>
-                              {candidateFit && (
+                              {assigned.id.startsWith('2nd-') ? (
+                                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+                                  2촌 가교
+                                </span>
+                              ) : candidateFit && (
                                 <span className="px-1.5 py-0.5 text-[10px] font-bold rounded bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300">
                                   핏 {candidateFit.score}점
                                 </span>
@@ -348,6 +407,11 @@ ${gapAnalysis.recommendation}
                             </div>
                             <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
                               {assigned.currentCompany} · {assigned.currentTitle}
+                              {assigned.memo?.includes('[2촌 인맥]') && (
+                                <span className="text-purple-600 dark:text-purple-400 ml-1 font-medium">
+                                  · {assigned.memo.replace('[2촌 인맥] ', '')}
+                                </span>
+                              )}
                             </p>
                           </div>
                         </div>
@@ -383,112 +447,266 @@ ${gapAnalysis.recommendation}
 
           {/* [우측 5컬럼] 스킬 매칭 추천 실무 인재 랭킹 패널 */}
           <div className="lg:col-span-5 flex flex-col h-full overflow-hidden bg-white dark:bg-slate-900">
-            <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/30 flex items-center justify-between shrink-0">
-              <div>
-                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider block">
-                  【 {SQUAD_ROLES[selectedRoleId]?.label} 】 추천 후보
-                </span>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400">
-                  직무, 보유 기술, 도메인 경험을 종합 매칭한 순위입니다
-                </span>
+            <div className="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/30 shrink-0 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-xs font-bold text-slate-800 dark:text-slate-200 uppercase tracking-wider block">
+                    【 {SQUAD_ROLES[selectedRoleId]?.label} 】 추천 후보
+                  </span>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                    직무, 보유 기술, 도메인 경험을 종합 매칭한 순위입니다
+                  </span>
+                </div>
               </div>
-              <span className="px-2 py-0.5 text-xs font-bold rounded-full bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
-                {candidatesForActiveRole.length}명 발굴
-              </span>
+
+              {/* 1촌 내 인맥 / 2촌 동료 공유 인맥 탭 세그먼트 */}
+              <div className="flex items-center gap-1.5 p-1 bg-slate-200/70 dark:bg-slate-800 rounded-xl">
+                <button
+                  type="button"
+                  data-testid="tab-candidate-first"
+                  onClick={() => setCandidateTab('first')}
+                  className={`flex-1 py-1.5 px-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                    candidateTab === 'first'
+                      ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+                >
+                  <Users className="w-3.5 h-3.5" />
+                  <span>1촌 내 인맥 ({candidatesForActiveRole.length})</span>
+                </button>
+                <button
+                  type="button"
+                  data-testid="tab-candidate-second"
+                  onClick={() => setCandidateTab('second')}
+                  className={`flex-1 py-1.5 px-2 text-xs font-bold rounded-lg transition-all flex items-center justify-center gap-1.5 ${
+                    candidateTab === 'second'
+                      ? 'bg-white dark:bg-slate-700 text-purple-600 dark:text-purple-400 shadow-sm'
+                      : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200'
+                  }`}
+                >
+                  <Link2 className="w-3.5 h-3.5" />
+                  <span>2촌 동료 인맥 ({secondDegreeCandidates.length})</span>
+                </button>
+              </div>
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-3">
-              {candidatesForActiveRole.length === 0 ? (
-                <div className="p-8 text-center text-slate-400">
-                  해당 역할에 일치하는 후보자를 찾을 수 없습니다.
-                </div>
-              ) : (
-                candidatesForActiveRole.map(match => {
-                  const isAlreadyAssigned = assignments[selectedRoleId]?.id === match.person.id;
-                  const isAssignedElsewhere = Object.entries(assignments).some(
-                    ([rId, p]) => rId !== selectedRoleId && p?.id === match.person.id
-                  );
-
-                  return (
-                    <div
-                      key={match.person.id}
-                      className={`p-3 rounded-xl border transition-all ${
-                        isAlreadyAssigned
-                          ? 'border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/20'
-                          : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 hover:border-indigo-300'
-                      }`}
+              {candidateTab === 'first' ? (
+                /* 1촌 후보자 목록 */
+                candidatesForActiveRole.length === 0 ? (
+                  <div className="p-8 text-center text-slate-400 space-y-2">
+                    <p className="text-xs">내 주소록에서 일치하는 1촌 후보자를 찾지 못했습니다.</p>
+                    <button
+                      onClick={() => setCandidateTab('second')}
+                      className="text-xs font-semibold text-purple-600 dark:text-purple-400 hover:underline"
                     >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex items-start gap-2.5 min-w-0">
-                          <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
-                            {match.person.name.slice(0, 2)}
-                          </div>
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-1.5 flex-wrap">
-                              <span 
-                                onClick={() => onSelectPerson?.(match.person)}
-                                className="font-bold text-sm text-slate-900 dark:text-white hover:underline cursor-pointer"
-                              >
-                                {match.person.name}
-                              </span>
-                              <span className={`px-1.5 py-0.2 text-[10px] font-bold rounded ${
-                                match.score >= 80 
-                                  ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300'
-                                  : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
-                              }`}>
-                                매칭 {match.score}%
-                              </span>
-                              {isAssignedElsewhere && !isAlreadyAssigned && (
-                                <span className="px-1.5 py-0.2 text-[10px] font-medium rounded bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
-                                  타 슬롯 참여 중
-                                </span>
-                              )}
+                      사내 동료 2촌 공유 인맥 확인하기 →
+                    </button>
+                  </div>
+                ) : (
+                  candidatesForActiveRole.map(match => {
+                    const isAlreadyAssigned = assignments[selectedRoleId]?.id === match.person.id;
+                    const isAssignedElsewhere = Object.entries(assignments).some(
+                      ([rId, p]) => rId !== selectedRoleId && p?.id === match.person.id
+                    );
+
+                    return (
+                      <div
+                        key={match.person.id}
+                        className={`p-3 rounded-xl border transition-all ${
+                          isAlreadyAssigned
+                            ? 'border-emerald-500 bg-emerald-50/30 dark:bg-emerald-950/20'
+                            : 'border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/40 hover:border-indigo-300'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-start gap-2.5 min-w-0">
+                            <div className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">
+                              {match.person.name.slice(0, 2)}
                             </div>
-                            <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                              {match.person.currentCompany} · {match.person.currentTitle}
-                            </p>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span 
+                                  onClick={() => onSelectPerson?.(match.person)}
+                                  className="font-bold text-sm text-slate-900 dark:text-white hover:underline cursor-pointer"
+                                >
+                                  {match.person.name}
+                                </span>
+                                <span className={`px-1.5 py-0.2 text-[10px] font-bold rounded ${
+                                  match.score >= 80 
+                                    ? 'bg-indigo-100 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300'
+                                    : 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+                                }`}>
+                                  매칭 {match.score}%
+                                </span>
+                                {isAssignedElsewhere && !isAlreadyAssigned && (
+                                  <span className="px-1.5 py-0.2 text-[10px] font-medium rounded bg-amber-50 text-amber-700 dark:bg-amber-950/40 dark:text-amber-300">
+                                    타 슬롯 참여 중
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                                {match.person.currentCompany} · {match.person.currentTitle}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* 배정 버튼 */}
+                          <div>
+                            {isAlreadyAssigned ? (
+                              <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/40 rounded-lg">
+                                <Check className="w-3.5 h-3.5" /> 배정됨
+                              </span>
+                            ) : (
+                              <button
+                                onClick={() => handleAssignPerson(selectedRoleId, match.person)}
+                                className="px-2.5 py-1 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
+                              >
+                                팀에 배정
+                              </button>
+                            )}
                           </div>
                         </div>
 
-                        {/* 배정 버튼 */}
-                        <div>
-                          {isAlreadyAssigned ? (
-                            <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/40 rounded-lg">
-                              <Check className="w-3.5 h-3.5" /> 배정됨
-                            </span>
-                          ) : (
-                            <button
-                              onClick={() => handleAssignPerson(selectedRoleId, match.person)}
-                              className="px-2.5 py-1 text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg transition-colors shadow-sm"
-                            >
-                              팀에 배정
-                            </button>
-                          )}
-                        </div>
+                        {/* 일치한 핵심 스킬 칩 */}
+                        {match.matchedSkills.length > 0 && (
+                          <div className="flex items-center gap-1 flex-wrap mt-2 pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
+                            <span className="text-[10px] font-medium text-slate-400">일치 스킬:</span>
+                            {match.matchedSkills.map(s => (
+                              <span 
+                                key={s}
+                                className="px-1.5 py-0.5 text-[10px] font-semibold rounded bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300"
+                              >
+                                ✓ {s}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* 하이라이트 사유 */}
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 leading-snug">
+                          {match.highlightReason}
+                        </p>
                       </div>
+                    );
+                  })
+                )
+              ) : (
+                /* 2촌 동료 공유 인맥 목록 */
+                secondDegreeCandidates.length === 0 ? (
+                  <div className="p-8 text-center text-slate-400 text-xs">
+                    사내 동료 공유 인맥 중 해당 직무에 매칭되는 2촌 인재가 없습니다.
+                  </div>
+                ) : (
+                  secondDegreeCandidates.map(match => {
+                    const syntheticId = `2nd-${match.contact.id}`;
+                    const isAlreadyAssigned = assignments[selectedRoleId]?.id === syntheticId;
+                    const reward = calculateReferralRewardEst(selectedRoleId);
 
-                      {/* 일치한 핵심 스킬 칩 */}
-                      {match.matchedSkills.length > 0 && (
-                        <div className="flex items-center gap-1 flex-wrap mt-2 pt-2 border-t border-slate-200/60 dark:border-slate-700/60">
-                          <span className="text-[10px] font-medium text-slate-400">일치 스킬:</span>
-                          {match.matchedSkills.map(s => (
-                            <span 
-                              key={s}
-                              className="px-1.5 py-0.5 text-[10px] font-semibold rounded bg-indigo-50 text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300"
+                    return (
+                      <div
+                        key={match.contact.id}
+                        data-testid={`second-degree-card-${match.contact.id}`}
+                        className={`p-3.5 rounded-xl border transition-all space-y-2.5 ${
+                          isAlreadyAssigned
+                            ? 'border-purple-500 bg-purple-50/40 dark:bg-purple-950/20 ring-1 ring-purple-500/30'
+                            : 'border-slate-200 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-800/40 hover:border-purple-300 dark:hover:border-purple-700'
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="flex items-start gap-2.5 min-w-0">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-600 text-white text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 shadow-sm">
+                              {match.contact.targetName.slice(0, 2)}
+                            </div>
+                            <div className="min-w-0">
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                <span className="font-bold text-sm text-slate-900 dark:text-white">
+                                  {match.contact.targetName}
+                                </span>
+                                <span className="px-1.5 py-0.2 text-[10px] font-bold rounded bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+                                  매칭 {match.score}%
+                                </span>
+                                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 text-[10px] font-semibold rounded bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300">
+                                  <Users className="w-2.5 h-2.5 text-purple-500" />
+                                  가교: {match.bridgeColleagueName}
+                                </span>
+                              </div>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
+                                {match.contact.targetCompany} · {match.contact.targetTitle}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* 액션 버튼 그룹 */}
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <button
+                              type="button"
+                              data-testid={`intro-req-${match.contact.id}`}
+                              onClick={() => handleCopyIntroRequest(selectedRoleId, match)}
+                              className="flex items-center gap-1 px-2.5 py-1 text-xs font-semibold text-purple-700 dark:text-purple-300 bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 dark:hover:bg-purple-900/60 border border-purple-200 dark:border-purple-800 rounded-lg transition-colors cursor-pointer"
+                              title="동료에게 보낼 메신저 소개 요청 서신 복사"
                             >
-                              ✓ {s}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                              {copiedIntroPeer === match.contact.id ? (
+                                <>
+                                  <Check className="w-3.5 h-3.5 text-emerald-600" />
+                                  <span className="text-emerald-600 font-bold">복사됨</span>
+                                </>
+                              ) : (
+                                <>
+                                  <Send className="w-3 h-3" />
+                                  <span>소개 요청</span>
+                                </>
+                              )}
+                            </button>
 
-                      {/* 하이라이트 사유 */}
-                      <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1.5 leading-snug">
-                        {match.highlightReason}
-                      </p>
-                    </div>
-                  );
-                })
+                            {isAlreadyAssigned ? (
+                              <span className="flex items-center gap-1 px-2.5 py-1 text-xs font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/40 rounded-lg">
+                                <Check className="w-3.5 h-3.5" /> 배정됨
+                              </span>
+                            ) : (
+                              <button
+                                type="button"
+                                data-testid={`assign-2nd-${match.contact.id}`}
+                                onClick={() => handleAssignSecondDegree(selectedRoleId, match)}
+                                className="px-2.5 py-1 text-xs font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-lg transition-colors shadow-sm cursor-pointer"
+                              >
+                                가교 배정
+                              </button>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* 추천 감사 리워드 칩 */}
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50/80 dark:bg-amber-950/30 border border-amber-200/60 dark:border-amber-800/40 text-[11px] text-amber-800 dark:text-amber-300">
+                          <Gift className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 shrink-0" />
+                          <span>
+                            추천 리워드: 가벼운 티타임 성사 <strong>{reward.coffeeChatReward}만원</strong> · 정식 합류 <strong>{reward.onboardingBounty}만원</strong>
+                          </span>
+                        </div>
+
+                        {/* 일치 핵심 스킬 */}
+                        {match.matchedSkills.length > 0 && (
+                          <div className="flex items-center gap-1 flex-wrap pt-1">
+                            <span className="text-[10px] font-medium text-slate-400">일치 스킬:</span>
+                            {match.matchedSkills.map(s => (
+                              <span 
+                                key={s}
+                                className="px-1.5 py-0.5 text-[10px] font-semibold rounded bg-purple-50 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300"
+                              >
+                                ✓ {s}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+
+                        {/* 하이라이트 사유 */}
+                        <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug">
+                          {match.highlightReason}
+                        </p>
+                      </div>
+                    );
+                  })
+                )
               )}
             </div>
           </div>

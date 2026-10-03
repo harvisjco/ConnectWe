@@ -7,6 +7,7 @@ import {
   UserPlus, Link2, HelpCircle, Sparkles
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
+import { MOCK_TEAM_MEMBERS, MOCK_PEER_SHARED_CONTACTS } from '../../data/mockTeamNetwork';
 
 interface TeamNetworkViewProps {
   people: Person[];
@@ -28,9 +29,7 @@ export const TeamNetworkView: React.FC<TeamNetworkViewProps> = ({
 
   // 팀 멤버 시뮬레이션
   const teamMembers: TeamMember[] = [
-    { id: 'tm-1', name: '김태호', department: '전략기획실', role: '전략이사', avatarColor: 'bg-indigo-600', contactCount: 42 },
-    { id: 'tm-2', name: '이지은', department: '투자심사본부', role: '수석심사역', avatarColor: 'bg-purple-600', contactCount: 38 },
-    { id: 'tm-3', name: '박준혁', department: 'HR·피플팀', role: '탤런트리드', avatarColor: 'bg-emerald-600', contactCount: 51 },
+    ...MOCK_TEAM_MEMBERS,
     { id: 'tm-me', name: '나 (본인)', department: '비즈니스개발', role: '그로스리드', avatarColor: 'bg-sky-600', contactCount: people.length }
   ];
 
@@ -68,64 +67,7 @@ export const TeamNetworkView: React.FC<TeamNetworkViewProps> = ({
     }));
 
     // 2. 동료 팀원들의 샘플 공유 인맥 (PII 마스킹 상태)
-    const peerContacts: TeamSharedContact[] = [
-      {
-        id: 'shared-peer-1',
-        ownerMemberId: 'tm-1',
-        ownerMemberName: '김태호 전략이사',
-        ownerDepartment: '전략기획실',
-        targetName: '이해진',
-        targetCompany: 'NAVER',
-        targetTitle: '글로벌투자책임자(GIO) / 이사회 의장',
-        maskedMobile: '010-****-1999',
-        maskedEmail: 'h***@navercorp.com',
-        relationshipStrength: 'STRONG',
-        lastInteractedAt: '2026-05-12',
-        isDartExecutive: true
-      },
-      {
-        id: 'shared-peer-2',
-        ownerMemberId: 'tm-2',
-        ownerMemberName: '이지은 수석심사역',
-        ownerDepartment: '투자심사본부',
-        targetName: '정신아',
-        targetCompany: '카카오',
-        targetTitle: '대표이사',
-        maskedMobile: '010-****-2024',
-        maskedEmail: 's***@kakaocorp.com',
-        relationshipStrength: 'MEDIUM',
-        lastInteractedAt: '2026-04-20',
-        isDartExecutive: true
-      },
-      {
-        id: 'shared-peer-3',
-        ownerMemberId: 'tm-3',
-        ownerMemberName: '박준혁 탤런트리드',
-        ownerDepartment: 'HR·피플팀',
-        targetName: '한종희',
-        targetCompany: '삼성전자',
-        targetTitle: '부회장 / 대표이사',
-        maskedMobile: '010-****-2022',
-        maskedEmail: 'j***@samsung.com',
-        relationshipStrength: 'STRONG',
-        lastInteractedAt: '2026-06-01',
-        isDartExecutive: true
-      },
-      {
-        id: 'shared-peer-4',
-        ownerMemberId: 'tm-1',
-        ownerMemberName: '김태호 전략이사',
-        ownerDepartment: '전략기획실',
-        targetName: '곽노정',
-        targetCompany: 'SK하이닉스',
-        targetTitle: '대표이사 사장',
-        maskedMobile: '010-****-2021',
-        maskedEmail: 'n***@sk.com',
-        relationshipStrength: 'MEDIUM',
-        lastInteractedAt: '2026-03-15',
-        isDartExecutive: true
-      }
-    ];
+    const peerContacts: TeamSharedContact[] = MOCK_PEER_SHARED_CONTACTS;
 
     return [...myContacts, ...peerContacts];
   }, [people]);

@@ -1,4 +1,4 @@
-﻿export interface TeamMember {
+export interface TeamMember {
   id: string;
   name: string;
   department: string;
@@ -20,4 +20,6 @@ export interface TeamSharedContact {
   relationshipStrength: 'STRONG' | 'MEDIUM' | 'LIGHT';
   lastInteractedAt?: string;
   isDartExecutive?: boolean;
+  skills?: string[];
+  primaryDomain?: string;
 }
