@@ -5,7 +5,7 @@ import {
   Search, User, Briefcase, Zap, 
   MapPin, Award, Building2, Sparkles, 
   ArrowRight, X, Mic, Compass, BarChart2, UploadCloud, Coffee, Bell,
-  Gift, Headphones, GitMerge, Users, Rocket, Layers, BookOpen
+  Gift, Headphones, GitMerge, Users, Rocket, Layers, BookOpen, QrCode
 } from 'lucide-react';
 
 interface CommandAction {
@@ -37,6 +37,7 @@ interface GlobalCommandPaletteProps {
   onOpenVentureRadar?: () => void;
   onOpenKnowledgeExchange?: () => void;
   onOpenPeerSynergy?: (tab?: 'tech' | 'referral' | 'guild' | 'notes') => void;
+  onOpenPeerTrustCareer?: (tab?: 'endorsements' | 'digitalCard' | 'roulette' | 'careerPath') => void;
   onNavigateView: (view: NavViewType) => void;
 }
 
@@ -59,6 +60,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenVentureRadar,
   onOpenKnowledgeExchange,
   onOpenPeerSynergy,
+  onOpenPeerTrustCareer,
   onNavigateView
 }) => {
   const [query, setQuery] = useState('');
@@ -314,6 +316,58 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
         keywords: ['인사이트', '회고', '메모', '노트', '배운점', '피드백', '감사', 'insight', 'notes'],
         onExecute: () => {
           onOpenPeerSynergy('notes');
+          onClose();
+        }
+      },
+      onOpenPeerTrustCareer && {
+        id: 'action-peer-trust-endorse',
+        category: '스마트 액션',
+        title: '🌟 피어 실무 역량 보증 & 신뢰 뱃지 스튜디오 (Peer Endorsements)',
+        subtitle: '함께 일해본 동료의 3대 실무 강점 보증 및 따뜻한 감사 답례 서신 생성',
+        icon: Award,
+        badge: '실무 보증',
+        keywords: ['보증', '실무', '신뢰', '강점', '뱃지', '피어', 'endorsement', 'trust', 'peer', '추천'],
+        onExecute: () => {
+          onOpenPeerTrustCareer('endorsements');
+          onClose();
+        }
+      },
+      onOpenPeerTrustCareer && {
+        id: 'action-peer-trust-card',
+        category: '스마트 액션',
+        title: '📇 모바일 1-Page 디지털 실무 명함 & QR 슈퍼파워 카드 (vCard)',
+        subtitle: 'RFC 6350 표준 vCard 파일 다운로드 및 모바일 카메라 스캔 주소록 자동 저장',
+        icon: QrCode,
+        badge: '디지털 명함',
+        keywords: ['명함', '디지털', 'vcard', 'vcf', 'qr', '모바일', '프로필', 'card', '스마트폰'],
+        onExecute: () => {
+          onOpenPeerTrustCareer('digitalCard');
+          onClose();
+        }
+      },
+      onOpenPeerTrustCareer && {
+        id: 'action-peer-trust-roulette',
+        category: '스마트 액션',
+        title: '☕ 크로스 직무 1:1 캐주얼 커피챗 룰렛 (Coffee Roulette)',
+        subtitle: '개발자 ↔ 디자이너 ↔ PM 간 격주 20분 캐주얼 티타임 자동 매칭 & 아이스브레이킹 대화 카드',
+        icon: Coffee,
+        badge: '커피챗 룰렛',
+        keywords: ['룰렛', '커피챗', '티타임', '크로스직무', '개발자', '디자이너', 'pm', 'roulette', 'coffee'],
+        onExecute: () => {
+          onOpenPeerTrustCareer('roulette');
+          onClose();
+        }
+      },
+      onOpenPeerTrustCareer && {
+        id: 'action-peer-trust-career',
+        category: '스마트 액션',
+        title: '🗺️ 실무 커리어 도약 경로 & 스킬 갭 멘토 매칭 (Career Explorer)',
+        subtitle: '테크 리드·수석 아키텍트 목표 역량 대비 부족 스킬 분석 및 1촌/2촌 멘토 조언 서신 생성',
+        icon: Compass,
+        badge: '커리어 멘토',
+        keywords: ['커리어', '성장', '멘토', '스킬', '로드맵', '테크리드', '아키텍트', 'career', 'path', 'gap'],
+        onExecute: () => {
+          onOpenPeerTrustCareer('careerPath');
           onClose();
         }
       }

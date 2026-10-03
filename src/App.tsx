@@ -60,6 +60,7 @@ const ProjectSquadBuilderModal = React.lazy(() => import('./components/modals/Pr
 const EarlyStageVentureRadarModal = React.lazy(() => import('./components/modals/EarlyStageVentureRadarModal').then(m => ({ default: m.EarlyStageVentureRadarModal })));
 const KnowledgeExchangeModal = React.lazy(() => import('./components/modals/KnowledgeExchangeModal').then(m => ({ default: m.KnowledgeExchangeModal })));
 const PeerSynergyHubModal = React.lazy(() => import('./components/modals/PeerSynergyHubModal').then(m => ({ default: m.PeerSynergyHubModal })));
+const PeerTrustCareerModal = React.lazy(() => import('./components/modals/PeerTrustCareerModal').then(m => ({ default: m.PeerTrustCareerModal })));
 const GlobalCommandPalette = React.lazy(() => import('./components/common/GlobalCommandPalette').then(m => ({ default: m.GlobalCommandPalette })));
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
 
@@ -259,6 +260,13 @@ export const App: React.FC = () => {
   const handleOpenPeerSynergy = (tab: 'tech' | 'referral' | 'guild' | 'notes' = 'tech') => {
     setPeerSynergyInitialTab(tab);
     setIsPeerSynergyOpen(true);
+  };
+
+  const [isPeerTrustCareerOpen, setIsPeerTrustCareerOpen] = useState(false);
+  const [peerTrustCareerInitialTab, setPeerTrustCareerInitialTab] = useState<'endorsements' | 'digitalCard' | 'roulette' | 'careerPath'>('endorsements');
+  const handleOpenPeerTrustCareer = (tab: 'endorsements' | 'digitalCard' | 'roulette' | 'careerPath' = 'endorsements') => {
+    setPeerTrustCareerInitialTab(tab);
+    setIsPeerTrustCareerOpen(true);
   };
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
@@ -560,6 +568,7 @@ export const App: React.FC = () => {
                   onOpenVentureRadar={handleOpenVentureRadar}
                   onOpenKnowledgeExchange={handleOpenKnowledgeExchange}
                   onOpenPeerSynergy={handleOpenPeerSynergy}
+                  onOpenPeerTrustCareer={handleOpenPeerTrustCareer}
                   onShowToast={showToast}
                   onSelectUserRole={handleSelectUserRole}
                 />
@@ -968,6 +977,18 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* 실무 인재 신뢰 & 커리어 도약 스튜디오 (피어 보증 / 디지털 명함 vCard / 커피챗 룰렛 / 커리어 멘토) */}
+      {isPeerTrustCareerOpen && (
+        <PeerTrustCareerModal
+          isOpen={true}
+          initialTab={peerTrustCareerInitialTab}
+          people={people}
+          onSelectPerson={setSelectedPerson}
+          onClose={() => setIsPeerTrustCareerOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
       {/* Proximity Tea Bundle Modal (거점 외근 동선 지능형 티타임 번들러) */}
       {teaBundleClusterId && (
         <ProximityTeaBundleModal
@@ -1114,6 +1135,7 @@ export const App: React.FC = () => {
         onOpenVentureRadar={handleOpenVentureRadar}
         onOpenKnowledgeExchange={handleOpenKnowledgeExchange}
         onOpenPeerSynergy={handleOpenPeerSynergy}
+        onOpenPeerTrustCareer={handleOpenPeerTrustCareer}
         onNavigateView={(v: NavViewType) => handleNavigateView(v)}
       />
 

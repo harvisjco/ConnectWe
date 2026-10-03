@@ -14,7 +14,8 @@ import {
 import { 
   Users, Cake, Calendar, Plus, Search, 
   Check, Copy, Phone, Mail, 
-  GraduationCap, Clock, MapPin, DollarSign, Camera, Sparkles, Rocket, Coffee
+  GraduationCap, Clock, MapPin, DollarSign, Camera, Sparkles, Rocket, Coffee,
+  Award, QrCode
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -27,6 +28,7 @@ interface GeneralMemberViewProps {
   onOpenVentureRadar?: () => void;
   onOpenKnowledgeExchange?: () => void;
   onOpenPeerSynergy?: (tab?: 'tech' | 'referral' | 'guild' | 'notes') => void;
+  onOpenPeerTrustCareer?: (tab?: 'endorsements' | 'digitalCard' | 'roulette' | 'careerPath') => void;
   onShowToast: (msg: string) => void;
   onSelectUserRole?: (role: UserRole) => void;
 }
@@ -40,6 +42,7 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
   onOpenVentureRadar,
   onOpenKnowledgeExchange,
   onOpenPeerSynergy,
+  onOpenPeerTrustCareer,
   onShowToast,
   onSelectUserRole
 }) => {
@@ -203,6 +206,18 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
               >
                 <Sparkles className="w-3.5 h-3.5 text-violet-200" />
                 <span>실무 시너지 허브</span>
+              </button>
+            )}
+            {onOpenPeerTrustCareer && (
+              <button
+                type="button"
+                data-testid="open-peer-trust-career-btn"
+                onClick={() => onOpenPeerTrustCareer('endorsements')}
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-amber-500 via-sky-500 to-indigo-600 hover:from-amber-600 hover:to-indigo-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"
+                title="피어 실무 보증, 모바일 디지털 명함(vCard), 1:1 커피챗 룰렛, 커리어 패스 멘토 스튜디오"
+              >
+                <Award className="w-3.5 h-3.5 text-amber-200" />
+                <span>신뢰 & 커리어 스튜디오</span>
               </button>
             )}
             <button
