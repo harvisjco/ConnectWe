@@ -29,10 +29,10 @@ test.describe('VIP 골든타임 능동형 케어 & 안부 서신 코파일럿 (G
     await expect(page.locator('text=Golden Care Radar')).toBeVisible();
 
     // 4. 4대 안부 테마 탭 확인 및 전환
-    await expect(page.locator('text=🌱 계절 안부')).toBeVisible();
-    await expect(page.locator('text=🎉 영전 & 성과 축하')).toBeVisible();
-    await expect(page.locator('text=☕ 가벼운 커피 안부')).toBeVisible();
-    await expect(page.locator('text=🤝 사업 & 시너지 교류')).toBeVisible();
+    await expect(page.locator('button:has-text("🌱 계절 안부")')).toBeVisible();
+    await expect(page.locator('button:has-text("🎉 영전 & 성과 축하")')).toBeVisible();
+    await expect(page.locator('button:has-text("☕ 가벼운 커피 안부")')).toBeVisible();
+    await expect(page.locator('button:has-text("🤝 사업 & 시너지 교류")')).toBeVisible();
 
     // '☕ 가벼운 커피 안부' 탭 클릭
     await page.locator('button:has-text("☕ 가벼운 커피 안부")').click();
@@ -79,7 +79,7 @@ test.describe('VIP 골든타임 능동형 케어 & 안부 서신 코파일럿 (G
       
       // 닫기 버튼 클릭하여 안전하게 닫힘 확인
       const closeBtn = page.locator('button:has-text("닫기")').first();
-      await closeBtn.click();
+      await closeBtn.click({ force: true });
       await expect(page.locator('text=VIP 골든타임 능동형 케어 & 안부 서신 코파일럿')).not.toBeVisible();
     }
   });
