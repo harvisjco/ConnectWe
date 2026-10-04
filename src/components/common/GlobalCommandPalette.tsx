@@ -19,6 +19,8 @@ interface CommandAction {
   onExecute: () => void;
 }
 
+import { GovernanceHubTab, TalentHubTab, MeetingHubTab } from '../../types/masterHub';
+
 interface GlobalCommandPaletteProps {
   isOpen: boolean;
   onClose: () => void;
@@ -42,6 +44,9 @@ interface GlobalCommandPaletteProps {
   onOpenNetworkVitality?: (tab?: 'vitality' | 'meetup' | 'bilingual' | 'sos') => void;
   onOpenExecutiveElegance?: (tab?: 'scheduler' | 'trip' | 'memory' | 'showcase') => void;
   onOpenMeetingGuardGovernance?: (tab?: 'governance' | 'talent' | 'offline' | 'followup') => void;
+  onOpenGovernanceMasterHub?: (tab?: GovernanceHubTab) => void;
+  onOpenTalentMasterHub?: (tab?: TalentHubTab) => void;
+  onOpenMeetingMasterHub?: (tab?: MeetingHubTab) => void;
   onNavigateView: (view: NavViewType) => void;
 }
 
@@ -68,6 +73,9 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
   onOpenNetworkVitality,
   onOpenExecutiveElegance,
   onOpenMeetingGuardGovernance,
+  onOpenGovernanceMasterHub,
+  onOpenTalentMasterHub,
+  onOpenMeetingMasterHub,
   onNavigateView
 }) => {
   const [query, setQuery] = useState('');
@@ -116,8 +124,47 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
       });
     });
 
-    // 2. 스마트 C-Level 액션
+    // 2. 스마트 C-Level 액션 & 3대 마스터 허브
     const smartActions = [
+      onOpenGovernanceMasterHub && {
+        id: 'action-governance-master-hub',
+        category: '스마트 액션',
+        title: '🏛️ 경영 거버넌스 & 전략 인텔리전스 마스터 허브',
+        subtitle: '상법 542조 사외이사 겸직 규제, 2026 주총 의결권, DART 지분 변동, C-Level 승계',
+        icon: Building2,
+        badge: 'C-Level 허브',
+        keywords: ['거버넌스', '이사회', '사외이사', '주총', '의결권', '공시', 'dart', '승계', 'governance'],
+        onExecute: () => {
+          onOpenGovernanceMasterHub();
+          onClose();
+        }
+      },
+      onOpenTalentMasterHub && {
+        id: 'action-talent-master-hub',
+        category: '스마트 액션',
+        title: '🤝 실무 인재 & 커리어 성장 생태계 마스터 허브',
+        subtitle: '5대 직군 스쿼드 빌더, 동문 창업 & 시드 투자 레이더, 피어 보증, 모바일 vCard, 실무 SOS',
+        icon: Users,
+        badge: '인재 생태계',
+        keywords: ['인재', '스쿼드', '창업', '시드', '보증', 'vcard', '명함', '길드', 'sos', 'talent'],
+        onExecute: () => {
+          onOpenTalentMasterHub();
+          onClose();
+        }
+      },
+      onOpenMeetingMasterHub && {
+        id: 'action-meeting-master-hub',
+        category: '스마트 액션',
+        title: '☕ 미팅 & 관계 라이프사이클 마스터 허브',
+        subtitle: '3선 티타임 조율 및 .ICS 캘린더, 5분 전 브리프, 현장 밋업, 회고 및 3분 사후 팔로업',
+        icon: Coffee,
+        badge: '미팅 전주기',
+        keywords: ['미팅', '티타임', '조율', 'ics', '브리프', '밋업', '회고', '팔로업', 'meeting'],
+        onExecute: () => {
+          onOpenMeetingMasterHub();
+          onClose();
+        }
+      },
       onOpenVoiceDebrief && {
         id: 'action-voice-debrief',
         category: '스마트 액션',

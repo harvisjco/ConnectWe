@@ -649,6 +649,20 @@ class PeerTrustCareerService {
       `바쁘신 일정에 큰 부담이 되지 않도록 멘토님께서 편하신 일시와 방식으로 전적으로 조율하겠습니다. 가능하신 시간대를 편히 말씀해 주시면 감사하겠습니다!\n\n` +
       `- 김성우 올림`;
   }
+
+  public exportVCard(profile: DigitalCardProfile): string {
+    return [
+      'BEGIN:VCARD',
+      'VERSION:3.0',
+      `FN:${profile.name}`,
+      `TITLE:${profile.title}`,
+      `ORG:${profile.company};${profile.department}`,
+      `TEL;TYPE=CELL:${profile.phone}`,
+      `EMAIL:${profile.email}`,
+      `NOTE:${profile.shortBio || ''}`,
+      'END:VCARD'
+    ].join('\r\n');
+  }
 }
 
 export const peerTrustCareerService = new PeerTrustCareerService();

@@ -19,6 +19,8 @@ import {
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
+import { GovernanceHubTab, TalentHubTab, MeetingHubTab } from '../../types/masterHub';
+
 interface GeneralMemberViewProps {
   people: Person[];
   onSelectPerson: (person: Person) => void;
@@ -32,6 +34,9 @@ interface GeneralMemberViewProps {
   onOpenNetworkVitality?: (tab?: 'vitality' | 'meetup' | 'bilingual' | 'sos') => void;
   onOpenExecutiveElegance?: (tab?: 'scheduler' | 'trip' | 'memory' | 'showcase') => void;
   onOpenMeetingGuardGovernance?: (tab?: 'governance' | 'talent' | 'offline' | 'followup') => void;
+  onOpenGovernanceMasterHub?: (tab?: GovernanceHubTab) => void;
+  onOpenTalentMasterHub?: (tab?: TalentHubTab) => void;
+  onOpenMeetingMasterHub?: (tab?: MeetingHubTab) => void;
   onShowToast: (msg: string) => void;
   onSelectUserRole?: (role: UserRole) => void;
 }
@@ -49,6 +54,9 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
   onOpenNetworkVitality,
   onOpenExecutiveElegance,
   onOpenMeetingGuardGovernance,
+  onOpenGovernanceMasterHub,
+  onOpenTalentMasterHub,
+  onOpenMeetingMasterHub,
   onShowToast,
   onSelectUserRole
 }) => {
@@ -167,118 +175,166 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
         title="동문 네트워크 & 소모임 커뮤니티"
         subtitle="소중한 학연·동아리·직장 동문 주소록을 손쉽게 정리하고, 생일을 챙기며 소모임 활동을 즐기는 공간입니다."
         actions={
-          <div className="flex items-center gap-2">
-            {onOpenSquadBuilder && (
-              <button
-                onClick={onOpenSquadBuilder}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-700 hover:to-sky-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"
-                title="프로젝트 스쿼드 가상 편성 및 스킬 매칭"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>프로젝트 팀 빌더</span>
-              </button>
-            )}
-            {onOpenVentureRadar && (
+          <div className="flex flex-col gap-2.5 items-end">
+            {/* Primary Action Row: The 3 Enterprise Master Hubs */}
+            <div className="flex items-center gap-2 flex-wrap justify-end">
+              {/* Hub 1: Executive Governance & Strategy Master Hub */}
               <button
                 type="button"
-                data-testid="open-venture-radar-btn"
-                onClick={onOpenVentureRadar}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-rose-50 to-indigo-50 hover:from-rose-100 hover:to-indigo-100 text-rose-800 dark:text-rose-300 dark:from-rose-950/40 dark:to-indigo-950/40 border border-rose-200/80 dark:border-rose-800/60 shadow-2xs transition-all active:scale-95 cursor-pointer"
-                title="동문·동료의 스텔스 창업 및 시드 투자 유치 신호 감지"
+                data-testid="open-governance-master-hub-btn"
+                onClick={() => onOpenGovernanceMasterHub ? onOpenGovernanceMasterHub('governance') : onOpenMeetingGuardGovernance?.('governance')}
+                className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-2xl bg-gradient-to-r from-blue-700 via-indigo-700 to-slate-900 hover:from-blue-800 hover:to-slate-950 text-white shadow-md shadow-blue-900/20 border border-blue-500/30 transition-all active:scale-95 cursor-pointer"
+                title="상법 제542조의8 사외이사 겸직 규제, 2026 주총 의결권 시뮬레이션, DART 5% 지분 공시 레이더, 최고경영진 승계 큐레이터"
               >
-                <Rocket className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
-                <span>창업 & 시드 레이더</span>
+                <ShieldCheck className="w-4 h-4 text-blue-300" />
+                <span>🏛️ 경영 거버넌스 허브</span>
               </button>
-            )}
-            {onOpenKnowledgeExchange && (
+
+              {/* Hub 2: Talent & Career Ecosystem Master Hub */}
               <button
                 type="button"
-                data-testid="open-knowledge-exchange-btn"
-                onClick={onOpenKnowledgeExchange}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-amber-50 to-indigo-50 hover:from-amber-100 hover:to-indigo-100 text-amber-900 dark:text-amber-200 dark:from-amber-950/40 dark:to-indigo-950/40 border border-amber-200/80 dark:border-amber-800/60 shadow-2xs transition-all active:scale-95 cursor-pointer"
-                title="실무 슈퍼파워 지식 교환 & 1:1 캐주얼 멘토링 팟"
+                data-testid="open-talent-master-hub-btn"
+                onClick={() => onOpenTalentMasterHub ? onOpenTalentMasterHub('squad') : onOpenSquadBuilder?.()}
+                className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-2xl bg-gradient-to-r from-indigo-600 via-violet-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800 text-white shadow-md shadow-indigo-900/20 border border-indigo-400/30 transition-all active:scale-95 cursor-pointer"
+                title="프로젝트 스쿼드 빌더, 동문 창업 & 시드 투자 레이더, 4단계 피어 보증, 모바일 vCard, 실무 SOS 헬프데스크"
               >
-                <Coffee className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                <span>실무 지식 교환 팟</span>
+                <Users className="w-4 h-4 text-indigo-300" />
+                <span>🤝 실무 인재 생태계 허브</span>
               </button>
-            )}
-            {onOpenPeerSynergy && (
+
+              {/* Hub 3: Meeting & Relationship Full-Lifecycle Master Hub */}
               <button
                 type="button"
-                data-testid="open-peer-synergy-btn"
-                onClick={() => onOpenPeerSynergy('tech')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"
-                title="테크 스택 랜드스케이프, 사내 채용 추천, 스터디 길드, 커피챗 인사이트 통합 스튜디오"
+                data-testid="open-meeting-master-hub-btn"
+                onClick={() => onOpenMeetingMasterHub ? onOpenMeetingMasterHub('schedule') : onOpenExecutiveElegance?.('scheduler')}
+                className="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-bold rounded-2xl bg-gradient-to-r from-amber-600 via-rose-600 to-indigo-700 hover:from-amber-700 hover:to-indigo-800 text-white shadow-md shadow-amber-900/20 border border-amber-400/30 transition-all active:scale-95 cursor-pointer"
+                title="3선 티타임 조율 및 RFC 5545 .ICS 캘린더 생성, 1-Page 미팅 사전 브리프, 현장 밋업 룸, 회고 및 3분 사후 팔로업 트래커"
               >
-                <Sparkles className="w-3.5 h-3.5 text-violet-200" />
-                <span>실무 시너지 허브</span>
+                <Coffee className="w-4 h-4 text-amber-300" />
+                <span>☕ 미팅 전주기 허브</span>
               </button>
-            )}
-            {onOpenPeerTrustCareer && (
+            </div>
+
+            {/* Secondary Action Row: Specialized Quick Studios & Registration Badges */}
+            <div className="flex items-center gap-1.5 flex-wrap justify-end">
+              {onOpenSquadBuilder && (
+                <button
+                  type="button"
+                  data-testid="open-squad-builder-btn"
+                  onClick={onOpenSquadBuilder}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-medium rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all cursor-pointer"
+                  title="프로젝트 스쿼드 가상 편성"
+                >
+                  <Sparkles className="w-3 h-3 text-indigo-500" />
+                  <span>스쿼드</span>
+                </button>
+              )}
+              {onOpenVentureRadar && (
+                <button
+                  type="button"
+                  data-testid="open-venture-radar-btn"
+                  onClick={onOpenVentureRadar}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-medium rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all cursor-pointer"
+                  title="동문·동료 창업 & 시드 투자 레이더"
+                >
+                  <Rocket className="w-3 h-3 text-rose-500" />
+                  <span>창업·시드</span>
+                </button>
+              )}
+              {onOpenKnowledgeExchange && (
+                <button
+                  type="button"
+                  data-testid="open-knowledge-exchange-btn"
+                  onClick={onOpenKnowledgeExchange}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-medium rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all cursor-pointer"
+                  title="실무 슈퍼파워 지식 교환 팟"
+                >
+                  <Coffee className="w-3 h-3 text-amber-500" />
+                  <span>지식 팟</span>
+                </button>
+              )}
+              {onOpenPeerSynergy && (
+                <button
+                  type="button"
+                  data-testid="open-peer-synergy-btn"
+                  onClick={() => onOpenPeerSynergy('tech')}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-medium rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all cursor-pointer"
+                  title="실무 시너지 허브"
+                >
+                  <Sparkles className="w-3 h-3 text-violet-500" />
+                  <span>시너지</span>
+                </button>
+              )}
+              {onOpenPeerTrustCareer && (
+                <button
+                  type="button"
+                  data-testid="open-peer-trust-career-btn"
+                  onClick={() => onOpenPeerTrustCareer('endorsements')}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-medium rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all cursor-pointer"
+                  title="신뢰 & 커리어 스튜디오"
+                >
+                  <Award className="w-3 h-3 text-amber-500" />
+                  <span>피어 보증</span>
+                </button>
+              )}
+              {onOpenNetworkVitality && (
+                <button
+                  type="button"
+                  data-testid="open-network-vitality-btn"
+                  onClick={() => onOpenNetworkVitality('vitality')}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-medium rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all cursor-pointer"
+                  title="관계 생명력 & 밋업 룸"
+                >
+                  <Heart className="w-3 h-3 text-emerald-500" />
+                  <span>생명력·밋업</span>
+                </button>
+              )}
+              {onOpenExecutiveElegance && (
+                <button
+                  type="button"
+                  data-testid="open-executive-elegance-btn"
+                  onClick={() => onOpenExecutiveElegance('scheduler')}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-medium rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all cursor-pointer"
+                  title="품격 & 쇼케이스 스튜디오"
+                >
+                  <Sparkles className="w-3 h-3 text-amber-500" />
+                  <span>품격·쇼케이스</span>
+                </button>
+              )}
+              {onOpenMeetingGuardGovernance && (
+                <button
+                  type="button"
+                  data-testid="open-meeting-guard-governance-btn"
+                  onClick={() => onOpenMeetingGuardGovernance('governance')}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 text-[11px] font-medium rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 transition-all cursor-pointer"
+                  title="거버넌스 & 미팅 가드"
+                >
+                  <ShieldCheck className="w-3 h-3 text-blue-500" />
+                  <span>거버넌스·가드</span>
+                </button>
+              )}
+
+              {/* 기본 등록 버튼들 */}
               <button
-                type="button"
-                data-testid="open-peer-trust-career-btn"
-                onClick={() => onOpenPeerTrustCareer('endorsements')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-amber-500 via-sky-500 to-indigo-600 hover:from-amber-600 hover:to-indigo-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"
-                title="피어 실무 보증, 모바일 디지털 명함(vCard), 1:1 커피챗 룰렛, 커리어 패스 멘토 스튜디오"
+                onClick={onOpenAddModal}
+                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-2xs transition-all active:scale-95 cursor-pointer ml-1"
               >
-                <Award className="w-3.5 h-3.5 text-amber-200" />
-                <span>신뢰 & 커리어 스튜디오</span>
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ 동문 추가</span>
               </button>
-            )}
-            {onOpenNetworkVitality && (
-              <button
-                type="button"
-                data-testid="open-network-vitality-btn"
-                onClick={() => onOpenNetworkVitality('vitality')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-sky-600 hover:from-emerald-700 hover:to-sky-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"
-                title="관계 생명력 4단계 진단, 시즌별 안부 서신, 현장 밋업 룸, 글로벌 미팅 브리프, 실무 SOS 헬프데스크"
-              >
-                <Heart className="w-3.5 h-3.5 text-emerald-200" />
-                <span>관계 생명력 & 밋업 룸</span>
-              </button>
-            )}
-            {onOpenExecutiveElegance && (
-              <button
-                type="button"
-                data-testid="open-executive-elegance-btn"
-                onClick={() => onOpenExecutiveElegance('scheduler')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-amber-600 via-rose-600 to-indigo-600 hover:from-amber-700 hover:to-indigo-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"
-                title="비즈니스 티타임 3선 서신, .ICS 캘린더 생성, 글로벌 거점 출장 인맥 매핑, 감동 메모 캡슐 & 프로덕트 쇼케이스"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-amber-200" />
-                <span>품격 & 쇼케이스 스튜디오</span>
-              </button>
-            )}
-            {onOpenMeetingGuardGovernance && (
-              <button
-                type="button"
-                data-testid="open-meeting-guard-governance-btn"
-                onClick={() => onOpenMeetingGuardGovernance('governance')}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-gradient-to-r from-blue-700 via-indigo-600 to-emerald-600 hover:from-blue-800 hover:to-emerald-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"
-                title="사외이사 겸직 규제·주총 의결권 시뮬레이션, 핵심 인재 승계 풀, 오프라인 무손실 CRDT 및 미팅 3분 사후 팔로업"
-              >
-                <ShieldCheck className="w-3.5 h-3.5 text-blue-200" />
-                <span>거버넌스 & 미팅 가드</span>
-              </button>
-            )}
-            <button
-              onClick={onOpenAddModal}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all active:scale-95 cursor-pointer"
-            >
-              <Plus className="w-3.5 h-3.5" />
-              동문·지인 직접 추가
-            </button>
-            {onOpenCardScanner && (
-              <button
-                onClick={onOpenCardScanner}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 shadow-2xs transition-all active:scale-95 cursor-pointer"
-                title="카메라 또는 명함 이미지 업로드로 1초 등록"
-              >
-                <Camera className="w-3.5 h-3.5 text-teal-600" />
-                <span>명함 스캔 등록</span>
-              </button>
-            )}
+              {onOpenCardScanner && (
+                <button
+                  type="button"
+                  data-testid="open-card-scanner-btn"
+                  onClick={onOpenCardScanner}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-xl bg-white hover:bg-slate-50 text-slate-700 border border-slate-200/90 shadow-2xs transition-all active:scale-95 cursor-pointer"
+                  title="카메라 또는 명함 이미지 업로드로 1초 등록"
+                >
+                  <Camera className="w-3.5 h-3.5 text-teal-600" />
+                  <span>명함 스캔</span>
+                </button>
+              )}
+            </div>
           </div>
         }
       />

@@ -60,6 +60,8 @@ export interface Person {
   currentCompany: string;
   currentDepartment: string;
   currentTitle: string;
+  company?: string;
+  role?: string;
   mobile: string;
   email: string;
   directPhone?: string;

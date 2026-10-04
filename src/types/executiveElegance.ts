@@ -94,6 +94,7 @@ export interface ThoughtfulMemoryCapsule {
     brand: string;
     reason: string;
   };
+  keyMoments?: string[];
   lastUpdated: string;
 }
 

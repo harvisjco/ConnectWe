@@ -51,9 +51,9 @@ export interface ProtocolMessageResult {
  * 청탁금지법(김영란법) 적용 여부 및 가액 한도 안심 판정
  */
 export function checkAntiGraftCompliance(person: Person): AntiGraftGuideline {
-  const company = person.currentCompany.toLowerCase();
+  const company = (person.currentCompany || '').toLowerCase();
   const dept = (person.currentDepartment || '').toLowerCase();
-  const title = person.currentTitle.toLowerCase();
+  const title = (person.currentTitle || person.role || '').toLowerCase();
 
   // 1. 공직자 및 공무원
   if (

@@ -23,7 +23,7 @@ export default defineConfig({
   webServer: {
     command: 'npm run preview',
     url: 'http://127.0.0.1:5199',
-    reuseExistingServer: false,
+    reuseExistingServer: true,
     timeout: 30 * 1000,
   },
 });

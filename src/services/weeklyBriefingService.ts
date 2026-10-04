@@ -183,3 +183,5 @@ ${dealLines}
 
 ※ 본 브리프는 공공 DART 실공시 팩트 및 ConnectWe 암호화 네트워크 그래프를 기반으로 작성되었습니다.`;
 }
+
+export const generateWeeklyExecutiveBrief = getWeeklyBriefingSummary;

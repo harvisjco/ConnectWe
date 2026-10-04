@@ -50,27 +50,31 @@ export function getPastCompanies(person: Person): string[] {
  */
 export function findMutualConnections(target: Person, allPeople: Person[]): MutualConnectionInsight[] {
   const insights: MutualConnectionInsight[] = [];
+  const getCompany = (p: Person) => (p.currentCompany || p.company || '').trim();
+  const getTitle = (p: Person) => (p.currentTitle || p.role || '').trim();
+  const targetCompany = getCompany(target);
   const targetPast = getPastCompanies(target);
   const targetCompanies = new Set<string>([
-    target.currentCompany.toLowerCase(),
+    ...(targetCompany ? [targetCompany.toLowerCase()] : []),
     ...targetPast.map(c => c.toLowerCase())
   ]);
 
   for (const other of allPeople) {
     if (other.id === target.id) continue;
+    const otherCompany = getCompany(other);
 
     // 1. 동일 회사 현재 재직
-    if (other.currentCompany.toLowerCase() === target.currentCompany.toLowerCase()) {
+    if (targetCompany && otherCompany && otherCompany.toLowerCase() === targetCompany.toLowerCase()) {
       insights.push({
         person: other,
-        context: `${target.currentCompany} 현 동료 (${other.currentTitle})`
+        context: `${targetCompany} 현 동료 (${getTitle(other)})`
       });
       continue;
     }
 
     // 2. 알럼나이 (이전 직장 일치)
     const otherPast = getPastCompanies(other);
-    const otherCompanies = [other.currentCompany, ...otherPast].map(c => c.toLowerCase());
+    const otherCompanies = [otherCompany, ...otherPast].filter(Boolean).map(c => c.toLowerCase());
     const matchedCompany = otherCompanies.find(c => targetCompanies.has(c));
     if (matchedCompany) {
       insights.push({
@@ -97,10 +101,11 @@ export function findMutualConnections(target: Person, allPeople: Person[]): Mutu
  * 인물과 연관된 진행 중인 비즈니스 딜 탐색
  */
 export function findRelatedDeals(target: Person, deals: BusinessDeal[]): BusinessDeal[] {
+  const targetCompany = (target.currentCompany || target.company || '').trim().toLowerCase();
   return deals.filter(deal => {
     const isStakeholder = deal.stakeholders.some(s => s.personId === target.id || s.personName === target.name);
-    const isTargetCompany = deal.targetCompany.toLowerCase().includes(target.currentCompany.toLowerCase()) ||
-                            target.currentCompany.toLowerCase().includes(deal.targetCompany.toLowerCase());
+    const dealCompany = (deal.targetCompany || '').trim().toLowerCase();
+    const isTargetCompany = !!(targetCompany && dealCompany && (dealCompany.includes(targetCompany) || targetCompany.includes(dealCompany)));
     return isStakeholder || isTargetCompany;
   });
 }
@@ -211,17 +216,19 @@ export function generateMeetingBriefing(
   const etiquetteGuide = getClusterEtiquetteGuide(cluster);
 
   const isDart = person.sourceType === 'DART_FACT' || !!person.dartInfo?.isPublicDirector;
+  const personCompany = person.currentCompany || person.company || '';
+  const personTitle = person.currentTitle || person.role || '';
   const dartSummary = {
     isFactVerified: isDart,
-    corpName: person.dartInfo?.stockName || person.currentCompany,
+    corpName: person.dartInfo?.stockName || personCompany,
     corpCode: person.dartInfo?.corpCode,
-    role: person.dartInfo?.registeredRole || person.currentTitle,
+    role: person.dartInfo?.registeredRole || personTitle,
     registeredStatus: isDart ? '금융감독원 DART 공시 실명 등기 확인' : '비상장/사외 전문 인재',
     term: person.dartInfo?.registeredTerm
   };
 
   const onePageSummaryText = `[C-Level 미팅 10분 전 스마트 브리핑]
-■ 대상: ${person.currentCompany} ${person.name} ${person.currentTitle}
+■ 대상: ${personCompany} ${person.name} ${personTitle}
 ■ 인재 클러스터: ${cluster.label} (${cluster.superpowers.join(', ')})
 ■ 거버넌스/DART 팩트: ${dartSummary.registeredStatus}${dartSummary.corpName ? ` (${dartSummary.corpName})` : ''}
 ■ 1촌 공통 인맥: ${mutualConnections.length > 0 ? mutualConnections.map(m => `${m.person.name} (${m.context})`).join(', ') : '신규 개척 인연'}

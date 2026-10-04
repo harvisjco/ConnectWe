@@ -32,6 +32,7 @@ export interface CalendarEventPayload {
  */
 export function generateTeaTimeAgenda(person: Person): TeaTimeAgendaResult {
   const isDartExecutive = person.sourceType === 'DART_FACT' || person.dartInfo?.isPublicDirector;
+  const name = person.name || '경영진';
   const company = person.currentCompany || '파트너사';
   const title = person.currentTitle || '대표/임원';
 
@@ -181,17 +182,19 @@ export function downloadIcsFile(event: CalendarEventPayload): void {
  */
 export function generateInvitationLetter(
   person: Person,
-  meetingDate: Date,
+  meetingDate: Date | string,
   venue: string,
   agendaSummary: string
 ): string {
-  const dateStr = meetingDate.toLocaleDateString('ko-KR', { 
+  const d = typeof meetingDate === 'string' ? new Date(meetingDate) : (meetingDate instanceof Date ? meetingDate : new Date());
+  const validDate = isNaN(d.getTime()) ? new Date() : d;
+  const dateStr = validDate.toLocaleDateString('ko-KR', { 
     year: 'numeric', 
     month: 'long', 
     day: 'numeric', 
     weekday: 'short' 
   });
-  const timeStr = meetingDate.toLocaleTimeString('ko-KR', { 
+  const timeStr = validDate.toLocaleTimeString('ko-KR', { 
     hour: '2-digit', 
     minute: '2-digit' 
   });

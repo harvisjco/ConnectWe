@@ -57,8 +57,9 @@ export function calculateDealHealthScore(stakeholders: DealStakeholder[]): numbe
  * 데모 및 초기 경험을 위한 스마트 샘플 딜 생성
  */
 export function generateMockDeals(people: Person[]): BusinessDeal[] {
-  const kakaoPerson = people.find(p => p.currentCompany.includes('카카오') || p.currentCompany.includes('네이버')) || people[0];
-  const samsungPerson = people.find(p => p.currentCompany.includes('삼성') || p.currentCompany.includes('SK')) || people[1] || people[0];
+  const getCompany = (p: Person) => p.currentCompany || p.company || '';
+  const kakaoPerson = people.find(p => getCompany(p).includes('카카오') || getCompany(p).includes('네이버')) || people[0];
+  const samsungPerson = people.find(p => getCompany(p).includes('삼성') || getCompany(p).includes('SK')) || people[1] || people[0];
   const thirdPerson = people.find(p => p.id !== kakaoPerson?.id && p.id !== samsungPerson?.id) || people[2] || people[0];
 
   const deals: BusinessDeal[] = [];
@@ -68,10 +69,10 @@ export function generateMockDeals(people: Person[]): BusinessDeal[] {
       {
         personId: samsungPerson.id,
         personName: samsungPerson.name,
-        company: samsungPerson.currentCompany,
-        title: samsungPerson.currentTitle,
+        company: getCompany(samsungPerson),
+        title: samsungPerson.currentTitle || samsungPerson.role || '',
         role: 'DECISION_MAKER',
-        closeness: samsungPerson.closeness,
+        closeness: samsungPerson.closeness || 2,
         isDartExecutive: samsungPerson.sourceType === 'DART_FACT' || !!samsungPerson.dartInfo?.isPublicDirector,
         notes: '예산 승인권자 및 핵심 의사결정권자'
       }
@@ -79,8 +80,8 @@ export function generateMockDeals(people: Person[]): BusinessDeal[] {
 
     deals.push({
       id: 'deal-1',
-      title: `[엔터프라이즈] ${samsungPerson.currentCompany} 차세대 AI 인프라 수주 계약`,
-      targetCompany: samsungPerson.currentCompany,
+      title: `[엔터프라이즈] ${getCompany(samsungPerson)} 차세대 AI 인프라 수주 계약`,
+      targetCompany: getCompany(samsungPerson),
       targetIndustry: 'IT / 반도체',
       dealSize: '35억원 (연간)',
       stage: 'PROPOSAL',
@@ -96,10 +97,10 @@ export function generateMockDeals(people: Person[]): BusinessDeal[] {
       {
         personId: kakaoPerson.id,
         personName: kakaoPerson.name,
-        company: kakaoPerson.currentCompany,
-        title: kakaoPerson.currentTitle,
+        company: getCompany(kakaoPerson),
+        title: kakaoPerson.currentTitle || kakaoPerson.role || '',
         role: 'CHAMPION',
-        closeness: kakaoPerson.closeness,
+        closeness: kakaoPerson.closeness || 2,
         isDartExecutive: kakaoPerson.sourceType === 'DART_FACT' || !!kakaoPerson.dartInfo?.isPublicDirector,
         notes: '사내 사업부 스폰서 및 기술 검토 총괄'
       }
@@ -107,8 +108,8 @@ export function generateMockDeals(people: Person[]): BusinessDeal[] {
 
     deals.push({
       id: 'deal-2',
-      title: `[전략 제휴] ${kakaoPerson.currentCompany} 거대언어모델(LLM) 공동 서비스 제휴`,
-      targetCompany: kakaoPerson.currentCompany,
+      title: `[전략 제휴] ${getCompany(kakaoPerson)} 거대언어모델(LLM) 공동 서비스 제휴`,
+      targetCompany: getCompany(kakaoPerson),
       targetIndustry: '빅테크 / 플랫폼',
       dealSize: '전략적 사업협력',
       stage: 'MEETING_HELD',
@@ -124,10 +125,10 @@ export function generateMockDeals(people: Person[]): BusinessDeal[] {
       {
         personId: thirdPerson.id,
         personName: thirdPerson.name,
-        company: thirdPerson.currentCompany,
-        title: thirdPerson.currentTitle,
+        company: getCompany(thirdPerson),
+        title: thirdPerson.currentTitle || thirdPerson.role || '',
         role: 'INFLUENCER',
-        closeness: thirdPerson.closeness,
+        closeness: thirdPerson.closeness || 2,
         isDartExecutive: thirdPerson.sourceType === 'DART_FACT' || !!thirdPerson.dartInfo?.isPublicDirector,
         notes: '실무 추천 및 2촌 소개 연결자'
       }
@@ -135,8 +136,8 @@ export function generateMockDeals(people: Person[]): BusinessDeal[] {
 
     deals.push({
       id: 'deal-3',
-      title: `[솔루션 공급] ${thirdPerson.currentCompany} 데이터 보안 볼트 구축 딜`,
-      targetCompany: thirdPerson.currentCompany,
+      title: `[솔루션 공급] ${getCompany(thirdPerson)} 데이터 보안 볼트 구축 딜`,
+      targetCompany: getCompany(thirdPerson),
       targetIndustry: '금융 / 핀테크',
       dealSize: '8.5억원',
       stage: 'WARM_CONTACT',

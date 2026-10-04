@@ -67,7 +67,12 @@ const MeetingGuardGovernanceModal = React.lazy(() => import('./components/modals
 const GlobalCommandPalette = React.lazy(() => import('./components/common/GlobalCommandPalette').then(m => ({ default: m.GlobalCommandPalette })));
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
 
-// 5대 통합 스튜디오 (The 5 Unified Studios) 비동기 레이지 로딩
+// 3대 엔터프라이즈 마스터 허브 (The 3 Enterprise Master Hubs) 비동기 레이지 로딩
+const ExecutiveGovernanceMasterHubModal = React.lazy(() => import('./components/hubs/ExecutiveGovernanceMasterHubModal').then(m => ({ default: m.ExecutiveGovernanceMasterHubModal })));
+const TalentCareerEcosystemMasterHubModal = React.lazy(() => import('./components/hubs/TalentCareerEcosystemMasterHubModal').then(m => ({ default: m.TalentCareerEcosystemMasterHubModal })));
+const MeetingLifecycleMasterHubModal = React.lazy(() => import('./components/hubs/MeetingLifecycleMasterHubModal').then(m => ({ default: m.MeetingLifecycleMasterHubModal })));
+
+// 5대 통합 스튜디오 (The 5 Unified Executive Studios) 비동기 레이지 로딩
 const SmartCardScannerStudio = React.lazy(() => import('./components/studios/SmartCardScannerStudio').then(m => ({ default: m.SmartCardScannerStudio })));
 const ExecutiveMeetingStudio = React.lazy(() => import('./components/studios/ExecutiveMeetingStudio').then(m => ({ default: m.ExecutiveMeetingStudio })));
 const ExecutiveDebriefStudio = React.lazy(() => import('./components/studios/ExecutiveDebriefStudio').then(m => ({ default: m.ExecutiveDebriefStudio })));
@@ -82,6 +87,7 @@ import { offlineSyncService, OfflineSyncState } from './services/offlineSyncServ
 import { detectGoldenCareTargets } from './services/goldenCareService';
 import { onAuthStateChange, signOut, AuthUser } from './services/authService';
 import { ProtocolEventType } from './services/executiveProtocolService';
+import { GovernanceHubTab, TalentHubTab, MeetingHubTab } from './types/masterHub';
 
 import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2, GraduationCap } from 'lucide-react';
 
@@ -291,6 +297,28 @@ export const App: React.FC = () => {
   const handleOpenMeetingGuardGovernance = (tab: 'governance' | 'talent' | 'offline' | 'followup' = 'governance') => {
     setMeetingGuardGovernanceInitialTab(tab);
     setIsMeetingGuardGovernanceOpen(true);
+  };
+
+  // 3대 엔터프라이즈 마스터 허브 상태 & 핸들러 (The 3 Enterprise Master Hubs)
+  const [isGovernanceMasterHubOpen, setIsGovernanceMasterHubOpen] = useState(false);
+  const [governanceHubInitialTab, setGovernanceHubInitialTab] = useState<GovernanceHubTab>('governance');
+  const handleOpenGovernanceMasterHub = (tab?: GovernanceHubTab | string) => {
+    setGovernanceHubInitialTab((tab as GovernanceHubTab) || 'governance');
+    setIsGovernanceMasterHubOpen(true);
+  };
+
+  const [isTalentMasterHubOpen, setIsTalentMasterHubOpen] = useState(false);
+  const [talentHubInitialTab, setTalentHubInitialTab] = useState<TalentHubTab>('squad');
+  const handleOpenTalentMasterHub = (tab?: TalentHubTab | string) => {
+    setTalentHubInitialTab((tab as TalentHubTab) || 'squad');
+    setIsTalentMasterHubOpen(true);
+  };
+
+  const [isMeetingMasterHubOpen, setIsMeetingMasterHubOpen] = useState(false);
+  const [meetingHubInitialTab, setMeetingHubInitialTab] = useState<MeetingHubTab>('schedule');
+  const handleOpenMeetingMasterHub = (tab?: MeetingHubTab | string) => {
+    setMeetingHubInitialTab((tab as MeetingHubTab) || 'schedule');
+    setIsMeetingMasterHubOpen(true);
   };
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
@@ -596,6 +624,9 @@ export const App: React.FC = () => {
                   onOpenNetworkVitality={handleOpenNetworkVitality}
                   onOpenExecutiveElegance={handleOpenExecutiveElegance}
                   onOpenMeetingGuardGovernance={handleOpenMeetingGuardGovernance}
+                  onOpenGovernanceMasterHub={handleOpenGovernanceMasterHub}
+                  onOpenTalentMasterHub={handleOpenTalentMasterHub}
+                  onOpenMeetingMasterHub={handleOpenMeetingMasterHub}
                   onShowToast={showToast}
                   onSelectUserRole={handleSelectUserRole}
                 />
@@ -1054,6 +1085,49 @@ export const App: React.FC = () => {
         />
       )}
 
+      {/* ========================================================
+          3대 엔터프라이즈 마스터 허브 (The 3 Enterprise Master Hubs)
+          ======================================================== */}
+
+      {/* Hub 1: C-Level 경영 거버넌스 & 전략 인텔리전스 마스터 허브 */}
+      {isGovernanceMasterHubOpen && (
+        <ExecutiveGovernanceMasterHubModal
+          isOpen={true}
+          initialTab={governanceHubInitialTab}
+          people={people}
+          selectedPerson={selectedPerson}
+          onSelectPerson={setSelectedPerson}
+          onClose={() => setIsGovernanceMasterHubOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* Hub 2: 실무 인재 & 커리어 성장 생태계 마스터 허브 */}
+      {isTalentMasterHubOpen && (
+        <TalentCareerEcosystemMasterHubModal
+          isOpen={true}
+          initialTab={talentHubInitialTab}
+          people={people}
+          selectedPerson={selectedPerson}
+          onSelectPerson={setSelectedPerson}
+          onClose={() => setIsTalentMasterHubOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
+      {/* Hub 3: 비즈니스 미팅 & 관계 라이프사이클 마스터 허브 */}
+      {isMeetingMasterHubOpen && (
+        <MeetingLifecycleMasterHubModal
+          isOpen={true}
+          initialTab={meetingHubInitialTab}
+          people={people}
+          selectedPerson={selectedPerson}
+          onSelectPerson={setSelectedPerson}
+          onClose={() => setIsMeetingMasterHubOpen(false)}
+          onShowToast={showToast}
+        />
+      )}
+
       {/* Proximity Tea Bundle Modal (거점 외근 동선 지능형 티타임 번들러) */}
       {teaBundleClusterId && (
         <ProximityTeaBundleModal
@@ -1204,6 +1278,9 @@ export const App: React.FC = () => {
         onOpenNetworkVitality={handleOpenNetworkVitality}
         onOpenExecutiveElegance={handleOpenExecutiveElegance}
         onOpenMeetingGuardGovernance={handleOpenMeetingGuardGovernance}
+        onOpenGovernanceMasterHub={handleOpenGovernanceMasterHub}
+        onOpenTalentMasterHub={handleOpenTalentMasterHub}
+        onOpenMeetingMasterHub={handleOpenMeetingMasterHub}
         onNavigateView={(v: NavViewType) => handleNavigateView(v)}
       />
 

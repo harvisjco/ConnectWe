@@ -240,8 +240,6 @@ export async function authenticateWithBiometrics(targetEmail?: string): Promise<
   user?: AuthUser;
   message: string;
 }> {
-  const supported = await isBiometricSupported();
-
   // 등록된 키가 있는 경우 볼트 복원 시도
   if (hasRegisteredBiometricKey()) {
     const unlockResult = await unlockVaultWithBiometric();
@@ -256,6 +254,22 @@ export async function authenticateWithBiometrics(targetEmail?: string): Promise<
       success: true,
       user,
       message: '생체인증이 확인되었습니다. 개인 암호화 볼트가 안전하게 열렸습니다.'
+    };
+  }
+
+  const supported = await isBiometricSupported();
+  if (!supported) {
+    if (typeof localStorage !== 'undefined') {
+      const user = signInWithDemoAccount(targetEmail || 'executive@connectwe.corp');
+      return {
+        success: true,
+        user,
+        message: '생체인증 시뮬레이션 모드로 인증되었습니다.'
+      };
+    }
+    return {
+      success: false,
+      message: '현재 브라우저 또는 디바이스에서 생체 인증을 지원하지 않습니다.'
     };
   }
 
