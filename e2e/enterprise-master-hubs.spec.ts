@@ -138,4 +138,35 @@ test.describe('3대 엔터프라이즈 마스터 허브 (3 Enterprise Master Hub
     await expect(ventureBtn).toBeVisible();
     await expect(scanBtn).toBeVisible();
   });
+
+  test('5. SidebarLNB 내 3대 엔터프라이즈 마스터 허브 바로가기 연동 검증', async ({ page }) => {
+    // 1) LNB 거버넌스 허브 열기 및 닫기
+    const lnbGovBtn = page.locator('[data-testid="lnb-governance-hub"]').first();
+    await expect(lnbGovBtn).toBeVisible({ timeout: 5000 });
+    await lnbGovBtn.click();
+    const modal = page.locator('[role="dialog"]');
+    await expect(modal).toBeVisible({ timeout: 5000 });
+    await expect(modal.locator('text=경영 거버넌스 & 전략 인텔리전스 마스터 허브')).toBeVisible();
+    await modal.locator('button:has-text("닫기")').click();
+    await expect(modal).not.toBeVisible();
+
+    // 2) LNB 실무 인재 생태계 허브 열기 및 닫기
+    const lnbTalentBtn = page.locator('[data-testid="lnb-talent-hub"]').first();
+    await expect(lnbTalentBtn).toBeVisible({ timeout: 5000 });
+    await lnbTalentBtn.click();
+    await expect(modal).toBeVisible({ timeout: 5000 });
+    await expect(modal.locator('text=실무 인재 & 커리어 성장 생태계 마스터 허브')).toBeVisible();
+    await modal.locator('button:has-text("닫기")').click();
+    await expect(modal).not.toBeVisible();
+
+    // 3) LNB 미팅 전주기 허브 열기 및 닫기
+    const lnbMeetingBtn = page.locator('[data-testid="lnb-meeting-hub"]').first();
+    await expect(lnbMeetingBtn).toBeVisible({ timeout: 5000 });
+    await lnbMeetingBtn.click();
+    await expect(modal).toBeVisible({ timeout: 5000 });
+    await expect(modal.locator('text=미팅 & 관계 라이프사이클 마스터 허브')).toBeVisible();
+    await modal.locator('button:has-text("닫기")').click();
+    await expect(modal).not.toBeVisible();
+  });
 });
+

@@ -42,7 +42,6 @@ const ImportDataModal = React.lazy(() => import('./components/import/ImportDataM
 const AddPersonModal = React.lazy(() => import('./components/crm/AddPersonModal').then(m => ({ default: m.AddPersonModal })));
 const DailyDigestModal = React.lazy(() => import('./components/digest/DailyDigestModal').then(m => ({ default: m.DailyDigestModal })));
 const DisclosureAlertModal = React.lazy(() => import('./components/digest/DisclosureAlertModal').then(m => ({ default: m.DisclosureAlertModal })));
-const DegreesOfSeparationModal = React.lazy(() => import('./components/network/DegreesOfSeparationModal').then(m => ({ default: m.DegreesOfSeparationModal })));
 const NetworkDashboard = React.lazy(() => import('./components/dashboard/NetworkDashboard').then(m => ({ default: m.NetworkDashboard })));
 const UserSettingsModal = React.lazy(() => import('./components/settings/UserSettingsModal').then(m => ({ default: m.UserSettingsModal })));
 const CalendarImportModal = React.lazy(() => import('./components/radar/CalendarImportModal').then(m => ({ default: m.CalendarImportModal })));
@@ -50,8 +49,6 @@ const PrivateSalonModal = React.lazy(() => import('./components/modals/PrivateSa
 const CadenceGreetingModal = React.lazy(() => import('./components/modals/CadenceGreetingModal').then(m => ({ default: m.CadenceGreetingModal })));
 const ProximityTeaBundleModal = React.lazy(() => import('./components/radar/ProximityTeaBundleModal').then(m => ({ default: m.ProximityTeaBundleModal })));
 const ExecutiveWeeklyBriefModal = React.lazy(() => import('./components/modals/ExecutiveWeeklyBriefModal').then(m => ({ default: m.ExecutiveWeeklyBriefModal })));
-const RelationshipHeatmapModal = React.lazy(() => import('./components/modals/RelationshipHeatmapModal').then(m => ({ default: m.RelationshipHeatmapModal })));
-const GratitudeSettlementModal = React.lazy(() => import('./components/modals/GratitudeSettlementModal').then(m => ({ default: m.GratitudeSettlementModal })));
 const GoldenCareModal = React.lazy(() => import('./components/modals/GoldenCareModal').then(m => ({ default: m.GoldenCareModal })));
 const ExecutiveProtocolModal = React.lazy(() => import('./components/modals/ExecutiveProtocolModal').then(m => ({ default: m.ExecutiveProtocolModal })));
 const AmbientAudioBriefingModal = React.lazy(() => import('./components/modals/AmbientAudioBriefingModal').then(m => ({ default: m.AmbientAudioBriefingModal })));
@@ -74,10 +71,9 @@ const MeetingLifecycleMasterHubModal = React.lazy(() => import('./components/hub
 
 // 5대 통합 스튜디오 (The 5 Unified Executive Studios) 비동기 레이지 로딩
 const SmartCardScannerStudio = React.lazy(() => import('./components/studios/SmartCardScannerStudio').then(m => ({ default: m.SmartCardScannerStudio })));
-const ExecutiveMeetingStudio = React.lazy(() => import('./components/studios/ExecutiveMeetingStudio').then(m => ({ default: m.ExecutiveMeetingStudio })));
-const ExecutiveDebriefStudio = React.lazy(() => import('./components/studios/ExecutiveDebriefStudio').then(m => ({ default: m.ExecutiveDebriefStudio })));
-const WarmIntroHubStudio = React.lazy(() => import('./components/studios/WarmIntroHubStudio').then(m => ({ default: m.WarmIntroHubStudio })));
+const ExecutiveEngagementStudio = React.lazy(() => import('./components/studios/ExecutiveEngagementStudio').then(m => ({ default: m.ExecutiveEngagementStudio })));
 const DataVaultSecurityStudio = React.lazy(() => import('./components/studios/DataVaultSecurityStudio').then(m => ({ default: m.DataVaultSecurityStudio })));
+const RelationshipDiscoveryStudio = React.lazy(() => import('./components/studios/RelationshipDiscoveryStudio').then(m => ({ default: m.RelationshipDiscoveryStudio })));
 
 import { BusinessDeal } from './services/dealPipelineService';
 import { maskPerson } from './services/privacyShieldService';
@@ -536,6 +532,9 @@ export const App: React.FC = () => {
           isOpenMobile={isMobileSidebarOpen}
           onCloseMobile={() => setIsMobileSidebarOpen(false)}
           onOpenCopilot={() => setIsCopilotOpen(true)}
+          onOpenGovernanceMasterHub={handleOpenGovernanceMasterHub}
+          onOpenTalentMasterHub={handleOpenTalentMasterHub}
+          onOpenMeetingMasterHub={handleOpenMeetingMasterHub}
         />
 
         {/* Main Content Area */}
@@ -848,20 +847,7 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* 2nd-Degree Separation Bridge Modal */}
-      {bridgeTargetPerson && (
-        <DegreesOfSeparationModal
-          targetPerson={bridgeTargetPerson}
-          people={people}
-          onClose={() => setBridgeTargetPerson(null)}
-          onSelectPerson={setSelectedPerson}
-          onOpenBounty={() => {
-            setBridgeTargetPerson(null);
-            handleNavigateView('bounty');
-          }}
-          onShowToast={showToast}
-        />
-      )}
+      {/* 2nd-Degree Separation Bridge (통합 메가스튜디오 2 RelationshipDiscoveryStudio로 일원화됨) */}
 
       {/* Network Intelligence Dashboard */}
       {isDashboardOpen && (
@@ -1156,30 +1142,7 @@ export const App: React.FC = () => {
       )}
 
 
-      {/* C-Level Relationship Tie Strength & Temperature Heatmap Modal */}
-      {isHeatmapOpen && (
-        <RelationshipHeatmapModal
-          people={people}
-          meetings={meetings}
-          onClose={() => setIsHeatmapOpen(false)}
-          onSelectPerson={setSelectedPerson}
-          onShowToast={showToast}
-        />
-      )}
-
-      {/* Business Deal Referral Reward & Gratitude Settlement Dashboard Modal */}
-      {isGratitudeOpen && (
-        <GratitudeSettlementModal
-          people={people}
-          initialDeal={gratitudeTargetDeal}
-          onClose={() => {
-            setIsGratitudeOpen(false);
-            setGratitudeTargetDeal(null);
-          }}
-          onSelectPerson={setSelectedPerson}
-          onShowToast={showToast}
-        />
-      )}
+      {/* C-Level Relationship Tie Strength & Temperature Heatmap & Gratitude Settlement (통합 메가스튜디오 2로 일원화) */}
 
       {/* DART Corporate Disclosure Alert Modal */}
       {isDisclosureAlertOpen && (
@@ -1310,66 +1273,105 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Studio 2: C-Level 미팅 & 티타임 준비 스튜디오 (1-Page 스마트 브리프 ↔ 3대 의제 & .ICS 캘린더) */}
-      {(!!meetingPrepTargetPerson || isTeaTimeModalOpen) && (
-        <ExecutiveMeetingStudio
+      {/* ========================================================
+          통합 메가스튜디오 1: 경영진 미팅 & 소통 컨시어지 스튜디오
+          (ExecutiveMeetingStudio + ExecutiveDebriefStudio + ProximityTea + GoldenCare + Protocol 대통합)
+          ======================================================== */}
+      {(!!meetingPrepTargetPerson || isTeaTimeModalOpen || !!debriefTargetPerson || isVoiceDebriefOpen || !!followUpTargetPerson || isGoldenCareOpen || isProtocolOpen || isAudioBriefingOpen) && (
+        <ExecutiveEngagementStudio
           isOpen={true}
-          initialTab={isTeaTimeModalOpen ? 'teatime' : 'brief'}
-          person={teaTimeTargetPerson || meetingPrepTargetPerson || (people.length > 0 ? people[0] : null)}
+          initialTab={
+            isTeaTimeModalOpen
+              ? 'teatime'
+              : (isVoiceDebriefOpen || !!debriefTargetPerson || !!followUpTargetPerson)
+              ? 'debrief'
+              : (isGoldenCareOpen || isProtocolOpen)
+              ? 'care'
+              : 'brief'
+          }
+          targetPerson={
+            teaTimeTargetPerson ||
+            meetingPrepTargetPerson ||
+            debriefTargetPerson ||
+            voiceDebriefTarget ||
+            followUpTargetPerson ||
+            goldenCareTargetPerson ||
+            protocolTargetPerson ||
+            audioBriefingTargetPerson ||
+            (people.length > 0 ? people[0] : null)
+          }
           allPeople={people}
           onClose={() => {
             setMeetingPrepTargetPerson(null);
             setIsTeaTimeModalOpen(false);
             setTeaTimeTargetPerson(null);
+            setDebriefTargetPerson(null);
+            setIsVoiceDebriefOpen(false);
+            setVoiceDebriefTarget(null);
+            setFollowUpTargetPerson(null);
+            setIsGoldenCareOpen(false);
+            setGoldenCareTargetPerson(null);
+            setIsProtocolOpen(false);
+            setProtocolTargetPerson(null);
+            setIsAudioBriefingOpen(false);
+            setAudioBriefingTargetPerson(null);
           }}
-          onSelectPerson={(p) => {
+          onSelectPerson={(p: Person) => {
             setMeetingPrepTargetPerson(null);
             setIsTeaTimeModalOpen(false);
             setTeaTimeTargetPerson(null);
             setSelectedPerson(p);
           }}
-          onOpenAudioBriefing={(p) => handleOpenAudioBriefing(p)}
           onShowToast={showToast}
         />
       )}
 
-      {/* Studio 3: 미팅 회고 & 후속 소통 스튜디오 (🎙️ 30초 음성 모드 ↔ ⌨️ 1분 텍스트 모드 & 감사 서신) */}
-      {(!!debriefTargetPerson || isVoiceDebriefOpen || !!followUpTargetPerson) && (
-        <ExecutiveDebriefStudio
+      {/* ========================================================
+          통합 메가스튜디오 2: 인맥 탐색 & 웜 인트로 지능형 스튜디오
+          (WarmIntroHubStudio + DegreesOfSeparation + RelationshipHeatmap + GratitudeSettlement 대통합)
+          ======================================================== */}
+      {(isWarmIntroPathOpen || !!warmIntroConnectorTargets || !!bridgeTargetPerson || isHeatmapOpen || isGratitudeOpen) && (
+        <RelationshipDiscoveryStudio
           isOpen={true}
-          initialMode={isVoiceDebriefOpen ? 'voice' : 'text'}
-          person={debriefTargetPerson || voiceDebriefTarget || followUpTargetPerson || (people.length > 0 ? people[0] : null)}
+          initialTab={
+            isHeatmapOpen
+              ? 'heatmap'
+              : isGratitudeOpen
+              ? 'gratitude'
+              : bridgeTargetPerson
+              ? 'degrees'
+              : 'path'
+          }
           people={people}
-          onClose={() => {
-            setDebriefTargetPerson(null);
-            setIsVoiceDebriefOpen(false);
-            setVoiceDebriefTarget(null);
-            setFollowUpTargetPerson(null);
-          }}
-          onUpdatePerson={handleUpdatePerson}
-          onShowToast={showToast}
-        />
-      )}
-
-      {/* Studio 4: 웜 인트로 & 관계 허브 스튜디오 (최단 신뢰 소개 경로 ↔ Double Opt-in 두 사람 잇기) */}
-      {(isWarmIntroPathOpen || !!warmIntroConnectorTargets) && (
-        <WarmIntroHubStudio
-          isOpen={true}
-          initialTab={warmIntroConnectorTargets ? 'connect_two' : 'find_path'}
-          people={people}
-          targetPerson={warmIntroPathTarget}
+          targetPerson={bridgeTargetPerson || warmIntroPathTarget}
           personA={warmIntroConnectorTargets?.personA}
           personB={warmIntroConnectorTargets?.personB}
+          meetings={meetings}
+          initialDeal={gratitudeTargetDeal}
           onClose={() => {
             setIsWarmIntroPathOpen(false);
             setWarmIntroPathTarget(null);
             setWarmIntroConnectorTargets(null);
+            setBridgeTargetPerson(null);
+            setIsHeatmapOpen(false);
+            setIsGratitudeOpen(false);
+            setGratitudeTargetDeal(null);
           }}
           onSelectPerson={(p) => {
             setIsWarmIntroPathOpen(false);
             setWarmIntroPathTarget(null);
             setWarmIntroConnectorTargets(null);
+            setBridgeTargetPerson(null);
+            setIsHeatmapOpen(false);
+            setIsGratitudeOpen(false);
             setSelectedPerson(p);
+          }}
+          onOpenTeatimeWithPerson={(p) => {
+            setIsWarmIntroPathOpen(false);
+            setIsHeatmapOpen(false);
+            setBridgeTargetPerson(null);
+            setTeaTimeTargetPerson(p);
+            setIsTeaTimeModalOpen(true);
           }}
           onShowToast={showToast}
         />

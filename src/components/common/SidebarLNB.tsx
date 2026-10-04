@@ -6,7 +6,7 @@ import {
   Briefcase, TrendingUp, Gift, Users,
   Share2, Orbit, Compass, Clock,
   Sparkles, ChevronLeft, ChevronRight, X,
-  GraduationCap
+  GraduationCap, ShieldCheck, Coffee
 } from 'lucide-react';
 
 export type NavViewType = 
@@ -26,6 +26,9 @@ interface SidebarLNBProps {
   isOpenMobile: boolean;
   onCloseMobile: () => void;
   onOpenCopilot: () => void;
+  onOpenGovernanceMasterHub?: (tab?: string) => void;
+  onOpenTalentMasterHub?: (tab?: string) => void;
+  onOpenMeetingMasterHub?: (tab?: string) => void;
 }
 
 interface NavItem {
@@ -55,7 +58,10 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
   onToggleCollapse,
   isOpenMobile,
   onCloseMobile,
-  onOpenCopilot
+  onOpenCopilot,
+  onOpenGovernanceMasterHub,
+  onOpenTalentMasterHub,
+  onOpenMeetingMasterHub
 }) => {
   // 실시간 수치 집계
   const dartFactCount = people.filter(p => p.sourceType === 'DART_FACT' || p.dartInfo?.isPublicDirector).length;
@@ -383,6 +389,103 @@ export const SidebarLNB: React.FC<SidebarLNBProps> = ({
 
       {/* Nav Menu Items List */}
       <div className="flex-1 overflow-y-auto px-2 py-3 space-y-4 scrollbar-none">
+        {/* 3 Enterprise Master Hubs Banner / Quick Access */}
+        {(onOpenGovernanceMasterHub || onOpenTalentMasterHub || onOpenMeetingMasterHub) && (
+          <div className="space-y-1.5 pb-2 border-b border-slate-200/80 dark:border-slate-800/80">
+            {!isCollapsed ? (
+              <div className="flex items-center justify-between px-2.5 pt-1 pb-1">
+                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 tracking-tight">
+                  엔터프라이즈 마스터 허브
+                </span>
+                <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-200/60 dark:border-indigo-800/60 font-mono">
+                  SUITE
+                </span>
+              </div>
+            ) : (
+              <div className="w-full flex justify-center py-0.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+              </div>
+            )}
+
+            <div className="space-y-1">
+              {onOpenGovernanceMasterHub && (
+                <button
+                  type="button"
+                  data-testid="lnb-governance-hub"
+                  onClick={() => {
+                    onOpenGovernanceMasterHub();
+                    onCloseMobile();
+                  }}
+                  title={isCollapsed ? "경영 거버넌스 & 전략 인텔리전스 마스터 허브" : undefined}
+                  className={`w-full flex items-center rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-blue-700 dark:hover:text-blue-300 hover:bg-blue-50/80 dark:hover:bg-blue-950/40 border border-transparent hover:border-blue-200 dark:hover:border-blue-800/60 transition-all cursor-pointer ${
+                    isCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 truncate">
+                    <ShieldCheck className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0" />
+                    {!isCollapsed && <span className="truncate">경영 거버넌스 허브</span>}
+                  </div>
+                  {!isCollapsed && (
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 shrink-0">
+                      C-Level
+                    </span>
+                  )}
+                </button>
+              )}
+
+              {onOpenTalentMasterHub && (
+                <button
+                  type="button"
+                  data-testid="lnb-talent-hub"
+                  onClick={() => {
+                    onOpenTalentMasterHub();
+                    onCloseMobile();
+                  }}
+                  title={isCollapsed ? "실무 인재 & 커리어 성장 생태계 마스터 허브" : undefined}
+                  className={`w-full flex items-center rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-indigo-700 dark:hover:text-indigo-300 hover:bg-indigo-50/80 dark:hover:bg-indigo-950/40 border border-transparent hover:border-indigo-200 dark:hover:border-indigo-800/60 transition-all cursor-pointer ${
+                    isCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 truncate">
+                    <Users className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                    {!isCollapsed && <span className="truncate">실무 인재 생태계 허브</span>}
+                  </div>
+                  {!isCollapsed && (
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 shrink-0">
+                      스쿼드
+                    </span>
+                  )}
+                </button>
+              )}
+
+              {onOpenMeetingMasterHub && (
+                <button
+                  type="button"
+                  data-testid="lnb-meeting-hub"
+                  onClick={() => {
+                    onOpenMeetingMasterHub();
+                    onCloseMobile();
+                  }}
+                  title={isCollapsed ? "비즈니스 미팅 & 관계 라이프사이클 마스터 허브" : undefined}
+                  className={`w-full flex items-center rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-amber-700 dark:hover:text-amber-300 hover:bg-amber-50/80 dark:hover:bg-amber-950/40 border border-transparent hover:border-amber-200 dark:hover:border-amber-800/60 transition-all cursor-pointer ${
+                    isCollapsed ? 'justify-center p-2' : 'justify-between px-2.5 py-2'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 truncate">
+                    <Coffee className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
+                    {!isCollapsed && <span className="truncate">미팅 전주기 허브</span>}
+                  </div>
+                  {!isCollapsed && (
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 shrink-0">
+                      Full
+                    </span>
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
         {sections.map((section, sIdx) => (
           <div key={sIdx} className="space-y-1">
             {/* Section Header with GoodPartner Pill Tag */}
