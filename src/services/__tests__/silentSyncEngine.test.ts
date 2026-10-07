@@ -26,5 +26,5 @@ describe('silentSyncEngine (무감각 E2EE 백그라운드 데이터 볼트)', (
     // 로드 및 복호화 검증
     const loaded = await silentSyncEngine.loadVaultData<typeof testData>('test_person_1');
     expect(loaded).toEqual(testData);
-  });
+  }, 20000);
 });

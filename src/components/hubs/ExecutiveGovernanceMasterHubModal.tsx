@@ -39,7 +39,6 @@ import { getWeeklyBriefingSummary, generateWeeklyBriefingTextCopy } from '../../
 import { calculateTieStrength } from '../../services/tieStrengthService';
 import {
   getGovernanceHistory,
-  GovernanceHistoryItem,
   GovernanceEventType
 } from '../../services/dartGovernanceService';
 

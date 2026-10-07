@@ -320,12 +320,6 @@ export const App: React.FC = () => {
     });
   };
 
-  // 실무 인재 하위 모달 호환 핸들러 (통합 메가스튜디오 3 TalentEcosystemStudio 탭으로 원클릭 직결)
-  const handleOpenSquadBuilder = () => handleOpenTalentMasterHub('squad');
-  const handleOpenVentureRadar = () => handleOpenTalentMasterHub('venture');
-  const handleOpenKnowledgeExchange = () => handleOpenTalentMasterHub('knowledge');
-  const handleOpenPeerSynergy = () => handleOpenTalentMasterHub('trust_card');
-  const handleOpenPeerTrustCareer = () => handleOpenTalentMasterHub('trust_card');
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
   useEffect(() => {
