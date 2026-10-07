@@ -53,27 +53,22 @@ const GoldenCareModal = React.lazy(() => import('./components/modals/GoldenCareM
 const ExecutiveProtocolModal = React.lazy(() => import('./components/modals/ExecutiveProtocolModal').then(m => ({ default: m.ExecutiveProtocolModal })));
 const AmbientAudioBriefingModal = React.lazy(() => import('./components/modals/AmbientAudioBriefingModal').then(m => ({ default: m.AmbientAudioBriefingModal })));
 const CrossBoardSynergyModal = React.lazy(() => import('./components/modals/CrossBoardSynergyModal').then(m => ({ default: m.CrossBoardSynergyModal })));
-const ProjectSquadBuilderModal = React.lazy(() => import('./components/modals/ProjectSquadBuilderModal').then(m => ({ default: m.ProjectSquadBuilderModal })));
-const EarlyStageVentureRadarModal = React.lazy(() => import('./components/modals/EarlyStageVentureRadarModal').then(m => ({ default: m.EarlyStageVentureRadarModal })));
-const KnowledgeExchangeModal = React.lazy(() => import('./components/modals/KnowledgeExchangeModal').then(m => ({ default: m.KnowledgeExchangeModal })));
-const PeerSynergyHubModal = React.lazy(() => import('./components/modals/PeerSynergyHubModal').then(m => ({ default: m.PeerSynergyHubModal })));
-const PeerTrustCareerModal = React.lazy(() => import('./components/modals/PeerTrustCareerModal').then(m => ({ default: m.PeerTrustCareerModal })));
 const NetworkVitalityModal = React.lazy(() => import('./components/modals/NetworkVitalityModal').then(m => ({ default: m.NetworkVitalityModal })));
 const ExecutiveEleganceModal = React.lazy(() => import('./components/modals/ExecutiveEleganceModal').then(m => ({ default: m.ExecutiveEleganceModal })));
 const MeetingGuardGovernanceModal = React.lazy(() => import('./components/modals/MeetingGuardGovernanceModal').then(m => ({ default: m.MeetingGuardGovernanceModal })));
 const GlobalCommandPalette = React.lazy(() => import('./components/common/GlobalCommandPalette').then(m => ({ default: m.GlobalCommandPalette })));
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
 
-// 3대 엔터프라이즈 마스터 허브 (The 3 Enterprise Master Hubs) 비동기 레이지 로딩
+// 엔터프라이즈 마스터 허브 비동기 레이지 로딩
 const ExecutiveGovernanceMasterHubModal = React.lazy(() => import('./components/hubs/ExecutiveGovernanceMasterHubModal').then(m => ({ default: m.ExecutiveGovernanceMasterHubModal })));
-const TalentCareerEcosystemMasterHubModal = React.lazy(() => import('./components/hubs/TalentCareerEcosystemMasterHubModal').then(m => ({ default: m.TalentCareerEcosystemMasterHubModal })));
 const MeetingLifecycleMasterHubModal = React.lazy(() => import('./components/hubs/MeetingLifecycleMasterHubModal').then(m => ({ default: m.MeetingLifecycleMasterHubModal })));
 
-// 5대 통합 스튜디오 (The 5 Unified Executive Studios) 비동기 레이지 로딩
+// 4대 전문 스튜디오 비동기 레이지 로딩
 const SmartCardScannerStudio = React.lazy(() => import('./components/studios/SmartCardScannerStudio').then(m => ({ default: m.SmartCardScannerStudio })));
 const ExecutiveEngagementStudio = React.lazy(() => import('./components/studios/ExecutiveEngagementStudio').then(m => ({ default: m.ExecutiveEngagementStudio })));
 const DataVaultSecurityStudio = React.lazy(() => import('./components/studios/DataVaultSecurityStudio').then(m => ({ default: m.DataVaultSecurityStudio })));
 const RelationshipDiscoveryStudio = React.lazy(() => import('./components/studios/RelationshipDiscoveryStudio').then(m => ({ default: m.RelationshipDiscoveryStudio })));
+const TalentEcosystemStudio = React.lazy(() => import('./components/studios/TalentEcosystemStudio').then(m => ({ default: m.TalentEcosystemStudio })));
 
 import { BusinessDeal } from './services/dealPipelineService';
 import { maskPerson } from './services/privacyShieldService';
@@ -83,7 +78,7 @@ import { offlineSyncService, OfflineSyncState } from './services/offlineSyncServ
 import { detectGoldenCareTargets } from './services/goldenCareService';
 import { onAuthStateChange, signOut, AuthUser } from './services/authService';
 import { ProtocolEventType } from './services/executiveProtocolService';
-import { GovernanceHubTab, TalentHubTab, MeetingHubTab } from './types/masterHub';
+import { GovernanceHubTab, TalentHubTab, MeetingHubTab, MasterHubState } from './types/masterHub';
 
 import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2, GraduationCap } from 'lucide-react';
 
@@ -245,33 +240,24 @@ export const App: React.FC = () => {
     setIsCrossBoardOpen(true);
   };
 
-  const [isSquadBuilderOpen, setIsSquadBuilderOpen] = useState(false);
   const handleOpenSquadBuilder = () => {
-    setIsSquadBuilderOpen(true);
+    handleOpenTalentMasterHub('squad');
   };
 
-  const [isVentureRadarOpen, setIsVentureRadarOpen] = useState(false);
   const handleOpenVentureRadar = () => {
-    setIsVentureRadarOpen(true);
+    handleOpenTalentMasterHub('venture');
   };
 
-  const [isKnowledgeExchangeOpen, setIsKnowledgeExchangeOpen] = useState(false);
   const handleOpenKnowledgeExchange = () => {
-    setIsKnowledgeExchangeOpen(true);
+    handleOpenTalentMasterHub('knowledge_guild');
   };
 
-  const [isPeerSynergyOpen, setIsPeerSynergyOpen] = useState(false);
-  const [peerSynergyInitialTab, setPeerSynergyInitialTab] = useState<'tech' | 'referral' | 'guild' | 'notes'>('tech');
-  const handleOpenPeerSynergy = (tab: 'tech' | 'referral' | 'guild' | 'notes' = 'tech') => {
-    setPeerSynergyInitialTab(tab);
-    setIsPeerSynergyOpen(true);
+  const handleOpenPeerSynergy = (_tab: 'tech' | 'referral' | 'guild' | 'notes' = 'tech') => {
+    handleOpenTalentMasterHub('trust_card');
   };
 
-  const [isPeerTrustCareerOpen, setIsPeerTrustCareerOpen] = useState(false);
-  const [peerTrustCareerInitialTab, setPeerTrustCareerInitialTab] = useState<'endorsements' | 'digitalCard' | 'roulette' | 'careerPath'>('endorsements');
-  const handleOpenPeerTrustCareer = (tab: 'endorsements' | 'digitalCard' | 'roulette' | 'careerPath' = 'endorsements') => {
-    setPeerTrustCareerInitialTab(tab);
-    setIsPeerTrustCareerOpen(true);
+  const handleOpenPeerTrustCareer = (_tab: 'endorsements' | 'digitalCard' | 'roulette' | 'careerPath' = 'endorsements') => {
+    handleOpenTalentMasterHub('trust_card');
   };
 
   const [isNetworkVitalityOpen, setIsNetworkVitalityOpen] = useState(false);
@@ -295,27 +281,51 @@ export const App: React.FC = () => {
     setIsMeetingGuardGovernanceOpen(true);
   };
 
-  // 3대 엔터프라이즈 마스터 허브 상태 & 핸들러 (The 3 Enterprise Master Hubs)
-  const [isGovernanceMasterHubOpen, setIsGovernanceMasterHubOpen] = useState(false);
-  const [governanceHubInitialTab, setGovernanceHubInitialTab] = useState<GovernanceHubTab>('governance');
-  const handleOpenGovernanceMasterHub = (tab?: GovernanceHubTab | string) => {
-    setGovernanceHubInitialTab((tab as GovernanceHubTab) || 'governance');
-    setIsGovernanceMasterHubOpen(true);
+  // 3대 엔터프라이즈 마스터 허브 단일 상태 머신 (Unified Master Hub State Machine)
+  const [masterHubState, setMasterHubState] = useState<MasterHubState>({
+    activeHub: null,
+    initialTab: undefined,
+    contextPerson: null
+  });
+
+  const handleOpenGovernanceMasterHub = (tab?: GovernanceHubTab | string, person?: Person) => {
+    setMasterHubState({
+      activeHub: 'governance',
+      initialTab: (tab as GovernanceHubTab) || 'governance',
+      contextPerson: person || selectedPerson
+    });
   };
 
-  const [isTalentMasterHubOpen, setIsTalentMasterHubOpen] = useState(false);
-  const [talentHubInitialTab, setTalentHubInitialTab] = useState<TalentHubTab>('squad');
-  const handleOpenTalentMasterHub = (tab?: TalentHubTab | string) => {
-    setTalentHubInitialTab((tab as TalentHubTab) || 'squad');
-    setIsTalentMasterHubOpen(true);
+  const handleOpenTalentMasterHub = (tab?: TalentHubTab | string, person?: Person) => {
+    setMasterHubState({
+      activeHub: 'talent',
+      initialTab: (tab as TalentHubTab) || 'squad',
+      contextPerson: person || selectedPerson
+    });
   };
 
-  const [isMeetingMasterHubOpen, setIsMeetingMasterHubOpen] = useState(false);
-  const [meetingHubInitialTab, setMeetingHubInitialTab] = useState<MeetingHubTab>('schedule');
-  const handleOpenMeetingMasterHub = (tab?: MeetingHubTab | string) => {
-    setMeetingHubInitialTab((tab as MeetingHubTab) || 'schedule');
-    setIsMeetingMasterHubOpen(true);
+  const handleOpenMeetingMasterHub = (tab?: MeetingHubTab | string, person?: Person) => {
+    setMasterHubState({
+      activeHub: 'meeting',
+      initialTab: (tab as MeetingHubTab) || 'schedule',
+      contextPerson: person || selectedPerson
+    });
   };
+
+  const handleCloseMasterHub = () => {
+    setMasterHubState({
+      activeHub: null,
+      initialTab: undefined,
+      contextPerson: null
+    });
+  };
+
+  // 실무 인재 하위 모달 호환 핸들러 (통합 메가스튜디오 3 TalentEcosystemStudio 탭으로 원클릭 직결)
+  const handleOpenSquadBuilder = () => handleOpenTalentMasterHub('squad');
+  const handleOpenVentureRadar = () => handleOpenTalentMasterHub('venture');
+  const handleOpenKnowledgeExchange = () => handleOpenTalentMasterHub('knowledge');
+  const handleOpenPeerSynergy = () => handleOpenTalentMasterHub('trust_card');
+  const handleOpenPeerTrustCareer = () => handleOpenTalentMasterHub('trust_card');
 
   // C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) 전역 핫키 바인딩
   useEffect(() => {
@@ -962,76 +972,7 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* 스마트 프로젝트 팀 빌더 & 스킬 매칭 스튜디오 모달 */}
-      {isSquadBuilderOpen && (
-        <ProjectSquadBuilderModal
-          isOpen={true}
-          people={people}
-          onSelectPerson={setSelectedPerson}
-          onOpenTeaTimeStudio={(person) => {
-            setIsSquadBuilderOpen(false);
-            setTeaTimeTargetPerson(person);
-            setIsTeaTimeModalOpen(true);
-          }}
-          onClose={() => setIsSquadBuilderOpen(false)}
-          onShowToast={showToast}
-        />
-      )}
-
-      {/* 초기 스타트업 창업 & 시드 펀딩 레이더 (파운더스 클럽) 모달 */}
-      {isVentureRadarOpen && (
-        <EarlyStageVentureRadarModal
-          isOpen={true}
-          people={people}
-          onSelectPerson={setSelectedPerson}
-          onOpenSquadBuilder={(_signal) => {
-            setIsVentureRadarOpen(false);
-            setIsSquadBuilderOpen(true);
-          }}
-          onClose={() => setIsVentureRadarOpen(false)}
-          onShowToast={showToast}
-        />
-      )}
-
-      {/* 실무 슈퍼파워 지식 교환 & 캐주얼 멘토링 팟 모달 */}
-      {isKnowledgeExchangeOpen && (
-        <KnowledgeExchangeModal
-          isOpen={true}
-          people={people}
-          onSelectPerson={setSelectedPerson}
-          onOpenTeaTimeStudio={(person) => {
-            setIsKnowledgeExchangeOpen(false);
-            setTeaTimeTargetPerson(person);
-            setIsTeaTimeModalOpen(true);
-          }}
-          onClose={() => setIsKnowledgeExchangeOpen(false)}
-          onShowToast={showToast}
-        />
-      )}
-
-      {/* 실무 인재 시너지 & 성장 스튜디오 (테크 스택 / 사내 추천 / 스터디 길드 / 인사이트 노트) */}
-      {isPeerSynergyOpen && (
-        <PeerSynergyHubModal
-          isOpen={true}
-          initialTab={peerSynergyInitialTab}
-          people={people}
-          onSelectPerson={setSelectedPerson}
-          onClose={() => setIsPeerSynergyOpen(false)}
-          onShowToast={showToast}
-        />
-      )}
-
-      {/* 실무 인재 신뢰 & 커리어 도약 스튜디오 (피어 보증 / 디지털 명함 vCard / 커피챗 룰렛 / 커리어 멘토) */}
-      {isPeerTrustCareerOpen && (
-        <PeerTrustCareerModal
-          isOpen={true}
-          initialTab={peerTrustCareerInitialTab}
-          people={people}
-          onSelectPerson={setSelectedPerson}
-          onClose={() => setIsPeerTrustCareerOpen(false)}
-          onShowToast={showToast}
-        />
-      )}
+      {/* 실무 인재 & 커리어 생태계 개별 모달 (통합 메가스튜디오 3 TalentEcosystemStudio로 일원화됨) */}
 
       {/* 네트워크 생명력 & 밋업·글로벌 스튜디오 (생명력 레이더 / 현장 밋업 룸 / 바이링구얼 미팅 / 실무 SOS) */}
       {isNetworkVitalityOpen && (
@@ -1072,44 +1013,48 @@ export const App: React.FC = () => {
       )}
 
       {/* ========================================================
-          3대 엔터프라이즈 마스터 허브 (The 3 Enterprise Master Hubs)
+          3대 엔터프라이즈 마스터 허브 단일 상태 머신 렌더링
           ======================================================== */}
 
       {/* Hub 1: C-Level 경영 거버넌스 & 전략 인텔리전스 마스터 허브 */}
-      {isGovernanceMasterHubOpen && (
+      {masterHubState.activeHub === 'governance' && (
         <ExecutiveGovernanceMasterHubModal
           isOpen={true}
-          initialTab={governanceHubInitialTab}
+          initialTab={masterHubState.initialTab as GovernanceHubTab}
           people={people}
-          selectedPerson={selectedPerson}
+          selectedPerson={masterHubState.contextPerson || selectedPerson}
           onSelectPerson={setSelectedPerson}
-          onClose={() => setIsGovernanceMasterHubOpen(false)}
+          onClose={handleCloseMasterHub}
           onShowToast={showToast}
         />
       )}
 
-      {/* Hub 2: 실무 인재 & 커리어 성장 생태계 마스터 허브 */}
-      {isTalentMasterHubOpen && (
-        <TalentCareerEcosystemMasterHubModal
+      {/* Hub 2: 실무 인재 & 커리어 성장 생태계 스튜디오 (메가스튜디오 3) */}
+      {masterHubState.activeHub === 'talent' && (
+        <TalentEcosystemStudio
           isOpen={true}
-          initialTab={talentHubInitialTab}
+          initialTab={
+            masterHubState.initialTab === 'trust_career' || masterHubState.initialTab === 'synergy'
+              ? 'trust_card'
+              : (masterHubState.initialTab as any) || 'squad'
+          }
           people={people}
-          selectedPerson={selectedPerson}
+          selectedPerson={masterHubState.contextPerson || selectedPerson}
           onSelectPerson={setSelectedPerson}
-          onClose={() => setIsTalentMasterHubOpen(false)}
+          onClose={handleCloseMasterHub}
           onShowToast={showToast}
         />
       )}
 
       {/* Hub 3: 비즈니스 미팅 & 관계 라이프사이클 마스터 허브 */}
-      {isMeetingMasterHubOpen && (
+      {masterHubState.activeHub === 'meeting' && (
         <MeetingLifecycleMasterHubModal
           isOpen={true}
-          initialTab={meetingHubInitialTab}
+          initialTab={masterHubState.initialTab as MeetingHubTab}
           people={people}
-          selectedPerson={selectedPerson}
+          selectedPerson={masterHubState.contextPerson || selectedPerson}
           onSelectPerson={setSelectedPerson}
-          onClose={() => setIsMeetingMasterHubOpen(false)}
+          onClose={handleCloseMasterHub}
           onShowToast={showToast}
         />
       )}

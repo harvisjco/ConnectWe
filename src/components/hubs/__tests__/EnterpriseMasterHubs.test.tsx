@@ -71,6 +71,26 @@ describe('3 Enterprise Master Hubs Unit Tests (renderToString)', () => {
       expect(html).toContain('상법 제542조의8 사외이사 겸직 규제 실시간 판별기');
     });
 
+    it('renders disclosures tab with DART governance timeline and audit trail', () => {
+      const handleClose = vi.fn();
+      const handleShowToast = vi.fn();
+
+      const html = renderToString(
+        <ExecutiveGovernanceMasterHubModal
+          isOpen={true}
+          initialTab="disclosures"
+          onClose={handleClose}
+          people={mockPeople}
+          onShowToast={handleShowToast}
+        />
+      );
+
+      expect(html).toContain('DART 5% 이상 대량보유 및 담보계약 공시 레이더');
+      expect(html).toContain('크로스보드(Cross-Board) 임원 교류 &amp; M&amp;A 시너지 레이더');
+      expect(html).toContain('DART 전자공시 핵심 임원 실공시 궤적 &amp; 책임경영 타임라인');
+      expect(html).toContain('검증된 공시 팩트');
+    });
+
     it('renders closed modal as empty string', () => {
       const html = renderToString(
         <ExecutiveGovernanceMasterHubModal

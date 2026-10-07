@@ -15,7 +15,11 @@ import {
   AlertTriangle,
   ArrowRight,
   Flame,
-  Activity
+  Activity,
+  ExternalLink,
+  History,
+  Search,
+  Calendar
 } from 'lucide-react';
 import {
   getOutsideDirectorMandates,
@@ -33,6 +37,11 @@ import {
 import { analyzeCrossBoardSynergy } from '../../services/crossBoardSynergyService';
 import { getWeeklyBriefingSummary, generateWeeklyBriefingTextCopy } from '../../services/weeklyBriefingService';
 import { calculateTieStrength } from '../../services/tieStrengthService';
+import {
+  getGovernanceHistory,
+  GovernanceHistoryItem,
+  GovernanceEventType
+} from '../../services/dartGovernanceService';
 
 export interface ExecutiveGovernanceMasterHubModalProps {
   isOpen: boolean;
@@ -84,6 +93,34 @@ export const ExecutiveGovernanceMasterHubModal: React.FC<ExecutiveGovernanceMast
   const equityAlerts: EquityHoldingChangeAlert[] = useMemo(() => getEquityHoldingChangeAlerts(), []);
   const [targetCorp, setTargetCorp] = useState<string>('삼성전자');
   const crossBoardAnalysis = useMemo(() => analyzeCrossBoardSynergy(targetCorp, people), [targetCorp, people]);
+
+  // DART 실공시 궤적 타임라인 & 필터링 파이프라인
+  const [historyFilterType, setHistoryFilterType] = useState<GovernanceEventType | 'ALL'>('ALL');
+  const [historySearchKeyword, setHistorySearchKeyword] = useState<string>('');
+
+  const allGovernanceHistories = useMemo(() => {
+    return people.flatMap((p) => {
+      const histories = getGovernanceHistory(p);
+      return histories.map((h) => ({
+        ...h,
+        person: p
+      }));
+    }).sort((a, b) => b.announcedDate.localeCompare(a.announcedDate));
+  }, [people]);
+
+  const filteredGovernanceHistories = useMemo(() => {
+    return allGovernanceHistories.filter((item) => {
+      const matchesType = historyFilterType === 'ALL' || item.eventType === historyFilterType;
+      const q = historySearchKeyword.trim().toLowerCase();
+      const matchesKeyword = !q ||
+        item.corpName.toLowerCase().includes(q) ||
+        item.headline.toLowerCase().includes(q) ||
+        item.detail.toLowerCase().includes(q) ||
+        item.person.name.toLowerCase().includes(q) ||
+        item.eventLabel.toLowerCase().includes(q);
+      return matchesType && matchesKeyword;
+    });
+  }, [allGovernanceHistories, historyFilterType, historySearchKeyword]);
 
   // 3. 최고경영진 승계 큐레이터 데이터
   const [selectedTrack, setSelectedTrack] = useState<ExecutiveTalentTrack | 'ALL'>('ALL');
@@ -505,6 +542,143 @@ export const ExecutiveGovernanceMasterHubModal: React.FC<ExecutiveGovernanceMast
                     ))}
                   </div>
                 </div>
+              </div>
+
+              {/* DART 핵심 임원 실공시 타임라인 & 궤적(Audit Trail) */}
+              <div className="p-5 rounded-2xl bg-white dark:bg-slate-800/60 border border-slate-200/90 dark:border-slate-700/80 shadow-xs space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-xl bg-blue-600 text-white shadow-xs">
+                      <History className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-slate-900 dark:text-white">
+                        DART 전자공시 핵심 임원 실공시 궤적 & 책임경영 타임라인
+                      </h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        금융감독원 전자공시시스템(DART) 기반 임원 선임·지분변동·겸직 이력 및 책임경영 팩트 실시간 Audit Trail
+                      </p>
+                    </div>
+                  </div>
+                  <span className="px-2.5 py-1 text-xs font-bold rounded-lg bg-blue-50 text-blue-700 dark:bg-blue-950 dark:text-blue-300 border border-blue-200 dark:border-blue-800 shrink-0">
+                    검증된 공시 팩트 {filteredGovernanceHistories.length}건
+                  </span>
+                </div>
+
+                {/* 실시간 필터 & 검색 툴바 */}
+                <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 pt-1">
+                  {/* 검색 인풋 */}
+                  <div className="relative flex-1 max-w-md">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    <input
+                      type="text"
+                      value={historySearchKeyword}
+                      onChange={(e) => setHistorySearchKeyword(e.target.value)}
+                      placeholder="기업명, 임원명, 공시 안건 검색..."
+                      className="w-full pl-9 pr-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500/30"
+                    />
+                  </div>
+
+                  {/* 공시 유형 필터 탭 */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1 md:pb-0">
+                    {[
+                      { key: 'ALL', label: '전체 궤적' },
+                      { key: 'APPOINTMENT', label: '선임·중임' },
+                      { key: 'SHARE_ACQUISITION', label: '지분 변동' },
+                      { key: 'CONCURRENT_OFFICE', label: '겸직 변동' },
+                      { key: 'ANNUAL_DISCLOSURE', label: '정기 공시' }
+                    ].map((btn) => (
+                      <button
+                        key={btn.key}
+                        type="button"
+                        onClick={() => setHistoryFilterType(btn.key as GovernanceEventType | 'ALL')}
+                        className={`px-3 py-1 text-xs font-semibold rounded-lg transition-all shrink-0 cursor-pointer ${
+                          historyFilterType === btn.key
+                            ? 'bg-blue-600 text-white shadow-xs'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700'
+                        }`}
+                      >
+                        {btn.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 타임라인 카드 목록 */}
+                {filteredGovernanceHistories.length === 0 ? (
+                  <div className="py-12 text-center rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-dashed border-slate-200 dark:border-slate-800 space-y-2">
+                    <History className="w-8 h-8 text-slate-300 mx-auto" />
+                    <p className="text-xs text-slate-500 font-medium">검색 조건에 부합하는 DART 실공시 궤적이 없습니다.</p>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setHistoryFilterType('ALL');
+                        setHistorySearchKeyword('');
+                      }}
+                      className="text-xs text-blue-600 dark:text-blue-400 font-bold hover:underline cursor-pointer"
+                    >
+                      필터 초기화
+                    </button>
+                  </div>
+                ) : (
+                  <div className="relative pl-6 space-y-4 before:absolute before:left-2.5 before:top-3 before:bottom-3 before:w-0.5 before:bg-slate-200 dark:before:bg-slate-700">
+                    {filteredGovernanceHistories.map((h) => (
+                      <div
+                        key={h.id}
+                        className="relative p-4 rounded-xl bg-slate-50/80 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 hover:border-blue-400/60 dark:hover:border-blue-600/60 transition-all space-y-2 group"
+                      >
+                        {/* 타임라인 원형 마커 */}
+                        <div className="absolute -left-[1.8rem] top-4.5 w-3 h-3 rounded-full bg-blue-600 border-2 border-white dark:border-slate-900 ring-2 ring-blue-500/20" />
+
+                        {/* 상단 메타 정보 */}
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className={`px-2 py-0.5 text-[11px] font-bold rounded-md border ${h.badgeStyle}`}>
+                              {h.eventLabel}
+                            </span>
+                            <span className="text-xs font-bold text-slate-900 dark:text-white">
+                              {h.corpName}
+                            </span>
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
+                              · {h.person.name} ({h.person.currentTitle})
+                            </span>
+                          </div>
+
+                          <div className="flex items-center gap-2 text-xs text-slate-400">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span className="font-mono">{h.announcedDate}</span>
+                          </div>
+                        </div>
+
+                        {/* 헤드라인 및 상세 본문 */}
+                        <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100">
+                          {h.headline}
+                        </h4>
+                        <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                          {h.detail}
+                        </p>
+
+                        {/* 하단 DART 공시 원문 링크 */}
+                        {h.rceptNo && (
+                          <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 flex items-center justify-between text-[11px]">
+                            <span className="font-mono text-slate-400">
+                              접수번호: {h.rceptNo}
+                            </span>
+                            <a
+                              href={`https://dart.fss.or.kr/dsaf001/main.do?rcpNo=${h.rceptNo}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-colors"
+                            >
+                              <span>DART 전자공시 원문 열람</span>
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           )}
