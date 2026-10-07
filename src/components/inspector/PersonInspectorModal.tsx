@@ -18,8 +18,18 @@ import {
   Download, Trash2, Plus, Lock,
   Sparkles, Zap, Cpu, Building2, Rocket,
   User, MessageSquare, Shield, Send, Copy, AlertTriangle,
-  Mic, Compass, Coffee, BellRing, Gift, Headphones
+  Mic, Compass, Coffee, BellRing, Gift, Headphones,
+  Pin, FileText, ListTodo, CheckSquare, Square
 } from 'lucide-react';
+import { BusinessLetterComposerModal } from '../modals/BusinessLetterComposerModal';
+import {
+  loadActionItems,
+  saveActionItems,
+  toggleActionItem,
+  deleteActionItem,
+  extractActionItemsFromText,
+  MeetingActionItem
+} from '../../services/meetingActionItemService';
 
 interface PersonInspectorModalProps {
   person: Person | null;
@@ -79,6 +89,13 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
   const [polishedLetter, setPolishedLetter] = useState('');
   const [isCopiedLetter, setIsCopiedLetter] = useState(false);
 
+  // 1초 비즈니스 서신 템플릿 모달 상태
+  const [isLetterModalOpen, setIsLetterModalOpen] = useState(false);
+
+  // 미팅 Action Item 상태
+  const [actionItems, setActionItems] = useState<MeetingActionItem[]>([]);
+  const [newActionItemText, setNewActionItemText] = useState('');
+
   // ESC 키 닫기 핸들러
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -95,14 +112,62 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
       setIsEditingMemo(false);
       setIsAddingLog(false);
       setIsComposerOpen(false);
+      setIsLetterModalOpen(false);
       setDartStatusMsg(null);
       setRawDraft('');
       setPolishedLetter('');
       setActiveTab('profile');
       const allLogs = loadActivityLogs();
       setActivityLogs(allLogs.filter(l => l.personId === person.id));
+      setActionItems(loadActionItems(person.id));
     }
   }, [person]);
+
+  // VIP 핀 토글
+  const handleTogglePin = () => {
+    if (!person) return;
+    const updated = { ...person, isPinned: !person.isPinned };
+    onUpdatePerson(updated);
+  };
+
+  // Action Item 토글 & 삭제 & 추가 & 메모 추출
+  const handleToggleAction = (id: string) => {
+    const updated = toggleActionItem(id);
+    if (person) {
+      setActionItems(updated.filter(i => i.personId === person.id));
+    }
+  };
+
+  const handleDeleteAction = (id: string) => {
+    const updated = deleteActionItem(id);
+    if (person) {
+      setActionItems(updated.filter(i => i.personId === person.id));
+    }
+  };
+
+  const handleAddAction = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newActionItemText.trim() || !person) return;
+    const newItem: MeetingActionItem = {
+      id: `act-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      personId: person.id,
+      content: newActionItemText.trim(),
+      isCompleted: false,
+      detectedDate: new Date().toISOString().slice(0, 10)
+    };
+    saveActionItems([newItem]);
+    setActionItems(loadActionItems(person.id));
+    setNewActionItemText('');
+  };
+
+  const handleExtractFromMemo = () => {
+    if (!person || !memoText.trim()) return;
+    const detected = extractActionItemsFromText(memoText, person.id);
+    if (detected.length > 0) {
+      saveActionItems(detected);
+      setActionItems(loadActionItems(person.id));
+    }
+  };
 
   const powerMetric = useMemo(() => {
     if (!person) return null;
@@ -292,6 +357,30 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
 
           {/* Quick Header Tool Buttons */}
           <div className="flex items-center gap-1 shrink-0">
+            {/* VIP 핀 고정 토글 */}
+            <button
+              type="button"
+              onClick={handleTogglePin}
+              title={person.isPinned ? 'VIP 핀 고정 해제' : 'VIP 핀 상단 고정'}
+              className={`p-2 rounded-xl transition-all cursor-pointer ${
+                person.isPinned
+                  ? 'text-amber-500 bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 shadow-2xs'
+                  : 'text-slate-400 hover:text-amber-500 hover:bg-slate-50 dark:hover:bg-slate-800'
+              }`}
+            >
+              <Pin className={`w-4 h-4 ${person.isPinned ? 'fill-amber-500' : ''}`} />
+            </button>
+
+            {/* 1초 비즈니스 서신 템플릿 라이브러리 */}
+            <button
+              type="button"
+              onClick={() => setIsLetterModalOpen(true)}
+              title="상황별 1초 비즈니스 서신 작성"
+              className="p-2 rounded-xl text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-950/50 transition-colors cursor-pointer"
+            >
+              <FileText className="w-4 h-4" />
+            </button>
+
             <button
               onClick={handleDownloadVcard}
               title="vCard (.vcf) 다운로드"
@@ -682,6 +771,98 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
                 )}
               </div>
 
+              {/* 실무 핵심: 미팅 Action Items & 약속 관리 체크리스트 */}
+              <div className="rounded-2xl border border-blue-200/80 dark:border-blue-900/60 bg-blue-50/20 dark:bg-blue-950/20 p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <ListTodo className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-slate-200">
+                      미팅 Action Items & 핵심 약속
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300">
+                      {actionItems.filter(i => !i.isCompleted).length}건 진행 중
+                    </span>
+                    {memoText.trim() && (
+                      <button
+                        type="button"
+                        onClick={handleExtractFromMemo}
+                        className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                        title="작성된 메모에서 약속/할 일 문장 자동 감지"
+                      >
+                        메모에서 자동 추출
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* 액션 아이템 리스트 */}
+                {actionItems.length === 0 ? (
+                  <p className="text-xs text-slate-400 py-1">
+                    등록된 후속 조치나 미팅 약속이 없습니다. 하단에서 직접 추가하거나 메모에서 추출해 보세요.
+                  </p>
+                ) : (
+                  <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                    {actionItems.map((item) => (
+                      <div
+                        key={item.id}
+                        className={`flex items-start justify-between p-2 rounded-xl border text-xs transition-all ${
+                          item.isCompleted
+                            ? 'bg-slate-50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 text-slate-400 line-through'
+                            : 'bg-white dark:bg-slate-800 border-slate-200/80 dark:border-slate-700 text-slate-800 dark:text-slate-200 shadow-2xs'
+                        }`}
+                      >
+                        <button
+                          type="button"
+                          onClick={() => handleToggleAction(item.id)}
+                          className="flex items-start gap-2 text-left flex-1 cursor-pointer"
+                        >
+                          {item.isCompleted ? (
+                            <CheckSquare className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                          ) : (
+                            <Square className="w-4 h-4 text-slate-400 shrink-0 mt-0.5" />
+                          )}
+                          <div className="flex-1">
+                            <span className="leading-snug">{item.content}</span>
+                            {item.dueDateHint && (
+                              <span className="ml-1.5 px-1.5 py-0.2 rounded text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300">
+                                {item.dueDateHint}
+                              </span>
+                            )}
+                          </div>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteAction(item.id)}
+                          className="text-slate-400 hover:text-rose-500 p-1 transition-colors cursor-pointer"
+                          title="삭제"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 신규 액션 아이템 수기 추가 */}
+                <form onSubmit={handleAddAction} className="flex gap-2 pt-1">
+                  <input
+                    type="text"
+                    value={newActionItemText}
+                    onChange={(e) => setNewActionItemText(e.target.value)}
+                    placeholder="신규 할 일 입력 (예: 다음 주 금요일까지 제안서 초안 전달)..."
+                    className="flex-1 px-3 py-1.5 text-xs rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-hidden focus:ring-2 focus:ring-blue-500/20"
+                  />
+                  <button
+                    type="submit"
+                    className="px-3 py-1.5 text-xs font-bold rounded-xl bg-blue-600 text-white hover:bg-blue-700 transition-colors shrink-0 cursor-pointer"
+                  >
+                    추가
+                  </button>
+                </form>
+              </div>
+
               {/* 소통 이력 타임라인 리스트 & 빠른 기록 폼 */}
               <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-4 space-y-3">
                 <div className="flex items-center justify-between">
@@ -856,6 +1037,16 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
           </button>
         </div>
       </div>
+
+      {/* 상황별 1초 비즈니스 서신 템플릿 모달 */}
+      {isLetterModalOpen && (
+        <BusinessLetterComposerModal
+          isOpen={true}
+          person={person}
+          onClose={() => setIsLetterModalOpen(false)}
+          onShowToast={(msg) => alert(msg)}
+        />
+      )}
     </div>
   );
 };

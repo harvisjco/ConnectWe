@@ -74,6 +74,7 @@ import { BusinessDeal } from './services/dealPipelineService';
 import { maskPerson } from './services/privacyShieldService';
 import { GeoClusterId } from './services/geoProximityService';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
+import { PinnedVipQuickBar } from './components/common/PinnedVipQuickBar';
 import { offlineSyncService, OfflineSyncState } from './services/offlineSyncService';
 import { detectGoldenCareTargets } from './services/goldenCareService';
 import { onAuthStateChange, signOut, AuthUser } from './services/authService';
@@ -543,6 +544,12 @@ export const App: React.FC = () => {
 
         {/* Main Content Area */}
         <main className="flex-1 min-w-0 pb-28 space-y-4 w-full max-w-full">
+          {/* 상단 퀵액세스 VIP 핀 바 */}
+          <PinnedVipQuickBar
+            people={people}
+            onSelectPerson={setSelectedPerson}
+          />
+
           {/* Quick SubNav Pills (GoodPartner Capsule Style - Desktop only, Mobile uses BottomBar) */}
           <div className="hidden sm:flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none w-full">
             {quickNavTabs.map((tab) => {

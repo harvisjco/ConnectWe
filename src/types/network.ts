@@ -79,6 +79,8 @@ export interface Person {
   connectionChannel: 'remember' | 'vcard' | 'business_card' | 'dart' | 'manual';
   lastContactDate?: string;
   isStale: boolean; // 6개월 이상 미소통 (안부 필요)
+  isPinned?: boolean; // 상단 퀵액세스 VIP 핀 고정
+  tags?: string[]; // 커스텀 태그 목록
   memo?: string;
   activityLogs?: ActivityLog[];
   address?: string;
