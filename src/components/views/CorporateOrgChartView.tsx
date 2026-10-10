@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Person } from '../../types/network';
 import { 
   getAvailableCorporations, 
@@ -8,7 +8,7 @@ import {
 import { OrgNode } from '../../types/orgChart';
 import { ViewHeader } from '../ui';
 import { 
-  Building2, Search, Sparkles, 
+  Building2, Search, Sparkles, X,
   Share2, Award, UserCheck, 
   Calendar, ShieldCheck,
   ChevronDown, ChevronUp, Copy, Printer, Check, Eye, EyeOff, Layers,
@@ -65,6 +65,13 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
     });
   };
 
+  // 검색어 입력 시 숨겨진 하위 노드가 노출되도록 전체 섹션 자동 펼침
+  useEffect(() => {
+    if (searchTerm.trim()) {
+      setAllCollapsed(false);
+    }
+  }, [searchTerm]);
+
   // 연도별 시계열 스냅샷
   const yearlySnapshots = useMemo(() => {
     return getCorpYearlySnapshots(selectedCorpName);
@@ -100,6 +107,19 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
       return true;
     });
   };
+
+  const totalMatchedCount = useMemo(() => {
+    if (!orgChart || !searchTerm.trim()) return 0;
+    const allNodes = [
+      ...orgChart.hierarchy.chairpersons,
+      ...orgChart.hierarchy.ceos,
+      ...orgChart.hierarchy.cLevels,
+      ...orgChart.hierarchy.directors,
+      ...orgChart.hierarchy.leaders,
+      ...orgChart.hierarchy.auditors
+    ];
+    return filterNodes(allNodes).length;
+  }, [orgChart, searchTerm, onlyConnectedFilter, domainFilter]);
 
   // 텍스트 보고서 클립보드 복사
   const handleExportTextReport = () => {
@@ -407,15 +427,30 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
 
         {/* 3. 검색 및 접기/내보내기 액션 바 */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-slate-100">
-          <div className="relative w-full sm:w-72">
+          <div className="relative w-full sm:w-80 flex items-center">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-2.5" />
             <input
               type="text"
               placeholder="임원명, 직위, 담당업무 검색..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-3.5 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-400 transition-colors"
+              className="w-full pl-9 pr-20 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-xs text-slate-900 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-400 transition-colors"
             />
+            {searchTerm && (
+              <div className="absolute right-2.5 flex items-center gap-1.5">
+                <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+                  {totalMatchedCount}명
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSearchTerm('')}
+                  className="p-0.5 text-slate-400 hover:text-slate-600 rounded-full cursor-pointer"
+                  title="검색어 지우기"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5 flex-wrap w-full sm:w-auto justify-end">

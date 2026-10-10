@@ -20,6 +20,7 @@ interface CommandAction {
 }
 
 import { GovernanceHubTab, TalentHubTab, MeetingHubTab } from '../../types/masterHub';
+import { isPureChoseong, matchChoseong } from '../../utils/koreanUtils';
 
 interface GlobalCommandPaletteProps {
   isOpen: boolean;
@@ -80,21 +81,29 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
 }) => {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [categoryTab, setCategoryTab] = useState<'all' | 'people' | 'nav' | 'action'>('all');
   const inputRef = useRef<HTMLInputElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   // 모달 오픈 시 인풋 포커스 & 초기화
   useEffect(() => {
     if (isOpen) {
       setQuery('');
+      setCategoryTab('all');
       setSelectedIndex(0);
       setTimeout(() => inputRef.current?.focus(), 50);
     }
   }, [isOpen]);
 
+  // 방향키 이동 시 선택 항목 자동 스크롤 추적
+  useEffect(() => {
+    const el = listRef.current?.querySelector(`[data-index="${selectedIndex}"]`);
+    el?.scrollIntoView({ block: 'nearest' });
+  }, [selectedIndex]);
+
   // 검색 쿼리에 따른 동적 액션 리스트 생성
   const actions = useMemo<CommandAction[]>(() => {
     const q = query.trim().toLowerCase();
-    const result: CommandAction[] = [];
 
     // 1. 메뉴 네비게이션 액션
     const menuActions: Array<{ id: NavViewType; title: string; subtitle: string; icon: React.ComponentType<{ className?: string }> }> = [
@@ -109,20 +118,18 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
       !q || m.title.toLowerCase().includes(q) || m.subtitle.toLowerCase().includes(q)
     );
 
-    matchedMenus.forEach(m => {
-      result.push({
-        id: `nav-${m.id}`,
-        category: '경영 네비게이션',
-        title: m.title,
-        subtitle: m.subtitle,
-        icon: m.icon,
-        badge: '화면 전환',
-        onExecute: () => {
-          onNavigateView(m.id);
-          onClose();
-        }
-      });
-    });
+    const navActions: CommandAction[] = matchedMenus.map(m => ({
+      id: `nav-${m.id}`,
+      category: '경영 네비게이션',
+      title: m.title,
+      subtitle: m.subtitle,
+      icon: m.icon,
+      badge: '화면 전환',
+      onExecute: () => {
+        onNavigateView(m.id);
+        onClose();
+      }
+    }));
 
     // 2. 스마트 C-Level 액션 & 3대 마스터 허브
     const smartActions = [
@@ -583,32 +590,40 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
       }
     ].filter(Boolean) as Array<CommandAction & { keywords: string[] }>;
 
+    const smartActionList: CommandAction[] = [];
     smartActions.forEach(action => {
       const isMatch = !q || 
         action.title.toLowerCase().includes(q) || 
         action.subtitle.toLowerCase().includes(q) || 
         action.keywords.some(kw => kw.toLowerCase().includes(q) || q.includes(kw.toLowerCase()));
       if (isMatch) {
-        result.push(action);
+        smartActionList.push(action);
       }
     });
 
-    // 3. 인물 검색 및 1초 브리핑 액션 (상위 6명)
+    // 3. 인물 검색 및 1초 브리핑 액션 (초성 검색 및 이름 매칭 지원)
+    const isChoseong = isPureChoseong(q);
+    const peopleActions: CommandAction[] = [];
+
     const matchedPeople = people.filter(p => {
       if (!q) return p.closeness <= 2; // 초기에는 1~2촌 핵심 인물 표시
+      if (isChoseong) {
+        return matchChoseong(p.name, q) || matchChoseong(p.currentCompany, q);
+      }
       return (
         p.name.toLowerCase().includes(q) ||
         p.currentCompany.toLowerCase().includes(q) ||
         p.currentTitle.toLowerCase().includes(q) ||
-        (p.primaryDomain && p.primaryDomain.toLowerCase().includes(q))
+        (p.primaryDomain && p.primaryDomain.toLowerCase().includes(q)) ||
+        p.skills.some(s => s.toLowerCase().includes(q))
       );
-    }).slice(0, 6);
+    }).slice(0, 8);
 
     matchedPeople.forEach(p => {
       const isDart = p.sourceType === 'DART_FACT' || !!p.dartInfo?.isPublicDirector;
       
       // A. 미팅 10분 전 스마트 브리핑 열기 액션
-      result.push({
+      peopleActions.push({
         id: `briefing-${p.id}`,
         category: '인물 인텔리전스',
         title: `${p.name} (${p.currentCompany} ${p.currentTitle})`,
@@ -626,7 +641,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
       });
 
       // B. 프로필 상세 보기 액션
-      result.push({
+      peopleActions.push({
         id: `profile-${p.id}`,
         category: '인물 인텔리전스',
         title: `${p.name} 프로필 인스펙터`,
@@ -639,8 +654,18 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
       });
     });
 
-    return result;
-  }, [query, people, onNavigateView, onSelectPerson, onOpenMeetingBriefing, onClose]);
+    // 4. 탭 필터링 및 지능형 섹션 리랭킹 (Adaptive Priority)
+    if (categoryTab === 'people') return peopleActions;
+    if (categoryTab === 'nav') return navActions;
+    if (categoryTab === 'action') return smartActionList;
+
+    // 'all' 모드: 인물 이름이나 초성 입력 시 인물 섹션을 최상단에 승격!
+    const isPersonIntent = isChoseong || (q && people.some(p => p.name.toLowerCase().includes(q)));
+    if (isPersonIntent) {
+      return [...peopleActions, ...navActions, ...smartActionList];
+    }
+    return [...navActions, ...smartActionList, ...peopleActions];
+  }, [query, categoryTab, people, onNavigateView, onSelectPerson, onOpenMeetingBriefing, onClose]);
 
   // 키보드 방향키 및 Enter / Escape 핸들링
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -704,8 +729,59 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
           </kbd>
         </div>
 
+        {/* Category Tabs Filter Bar */}
+        <div className="flex items-center gap-1 px-4 py-1.5 border-b border-slate-100 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/70 text-xs overflow-x-auto scrollbar-none">
+          <button
+            type="button"
+            onClick={() => { setCategoryTab('all'); setSelectedIndex(0); }}
+            className={`px-3 py-1 rounded-full font-medium transition-all whitespace-nowrap cursor-pointer ${
+              categoryTab === 'all'
+                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-2xs font-bold'
+                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+            }`}
+          >
+            전체
+          </button>
+          <button
+            type="button"
+            onClick={() => { setCategoryTab('people'); setSelectedIndex(0); }}
+            className={`px-3 py-1 rounded-full font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-1 ${
+              categoryTab === 'people'
+                ? 'bg-indigo-600 text-white shadow-2xs font-bold'
+                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+            }`}
+          >
+            <User className="w-3 h-3" />
+            <span>인맥 인텔리전스</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => { setCategoryTab('nav'); setSelectedIndex(0); }}
+            className={`px-3 py-1 rounded-full font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-1 ${
+              categoryTab === 'nav'
+                ? 'bg-slate-700 text-white shadow-2xs font-bold'
+                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+            }`}
+          >
+            <Zap className="w-3 h-3" />
+            <span>경영 네비게이션</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => { setCategoryTab('action'); setSelectedIndex(0); }}
+            className={`px-3 py-1 rounded-full font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-1 ${
+              categoryTab === 'action'
+                ? 'bg-amber-600 text-white shadow-2xs font-bold'
+                : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
+            }`}
+          >
+            <Sparkles className="w-3 h-3" />
+            <span>스마트 액션</span>
+          </button>
+        </div>
+
         {/* Action Items List */}
-        <div className="max-h-[60vh] overflow-y-auto p-2 space-y-1">
+        <div ref={listRef} className="max-h-[60vh] overflow-y-auto p-2 space-y-1">
           {actions.length === 0 ? (
             <div className="py-12 text-center text-xs text-slate-400">
               일치하는 인맥이나 메뉴 액션을 찾지 못했습니다.
@@ -718,6 +794,7 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
               return (
                 <div
                   key={action.id}
+                  data-index={idx}
                   role="button"
                   tabIndex={0}
                   onClick={() => action.onExecute()}

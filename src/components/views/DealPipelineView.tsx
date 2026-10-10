@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Person } from '../../types/network';
 import { 
   BusinessDeal, 
@@ -18,7 +18,8 @@ import {
 import { 
   Briefcase, Plus, ShieldCheck, 
   X, Trash2, FileText, Send, Gift, GitMerge,
-  TrendingUp, DollarSign, Award, Target, Sparkles
+  TrendingUp, DollarSign, Award, Target, Sparkles,
+  Search
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -67,8 +68,31 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
   const [newDealSize, setNewDealSize] = useState('10억원 규모');
   const [newCloseDate, setNewCloseDate] = useState('2026-12-31');
 
-  // C-Level 파이프라인 정량 지표 계산
-  const metrics = calculatePipelineMetrics(deals);
+  // 실시간 딜 검색 & 키맨 필터 상태
+  const [dealSearch, setDealSearch] = useState('');
+  const [keymanFilter, setKeymanFilter] = useState<'all' | 'has_dart' | 'has_closeness1'>('all');
+
+  // 실시간 필터링된 딜 목록
+  const filteredDeals = useMemo(() => {
+    return deals.filter(d => {
+      if (dealSearch.trim()) {
+        const q = dealSearch.toLowerCase().trim();
+        const matchTitle = d.title.toLowerCase().includes(q);
+        const matchCompany = d.targetCompany.toLowerCase().includes(q);
+        const matchStakeholder = d.stakeholders.some(s => s.personName.toLowerCase().includes(q));
+        if (!matchTitle && !matchCompany && !matchStakeholder) return false;
+      }
+      if (keymanFilter === 'has_dart') {
+        if (!d.stakeholders.some(s => s.isDartExecutive)) return false;
+      } else if (keymanFilter === 'has_closeness1') {
+        if (!d.stakeholders.some(s => s.closeness === 1)) return false;
+      }
+      return true;
+    });
+  }, [deals, dealSearch, keymanFilter]);
+
+  // C-Level 파이프라인 정량 지표 계산 (전체 vs 필터 기반)
+  const metrics = calculatePipelineMetrics(filteredDeals);
 
   // DART 거버넌스 시뮬레이션 실행
   const handleRunGovSimulation = () => {
@@ -303,10 +327,86 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
         </div>
       </div>
 
+      {/* 1.8. Search & Keyman Filter Toolbar */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+        {/* Deal Search Input */}
+        <div className="relative flex-1 max-w-md">
+          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={dealSearch}
+            onChange={e => setDealSearch(e.target.value)}
+            placeholder="딜 명칭, 고객사, 참여 키맨 검색..."
+            className="w-full pl-8 pr-7 py-1.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400 text-slate-900 dark:text-white"
+          />
+          {dealSearch && (
+            <button
+              onClick={() => setDealSearch('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+              title="검색어 초기화"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          )}
+        </div>
+
+        {/* Filter Chips & Count */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700 text-xs">
+            <button
+              onClick={() => setKeymanFilter('all')}
+              className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                keymanFilter === 'all'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white font-bold shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+              }`}
+            >
+              전체 ({deals.length})
+            </button>
+            <button
+              onClick={() => setKeymanFilter('has_closeness1')}
+              className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                keymanFilter === 'has_closeness1'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white font-bold shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+              }`}
+            >
+              1촌 키맨 보유
+            </button>
+            <button
+              onClick={() => setKeymanFilter('has_dart')}
+              className={`px-2.5 py-1 rounded-lg font-medium transition-all ${
+                keymanFilter === 'has_dart'
+                  ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white font-bold shadow-2xs'
+                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900'
+              }`}
+            >
+              DART 등기임원 연계
+            </button>
+          </div>
+
+          <span className="text-xs text-slate-500 font-medium font-mono pl-1">
+            {filteredDeals.length}개 표시
+          </span>
+
+          {(dealSearch || keymanFilter !== 'all') && (
+            <button
+              onClick={() => {
+                setDealSearch('');
+                setKeymanFilter('all');
+              }}
+              className="text-xs text-blue-600 hover:underline font-medium ml-1"
+            >
+              필터 초기화
+            </button>
+          )}
+        </div>
+      </div>
+
       {/* 2. Kanban Board Columns */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 overflow-x-auto pb-4">
         {STAGES.map(stage => {
-          const stageDeals = deals.filter(d => d.stage === stage.id);
+          const stageDeals = filteredDeals.filter(d => d.stage === stage.id);
 
           return (
             <div
@@ -323,19 +423,25 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
               {/* Deal Cards in this Stage: Compact Summary Mode */}
               <div className="space-y-2.5 flex-1 overflow-y-auto">
                 {stageDeals.length === 0 ? (
-                  <div 
-                    onClick={() => {
-                      setNewCompany('');
-                      setNewTitle('');
-                      setIsAddModalOpen(true);
-                    }}
-                    className="h-28 border border-dashed border-slate-300/80 hover:border-indigo-400 dark:border-slate-800 rounded-xl flex flex-col items-center justify-center p-3 text-center cursor-pointer transition-colors bg-white/40 dark:bg-slate-900/40 group"
-                  >
-                    <Plus className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors mb-1" />
-                    <span className="text-[11px] font-medium text-slate-400 group-hover:text-indigo-600 transition-colors">
-                      + 새 프로젝트 등록
-                    </span>
-                  </div>
+                  dealSearch || keymanFilter !== 'all' ? (
+                    <div className="h-28 border border-dashed border-slate-300/60 dark:border-slate-800 rounded-xl flex flex-col items-center justify-center p-3 text-center text-[11px] text-slate-400">
+                      일치하는 딜 없음
+                    </div>
+                  ) : (
+                    <div 
+                      onClick={() => {
+                        setNewCompany('');
+                        setNewTitle('');
+                        setIsAddModalOpen(true);
+                      }}
+                      className="h-28 border border-dashed border-slate-300/80 hover:border-indigo-400 dark:border-slate-800 rounded-xl flex flex-col items-center justify-center p-3 text-center cursor-pointer transition-colors bg-white/40 dark:bg-slate-900/40 group"
+                    >
+                      <Plus className="w-4 h-4 text-slate-400 group-hover:text-indigo-600 transition-colors mb-1" />
+                      <span className="text-[11px] font-medium text-slate-400 group-hover:text-indigo-600 transition-colors">
+                        + 새 프로젝트 등록
+                      </span>
+                    </div>
+                  )
                 ) : (
                   stageDeals.map(deal => (
                   <div

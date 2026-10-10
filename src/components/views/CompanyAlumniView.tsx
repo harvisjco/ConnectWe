@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Person } from '../../types/network';
-import { Building2, ArrowRight, Sparkles, Briefcase, Rocket, Cpu, LayoutGrid, List } from 'lucide-react';
+import { 
+  Building2, ArrowRight, Sparkles, Briefcase, Rocket, Cpu, LayoutGrid, List,
+  Search, Download, X
+} from 'lucide-react';
 import { identifyTalentCluster } from '../../services/talentClusterEngine';
 import { ViewHeader } from '../ui';
 
@@ -12,6 +15,8 @@ interface CompanyAlumniViewProps {
 export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, onSelectPerson }) => {
   const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
   const [subFilter, setSubFilter] = useState<'all' | 'current' | 'alumni'>('all');
+  const [companySearch, setCompanySearch] = useState('');
+  const [personSearch, setPersonSearch] = useState('');
 
   // 기업별 현직/알럼나이 맵 생성
   const companyMap = new Map<string, { current: Person[]; alumni: Person[] }>();
@@ -46,6 +51,13 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
 
   const [selectedCompany, setSelectedCompany] = useState<string>(companies[0]?.name || '');
 
+  // 좌측 기업 검색 필터링
+  const filteredCompanies = useMemo(() => {
+    if (!companySearch.trim()) return companies;
+    const q = companySearch.toLowerCase().trim();
+    return companies.filter(c => c.name.toLowerCase().includes(q));
+  }, [companies, companySearch]);
+
   const activeData = companyMap.get(selectedCompany) || { current: [], alumni: [] };
 
   const displayedPeople = subFilter === 'all'
@@ -53,6 +65,43 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
     : subFilter === 'current'
       ? activeData.current.map(p => ({ person: p, isCurrent: true }))
       : activeData.alumni.map(p => ({ person: p, isCurrent: false }));
+
+  // 우측 인맥 2차 검색 필터링
+  const searchFilteredPeople = useMemo(() => {
+    if (!personSearch.trim()) return displayedPeople;
+    const q = personSearch.toLowerCase().trim();
+    return displayedPeople.filter(({ person }) => 
+      person.name.toLowerCase().includes(q) ||
+      person.currentTitle.toLowerCase().includes(q) ||
+      person.currentDepartment.toLowerCase().includes(q) ||
+      (person.primaryDomain && person.primaryDomain.toLowerCase().includes(q))
+    );
+  }, [displayedPeople, personSearch]);
+
+  // CSV 내보내기 (BOM UTF-8 준수)
+  const handleExportCompanyCsv = () => {
+    if (!selectedCompany) return;
+    const header = ['성명', '구분', '소속회사', '직함', '부서', '도메인', '친밀도'];
+    const rows = displayedPeople.map(({ person, isCurrent }) => [
+      `"${person.name}"`,
+      `"${isCurrent ? '현직' : '알럼나이'}"`,
+      `"${person.currentCompany}"`,
+      `"${person.currentTitle}"`,
+      `"${person.currentDepartment}"`,
+      `"${person.primaryDomain || ''}"`,
+      `"${person.closeness}촌"`
+    ]);
+    const csvContent = '\uFEFF' + [header.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${selectedCompany}_알럼나이_인맥_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="space-y-4">
@@ -76,43 +125,70 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
               <Building2 className="w-4 h-4 text-blue-600" />
               <h3 className="text-sm font-bold text-slate-900 tracking-tight">기업 & 알럼나이 허브</h3>
             </div>
-            <span className="text-xs text-slate-500 font-medium">{companies.length}개 법인</span>
+            <span className="text-xs text-slate-500 font-medium">{filteredCompanies.length}개 법인</span>
           </div>
 
-          <div className="space-y-1.5 overflow-y-auto flex-1 pr-1 max-h-[650px]">
-            {companies.map(comp => {
-              const isSelected = selectedCompany === comp.name;
-              return (
-                <button
-                  key={comp.name}
-                  onClick={() => setSelectedCompany(comp.name)}
-                  className={`w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between group ${
-                    isSelected
-                      ? 'bg-slate-100/90 border-slate-300 shadow-2xs font-bold'
-                      : 'bg-white hover:bg-slate-50 border-slate-200/70 hover:border-slate-300'
-                  }`}
-                >
-                  <div className="min-w-0 pr-2">
-                    <div className="flex items-center gap-2">
-                      <span className={`text-xs font-bold truncate ${isSelected ? 'text-slate-900' : 'text-slate-800 group-hover:text-slate-900'}`}>
-                        {comp.name}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-500">
-                      <span>현직 <strong className="text-slate-700">{comp.currentCount}</strong>명</span>
-                      <span>·</span>
-                      <span className="text-amber-800 font-medium">알럼나이 <strong className="text-amber-700">{comp.alumniCount}</strong>명</span>
-                    </div>
-                  </div>
+          {/* 좌측 기업 실시간 검색창 */}
+          <div className="relative">
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              value={companySearch}
+              onChange={e => setCompanySearch(e.target.value)}
+              placeholder="법인명 검색..."
+              className="w-full pl-8 pr-7 py-1.5 text-xs bg-slate-50/80 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400"
+            />
+            {companySearch && (
+              <button
+                onClick={() => setCompanySearch('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+                title="검색어 지우기"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
 
-                  <div className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all flex-shrink-0 ${
-                    isSelected ? 'bg-slate-900 text-white shadow-2xs' : 'text-slate-400 group-hover:text-slate-600'
-                  }`}>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </div>
-                </button>
-              );
-            })}
+          <div className="space-y-1.5 overflow-y-auto flex-1 pr-1 max-h-[600px]">
+            {filteredCompanies.length === 0 ? (
+              <div className="p-4 text-center text-xs text-slate-400 border border-dashed border-slate-200 rounded-xl">
+                검색된 법인이 없습니다
+              </div>
+            ) : (
+              filteredCompanies.map(comp => {
+                const isSelected = selectedCompany === comp.name;
+                return (
+                  <button
+                    key={comp.name}
+                    onClick={() => setSelectedCompany(comp.name)}
+                    className={`w-full text-left p-3 rounded-xl border transition-all flex items-center justify-between group ${
+                      isSelected
+                        ? 'bg-slate-100/90 border-slate-300 shadow-2xs font-bold'
+                        : 'bg-white hover:bg-slate-50 border-slate-200/70 hover:border-slate-300'
+                    }`}
+                  >
+                    <div className="min-w-0 pr-2">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-xs font-bold truncate ${isSelected ? 'text-slate-900' : 'text-slate-800 group-hover:text-slate-900'}`}>
+                          {comp.name}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2 mt-1 text-[11px] text-slate-500">
+                        <span>현직 <strong className="text-slate-700">{comp.currentCount}</strong>명</span>
+                        <span>·</span>
+                        <span className="text-amber-800 font-medium">알럼나이 <strong className="text-amber-700">{comp.alumniCount}</strong>명</span>
+                      </div>
+                    </div>
+
+                    <div className={`w-6 h-6 rounded-lg flex items-center justify-center transition-all flex-shrink-0 ${
+                      isSelected ? 'bg-slate-900 text-white shadow-2xs' : 'text-slate-400 group-hover:text-slate-600'
+                    }`}>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </div>
+                  </button>
+                );
+              })
+            )}
           </div>
         </div>
 
@@ -121,23 +197,24 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
           {selectedCompany ? (
             <>
               {/* Header Control Card: High-Density & Clean Reference Style */}
-              <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 font-bold flex-shrink-0">
-                    <Building2 className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <h2 className="text-base font-bold text-slate-900 tracking-tight">{selectedCompany}</h2>
-                      <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
-                        총 {activeData.current.length + activeData.alumni.length}명
-                      </span>
+              <div className="bg-white border border-slate-200/90 rounded-2xl p-4 sm:p-5 flex flex-col gap-3 shadow-xs">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 font-bold flex-shrink-0">
+                      <Building2 className="w-5 h-5" />
                     </div>
-                    <p className="text-xs text-slate-500 mt-0.5">
-                      현직 {activeData.current.length}명 · 알럼나이 {activeData.alumni.length}명 연결망
-                    </p>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-base font-bold text-slate-900 tracking-tight">{selectedCompany}</h2>
+                        <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                          총 {activeData.current.length + activeData.alumni.length}명
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        현직 {activeData.current.length}명 · 알럼나이 {activeData.alumni.length}명 연결망
+                      </p>
+                    </div>
                   </div>
-                </div>
 
                 <div className="flex items-center gap-2 flex-wrap">
                   {/* Sub-filter tabs */}
@@ -204,10 +281,55 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
                 </div>
               </div>
 
+              {/* Sub-toolbar: Person In-Page Search & CSV Export */}
+                <div className="flex items-center justify-between gap-3 pt-2 border-t border-slate-100">
+                  <div className="relative flex-1 max-w-sm">
+                    <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={personSearch}
+                      onChange={e => setPersonSearch(e.target.value)}
+                      placeholder={`${selectedCompany} 인맥 검색 (성명, 직함, 부서)...`}
+                      className="w-full pl-8 pr-7 py-1.5 text-xs bg-slate-50/80 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all placeholder:text-slate-400"
+                    />
+                    {personSearch && (
+                      <button
+                        onClick={() => setPersonSearch('')}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+                        title="검색어 지우기"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    )}
+                  </div>
+
+                  <button
+                    onClick={handleExportCompanyCsv}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 shadow-2xs transition-colors shrink-0"
+                    title="Excel 호환 UTF-8 BOM CSV 다운로드"
+                  >
+                    <Download className="w-3.5 h-3.5 text-slate-500" />
+                    <span>CSV 내보내기</span>
+                  </button>
+                </div>
+              </div>
+
               {/* Data Presentation Area */}
-              {displayedPeople.length === 0 ? (
+              {searchFilteredPeople.length === 0 ? (
                 <div className="p-8 rounded-2xl bg-white border border-dashed border-slate-200 text-center text-xs text-slate-500">
-                  해당 필터 조건에 부합하는 인맥 데이터가 없습니다.
+                  {personSearch ? (
+                    <div className="space-y-1">
+                      <p>'{personSearch}' 검색 조건에 부합하는 인맥이 없습니다.</p>
+                      <button
+                        onClick={() => setPersonSearch('')}
+                        className="text-blue-600 hover:underline font-medium text-xs mt-1"
+                      >
+                        검색어 초기화
+                      </button>
+                    </div>
+                  ) : (
+                    '해당 필터 조건에 부합하는 인맥 데이터가 없습니다.'
+                  )}
                 </div>
               ) : viewMode === 'table' ? (
                 /* High-Density Executive Table Mode (Inspired by GoodPartner Reference) */
@@ -226,7 +348,7 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 text-xs">
-                        {displayedPeople.map(({ person: p, isCurrent }) => {
+                        {searchFilteredPeople.map(({ person: p, isCurrent }) => {
                           const cluster = identifyTalentCluster(p);
                           const pastCareer = !isCurrent
                             ? p.careers.find(c => !c.isCurrent && c.companyName.toLowerCase().includes(selectedCompany.toLowerCase()))
@@ -325,7 +447,7 @@ export const CompanyAlumniView: React.FC<CompanyAlumniViewProps> = ({ people, on
               ) : (
                 /* Card Grid Mode */
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  {displayedPeople.map(({ person: p, isCurrent }) => {
+                  {searchFilteredPeople.map(({ person: p, isCurrent }) => {
                     const cluster = identifyTalentCluster(p);
                     const pastCareer = !isCurrent
                       ? p.careers.find(c => !c.isCurrent && c.companyName.toLowerCase().includes(selectedCompany.toLowerCase()))
