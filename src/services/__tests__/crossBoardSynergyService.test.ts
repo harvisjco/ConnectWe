@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { 
   analyzeCrossBoardSynergy, 
-  getCorpExecutives 
+  getCorpExecutives,
+  getConcurrentDirectorships 
 } from '../crossBoardSynergyService';
 import { Person } from '../../types/network';
 
@@ -137,5 +138,19 @@ describe('crossBoardSynergyService - 크로스 보드 시너지 & 3대 신뢰 �
     const alumniOverlays = report.overlays.filter(o => o.type === 'ALUMNI_OVERLAP');
     expect(alumniOverlays.length).toBeGreaterThan(0);
     expect(alumniOverlays.some(o => o.personName === '한동훈' || o.personName === '이진혁')).toBe(true);
+  });
+
+  it('6. 상법 제542조의8 사외이사 겸직 규제(상장사 2개사 한도) 판정이 정상 계산되어야 한다', () => {
+    // 가상 인물에 대한 겸직 산출 검증
+    const res = getConcurrentDirectorships('이재용');
+    expect(res).toBeDefined();
+    expect(typeof res.count).toBe('number');
+    expect(typeof res.isCompliant).toBe('boolean');
+    if (res.count > 2) {
+      expect(res.isCompliant).toBe(false);
+      expect(res.warning).toContain('상법 제542조의8');
+    } else {
+      expect(res.isCompliant).toBe(true);
+    }
   });
 });

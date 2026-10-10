@@ -62,6 +62,17 @@ export const GoldenCareModal: React.FC<GoldenCareModalProps> = ({
     setIsCopied(false);
   }, [person]);
 
+  // 전역 ESC 키 닫기 핸들러
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   const activeDraft = drafts[selectedThemeIndex] || drafts[0];
 
   // Editable body state

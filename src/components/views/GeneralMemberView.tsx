@@ -21,6 +21,7 @@ import { ViewHeader } from '../ui';
 import { GovernanceHubTab, TalentHubTab, MeetingHubTab } from '../../types/masterHub';
 import { isPureChoseong, matchChoseong } from '../../utils/koreanUtils';
 import { PersonMiniPreviewTooltip } from '../common/PersonMiniPreviewTooltip';
+import { getExecutiveStatusBadge } from '../../services/executiveToneService';
 
 interface GeneralMemberViewProps {
   people: Person[];
@@ -552,16 +553,29 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
                     )}
 
                     <div className="flex items-start gap-3">
-                      <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-bold text-base flex items-center justify-center shadow-sm">
+                      <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-bold text-base flex items-center justify-center shadow-sm shrink-0">
                         {person.name.slice(0, 1)}
                       </div>
-                      <div>
-                        <h4 className="text-base font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 transition-colors">
-                          <PersonMiniPreviewTooltip person={person} onSelectPerson={onSelectPerson}>
-                            <span>{person.name}</span>
-                          </PersonMiniPreviewTooltip>
-                        </h4>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h4 className="text-base font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 transition-colors">
+                            <PersonMiniPreviewTooltip person={person} onSelectPerson={onSelectPerson}>
+                              <span>{person.name}</span>
+                            </PersonMiniPreviewTooltip>
+                          </h4>
+                          {(() => {
+                            const badge = getExecutiveStatusBadge(person);
+                            return (
+                              <span 
+                                className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${badge.badgeClass}`}
+                                title={badge.subLabel}
+                              >
+                                {badge.label}
+                              </span>
+                            );
+                          })()}
+                        </div>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
                           {person.currentCompany} · {person.currentTitle}
                         </p>
                       </div>

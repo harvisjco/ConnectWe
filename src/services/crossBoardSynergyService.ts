@@ -26,6 +26,9 @@ export interface CrossBoardOverlayItem {
   connectionContext: string;
   closeness: number;
   matchedPerson?: Person;
+  concurrentPublicCorpCount?: number;
+  isCommercialLawCompliant?: boolean;
+  complianceWarning?: string;
 }
 
 export interface TrustRoute {
@@ -81,6 +84,30 @@ export function getCorpExecutives(corpName: string): RawDartExecutive[] {
 }
 
 /**
+ * 특정 인물이 DART 상장사 중 겸직 중인 상장사 목록 및 상법 제542조의8 준수 여부 산출
+ * (상법 제542조의8 및 시행령 제34조: 상장회사 사외이사는 2개 이상의 다른 회사 이사/감사 겸직 불가 - 최대 2개사 한도)
+ */
+export function getConcurrentDirectorships(personName: string): {
+  count: number;
+  companies: string[];
+  isCompliant: boolean;
+  warning?: string;
+} {
+  const matchingExecs = DART_EXECUTIVES.filter(e => e.name === personName);
+  const distinctCorps = Array.from(new Set(matchingExecs.map(e => e.corpName)));
+  const count = distinctCorps.length;
+  const isCompliant = count <= 2;
+  return {
+    count,
+    companies: distinctCorps,
+    isCompliant,
+    warning: !isCompliant 
+      ? `상법 제542조의8 겸직 한도 주의 (상장사 ${count}개사: ${distinctCorps.join(', ')})`
+      : undefined
+  };
+}
+
+/**
  * 전략적 크로스 보드 시너지 및 3대 신뢰 가교 경로 분석
  */
 export function analyzeCrossBoardSynergy(
@@ -101,6 +128,7 @@ export function analyzeCrossBoardSynergy(
 
     if (matchedPerson) {
       const isDirector = (exec.registrationType || '').includes('사외') || (exec.position || '').includes('사외');
+      const directorshipInfo = getConcurrentDirectorships(matchedPerson.name);
       overlays.push({
         id: `overlay-direct-${exec.id || exec.name}`,
         type: isDirector ? 'CONCURRENT_BOARD' : 'DIRECT_BOARD',
@@ -113,7 +141,10 @@ export function analyzeCrossBoardSynergy(
         personCompany: targetCorpName,
         connectionContext: `DART 공시 ${exec.position || '임원'} (${exec.chargeJob || '경영 총괄'}) · 내 1촌 핵심 네트워크`,
         closeness: matchedPerson.closeness,
-        matchedPerson
+        matchedPerson,
+        concurrentPublicCorpCount: directorshipInfo.count,
+        isCommercialLawCompliant: directorshipInfo.isCompliant,
+        complianceWarning: directorshipInfo.warning
       });
     }
   });

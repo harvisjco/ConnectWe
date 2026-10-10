@@ -41,6 +41,17 @@ export const CrossBoardSynergyModal: React.FC<CrossBoardSynergyModalProps> = ({
     return analyzeCrossBoardSynergy(selectedCorp, people, '(주)ConnectWe');
   }, [selectedCorp, people]);
 
+  // 전역 ESC 키 닫기 리스너
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   // 1-Page 브리프 복사
@@ -253,6 +264,23 @@ export const CrossBoardSynergyModal: React.FC<CrossBoardSynergyModalProps> = ({
                         <p className="text-[11px] text-slate-600 dark:text-slate-300 mt-2 leading-relaxed">
                           {item.connectionContext}
                         </p>
+
+                        {/* 상법 제542조 겸직 한도 컴플라이언스 인디케이터 */}
+                        {item.concurrentPublicCorpCount !== undefined && item.concurrentPublicCorpCount > 0 && (
+                          <div className="mt-2.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+                            {item.isCommercialLawCompliant ? (
+                              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800 text-[10px] font-semibold">
+                                <ShieldCheck className="w-3 h-3 text-emerald-600 shrink-0" />
+                                <span>상법 겸직 한도 준수 (상장사 {item.concurrentPublicCorpCount}개사 사외이사)</span>
+                              </div>
+                            ) : (
+                              <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-300/80 dark:border-amber-700 text-[10px] font-semibold" title={item.complianceWarning}>
+                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                                <span>⚠️ 법적 겸직 한도 확인 필요 (상장사 {item.concurrentPublicCorpCount}개사 초과)</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       <div className="flex items-center justify-between pt-3 mt-3 border-t border-slate-100 dark:border-slate-700/60">

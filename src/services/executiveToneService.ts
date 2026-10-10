@@ -1,4 +1,5 @@
 import { TalentClusterId } from './talentClusterEngine';
+import { Person } from '../types/network';
 
 export interface BannedWordViolation {
   word: string;
@@ -259,4 +260,63 @@ export function polishToneForCluster(
     default:
       return `${company}${name}님, 안녕하세요!\n\n현장에서 최고의 완성도로 프로덕트와 서비스를 직접 만들어가시는 ${name}님의 탁월한 전문성을 늘 눈여겨보고 있었습니다.\n\n${cleanOriginal ? `[나누고 싶은 이야기]\n${cleanOriginal}\n\n` : ''}실무 현장의 생생한 문제해결 노하우와 최신 빌딩 경험을 편안한 분위기 속에서 나누며 좋은 인연을 맺고 싶습니다.\n\n부담 없이 커피 한 잔 나누며 가볍게 인사 나눌 수 있을지요? 편하신 시간 언제든 편하게 말씀해주세요 :)\n\n감사합니다!`;
   }
+}
+
+export interface ExecutiveStatusBadgeInfo {
+  label: string;
+  subLabel?: string;
+  badgeClass: string;
+}
+
+/**
+ * [C-4] 상장사 DART 공시 팩트와 비상장 혁신 벤처/딥테크 간의 시각적 위계 균형 배지
+ */
+export function getExecutiveStatusBadge(person: Person): ExecutiveStatusBadgeInfo {
+  // 1. DART 공시 상장사 임원
+  if (person.sourceType === 'DART_FACT' || !!person.dartInfo?.isPublicDirector) {
+    return {
+      label: 'DART FACT',
+      subLabel: '공시 검증 임원',
+      badgeClass: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/70 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800'
+    };
+  }
+
+  // 2. 비상장 벤처 리더 / 창업가 (Venture Leader)
+  const isFounderOrCeo = /(대표|ceo|founder|창업|공동창업|co-founder)/i.test(person.currentTitle || '');
+  if (isFounderOrCeo) {
+    return {
+      label: '🚀 프론티어 빌더',
+      subLabel: '혁신 벤처 리더',
+      badgeClass: 'bg-rose-50 text-rose-700 dark:bg-rose-950/70 dark:text-rose-300 border-rose-200 dark:border-rose-800'
+    };
+  }
+
+  // 3. 딥테크 펠로우 / AI 아키텍트 (Tech Fellow)
+  const isTechFellow = /(cto|caio|펠로우|fellow|연구총괄|수석|architect|ai lab)/i.test(person.currentTitle || '') || 
+                       (person.primaryDomain && /(ai|ml|반도체|로보틱스|hw|인프라)/i.test(person.primaryDomain));
+  if (isTechFellow) {
+    return {
+      label: '🔬 딥테크 펠로우',
+      subLabel: '원천 기술 아키텍트',
+      badgeClass: 'bg-violet-50 text-violet-700 dark:bg-violet-950/70 dark:text-violet-300 border-violet-200 dark:border-violet-800'
+    };
+  }
+
+  // 4. 투자 파트너 / VC (Investor Partner)
+  const isInvestor = /(파트너|심사역|벤처캐피탈|vc|pe|투자|managing partner)/i.test(person.currentTitle || '') || 
+                     (person.currentCompany && /(인베스트|투자|벤처|파트너스|capital)/i.test(person.currentCompany));
+  if (isInvestor) {
+    return {
+      label: '💼 투자 파트너',
+      subLabel: '성장 자본 파트너',
+      badgeClass: 'bg-amber-50 text-amber-700 dark:bg-amber-950/70 dark:text-amber-300 border-amber-200 dark:border-amber-800'
+    };
+  }
+
+  // 5. 핵심 실무 리더
+  return {
+    label: '✨ 핵심 실무 리더',
+    subLabel: '프로덕션 스페셜리스트',
+    badgeClass: 'bg-indigo-50 text-indigo-700 dark:bg-indigo-950/70 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800'
+  };
 }

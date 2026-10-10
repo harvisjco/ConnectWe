@@ -56,6 +56,22 @@ export interface LetterGenerateOptions {
 }
 
 /**
+ * 비즈니스 서신 수신자 직함 정규화 (괄호 부가설명 정리 및 격조 높은 호칭 보정)
+ */
+export function sanitizeTitleForEtiquette(rawTitle?: string): string {
+  if (!rawTitle) return '리더';
+  // 1. 끝에 '님'이 이미 붙어있으면 제거
+  let clean = rawTitle.replace(/님$/i, '').trim();
+  // 2. 괄호 안 부가설명 정리 (예: 대표이사 (CEO) -> 대표이사)
+  clean = clean.replace(/\s*\([^)]*\)/g, '').trim();
+  // 3. 슬래시 복합 직책 분리 (예: CTO / 사내이사 -> CTO)
+  if (clean.includes('/')) {
+    clean = clean.split('/')[0].trim();
+  }
+  return clean || rawTitle;
+}
+
+/**
  * 인물 정보와 옵션을 바탕으로 상황별 완성형 비즈니스 서신 텍스트 생성
  */
 export function generateBusinessLetter(
@@ -65,7 +81,7 @@ export function generateBusinessLetter(
 ): string {
   const name = person.name || '대표';
   const company = person.currentCompany || '귀사';
-  const title = person.currentTitle || '리더';
+  const title = sanitizeTitleForEtiquette(person.currentTitle);
   const domain = person.primaryDomain || (person.skills && person.skills[0]) || '산업 혁신';
   const senderName = options.senderName || 'ConnectWe 파트너';
   const senderOrg = options.senderCompany 

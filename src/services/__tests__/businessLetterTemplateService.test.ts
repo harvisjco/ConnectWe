@@ -1,7 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import {
   generateBusinessLetter,
-  LETTER_SCENARIOS
+  LETTER_SCENARIOS,
+  sanitizeTitleForEtiquette
 } from '../businessLetterTemplateService';
 import { Person } from '../../types/network';
 
@@ -68,6 +69,13 @@ describe('BusinessLetterTemplateService Unit Tests', () => {
 
     const reconnect = generateBusinessLetter(mockPerson, 'WARM_RECONNECT');
     expect(reconnect).toContain('오랜만에 반가운 마음으로 소식 전합니다');
+  });
+
+  it('sanitizes complex executive titles with etiquette helper', () => {
+    expect(sanitizeTitleForEtiquette('대표이사 (CEO)')).toBe('대표이사');
+    expect(sanitizeTitleForEtiquette('CTO / 사내이사')).toBe('CTO');
+    expect(sanitizeTitleForEtiquette('부사장님')).toBe('부사장');
+    expect(sanitizeTitleForEtiquette('')).toBe('리더');
   });
 });
 
