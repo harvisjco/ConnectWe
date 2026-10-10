@@ -18,8 +18,8 @@ import {
   Award, Heart, ShieldCheck
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
-
 import { GovernanceHubTab, TalentHubTab, MeetingHubTab } from '../../types/masterHub';
+import { isPureChoseong, matchChoseong } from '../../utils/koreanUtils';
 
 interface GeneralMemberViewProps {
   people: Person[];
@@ -99,14 +99,23 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
     }
 
     if (searchQuery.trim()) {
-      const q = searchQuery.toLowerCase();
-      result = result.filter(p => 
-        p.name.toLowerCase().includes(q) ||
-        p.currentCompany.toLowerCase().includes(q) ||
-        p.currentTitle.toLowerCase().includes(q) ||
-        p.primaryDomain.toLowerCase().includes(q) ||
-        p.academics.some(a => a.schoolName.toLowerCase().includes(q) || (a.major && a.major.toLowerCase().includes(q)))
-      );
+      const q = searchQuery.toLowerCase().trim();
+      const isChoseong = isPureChoseong(q);
+
+      result = result.filter(p => {
+        if (isChoseong) {
+          return matchChoseong(p.name, q) ||
+            matchChoseong(p.currentCompany, q) ||
+            matchChoseong(p.currentTitle, q);
+        }
+        return (
+          p.name.toLowerCase().includes(q) ||
+          p.currentCompany.toLowerCase().includes(q) ||
+          p.currentTitle.toLowerCase().includes(q) ||
+          p.primaryDomain.toLowerCase().includes(q) ||
+          p.academics.some(a => a.schoolName.toLowerCase().includes(q) || (a.major && a.major.toLowerCase().includes(q)))
+        );
+      });
     }
 
     return result;
@@ -479,16 +488,45 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
 
           {/* 주소록 카드 그리드 */}
           {filteredPeople.length === 0 ? (
-            <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+            <div className="p-12 text-center bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 animate-in fade-in duration-200">
               <Users className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-              <h3 className="text-base font-semibold text-slate-700 dark:text-slate-300">등록된 동문이 없습니다.</h3>
-              <p className="text-sm text-slate-500 mt-1 mb-4">새로운 학교 동문이나 지인을 등록하여 주소록을 만들어 보세요.</p>
-              <button
-                onClick={onOpenAddModal}
-                className="px-4 py-2 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white"
-              >
-                + 첫 동문 추가하기
-              </button>
+              {searchQuery.trim() ? (
+                <>
+                  <h3 className="text-base font-semibold text-slate-800 dark:text-slate-200">
+                    &apos;{searchQuery}&apos; 검색 결과가 없습니다
+                  </h3>
+                  <p className="text-xs text-slate-500 mt-1.5 max-w-md mx-auto">
+                    이름, 회사명, 학교명 또는 자음 초성(예: &apos;ㄱㅅㅇ&apos;)으로 검색해 보세요. 오타가 없는지 확인하거나 검색어를 단순화해 보세요.
+                  </p>
+                  <div className="flex items-center justify-center gap-2 mt-4">
+                    <button
+                      type="button"
+                      onClick={() => setSearchQuery('')}
+                      className="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-700 dark:text-slate-300 transition-all cursor-pointer"
+                    >
+                      검색어 초기화
+                    </button>
+                    <button
+                      type="button"
+                      onClick={onOpenAddModal}
+                      className="px-3.5 py-1.5 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white transition-all cursor-pointer shadow-sm"
+                    >
+                      + &apos;{searchQuery}&apos; 신규 등록
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <h3 className="text-base font-semibold text-slate-700 dark:text-slate-300">등록된 동문이 없습니다.</h3>
+                  <p className="text-sm text-slate-500 mt-1 mb-4">새로운 학교 동문이나 지인을 등록하여 주소록을 만들어 보세요.</p>
+                  <button
+                    onClick={onOpenAddModal}
+                    className="px-4 py-2 text-xs font-semibold rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-sm"
+                  >
+                    + 첫 동문 추가하기
+                  </button>
+                </>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

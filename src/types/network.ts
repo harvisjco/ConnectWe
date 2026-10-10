@@ -138,6 +138,7 @@ export interface GraphQueryResult {
   highlightNodeIds: string[];
   relatedCompanies: string[];
   filterTags: string[];
+  didYouMean?: string;
 }
 
 // --------------------------------------------------
