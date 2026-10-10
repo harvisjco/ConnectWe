@@ -788,6 +788,7 @@ export const App: React.FC = () => {
           <PersonInspectorModal
             person={selectedPerson}
             allPeople={people}
+            isShieldActive={isShieldActive}
         onClose={() => setSelectedPerson(null)}
         onUpdatePerson={handleUpdatePerson}
         onDeletePerson={handleDeletePerson}

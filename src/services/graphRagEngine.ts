@@ -198,8 +198,24 @@ export function executeGraphRagQuery(query: string, people: Person[]): GraphQuer
       }
     });
 
+    // 1촌 필터 조건 가중치
+    const isFirstDegree = cleanQ.includes('1촌') || cleanQ.includes('일촌');
+    if (isFirstDegree && p.closeness === 1) {
+      score += 20;
+    }
+
     if (matchedTokenCount > 0) {
       score += matchedTokenCount * 3;
+    }
+
+    // [A-1] 다중 엔티티 복합 조건 교집합 부스트 (Multi-entity Intersection Boost)
+    if (meaningfulTokens.length >= 2) {
+      if (matchedTokenCount >= meaningfulTokens.length) {
+        // 질의의 모든 핵심 엔티티 조건을 100% 충족하는 인재는 최상단 압도적 승격
+        score += 50;
+      } else if (matchedTokenCount >= 2) {
+        score += matchedTokenCount * 15;
+      }
     }
 
     // 최소 점수 임계치 (단순 스치기 과매칭 방지: 의도 감지되었거나 유의미 토큰 매칭 시 최소 score >= 4)

@@ -20,6 +20,7 @@ import {
 import { ViewHeader } from '../ui';
 import { GovernanceHubTab, TalentHubTab, MeetingHubTab } from '../../types/masterHub';
 import { isPureChoseong, matchChoseong } from '../../utils/koreanUtils';
+import { PersonMiniPreviewTooltip } from '../common/PersonMiniPreviewTooltip';
 
 interface GeneralMemberViewProps {
   people: Person[];
@@ -556,7 +557,9 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
                       </div>
                       <div>
                         <h4 className="text-base font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 transition-colors">
-                          {person.name}
+                          <PersonMiniPreviewTooltip person={person} onSelectPerson={onSelectPerson}>
+                            <span>{person.name}</span>
+                          </PersonMiniPreviewTooltip>
                         </h4>
                         <p className="text-xs text-slate-500 dark:text-slate-400">
                           {person.currentCompany} · {person.currentTitle}

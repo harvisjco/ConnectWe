@@ -19,7 +19,7 @@ import {
   Briefcase, Plus, ShieldCheck, 
   X, Trash2, FileText, Send, Gift, GitMerge,
   TrendingUp, DollarSign, Award, Target, Sparkles,
-  Search
+  Search, AlertCircle
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 
@@ -503,9 +503,18 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
                             )}
                           </div>
                         ) : (
-                          <span className="text-slate-400 text-[10px]">
-                            키맨 0
-                          </span>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setActiveDealForAddStakeholder(deal);
+                            }}
+                            className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 font-semibold transition-colors cursor-pointer"
+                            title="의사결정권자(Keyman) 부재 리스크: 사내 인맥 매칭 등록"
+                          >
+                            <AlertCircle className="w-2.5 h-2.5 text-amber-600" />
+                            <span>키맨 접점 필요</span>
+                          </button>
                         )}
                       </div>
                     </div>

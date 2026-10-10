@@ -5,6 +5,7 @@ import {
   buildCorporateOrgChart, 
   getCorpYearlySnapshots 
 } from '../../services/orgChartEngine';
+import { loadPromotionEvents } from '../../services/promotionRadarService';
 import { OrgNode } from '../../types/orgChart';
 import { ViewHeader } from '../ui';
 import { 
@@ -45,6 +46,7 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
   const [isCopiedReport, setIsCopiedReport] = useState<boolean>(false);
   const [diffMode, setDiffMode] = useState<boolean>(false);
+  const promotionEvents = useMemo(() => loadPromotionEvents(people), [people]);
 
   // 섹션 접기/펼치기 토글
   const toggleSection = (key: string) => {
@@ -239,6 +241,22 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
                 <TrendingUp className="w-3 h-3 text-sky-600" />
                 <span>승진·보직</span>
               </span>
+            )}
+
+            {/* [C-3] 계열사 겸직 네트워크 매핑 */}
+            {onOpenCrossBoardSynergy && (node.chargeJob?.includes('겸직') || node.registrationType?.includes('사외') || node.isRegistered) && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenCrossBoardSynergy(selectedCorpName);
+                }}
+                className="text-[10px] px-1.5 py-0.5 rounded-full bg-violet-50 hover:bg-violet-100 text-violet-700 border border-violet-200/80 font-semibold flex items-center gap-0.5 transition-colors cursor-pointer"
+                title="계열사 이사회 겸직 및 크로스 보드 시너지 열기"
+              >
+                <GitMerge className="w-2.5 h-2.5 text-violet-600" />
+                <span>계열사 겸직</span>
+              </button>
             )}
           </div>
 
@@ -520,6 +538,53 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* [C-1] DART 실시간 정기 인사 공시 레이더 타임라인 */}
+      {promotionEvents.length > 0 && (
+        <div className="p-3 sm:p-3.5 rounded-2xl bg-gradient-to-r from-blue-50/70 via-indigo-50/50 to-slate-50 border border-blue-200/80 shadow-2xs">
+          <div className="flex items-center justify-between gap-2 mb-2">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-blue-950">
+              <Sparkles className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
+              <span>DART 실시간 정기 인사 공시 레이더 (최근 30일)</span>
+              <span className="text-[10px] px-2 py-0.2 rounded-full bg-blue-600 text-white font-mono font-medium">
+                {promotionEvents.length}건 감지
+              </span>
+            </div>
+            <span className="text-[11px] text-slate-500 font-medium hidden sm:inline">
+              승진·영전 당일 즉시 축하 골든타임 알림
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 text-xs">
+            {promotionEvents.map((evt) => (
+              <div
+                key={evt.id}
+                onClick={() => {
+                  setSearchTerm(evt.personName);
+                  setAllCollapsed(false);
+                }}
+                className="group flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white hover:bg-blue-50/90 border border-slate-200/90 hover:border-blue-300 shadow-2xs transition-all cursor-pointer shrink-0"
+              >
+                <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0" />
+                <div className="flex items-baseline gap-1">
+                  <span className="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
+                    {evt.personName}
+                  </span>
+                  <span className="text-[11px] text-slate-500">
+                    ({evt.companyName})
+                  </span>
+                </div>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-semibold border border-blue-100">
+                  {evt.newTitle}
+                </span>
+                <span className="text-[10px] text-slate-400 font-mono">
+                  {evt.announcedDate}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 2. 연도별 하이라이트 배너 */}
       {currentYearInfo.keyChanges && currentYearInfo.keyChanges.length > 0 && (

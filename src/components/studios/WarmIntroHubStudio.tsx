@@ -256,11 +256,16 @@ export const WarmIntroHubStudio: React.FC<WarmIntroHubStudioProps> = ({
                       </div>
 
                       {/* Hop 1 */}
-                      <div className="flex flex-col items-center justify-center px-2">
-                        <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200 whitespace-nowrap">
-                          1촌 직접 신뢰
+                      <div className="flex flex-col items-center justify-center px-2 py-1 text-center">
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200 whitespace-nowrap shadow-2xs">
+                          Step 1: 1촌 직접 인연
                         </span>
-                        <ArrowRight className="w-5 h-5 text-indigo-400 rotate-90 md:rotate-0 my-1 md:my-0" />
+                        <div className="flex items-center gap-1 my-1">
+                          <span className="w-8 h-0.5 bg-emerald-300 hidden md:inline-block" />
+                          <ArrowRight className="w-4 h-4 text-emerald-500 rotate-90 md:rotate-0" />
+                          <span className="w-8 h-0.5 bg-emerald-300 hidden md:inline-block" />
+                        </div>
+                        <span className="text-[9px] text-slate-500 font-medium">직통 소개 부탁</span>
                       </div>
 
                       {/* Node 2: Intermediary */}
@@ -282,11 +287,16 @@ export const WarmIntroHubStudio: React.FC<WarmIntroHubStudioProps> = ({
                       </div>
 
                       {/* Hop 2 */}
-                      <div className="flex flex-col items-center justify-center px-2">
-                        <span className="text-[10px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200 whitespace-nowrap">
-                          {activePath.connectionTags[0] || '공통 인연'}
+                      <div className="flex flex-col items-center justify-center px-2 py-1 text-center">
+                        <span className="text-[10px] font-bold text-indigo-800 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-200 whitespace-nowrap shadow-2xs">
+                          Step 2: {activePath.connectionTags[0] || '공통 인연'}
                         </span>
-                        <ArrowRight className="w-5 h-5 text-indigo-400 rotate-90 md:rotate-0 my-1 md:my-0" />
+                        <div className="flex items-center gap-1 my-1">
+                          <span className="w-8 h-0.5 bg-indigo-300 hidden md:inline-block" />
+                          <ArrowRight className="w-4 h-4 text-indigo-500 rotate-90 md:rotate-0" />
+                          <span className="w-8 h-0.5 bg-indigo-300 hidden md:inline-block" />
+                        </div>
+                        <span className="text-[9px] text-slate-500 font-medium">Double Opt-in 연결</span>
                       </div>
 
                       {/* Node 3: Target */}

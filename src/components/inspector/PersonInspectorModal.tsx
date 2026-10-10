@@ -19,9 +19,11 @@ import {
   Sparkles, Zap, Cpu, Building2, Rocket,
   User, MessageSquare, Shield, Send, Copy, AlertTriangle,
   Mic, Compass, Coffee, BellRing, Gift, Headphones,
-  Pin, FileText, ListTodo, CheckSquare, Square
+  Pin, FileText, ListTodo, CheckSquare, Square, Printer
 } from 'lucide-react';
 import { BusinessLetterComposerModal } from '../modals/BusinessLetterComposerModal';
+import { MeetingPrepBriefModal } from '../modals/MeetingPrepBriefModal';
+import { maskPerson } from '../../services/privacyShieldService';
 import {
   loadActionItems,
   saveActionItems,
@@ -34,6 +36,7 @@ import {
 interface PersonInspectorModalProps {
   person: Person | null;
   allPeople?: Person[];
+  isShieldActive?: boolean;
   onClose: () => void;
   onUpdatePerson: (updated: Person) => void;
   onDeletePerson: (personId: string) => void;
@@ -53,8 +56,9 @@ interface PersonInspectorModalProps {
 type InspectorTab = 'profile' | 'timeline' | 'governance';
 
 export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
-  person,
+  person: initialPerson,
   allPeople = [],
+  isShieldActive = false,
   onClose,
   onUpdatePerson,
   onDeletePerson,
@@ -68,6 +72,10 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
   onOpenProtocol,
   onOpenAudioBriefing,
 }) => {
+  const person = useMemo(() => {
+    if (!initialPerson) return null;
+    return isShieldActive ? maskPerson(initialPerson, true) : initialPerson;
+  }, [initialPerson, isShieldActive]);
   const [activeTab, setActiveTab] = useState<InspectorTab>('profile');
   const [isEditingMemo, setIsEditingMemo] = useState(false);
   const [memoText, setMemoText] = useState(person?.memo || '');
@@ -92,6 +100,9 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
   // 1초 비즈니스 서신 템플릿 모달 상태
   const [isLetterModalOpen, setIsLetterModalOpen] = useState(false);
 
+  // 미팅 준비 1-Page 브리프 모달 상태
+  const [isBriefModalOpen, setIsBriefModalOpen] = useState(false);
+
   // 미팅 Action Item 상태
   const [actionItems, setActionItems] = useState<MeetingActionItem[]>([]);
   const [newActionItemText, setNewActionItemText] = useState('');
@@ -113,6 +124,7 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
       setIsAddingLog(false);
       setIsComposerOpen(false);
       setIsLetterModalOpen(false);
+      setIsBriefModalOpen(false);
       setDartStatusMsg(null);
       setRawDraft('');
       setPolishedLetter('');
@@ -369,6 +381,16 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
               }`}
             >
               <Pin className={`w-4 h-4 ${person.isPinned ? 'fill-amber-500' : ''}`} />
+            </button>
+
+            {/* 미팅 준비 1-Page 브리프 (A4 인쇄/복사용) */}
+            <button
+              type="button"
+              onClick={() => setIsBriefModalOpen(true)}
+              title="미팅 준비 1-Page 브리프 (A4 요약/출력)"
+              className="p-2 rounded-xl text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 transition-colors cursor-pointer"
+            >
+              <Printer className="w-4 h-4" />
             </button>
 
             {/* 1초 비즈니스 서신 템플릿 라이브러리 */}
@@ -1044,6 +1066,17 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
           isOpen={true}
           person={person}
           onClose={() => setIsLetterModalOpen(false)}
+          onShowToast={(msg) => alert(msg)}
+        />
+      )}
+
+      {/* 미팅 준비 1-Page 브리프 모달 (A4 요약/출력) */}
+      {isBriefModalOpen && (
+        <MeetingPrepBriefModal
+          isOpen={true}
+          person={person}
+          allPeople={allPeople}
+          onClose={() => setIsBriefModalOpen(false)}
           onShowToast={(msg) => alert(msg)}
         />
       )}

@@ -172,6 +172,23 @@ export const BusinessLetterComposerModal: React.FC<BusinessLetterComposerModalPr
                   placeholder="미팅 목적 또는 논의 주제 입력..."
                   className="w-full px-3 py-1.5 text-xs rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-blue-500/30"
                 />
+                <div className="flex items-center gap-1.5 flex-wrap mt-2">
+                  <span className="text-[10px] text-slate-400">추천 화두:</span>
+                  {['AI 도메인 전략 협력', '투자 & IR 논의', '신규 사업 제휴', '조직 & 테크 리더십'].map((topic) => (
+                    <button
+                      key={topic}
+                      type="button"
+                      onClick={() => setCustomTopic(customTopic === topic ? '' : topic)}
+                      className={`text-[10px] px-2 py-0.5 rounded-lg border transition-all cursor-pointer ${
+                        customTopic === topic 
+                          ? 'bg-blue-600 text-white border-blue-600 font-bold shadow-2xs'
+                          : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700'
+                      }`}
+                    >
+                      {topic}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-2">
