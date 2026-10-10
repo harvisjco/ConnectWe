@@ -108,6 +108,18 @@ export const ExecutiveEngagementStudio: React.FC<ExecutiveEngagementStudioProps>
   const [protocolFormat, setProtocolFormat] = useState<'short' | 'formal' | 'ribbon'>('formal');
   const [copiedProtocol, setCopiedProtocol] = useState(false);
 
+  // ESC 키 닫기 이벤트 리스너
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   // 인맥 필터링
   const filteredPeople = useMemo(() => {
     if (!searchQuery.trim()) return allPeople;
@@ -274,8 +286,13 @@ export const ExecutiveEngagementStudio: React.FC<ExecutiveEngagementStudioProps>
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+    <div 
+      data-testid="executive-engagement-studio"
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200"
+    >
       <div 
+        onClick={(e) => e.stopPropagation()}
         className="relative w-full max-w-5xl max-h-[92vh] flex flex-col bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/80 dark:border-slate-800 overflow-hidden"
         role="dialog"
         aria-modal="true"
@@ -290,12 +307,12 @@ export const ExecutiveEngagementStudio: React.FC<ExecutiveEngagementStudioProps>
               <Sparkles className="w-5 h-5 text-amber-300" />
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <h2 id="studio-title" className="text-base font-extrabold text-slate-900 dark:text-white tracking-tight">
                   경영진 미팅 & 소통 컨시어지 스튜디오
                 </h2>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
-                  통합 메가스튜디오 1
+                  {activeTab === 'teatime' ? '☕ 동선 티타임 & .ICS' : activeTab === 'debrief' ? '🎙️ 30초 음성 회고' : activeTab === 'care' ? '🔔 골든케어 & 의전' : '1-Page AI 브리프'}
                 </span>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -353,9 +370,10 @@ export const ExecutiveEngagementStudio: React.FC<ExecutiveEngagementStudioProps>
 
             {/* 닫기 버튼 */}
             <button
+              data-testid="close-engagement-studio"
               onClick={onClose}
               className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white flex items-center justify-center transition-all cursor-pointer"
-              title="스튜디오 닫기"
+              title="닫기 (ESC)"
             >
               <X className="w-4 h-4" />
             </button>

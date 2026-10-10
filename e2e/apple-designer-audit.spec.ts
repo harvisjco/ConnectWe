@@ -247,20 +247,34 @@ test.describe('Apple Chief Designer Deep Precision Audit', () => {
     }
 
     // Audit 9c: Drawer Inspection (AI Copilot Drawer)
-    const copilotBtn = page.locator('button:has-text("인맥 코파일럿"), button[title*="코파일럿"]').first();
+    const copilotBtn = page.locator('button[title="AI 인맥 지능 코파일럿 열기"], button:has-text("인맥 코파일럿")').first();
     if (await copilotBtn.isVisible()) {
       await copilotBtn.click();
       await page.waitForTimeout(600);
       await page.screenshot({ path: 'e2e/screenshots/audit-09c-drawer-copilot.png' });
       metricsResults.push(await getHigMetrics('Drawer - Copilot'));
       
-      const closeBtn = page.locator('div.fixed.inset-0.z-50 button:has(svg)').first();
-      if (await closeBtn.isVisible()) {
+      const closeBtn = page.locator('div.fixed.inset-0.z-50 button[title*="닫기"], [data-testid="close-engagement-studio"]').first();
+      if (await closeBtn.isVisible().catch(() => false)) {
         await closeBtn.click();
       } else {
         await page.keyboard.press('Escape');
       }
       await page.waitForTimeout(500);
+    }
+
+    // 모든 잔류 모달/드로어 딤 레이어 안전 해제
+    for (let i = 0; i < 5; i++) {
+      const closeAny = page.locator('[data-testid="close-engagement-studio"], [data-testid="close-relationship-studio"], [data-testid="close-talent-studio"], button[title*="닫기"]').first();
+      if (await closeAny.isVisible().catch(() => false)) {
+        await closeAny.click().catch(() => {});
+        await page.waitForTimeout(200);
+      } else {
+        await page.keyboard.press('Escape');
+        await page.waitForTimeout(200);
+      }
+      const backdrop = page.locator('div.fixed.inset-0.z-50').first();
+      if (!await backdrop.isVisible().catch(() => false)) break;
     }
 
     // Audit 10: Centered Dim Modal Inspection (Person Inspector Modal)

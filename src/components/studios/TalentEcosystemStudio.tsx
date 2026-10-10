@@ -70,6 +70,18 @@ export const TalentEcosystemStudio: React.FC<TalentEcosystemStudioProps> = ({
     }
   }, [initialTab]);
 
+  // ESC 키 닫기 이벤트 리스너
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   const handleCopy = (text: string, key: string, successMsg = '클립보드에 복사되었습니다.') => {
     if (typeof navigator !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(text);
@@ -240,8 +252,13 @@ export const TalentEcosystemStudio: React.FC<TalentEcosystemStudioProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+    <div 
+      data-testid="talent-ecosystem-studio"
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200"
+    >
       <div
+        onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="talent-ecosystem-title"
@@ -270,9 +287,11 @@ export const TalentEcosystemStudio: React.FC<TalentEcosystemStudioProps> = ({
             </div>
           </div>
           <button
+            data-testid="close-talent-studio"
             onClick={onClose}
             aria-label="닫기"
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            title="닫기 (ESC)"
+            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>

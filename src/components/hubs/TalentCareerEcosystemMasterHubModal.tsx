@@ -182,12 +182,15 @@ export const TalentCareerEcosystemMasterHubModal: React.FC<TalentCareerEcosystem
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/70 backdrop-blur-sm animate-in fade-in duration-200"
+      data-testid="talent-career-ecosystem-master-hub-modal"
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/70 backdrop-blur-md animate-in fade-in duration-200"
       role="dialog"
       aria-modal="true"
       aria-labelledby="talent-hub-title"
     >
       <div
+        data-testid="project-squad-builder-modal"
         className="relative w-full max-w-6xl max-h-[92vh] flex flex-col bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200/90 dark:border-slate-800 overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
@@ -213,9 +216,11 @@ export const TalentCareerEcosystemMasterHubModal: React.FC<TalentCareerEcosystem
           </div>
 
           <button
+            data-testid="close-talent-hub"
             onClick={onClose}
             className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
             aria-label="닫기"
+            title="닫기 (ESC)"
           >
             <X className="w-4 h-4" />
           </button>

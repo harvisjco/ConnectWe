@@ -608,14 +608,24 @@ export const GlobalCommandPalette: React.FC<GlobalCommandPaletteProps> = ({
     const matchedPeople = people.filter(p => {
       if (!q) return p.closeness <= 2; // 초기에는 1~2촌 핵심 인물 표시
       if (isChoseong) {
-        return matchChoseong(p.name, q) || matchChoseong(p.currentCompany, q);
+        return (
+          matchChoseong(p.name, q) || 
+          matchChoseong(p.currentCompany, q) ||
+          (p.careers && p.careers.some(c => matchChoseong(c.companyName, q)))
+        );
       }
       return (
         p.name.toLowerCase().includes(q) ||
         p.currentCompany.toLowerCase().includes(q) ||
         p.currentTitle.toLowerCase().includes(q) ||
         (p.primaryDomain && p.primaryDomain.toLowerCase().includes(q)) ||
-        p.skills.some(s => s.toLowerCase().includes(q))
+        p.skills.some(s => s.toLowerCase().includes(q)) ||
+        (p.careers && p.careers.some(c => 
+          c.companyName.toLowerCase().includes(q) || 
+          (c.department && c.department.toLowerCase().includes(q)) ||
+          (c.title && c.title.toLowerCase().includes(q))
+        )) ||
+        (p.memo && p.memo.toLowerCase().includes(q))
       );
     }).slice(0, 8);
 

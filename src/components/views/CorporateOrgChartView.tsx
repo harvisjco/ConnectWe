@@ -5,7 +5,7 @@ import {
   buildCorporateOrgChart, 
   getCorpYearlySnapshots 
 } from '../../services/orgChartEngine';
-import { loadPromotionEvents } from '../../services/promotionRadarService';
+import { loadPromotionEvents, generateCongratulationMessages } from '../../services/promotionRadarService';
 import { OrgNode } from '../../types/orgChart';
 import { ViewHeader } from '../ui';
 import { 
@@ -46,6 +46,7 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({});
   const [isCopiedReport, setIsCopiedReport] = useState<boolean>(false);
   const [diffMode, setDiffMode] = useState<boolean>(false);
+  const [copiedPromoId, setCopiedPromoId] = useState<string | null>(null);
   const promotionEvents = useMemo(() => loadPromotionEvents(people), [people]);
 
   // 섹션 접기/펼치기 토글
@@ -213,6 +214,15 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
     return (
       <div
         key={node.id}
+        data-testid="org-node-card"
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            handleNodeClick(node);
+          }
+        }}
         onClick={() => handleNodeClick(node)}
         className={`relative p-3.5 rounded-xl border transition-all cursor-pointer group hover:-translate-y-0.5 hover:shadow-xs ${borderStyle}`}
       >
@@ -580,6 +590,35 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
                 <span className="text-[10px] text-slate-400 font-mono">
                   {evt.announcedDate}
                 </span>
+
+                {/* [C-2] 품격 축전 1초 복사 버튼 */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const messages = generateCongratulationMessages(evt);
+                    const formal = messages.find(m => m.type === 'FORMAL_LETTER') || messages[0];
+                    if (formal) {
+                      navigator.clipboard.writeText(formal.content);
+                      setCopiedPromoId(evt.id);
+                      setTimeout(() => setCopiedPromoId(null), 2000);
+                    }
+                  }}
+                  title="품격 공식 축전 문구 클립보드 복사"
+                  className="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200/80 transition-all flex items-center gap-1 cursor-pointer"
+                >
+                  {copiedPromoId === evt.id ? (
+                    <>
+                      <Check className="w-2.5 h-2.5 text-emerald-600" />
+                      <span className="text-emerald-700">복사됨</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-2.5 h-2.5 text-indigo-600" />
+                      <span>축전 복사</span>
+                    </>
+                  )}
+                </button>
               </div>
             ))}
           </div>

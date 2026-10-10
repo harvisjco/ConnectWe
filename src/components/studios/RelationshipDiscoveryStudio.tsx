@@ -88,6 +88,18 @@ export const RelationshipDiscoveryStudio: React.FC<RelationshipDiscoveryStudioPr
     }
   }, [initialTab]);
 
+  // ESC 키 닫기 이벤트 리스너
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
   const handleCopy = (text: string, key: string, successMsg = '클립보드에 복사되었습니다.') => {
     navigator.clipboard.writeText(text);
     setCopiedKey(key);
@@ -371,8 +383,13 @@ export const RelationshipDiscoveryStudio: React.FC<RelationshipDiscoveryStudioPr
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
+    <div 
+      data-testid="relationship-discovery-studio"
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200"
+    >
       <div 
+        onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-labelledby="relationship-discovery-title"
@@ -401,8 +418,10 @@ export const RelationshipDiscoveryStudio: React.FC<RelationshipDiscoveryStudioPr
             </div>
           </div>
           <button
+            data-testid="close-relationship-studio"
             onClick={onClose}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            title="닫기 (ESC)"
+            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>

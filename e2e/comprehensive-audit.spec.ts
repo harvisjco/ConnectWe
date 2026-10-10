@@ -38,22 +38,26 @@ test.describe('ConnectWe 종합 브라우저 기능 정밀 진단 (Playwright E2
   });
 
   test('2. [GraphRAG 검색] 검색창에 키워드 입력 시 필터링이 정상 작동하고 리셋되어야 한다', async ({ page }) => {
-    const searchInput = page.locator('input[placeholder*="전문 스킬 검색"]').first();
-    await expect(searchInput).toBeVisible();
+    // 헤더 인라인 캡슐 검색바 클릭
+    const headerSearchBtn = page.locator('[data-testid="header-search-btn"]').first();
+    await expect(headerSearchBtn).toBeVisible();
+    await headerSearchBtn.click();
 
+    // 커맨드 팔레트 검색창 노출 및 입력 확인
+    const palette = page.locator('[data-testid="global-command-palette"]');
+    await expect(palette).toBeVisible();
+
+    const searchInput = palette.locator('input').first();
     await searchInput.fill('삼성');
-    await page.keyboard.press('Enter');
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(300);
 
-    // 검색 결과나 상태 확인
-    const countBadge = page.locator('text=명').first();
-    await expect(countBadge).toBeVisible();
+    // 검색 결과 항목 확인 (삼성전자 알럼나이 이진혁 등)
+    await expect(palette.locator('text=이진혁').first()).toBeVisible();
 
-    // 리셋 버튼 클릭
-    const resetButton = page.locator('button:has-text("초기화"), button[title*="초기화"]').first();
-    if (await resetButton.isVisible()) {
-      await resetButton.click();
-    }
+    // ESC 닫기
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(300);
+    await expect(palette).not.toBeVisible();
   });
 
   test('3. [LNB 네비게이션 순회] 11대 핵심 메뉴 전환 시 컴포넌트 런타임 오류 없이 정상 렌더링되어야 한다', async ({ page }) => {

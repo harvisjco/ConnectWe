@@ -60,7 +60,6 @@ describe('ExecutiveEngagementStudio (통합 메가스튜디오 1 렌더링 및 �
     );
 
     expect(html).toContain('경영진 미팅 &amp; 소통 컨시어지 스튜디오');
-    expect(html).toContain('통합 메가스튜디오 1');
     expect(html).toContain('1-Page AI 브리프');
     expect(html).toContain('동선 티타임 &amp; .ICS');
     expect(html).toContain('30초 음성 회고 &amp; 서신');
