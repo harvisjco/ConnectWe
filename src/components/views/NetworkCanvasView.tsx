@@ -299,18 +299,25 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
       ctx.strokeStyle = isHovered ? '#ffffff' : 'rgba(255,255,255,0.3)';
       ctx.stroke();
 
-      // 라벨
+      // [B-1] 라벨: 선명한 텍스트 섀도우 및 명도 대비 극대화
       ctx.globalAlpha = isDimmed ? 0.25 : 1.0;
-      ctx.font = node.type === 'me' ? 'bold 12px sans-serif' : '10px sans-serif';
-      ctx.fillStyle = '#f1f5f9';
+      ctx.save();
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.95)';
+      ctx.shadowBlur = 5;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 1;
+
+      ctx.font = node.type === 'me' || isHovered ? 'bold 11px sans-serif' : '10px sans-serif';
+      ctx.fillStyle = isHovered ? '#ffffff' : '#f8fafc';
       ctx.textAlign = 'center';
       ctx.fillText(node.label, node.x, node.y + node.radius + 14);
 
       if (node.subLabel && currentScale >= 0.85) {
-        ctx.font = '9px sans-serif';
-        ctx.fillStyle = '#94a3b8';
-        ctx.fillText(node.subLabel.slice(0, 16), node.x, node.y + node.radius + 25);
+        ctx.font = isHovered ? 'bold 9px sans-serif' : '9px sans-serif';
+        ctx.fillStyle = isHovered ? '#c7d2fe' : '#94a3b8';
+        ctx.fillText(node.subLabel.slice(0, 18), node.x, node.y + node.radius + 25);
       }
+      ctx.restore();
 
       ctx.globalAlpha = 1.0;
     }
@@ -460,7 +467,11 @@ export const NetworkCanvasView: React.FC<NetworkCanvasViewProps> = ({
       </div>
 
       {is3DMode ? (
-        <CosmicGalaxy3DView people={people} onSelectPerson={onSelectPerson} />
+        <CosmicGalaxy3DView 
+          people={people} 
+          onSelectPerson={onSelectPerson} 
+          onSwitchTo2D={() => setIs3DMode(false)}
+        />
       ) : (
         <>
           <canvas

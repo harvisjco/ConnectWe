@@ -6,11 +6,13 @@ import { Sparkles, Info } from 'lucide-react';
 interface CosmicGalaxy3DViewProps {
   people: Person[];
   onSelectPerson: (person: Person) => void;
+  onSwitchTo2D?: () => void;
 }
 
 export const CosmicGalaxy3DView: React.FC<CosmicGalaxy3DViewProps> = ({
   people,
-  onSelectPerson
+  onSelectPerson,
+  onSwitchTo2D
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredPerson, setHoveredPerson] = useState<Person | null>(null);
@@ -248,11 +250,23 @@ export const CosmicGalaxy3DView: React.FC<CosmicGalaxy3DViewProps> = ({
       {/* Three.js 3D WebGL Canvas Container */}
       <div ref={containerRef} className="w-full h-full cursor-grab active:cursor-grabbing" />
 
-      {/* Floating 3D Control Badge */}
-      <div className="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 backdrop-blur shadow-lg text-xs">
-        <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
-        <span className="font-bold text-white">3D Cosmic Orbit Mode (Three.js)</span>
-        <span className="text-[11px] text-slate-400 hidden sm:inline">· 마우스 드래그 360° 회전 · 휠 줌</span>
+      {/* Floating 3D Control Badge & [B-2] 2D 전환 퀵 액션 */}
+      <div className="absolute top-4 left-4 flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900/90 border border-slate-800 backdrop-blur shadow-lg text-xs">
+          <Sparkles className="w-4 h-4 text-purple-400 animate-pulse" />
+          <span className="font-bold text-white">3D Cosmic Orbit Mode</span>
+          <span className="text-[11px] text-slate-400 hidden sm:inline">· 한 손가락 360° 회전 · 두 손가락 줌</span>
+        </div>
+        {onSwitchTo2D && (
+          <button
+            type="button"
+            onClick={onSwitchTo2D}
+            className="px-3 py-1.5 rounded-xl bg-slate-800/90 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 hover:text-white transition-all cursor-pointer shadow-lg active:scale-95"
+            title="2D 인터랙티브 그래프 모드로 전환"
+          >
+            ← 2D 캔버스로 전환
+          </button>
+        )}
       </div>
 
       {/* 범례 */}

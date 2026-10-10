@@ -21,14 +21,15 @@ export const InteractionTimelineView: React.FC<InteractionTimelineViewProps> = (
   onOpenGoldenCare,
   onShowToast
 }) => {
-  const [filterType, setFilterType] = useState<'all' | 'stale' | 'recent'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'stale' | 'recent' | 'month'>('all');
   const [searchKeyword, setSearchKeyword] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
 
-  const handleFilterChange = (type: 'all' | 'stale' | 'recent') => {
+  const handleFilterChange = (type: 'all' | 'stale' | 'recent' | 'month') => {
     setFilterType(type);
     if (type === 'stale') onShowToast('6개월 이상 소통 공백(안부 연락 필요) 인맥 필터가 적용되었습니다.');
     else if (type === 'recent') onShowToast('최근 90일 내 소통 기록이 있는 인맥 필터가 적용되었습니다.');
+    else if (type === 'month') onShowToast('최근 30일 이내 활발히 교류한 핵심 인맥 필터가 적용되었습니다.');
   };
 
   // 6개월(180일) 이상 소통 공백(안부 필요) 인맥
@@ -41,8 +42,21 @@ export const InteractionTimelineView: React.FC<InteractionTimelineViewProps> = (
     return diffDays <= 90;
   });
 
+  // 최근 30일 내 소통 기록이 있는 인맥
+  const monthPeople = people.filter(p => {
+    if (p.closeness === 1 || !p.lastContactDate) return false;
+    const diffDays = (Date.now() - new Date(p.lastContactDate).getTime()) / (1000 * 3600 * 24);
+    return diffDays <= 30;
+  });
+
   // 필터링 적용 인맥 리스트
-  const targetList = filterType === 'stale' ? stalePeople : filterType === 'recent' ? recentPeople : people.filter(p => p.closeness !== 1);
+  const targetList = filterType === 'stale' 
+    ? stalePeople 
+    : filterType === 'recent' 
+    ? recentPeople 
+    : filterType === 'month'
+    ? monthPeople
+    : people.filter(p => p.closeness !== 1);
 
   const filteredPeople = targetList.filter(p => {
     if (!searchKeyword.trim()) return true;
@@ -146,6 +160,16 @@ export const InteractionTimelineView: React.FC<InteractionTimelineViewProps> = (
             전체 ({people.filter(p => p.closeness !== 1).length})
           </button>
           <button
+            onClick={() => handleFilterChange('month')}
+            className={`px-3 py-1.5 rounded-xl font-bold transition-all text-xs shadow-2xs ${
+              filterType === 'month'
+                ? 'bg-indigo-600 text-white'
+                : 'bg-white border border-slate-200/90 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+            }`}
+          >
+            최근 30일 ({monthPeople.length})
+          </button>
+          <button
             onClick={() => handleFilterChange('recent')}
             className={`px-3 py-1.5 rounded-xl font-bold transition-all text-xs shadow-2xs ${
               filterType === 'recent'
@@ -153,7 +177,7 @@ export const InteractionTimelineView: React.FC<InteractionTimelineViewProps> = (
                 : 'bg-white border border-slate-200/90 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
-            최근 소통 ({recentPeople.length})
+            최근 90일 ({recentPeople.length})
           </button>
           <button
             onClick={() => handleFilterChange('stale')}
