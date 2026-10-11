@@ -74,3 +74,13 @@ export function maskPerson(person: Person, isShieldActive: boolean): Person {
     memo: maskMemo(person.memo || '', true),
   };
 }
+
+/**
+ * 화면 캡처 방지 및 대외비 표시를 위한 다이내믹 워터마크 텍스트 생성
+ */
+export function generateDynamicWatermark(userName?: string): string {
+  const now = new Date().toISOString().slice(0, 16).replace('T', ' ');
+  const user = userName || 'C-Suite Executive';
+  return `CONFIDENTIAL · ${user} · ${now} · CAPTURE PROHIBITED`;
+}
+

@@ -58,6 +58,7 @@ const ExecutiveEleganceModal = React.lazy(() => import('./components/modals/Exec
 const MeetingGuardGovernanceModal = React.lazy(() => import('./components/modals/MeetingGuardGovernanceModal').then(m => ({ default: m.MeetingGuardGovernanceModal })));
 const GlobalCommandPalette = React.lazy(() => import('./components/common/GlobalCommandPalette').then(m => ({ default: m.GlobalCommandPalette })));
 const AuthModal = React.lazy(() => import('./components/auth/AuthModal').then(m => ({ default: m.AuthModal })));
+const KeyboardShortcutsModal = React.lazy(() => import('./components/modals/KeyboardShortcutsModal').then(m => ({ default: m.KeyboardShortcutsModal })));
 
 // 엔터프라이즈 마스터 허브 비동기 레이지 로딩
 const ExecutiveGovernanceMasterHubModal = React.lazy(() => import('./components/hubs/ExecutiveGovernanceMasterHubModal').then(m => ({ default: m.ExecutiveGovernanceMasterHubModal })));
@@ -71,7 +72,8 @@ const RelationshipDiscoveryStudio = React.lazy(() => import('./components/studio
 const TalentEcosystemStudio = React.lazy(() => import('./components/studios/TalentEcosystemStudio').then(m => ({ default: m.TalentEcosystemStudio })));
 
 import { BusinessDeal } from './services/dealPipelineService';
-import { maskPerson } from './services/privacyShieldService';
+import { maskPerson, generateDynamicWatermark } from './services/privacyShieldService';
+import { triggerHaptic } from './utils/hapticFeedback';
 import { GeoClusterId } from './services/geoProximityService';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 import { PinnedVipQuickBar } from './components/common/PinnedVipQuickBar';
@@ -106,8 +108,59 @@ export const App: React.FC = () => {
   });
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
+  // 키보드 단축키 모달 상태
+  const [isKeyboardShortcutsOpen, setIsKeyboardShortcutsOpen] = useState(false);
+
+  // 전역 키보드 단축키 리스너 (Shift+P, ?, 1~5 네비게이션)
+  useEffect(() => {
+    const handleGlobalShortcuts = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable)) {
+        return;
+      }
+
+      // Shift + P: 프라이버시 쉴드 토글
+      if (e.shiftKey && (e.key === 'P' || e.key === 'p')) {
+        e.preventDefault();
+        handleToggleShield();
+        return;
+      }
+
+      // ?: 단축키 도움말 모달 토글
+      if (e.key === '?') {
+        e.preventDefault();
+        setIsKeyboardShortcutsOpen(prev => !prev);
+        return;
+      }
+
+      // 1~5 숫자 키로 뷰 직결 전환
+      if (!e.metaKey && !e.ctrlKey && !e.altKey && !e.shiftKey) {
+        if (e.key === '1') {
+          setActiveView('command');
+          triggerHaptic('light');
+        } else if (e.key === '2') {
+          setActiveView('general');
+          triggerHaptic('light');
+        } else if (e.key === '3') {
+          setActiveView('canvas');
+          triggerHaptic('light');
+        } else if (e.key === '4') {
+          setActiveView('timeline');
+          triggerHaptic('light');
+        } else if (e.key === '5') {
+          setActiveView('proximity');
+          triggerHaptic('light');
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleGlobalShortcuts);
+    return () => window.removeEventListener('keydown', handleGlobalShortcuts);
+  }, [userRole]);
+
   // 뷰 변경 핸들러
   const handleSelectView = (view: NavViewType) => {
+    triggerHaptic('light');
     setActiveView(view);
   };
 
@@ -374,6 +427,7 @@ export const App: React.FC = () => {
     setIsShieldActive(prev => {
       const next = !prev;
       localStorage.setItem('connectwe_privacy_shield', String(next));
+      triggerHaptic('medium');
       showToast(next ? '🔒 VIP 대외비 프라이버시 쉴드가 활성화되었습니다. (민감정보 마스킹)' : 'VIP 프라이버시 쉴드가 해제되었습니다.');
       return next;
     });
@@ -515,6 +569,7 @@ export const App: React.FC = () => {
         }}
         isShieldActive={isShieldActive}
         onToggleShield={handleToggleShield}
+        onOpenKeyboardShortcuts={() => setIsKeyboardShortcutsOpen(true)}
         onOpenDataVault={() => setIsDataVaultOpen(true)}
         authUser={authUser}
         onOpenAuthModal={() => setIsAuthModalOpen(true)}
@@ -1354,7 +1409,23 @@ export const App: React.FC = () => {
         }}
         onShowToast={showToast}
       />
+
+      {/* Global Keyboard Shortcuts Guide Modal */}
+      <KeyboardShortcutsModal
+        isOpen={isKeyboardShortcutsOpen}
+        onClose={() => setIsKeyboardShortcutsOpen(false)}
+      />
       </React.Suspense>
+
+      {/* Dynamic Privacy Watermark Overlay (Shield Active) */}
+      {isShieldActive && (
+        <div 
+          className="fixed bottom-3 right-4 z-40 pointer-events-none px-3.5 py-1.5 rounded-2xl bg-slate-900/85 backdrop-blur-md border border-rose-500/40 text-[11px] font-mono font-bold text-rose-300 shadow-xl flex items-center gap-2 animate-pulse"
+        >
+          <span className="w-2 h-2 rounded-full bg-rose-500" />
+          <span>{generateDynamicWatermark(authUser?.email || 'C-Suite Executive')}</span>
+        </div>
+      )}
 
       {/* PWA Mobile Installation Floating Banner */}
       <PwaInstallBanner />

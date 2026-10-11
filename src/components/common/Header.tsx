@@ -15,7 +15,7 @@ import {
   BarChart2, Lock, Settings, Cloud, Bot, Camera, Calendar, Bell,
   MoreHorizontal, ChevronDown, PanelLeft, Database, Flame, Gift,
   Crown, Check, Search, Mic, Compass, Plane, RefreshCw, Coffee,
-  LogIn, LogOut, Headphones, GitMerge, Globe
+  LogIn, LogOut, Headphones, GitMerge, Globe, Eye, EyeOff, HelpCircle
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -49,6 +49,7 @@ interface HeaderProps {
   onOpenGratitudeSettlement?: () => void;
   isShieldActive?: boolean;
   onToggleShield?: () => void;
+  onOpenKeyboardShortcuts?: () => void;
   onOpenDataVault?: () => void;
   authUser?: AuthUser | null;
   onOpenAuthModal?: () => void;
@@ -88,6 +89,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenGratitudeSettlement,
   isShieldActive = false,
   onToggleShield,
+  onOpenKeyboardShortcuts,
   onOpenDataVault,
   authUser,
   onOpenAuthModal,
@@ -532,6 +534,35 @@ export const Header: React.FC<HeaderProps> = ({
               <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono font-bold bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-md text-slate-500 shadow-2xs shrink-0">
                 {isMac ? '⌘K' : 'Ctrl+K'}
               </kbd>
+            </button>
+          )}
+
+          {/* VIP Privacy Shield Dynamic Toggle (Shift+P) */}
+          {onToggleShield && (
+            <button
+              data-testid="header-privacy-shield-btn"
+              onClick={onToggleShield}
+              title={`VIP 프라이버시 쉴드 모드 (${isShieldActive ? '활성 상태 · 클릭하여 해제' : '대외비 보호 · 클릭하여 활성화'}) [Shift+P]`}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-bold transition-all active:scale-95 shadow-2xs min-h-[32px] cursor-pointer whitespace-nowrap ${
+                isShieldActive
+                  ? 'bg-rose-600 text-white shadow-rose-600/30 animate-pulse'
+                  : 'bg-white hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-750 text-slate-700 dark:text-slate-300 border border-slate-200/90 dark:border-slate-700'
+              }`}
+            >
+              {isShieldActive ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5 text-slate-500" />}
+              <span className="hidden md:inline">{isShieldActive ? '대외비 쉴드 ON' : '프라이버시 쉴드'}</span>
+              <kbd className="hidden lg:inline-flex px-1 py-0.2 text-[9px] font-mono rounded bg-black/10 dark:bg-white/10">⇧P</kbd>
+            </button>
+          )}
+
+          {/* Keyboard Shortcuts Guide Button (?) */}
+          {onOpenKeyboardShortcuts && (
+            <button
+              onClick={onOpenKeyboardShortcuts}
+              title="키보드 단축키 안내 (?)"
+              className="hidden sm:flex p-1.5 rounded-full text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors min-h-[32px] min-w-[32px] items-center justify-center cursor-pointer"
+            >
+              <HelpCircle className="w-4 h-4" />
             </button>
           )}
 

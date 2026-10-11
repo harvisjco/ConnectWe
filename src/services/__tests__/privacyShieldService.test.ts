@@ -5,7 +5,8 @@ import {
   maskEmail, 
   maskCompany, 
   maskMemo, 
-  maskPerson 
+  maskPerson,
+  generateDynamicWatermark
 } from '../privacyShieldService';
 import { Person } from '../../types/network';
 
@@ -116,6 +117,15 @@ describe('privacyShieldService - VIP 프라이버시 쉴드 모드 검증', () =
       expect(result.mobile).toBe('010-****-5678');
       expect(result.email).toBe('k***********@wantedlab.com');
       expect(result.memo).toContain('대외비 엠바고 보호 중');
+    });
+  });
+
+  describe('generateDynamicWatermark', () => {
+    it('지정된 사용자명과 캡처 금지 문구가 포함된 다이내믹 워터마크 텍스트를 생성해야 한다', () => {
+      const watermark = generateDynamicWatermark('김대표');
+      expect(watermark).toContain('CONFIDENTIAL');
+      expect(watermark).toContain('김대표');
+      expect(watermark).toContain('CAPTURE PROHIBITED');
     });
   });
 });
