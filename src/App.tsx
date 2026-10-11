@@ -85,6 +85,8 @@ import { GovernanceHubTab, TalentHubTab, MeetingHubTab, MasterHubState } from '.
 import { parseCurrentRoute, navigateTo, subscribeToRoute } from './services/routerService';
 import { pushToast } from './services/toastQueueService';
 import { ToastContainer } from './components/common/ToastContainer';
+import { findDuplicatePerson, mergePersonProfiles } from './services/deduplicationService';
+import { InactivityLockOverlay } from './components/security/InactivityLockOverlay';
 
 import { Zap, Users, Building2, Briefcase, Compass, Award, Share2, GraduationCap } from 'lucide-react';
 
@@ -503,11 +505,19 @@ export const App: React.FC = () => {
     showToast(`성공적으로 ${incoming.length}명의 인맥 노드가 지식 허브에 병합되었습니다.`);
   };
 
-  // 신규 인맥 수동 등록
+  // 신규 인맥 수동 등록 (스마트 중복 감지 및 이력 보존 병합)
   const handleSaveNewPerson = (newPerson: Person) => {
-    setPeople(prev => [newPerson, ...prev]);
-    setSelectedPerson(newPerson);
-    showToast(`[${newPerson.name}] 님이 인맥 허브에 새로 등록되었습니다.`);
+    const dupCheck = findDuplicatePerson(newPerson, people);
+    if (dupCheck.isDuplicate && dupCheck.matchedPerson) {
+      const merged = mergePersonProfiles(dupCheck.matchedPerson, newPerson);
+      setPeople(prev => prev.map(p => p.id === merged.id ? merged : p));
+      setSelectedPerson(merged);
+      showToast(`기존 인맥 [${merged.name}]의 이력과 스마트 병합되었습니다. (${dupCheck.description})`);
+    } else {
+      setPeople(prev => [newPerson, ...prev]);
+      setSelectedPerson(newPerson);
+      showToast(`[${newPerson.name}] 님이 인맥 허브에 새로 등록되었습니다.`);
+    }
   };
 
   // 인맥 정보 업데이트 (메모, DART 팩트 승격, 소통 이력 갱신 등)
@@ -1459,6 +1469,9 @@ export const App: React.FC = () => {
 
       {/* Enterprise Multi-Toast Stack Queue */}
       <ToastContainer />
+
+      {/* Enterprise Screen Inactivity Auto-Lock Security Guard */}
+      <InactivityLockOverlay />
     </div>
   );
 };
