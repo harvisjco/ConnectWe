@@ -82,8 +82,11 @@ import { detectGoldenCareTargets } from './services/goldenCareService';
 import { onAuthStateChange, signOut, AuthUser } from './services/authService';
 import { ProtocolEventType } from './services/executiveProtocolService';
 import { GovernanceHubTab, TalentHubTab, MeetingHubTab, MasterHubState } from './types/masterHub';
+import { parseCurrentRoute, navigateTo, subscribeToRoute } from './services/routerService';
+import { pushToast } from './services/toastQueueService';
+import { ToastContainer } from './components/common/ToastContainer';
 
-import { CheckCircle2, Zap, Users, Building2, Briefcase, Compass, Award, Share2, GraduationCap } from 'lucide-react';
+import { Zap, Users, Building2, Briefcase, Compass, Award, Share2, GraduationCap } from 'lucide-react';
 
 
 export const App: React.FC = () => {
@@ -97,10 +100,33 @@ export const App: React.FC = () => {
   // 로컬 스토리지 기반 오프라인 퍼스트 상태 (사용자별 완전 격리)
   const [people, setPeople] = useState<Person[]>(() => loadPeopleFromStorage());
   const [activeView, setActiveView] = useState<NavViewType>(() => {
+    const route = parseCurrentRoute();
+    if (route.view) return route.view;
     const role = getStoredUserRole();
     return role === 'general' ? 'general' : 'command';
   });
-  const [selectedPerson, setSelectedPerson] = useState<Person | null>(null);
+  const [selectedPerson, setSelectedPerson] = useState<Person | null>(() => {
+    const route = parseCurrentRoute();
+    if (route.personId) {
+      const p = loadPeopleFromStorage().find(item => item.id === route.personId);
+      return p || null;
+    }
+    return null;
+  });
+
+  // 브라우저 뒤로가기/앞으로가기 및 Hash 변경 실시간 구독
+  useEffect(() => {
+    const unsubscribe = subscribeToRoute((route) => {
+      if (route.view && route.view !== activeView) {
+        setActiveView(route.view);
+      }
+      if (route.personId) {
+        const found = people.find(p => p.id === route.personId);
+        if (found) setSelectedPerson(found);
+      }
+    });
+    return unsubscribe;
+  }, [people, activeView]);
 
   // LNB 사이드바 상태
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
@@ -162,6 +188,17 @@ export const App: React.FC = () => {
   const handleSelectView = (view: NavViewType) => {
     triggerHaptic('light');
     setActiveView(view);
+    navigateTo(view);
+  };
+
+  // 인맥 상세 선택 및 딥링크 라우팅 핸들러
+  const handleSelectPerson = (person: Person | null) => {
+    setSelectedPerson(person);
+    if (person) {
+      navigateTo(activeView, person.id);
+    } else {
+      navigateTo(activeView);
+    }
   };
 
   // 회원 등급 전환 핸들러
@@ -263,7 +300,6 @@ export const App: React.FC = () => {
   const [protocolInitialType, setProtocolInitialType] = useState<ProtocolEventType>('CONDOLENCE');
   const [isAudioBriefingOpen, setIsAudioBriefingOpen] = useState(false);
   const [audioBriefingTargetPerson, setAudioBriefingTargetPerson] = useState<Person | null>(null);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const handleOpenGoldenCare = (person?: Person) => {
     if (person) {
@@ -443,12 +479,9 @@ export const App: React.FC = () => {
     savePeopleToStorage(people, authUser?.id);
   }, [people, authUser]);
 
-  // Toast 헬퍼
+  // Toast 헬퍼 (엔터프라이즈 멀티 토스트 큐 연동)
   const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 3500);
+    pushToast(msg, 'info');
   };
 
   // GraphRAG 질의 실행
@@ -678,7 +711,7 @@ export const App: React.FC = () => {
               {activeView === 'general' && (
                 <GeneralMemberView
                   people={people}
-                  onSelectPerson={setSelectedPerson}
+                  onSelectPerson={handleSelectPerson}
                   onOpenAddModal={() => setIsAddModalOpen(true)}
                   onOpenCardScanner={() => setIsCardScannerOpen(true)}
                   onOpenSquadBuilder={handleOpenSquadBuilder}
@@ -700,7 +733,7 @@ export const App: React.FC = () => {
               {activeView === 'command' && (
                 <ExecutiveCommandCenterView
                   people={people}
-                  onSelectPerson={setSelectedPerson}
+                  onSelectPerson={handleSelectPerson}
                   onOpenDossier={(target) => setMeetingPrepTargetPerson(target)}
                   onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
                   onOpenDebrief={(target) => setDebriefTargetPerson(target)}
@@ -844,7 +877,7 @@ export const App: React.FC = () => {
             person={selectedPerson}
             allPeople={people}
             isShieldActive={isShieldActive}
-        onClose={() => setSelectedPerson(null)}
+        onClose={() => handleSelectPerson(null)}
         onUpdatePerson={handleUpdatePerson}
         onDeletePerson={handleDeletePerson}
         onOpenBridgeModal={(target) => setBridgeTargetPerson(target)}
@@ -1202,13 +1235,7 @@ export const App: React.FC = () => {
         onOpenScanner={() => setIsCardScannerOpen(true)}
       />
 
-      {/* Toast Notification Banner */}
-      {toastMessage && (
-        <div className="fixed bottom-20 right-6 z-50 flex items-center gap-2.5 px-4 py-3 rounded-2xl bg-slate-900/95 backdrop-blur-md text-white text-xs font-semibold shadow-2xl shadow-slate-900/40 border border-slate-700/80 animate-in slide-in-from-bottom-4 duration-300">
-          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
-          <span>{toastMessage}</span>
-        </div>
-      )}
+
 
       {/* C-Level 초고속 스포트라이트 커맨드 팔레트 (CMD+K / Ctrl+K) */}
       <GlobalCommandPalette
@@ -1429,6 +1456,9 @@ export const App: React.FC = () => {
 
       {/* PWA Mobile Installation Floating Banner */}
       <PwaInstallBanner />
+
+      {/* Enterprise Multi-Toast Stack Queue */}
+      <ToastContainer />
     </div>
   );
 };

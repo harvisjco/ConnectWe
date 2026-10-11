@@ -1,6 +1,11 @@
 import { Person, ActivityLog } from '../types/network';
 import { INITIAL_PEOPLE_SEED } from '../data/mockNetworkData';
 import { getActiveUserId } from './authService';
+import { 
+  secureSetItem, 
+  secureGetItem, 
+  shredAllSecureData 
+} from './secureStorageAdapter';
 
 export const GUEST_PEOPLE_STORAGE_KEY = 'connectwe_people_v1';
 export const GUEST_ACTIVITY_LOGS_KEY = 'connectwe_activity_logs_v1';
@@ -50,16 +55,42 @@ export function loadPeopleFromStorage(userId?: string): Person[] {
 }
 
 /**
- * 인맥 데이터 로컬 스토리지 저장 (사용자별 완전 격리)
+ * 인맥 데이터 로컬 및 보안 스토리지 저장 (사용자별 완전 격리 + IndexedDB AES-256 E2EE 백업)
  */
 export function savePeopleToStorage(people: Person[], userId?: string): void {
-  if (typeof localStorage === 'undefined') return;
   const key = getPeopleStorageKey(userId);
+  
+  // 1. IndexedDB 비동기 E2EE 암호화 저장 (백그라운드)
+  secureSetItem(key, people).catch(err => {
+    console.warn('[StorageService] Secure storage save error:', err);
+  });
+
+  // 2. 동기식 즉시 반환용 로컬스토리지 유지
+  if (typeof localStorage === 'undefined') return;
   try {
     localStorage.setItem(key, JSON.stringify(people));
   } catch (err) {
     console.error('Failed to save people to localStorage:', err);
   }
+}
+
+/**
+ * 비동기 보안 스토리지에서 인맥 데이터 정밀 로드 (IndexedDB E2EE 우선)
+ */
+export async function loadPeopleFromSecureStorage(userId?: string): Promise<Person[]> {
+  const key = getPeopleStorageKey(userId);
+  const secureData = await secureGetItem<Person[]>(key);
+  if (secureData && Array.isArray(secureData) && secureData.length > 0) {
+    return secureData;
+  }
+  return loadPeopleFromStorage(userId);
+}
+
+/**
+ * 개인정보보호법 및 GDPR 준수: 사용자 데이터 완전 파기
+ */
+export async function shredAllUserData(): Promise<{ success: boolean; itemsShredded: number }> {
+  return await shredAllSecureData();
 }
 
 /**
