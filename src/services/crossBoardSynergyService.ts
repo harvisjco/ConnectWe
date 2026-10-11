@@ -341,3 +341,118 @@ export function analyzeCrossBoardSynergy(
     onePageBriefText
   };
 }
+
+export type BoardResolutionType = 
+  | 'DIRECTOR_APPOINTMENT' // 신규 사내/사외이사 선임
+  | 'MERGER_ACQUISITION'   // 영업양수도 및 전략적 M&A
+  | 'STOCK_OPTION'         // 주식매수선택권 부여
+  | 'CAPITAL_INCREASE';    // 제3자 배정 유상증자
+
+export interface BoardResolutionSimulationResult {
+  corpName: string;
+  resolutionType: BoardResolutionType;
+  resolutionTitle: string;
+  simulatedApprovalRate: number; // 0 ~ 100 (%)
+  confidenceScore: number;       // 0 ~ 100 (%)
+  isPassExpected: boolean;       // 가결 예상 여부 (과반수 또는 특별결의 66.7%)
+  sentimentBreakdown: {
+    inFavor: number;             // 우호 지분 / 찬성 위원 수
+    neutral: number;             // 중립 / 유보
+    prudent: number;             // 신중 검토 / 이견
+  };
+  keyInfluencer: {
+    name: string;
+    role: string;
+    impactDescription: string;
+  };
+  executiveStrategyAdvice: string;
+}
+
+/**
+ * [혁신 02] 이사회 안건별 우호 지분 & 네트워크 찬반 시뮬레이터
+ * DART 공시 이사회 구성과 인맥 네트워크 친밀도를 결합하여 안건 통과율 및 설득 전략 산출
+ */
+export function simulateBoardResolution(
+  corpName: string,
+  resolutionType: BoardResolutionType,
+  people: Person[]
+): BoardResolutionSimulationResult {
+  const corpExecutives = DART_EXECUTIVES.filter(e => 
+    e.corpName?.includes(corpName) || corpName.includes(e.corpName || '')
+  );
+
+  const matchedPeople = people.filter(p => 
+    p.currentCompany?.includes(corpName) || 
+    (p.dartInfo?.stockName && p.dartInfo.stockName.includes(corpName))
+  );
+
+  const totalMembers = Math.max(corpExecutives.length, 5);
+  const closePartners = matchedPeople.filter(p => (p.closeness || 3) <= 2);
+
+  // 안건별 기본 가중치
+  let baseFavor = 0.6;
+  let resolutionTitle = '';
+  let requiredRate = 50.0;
+
+  switch (resolutionType) {
+    case 'DIRECTOR_APPOINTMENT':
+      resolutionTitle = '신규 사내/사외이사 선임 및 거버넌스 개편 안건';
+      baseFavor = 0.7;
+      requiredRate = 50.0;
+      break;
+    case 'MERGER_ACQUISITION':
+      resolutionTitle = '전략적 사업 양수도 및 M&A 제휴 안건';
+      baseFavor = 0.55;
+      requiredRate = 66.7; // 특별결의 요건
+      break;
+    case 'STOCK_OPTION':
+      resolutionTitle = '핵심 테크 리더 주식매수선택권(스톡옵션) 부여 안건';
+      baseFavor = 0.75;
+      requiredRate = 50.0;
+      break;
+    case 'CAPITAL_INCREASE':
+      resolutionTitle = '전략적 투자자(SI) 대상 제3자 배정 유상증자 안건';
+      baseFavor = 0.65;
+      requiredRate = 66.7;
+      break;
+  }
+
+  // 내부 친밀도 인맥 수에 따른 우호 지분 보정
+  const closenessBonus = Math.min(0.25, closePartners.length * 0.08);
+  const simulatedApprovalRate = Math.min(98, Math.round((baseFavor + closenessBonus) * 100));
+  const isPassExpected = simulatedApprovalRate >= requiredRate;
+
+  const inFavorCount = Math.round(totalMembers * (simulatedApprovalRate / 100));
+  const prudentCount = Math.max(1, Math.round(totalMembers * (1 - simulatedApprovalRate / 100) * 0.6));
+  const neutralCount = Math.max(0, totalMembers - inFavorCount - prudentCount);
+
+  const topKeyPerson = closePartners[0] || matchedPeople[0];
+  const keyInfluencer = {
+    name: topKeyPerson ? topKeyPerson.name : (corpExecutives[0]?.name || '이사회 의장'),
+    role: topKeyPerson ? (topKeyPerson.currentTitle || '핵심 파트너') : (corpExecutives[0]?.position || '대표이사'),
+    impactDescription: topKeyPerson
+      ? `당사와의 깊은 신뢰 관계(친밀도 ${topKeyPerson.closeness || 2}도)를 바탕으로 표결 전 우호적 분위기 형성에 결정적 영향력을 행사할 수 있습니다.`
+      : '공시 기준 핵심 의사결정권자로 사전 1-Page 브리프를 통한 정중한 사전 의견 조율이 요구됩니다.'
+  };
+
+  const executiveStrategyAdvice = isPassExpected
+    ? `현재 예상 찬성률이 ${simulatedApprovalRate}%로 의결 정족수(${requiredRate}%)를 안정적으로 상회합니다. 미팅 1주일 전 ${keyInfluencer.name}님과 조찬 또는 티타임을 통해 주요 화두를 사전 공유하시면 무난한 가결이 예상됩니다.`
+    : `현재 예상 찬성률이 ${simulatedApprovalRate}%로 필요 정족수(${requiredRate}%) 대비 신중 의견 조율이 필요합니다. 사외이사 진영의 이견을 경청하고 ${keyInfluencer.name}님을 통한 선제적 보완 협의를 권고합니다.`;
+
+  return {
+    corpName,
+    resolutionType,
+    resolutionTitle,
+    simulatedApprovalRate,
+    confidenceScore: Math.min(95, 75 + closePartners.length * 5),
+    isPassExpected,
+    sentimentBreakdown: {
+      inFavor: inFavorCount,
+      neutral: neutralCount,
+      prudent: prudentCount
+    },
+    keyInfluencer,
+    executiveStrategyAdvice
+  };
+}
+

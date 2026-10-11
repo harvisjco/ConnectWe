@@ -274,3 +274,110 @@ ${company}에서 이끄시는 영역과 시너지를 모색해볼 수 있는 좋
 부담 없이 편하신 시간에 차 한 잔 나누실 수 있으실지 정중히 여쭙니다. 일정 회신 주시면 조율하겠습니다!`;
 }
 
+export interface BusinessTripStop {
+  order: number;
+  timeSlot: string; // 예: "10:30 ~ 11:15"
+  meetingType: 'COFFEE_TEA' | 'LUNCH_BRIEF' | 'IN_DEPTH_MEETING';
+  meetingTypeLabel: string;
+  person: Person;
+  locationPoint: string;
+  travelBufferMinutes: number;
+  agendaSummary: string;
+}
+
+export interface BusinessTripRoutePlan {
+  cluster: GeoCluster;
+  tripDate: string;
+  totalMeetingsCount: number;
+  estimatedTotalHours: number;
+  stops: BusinessTripStop[];
+  routeEfficiencyScore: number; // 0 ~ 100
+  routeSummaryAdvice: string;
+}
+
+/**
+ * [혁신 29] 인터랙티브 출장 동선 & 티타임 번들 플래너
+/**
+ * [혁신 29] 인터랙티브 출장 동선 & 티타임 번들 플래너
+ * 7대 거점 출장 시 반경 500m 이내 접점 인맥을 묶어 연계 미팅 동선 타임테이블 산출
+ */
+export const getProximityTeaBundle = (clusterId: GeoClusterId, people: Person[]): ProximityTeaBundleResult => {
+  return getProximityTeaBundles(people, clusterId);
+};
+
+export function optimizeBusinessTripRoute(
+  clusterId: GeoClusterId,
+  people: Person[],
+  maxMeetings: number = 3,
+  targetDateStr: string = '2026-10-15 (목)'
+): BusinessTripRoutePlan {
+  const bundle = getProximityTeaBundles(people, clusterId);
+  const cluster = bundle.cluster;
+  const targetPeople = bundle.bundleItems.slice(0, Math.max(1, maxMeetings));
+
+  const defaultLocations: Record<GeoClusterId, string[]> = {
+    gangnam_teheran: ['테헤란로 센터필드 1F 로비', 'GFC 강남파이낸스 비즈니스 라운지', '아크플레이스 1F 커피바'],
+    pangyo: ['알파돔시티 카카오아지트 라운지', '판교 그래비티 호텔 카페', '네이버 1784 1F 브릿지'],
+    yeouido: ['여의도 파크원 타워 비즈니스 라운지', 'IFC서울 컨래드 호텔 로비', '한국거래소 인근 카페'],
+    gwanghwamun_jongno: ['광화문 그랑서울 로비 라운지', 'SK서린빌딩 1F 미팅룸', '포시즌스 호텔 서울 로비'],
+    yangjae_seocho: ['양재 현대차 본사 로비', '서초 삼성R&D캠퍼스 인근 라운지', '양재 하이브랜드 비즈니스 존'],
+    suwon_giheung: ['수원 삼성 디지털시티 정문 라운지', '기흥 나노시티 게스트하우스', '영통 R&D 비즈니스 센터'],
+    seongsu: ['성수 크래프톤 메가타워 라운지', '무신사 캠퍼스 N1 라운지', '성수 서울숲 코사이어티']
+  };
+
+  const clusterLocs = defaultLocations[clusterId] || ['거점 핵심 비즈니스 센터 라운지'];
+
+  const stops: BusinessTripStop[] = targetPeople.map((item, idx) => {
+    let timeSlot = '10:30 ~ 11:15';
+    let meetingType: BusinessTripStop['meetingType'] = 'COFFEE_TEA';
+    let meetingTypeLabel = '모닝 티타임 (45분)';
+
+    if (idx === 1) {
+      timeSlot = '12:00 ~ 13:15';
+      meetingType = 'LUNCH_BRIEF';
+      meetingTypeLabel = '런치 브리프 미팅 (75분)';
+    } else if (idx === 2) {
+      timeSlot = '14:30 ~ 15:15';
+      meetingType = 'IN_DEPTH_MEETING';
+      meetingTypeLabel = '오후 전략 티타임 (45분)';
+    } else if (idx >= 3) {
+      timeSlot = '16:00 ~ 16:45';
+      meetingType = 'COFFEE_TEA';
+      meetingTypeLabel = '후속 네트워킹 (45분)';
+    }
+
+    const agenda = item.person.primaryDomain 
+      ? `[${item.person.primaryDomain}] 최신 업계 동향 교류 및 상호 협력 기회 모색`
+      : `${item.person.currentCompany || '기업'} 사업 근황 교류 및 신뢰 파트너십 강화`;
+
+    return {
+      order: idx + 1,
+      timeSlot,
+      meetingType,
+      meetingTypeLabel,
+      person: item.person,
+      locationPoint: clusterLocs[idx % clusterLocs.length],
+      travelBufferMinutes: 15,
+      agendaSummary: agenda
+    };
+  });
+
+  const estimatedTotalHours = stops.length <= 1 ? 1.5 : stops.length === 2 ? 3.5 : 5.0;
+  const routeEfficiencyScore = Math.min(98, 70 + stops.length * 8);
+
+  const routeSummaryAdvice = stops.length > 0
+    ? `${cluster.name} 중심 반경 500m 이내로 도보 5~10분 이동 가능한 콤팩트 동선입니다. 총 ${stops.length}건의 미팅을 원스톱으로 완결하여 이동 시간 120분을 절약할 수 있습니다.`
+    : `${cluster.name} 거점에 등록된 인맥을 추가하여 외근 효율을 극대화하십시오.`;
+
+  return {
+    cluster,
+    tripDate: targetDateStr,
+    totalMeetingsCount: stops.length,
+    estimatedTotalHours,
+    stops,
+    routeEfficiencyScore,
+    routeSummaryAdvice
+  };
+}
+
+

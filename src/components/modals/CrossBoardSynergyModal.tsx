@@ -2,14 +2,17 @@ import React, { useState, useMemo } from 'react';
 import { Person } from '../../types/network';
 import { 
   analyzeCrossBoardSynergy, 
-  CrossBoardSynergyReport 
+  CrossBoardSynergyReport,
+  simulateBoardResolution,
+  BoardResolutionType,
+  BoardResolutionSimulationResult
 } from '../../services/crossBoardSynergyService';
 import { getAvailableCorporations } from '../../services/orgChartEngine';
 import { 
   Building2, Sparkles, Network, ArrowRight, 
   ShieldCheck, Copy, Check, X, 
   GitMerge, ChevronRight,
-  TrendingUp, Layers, Coffee
+  TrendingUp, Layers, Coffee, CheckCircle2, AlertCircle, Vote
 } from 'lucide-react';
 
 interface CrossBoardSynergyModalProps {
@@ -33,13 +36,19 @@ export const CrossBoardSynergyModal: React.FC<CrossBoardSynergyModalProps> = ({
 }) => {
   const corporations = useMemo(() => getAvailableCorporations(), []);
   const [selectedCorp, setSelectedCorp] = useState<string>(initialTargetCorp);
-  const [activeTab, setActiveTab] = useState<'overlays' | 'routes' | 'themes' | 'brief'>('overlays');
+  const [activeTab, setActiveTab] = useState<'overlays' | 'routes' | 'themes' | 'resolution' | 'brief'>('overlays');
+  const [resolutionType, setResolutionType] = useState<BoardResolutionType>('DIRECTOR_APPOINTMENT');
   const [isCopied, setIsCopied] = useState<boolean>(false);
 
   // 대상 기업 변경 시 시너지 분석 리포트 재산출
   const report: CrossBoardSynergyReport = useMemo(() => {
     return analyzeCrossBoardSynergy(selectedCorp, people, '(주)ConnectWe');
   }, [selectedCorp, people]);
+
+  // 혁신 02: 이사회 안건 찬반 시뮬레이션 산출
+  const resolutionResult: BoardResolutionSimulationResult = useMemo(() => {
+    return simulateBoardResolution(selectedCorp, resolutionType, people);
+  }, [selectedCorp, resolutionType, people]);
 
   // 전역 ESC 키 닫기 리스너
   React.useEffect(() => {
@@ -202,6 +211,18 @@ export const CrossBoardSynergyModal: React.FC<CrossBoardSynergyModalProps> = ({
           >
             <Sparkles className="w-3.5 h-3.5" />
             <span>밸류체인 결합 화두 (3)</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('resolution')}
+            className={`py-3 px-3 text-xs font-semibold border-b-2 flex items-center gap-1.5 whitespace-nowrap transition-colors cursor-pointer ${
+              activeTab === 'resolution'
+                ? 'border-indigo-600 text-indigo-600 dark:border-indigo-400 dark:text-indigo-400'
+                : 'border-transparent text-slate-500 hover:text-slate-800 dark:hover:text-slate-300'
+            }`}
+          >
+            <Vote className="w-3.5 h-3.5" />
+            <span>이사회 안건 찬반 시뮬레이터</span>
           </button>
 
           <button
@@ -406,6 +427,166 @@ export const CrossBoardSynergyModal: React.FC<CrossBoardSynergyModalProps> = ({
                   </div>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Tab: 이사회 안건 찬반 시뮬레이터 (혁신 02) */}
+          {activeTab === 'resolution' && (
+            <div className="space-y-4">
+              {/* 안건 선택 컨트롤 */}
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/60 space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Vote className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+                    <span className="text-xs font-bold text-slate-900 dark:text-white">모의 표결 안건 유형</span>
+                  </div>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400">
+                    DART 공시 임원진 구성 및 당사 인맥 친밀도 결합 시뮬레이션
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {[
+                    { id: 'DIRECTOR_APPOINTMENT' as const, label: '신규 사내/사외이사 선임', desc: '의결정족수 50.0% · 거버넌스 개편' },
+                    { id: 'MERGER_ACQUISITION' as const, label: '전략적 M&A 및 영업양수도', desc: '특별결의 66.7% · 핵심 사업 결합' },
+                    { id: 'STOCK_OPTION' as const, label: '핵심 테크 리더 스톡옵션 부여', desc: '의결정족수 50.0% · 우수 인재 리텐션' },
+                    { id: 'CAPITAL_INCREASE' as const, label: 'SI 대상 제3자배정 유상증자', desc: '특별결의 66.7% · 전략적 투자 유치' },
+                  ].map(item => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => setResolutionType(item.id)}
+                      className={`p-3 rounded-xl border text-left transition-all cursor-pointer ${
+                        resolutionType === item.id
+                          ? 'border-indigo-600 bg-indigo-50/80 dark:bg-indigo-950/40 text-indigo-950 dark:text-indigo-200 shadow-2xs ring-1 ring-indigo-500'
+                          : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-slate-600'
+                      }`}
+                    >
+                      <div className="text-xs font-bold">{item.label}</div>
+                      <div className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">{item.desc}</div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* 시뮬레이션 결과 대시보드 */}
+              <div className="p-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/80 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-slate-500 dark:text-slate-400">안건명:</span>
+                      <h4 className="text-sm font-bold text-slate-900 dark:text-white">
+                        {resolutionResult.resolutionTitle}
+                      </h4>
+                    </div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">
+                      대상 기업: {resolutionResult.corpName} 이사회
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {resolutionResult.isPassExpected ? (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                        가결 유력 (안정권)
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 dark:bg-amber-950/80 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+                        <AlertCircle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                        사전 조율 필요 (신중)
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* 찬성률 게이지 & 신뢰도 */}
+                <div className="space-y-2 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-100 dark:border-slate-800">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">
+                      시뮬레이션 찬성 지지율
+                    </span>
+                    <div className="flex items-center gap-2 font-mono">
+                      <span className="text-base font-extrabold text-indigo-600 dark:text-indigo-400">
+                        {resolutionResult.simulatedApprovalRate}%
+                      </span>
+                      <span className="text-[11px] text-slate-400">
+                        (데이터 신뢰도 {resolutionResult.confidenceScore}%)
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* 프로그레스 바 */}
+                  <div className="w-full h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden flex">
+                    <div 
+                      className={`h-full transition-all duration-500 rounded-full ${
+                        resolutionResult.isPassExpected 
+                          ? 'bg-gradient-to-r from-emerald-500 to-indigo-600' 
+                          : 'bg-gradient-to-r from-amber-500 to-orange-500'
+                      }`}
+                      style={{ width: `${resolutionResult.simulatedApprovalRate}%` }}
+                    />
+                  </div>
+
+                  {/* 세부 성향 분포 */}
+                  <div className="flex items-center justify-between pt-1 text-[11px]">
+                    <span className="text-emerald-700 dark:text-emerald-300 font-medium">
+                      ● 우호/찬성 성향: {resolutionResult.sentimentBreakdown.inFavor}명
+                    </span>
+                    <span className="text-slate-500 dark:text-slate-400 font-medium">
+                      ● 중립/유보: {resolutionResult.sentimentBreakdown.neutral}명
+                    </span>
+                    <span className="text-amber-700 dark:text-amber-300 font-medium">
+                      ● 신중 검토: {resolutionResult.sentimentBreakdown.prudent}명
+                    </span>
+                  </div>
+                </div>
+
+                {/* 핵심 설득 인사 (Key Influencer) 카드 */}
+                <div className="p-3.5 rounded-xl border border-indigo-200 dark:border-indigo-800/60 bg-indigo-50/50 dark:bg-indigo-950/20 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider">
+                      핵심 의결 영향력자 (Key Network Influencer)
+                    </span>
+                    {onOpenTeaTimeModal && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const matched = people.find(p => p.name === resolutionResult.keyInfluencer.name);
+                          onOpenTeaTimeModal(matched);
+                        }}
+                        className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-2xs transition-colors cursor-pointer"
+                      >
+                        <Coffee className="w-3 h-3" />
+                        <span>사전 티타임 제안</span>
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-sm font-bold text-slate-900 dark:text-white">
+                      {resolutionResult.keyInfluencer.name}
+                    </span>
+                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                      {resolutionResult.keyInfluencer.role}
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                    {resolutionResult.keyInfluencer.impactDescription}
+                  </p>
+                </div>
+
+                {/* C-Level 의사결정 전략 제언 박스 */}
+                <div className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/60 text-xs space-y-1">
+                  <div className="font-bold text-slate-900 dark:text-slate-200 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                    <span>C-Level 실행 전략 제언</span>
+                  </div>
+                  <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+                    {resolutionResult.executiveStrategyAdvice}
+                  </p>
+                </div>
+              </div>
             </div>
           )}
 

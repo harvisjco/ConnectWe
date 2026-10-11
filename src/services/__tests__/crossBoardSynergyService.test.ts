@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { 
   analyzeCrossBoardSynergy, 
   getCorpExecutives,
-  getConcurrentDirectorships 
+  getConcurrentDirectorships,
+  simulateBoardResolution
 } from '../crossBoardSynergyService';
 import { Person } from '../../types/network';
 
@@ -153,4 +154,23 @@ describe('crossBoardSynergyService - 크로스 보드 시너지 & 3대 신뢰 �
       expect(res.isCompliant).toBe(true);
     }
   });
+
+  it('7. [혁신 02] 이사회 안건 찬반 시뮬레이터(simulateBoardResolution)가 안건 유형별 정족수 및 찬성률을 계산한다', () => {
+    // 1) 신규 이사 선임 안건 (일반 결의 50%)
+    const result1 = simulateBoardResolution('삼성전자', 'DIRECTOR_APPOINTMENT', mockPeople);
+    expect(result1.corpName).toBe('삼성전자');
+    expect(result1.resolutionType).toBe('DIRECTOR_APPOINTMENT');
+    expect(result1.simulatedApprovalRate).toBeGreaterThanOrEqual(50);
+    expect(result1.isPassExpected).toBe(true);
+    expect(result1.sentimentBreakdown.inFavor).toBeGreaterThan(0);
+    expect(result1.keyInfluencer.name).toBeDefined();
+    expect(result1.executiveStrategyAdvice).toContain('예상 찬성률');
+
+    // 2) 전략적 M&A 안건 (특별 결의 66.7%)
+    const result2 = simulateBoardResolution('삼성전자', 'MERGER_ACQUISITION', mockPeople);
+    expect(result2.resolutionType).toBe('MERGER_ACQUISITION');
+    expect(result2.resolutionTitle).toContain('M&A');
+    expect(typeof result2.confidenceScore).toBe('number');
+  });
 });
+
