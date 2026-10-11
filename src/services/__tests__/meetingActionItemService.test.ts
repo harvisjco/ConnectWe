@@ -5,6 +5,9 @@ import {
   saveActionItems,
   toggleActionItem,
   deleteActionItem,
+  resolveDueDate,
+  generateGoogleCalendarUrl,
+  generateIcsContent,
   MeetingActionItem
 } from '../meetingActionItemService';
 
@@ -97,6 +100,43 @@ describe('MeetingActionItemService Unit Tests', () => {
 
     deleteActionItem('act-del');
     expect(loadActionItems('person-C')).toHaveLength(0);
+  });
+
+  it('generates valid Google Calendar URL and resolves due dates correctly', () => {
+    const item: MeetingActionItem = {
+      id: 'act-cal-1',
+      personId: 'person-D',
+      content: '다음 주 투자 설명회 자료 전달',
+      isCompleted: false,
+      detectedDate: '2026-10-10',
+      dueDateHint: '다음 주'
+    };
+
+    const resolvedDate = resolveDueDate(item);
+    expect(resolvedDate).toBeDefined();
+
+    const url = generateGoogleCalendarUrl(item, '김대표');
+    expect(url).toContain('https://calendar.google.com/calendar/render?action=TEMPLATE');
+    expect(url).toContain(encodeURIComponent('[ConnectWe 후속 조치]'));
+    expect(url).toContain(encodeURIComponent('김대표'));
+  });
+
+  it('generates standard RFC 5545 iCalendar content', () => {
+    const item: MeetingActionItem = {
+      id: 'act-ics-1',
+      personId: 'person-E',
+      content: '기술 자문 인터뷰 일정 확정',
+      isCompleted: false,
+      detectedDate: '2026-10-10',
+      dueDateHint: '내일'
+    };
+
+    const ics = generateIcsContent(item, '이CTO');
+    expect(ics).toContain('BEGIN:VCALENDAR');
+    expect(ics).toContain('BEGIN:VEVENT');
+    expect(ics).toContain('SUMMARY:[ConnectWe 후속 조치] 기술 자문 인터뷰 일정 확정 (이CTO)');
+    expect(ics).toContain('END:VEVENT');
+    expect(ics).toContain('END:VCALENDAR');
   });
 });
 

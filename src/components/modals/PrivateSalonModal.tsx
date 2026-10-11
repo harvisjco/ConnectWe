@@ -42,6 +42,17 @@ export const PrivateSalonModal: React.FC<PrivateSalonModalProps> = ({
     return sessions.find(s => s.id === activeSessionId) || sessions[0];
   }, [sessions, activeSessionId]);
 
+  // 전역 ESC 키 닫기 리스너
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
+
   // 추천 게스트 목록 (해당 거점 및 인재 클러스터 기반)
   const recommendedGuests = useMemo(() => {
     if (!activeSession) return [];
@@ -298,10 +309,25 @@ export const PrivateSalonModal: React.FC<PrivateSalonModalProps> = ({
 
           {activeTab === 'invite' && (
             <div className="space-y-4">
-              <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-xs text-amber-900 leading-relaxed flex items-center justify-between">
+              <div className="p-3.5 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-xs text-amber-900 leading-relaxed flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
                 <div>
-                  <strong>초대장 안내:</strong> 선택하신 {curatedGuests.length}명의 게스트별 맞춤 초대장입니다. 클릭 한 번으로 복사하여 카카오톡이나 문자 메시지로 전송하세요.
+                  <strong>초대장 안내:</strong> 선택하신 {curatedGuests.length}명의 게스트별 맞춤 초대장입니다.
+                  <div className="text-[11px] text-amber-700 mt-0.5">
+                    💡 <strong>좌석 배치 팁:</strong> 상호 보완적인 전문 도메인 게스트끼리 마주보도록 배치하면 대화 몰입도가 극대화됩니다.
+                  </div>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const rsvpLink = `https://connectwe.network/rsvp/salon-${activeSession.id}?cluster=${activeSession.clusterId}`;
+                    navigator.clipboard.writeText(rsvpLink);
+                    onShowToast('VIP 모바일 RSVP 링크가 복사되었습니다.');
+                  }}
+                  className="px-3 py-1.5 rounded-xl text-xs font-bold bg-amber-700 hover:bg-amber-800 text-white flex items-center gap-1.5 shrink-0 transition-colors cursor-pointer"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  모바일 RSVP 링크
+                </button>
               </div>
 
               <div className="space-y-3">

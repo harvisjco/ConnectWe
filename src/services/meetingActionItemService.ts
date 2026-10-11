@@ -133,3 +133,91 @@ export function deleteActionItem(id: string): MeetingActionItem[] {
     return [];
   }
 }
+
+/**
+ * 액션 아이템의 마감 기한 문자열로부터 추정 날짜(YYYY-MM-DD) 계산
+ */
+export function resolveDueDate(item: MeetingActionItem): string {
+  const baseDate = new Date(item.detectedDate || new Date());
+  if (!item.dueDateHint) {
+    // 기본적으로 탐지일 기준 3영업일 후 설정
+    baseDate.setDate(baseDate.getDate() + 3);
+    return baseDate.toISOString().slice(0, 10);
+  }
+
+  const hint = item.dueDateHint.toLowerCase();
+  if (hint.includes('내일')) {
+    baseDate.setDate(baseDate.getDate() + 1);
+  } else if (hint.includes('모레')) {
+    baseDate.setDate(baseDate.getDate() + 2);
+  } else if (hint.includes('다음 주') || hint.includes('다음주')) {
+    baseDate.setDate(baseDate.getDate() + 7);
+  } else if (hint.includes('금주') || hint.includes('이번 주') || hint.includes('이번주')) {
+    baseDate.setDate(baseDate.getDate() + 4);
+  } else {
+    // 3영업일 후 폴백
+    baseDate.setDate(baseDate.getDate() + 3);
+  }
+  return baseDate.toISOString().slice(0, 10);
+}
+
+/**
+ * Google Calendar 웹 이벤트 추가 URL 생성 (1-Click 연동)
+ */
+export function generateGoogleCalendarUrl(item: MeetingActionItem, personName?: string): string {
+  const title = encodeURIComponent(`[ConnectWe 후속 조치] ${item.content}${personName ? ` (${personName})` : ''}`);
+  const details = encodeURIComponent(
+    `소중한 미팅 후속 조치 과제입니다.\n\n내용: ${item.content}\n대상자: ${personName || '파트너'}\n등록일: ${item.detectedDate}\n기한 힌트: ${item.dueDateHint || '3일 내 권장'}\n\n* ConnectWe C-Level 네트워크 인텔리전스 시스템에서 생성됨`
+  );
+  const dateStr = resolveDueDate(item).replace(/-/g, '');
+  // 오전 10:00 ~ 오전 10:30 기본 일정
+  const dates = `${dateStr}T010000Z/${dateStr}T013000Z`;
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&dates=${dates}`;
+}
+
+/**
+ * 표준 RFC 5545 iCalendar (.ics) 파일 포맷 텍스트 생성
+ */
+export function generateIcsContent(item: MeetingActionItem, personName?: string): string {
+  const targetDateStr = resolveDueDate(item).replace(/-/g, '');
+  const title = `[ConnectWe 후속 조치] ${item.content}${personName ? ` (${personName})` : ''}`;
+  const now = new Date().toISOString().replace(/[-:]/g, '').slice(0, 15) + 'Z';
+
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//ConnectWe//Network Intelligence//KO',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:connectwe-${item.id}@connectwe.network`,
+    `DTSTAMP:${now}`,
+    `DTSTART:${targetDateStr}T090000`,
+    `DTEND:${targetDateStr}T093000`,
+    `SUMMARY:${title}`,
+    `DESCRIPTION:${item.content} (대상: ${personName || '파트너'}, 등록일: ${item.detectedDate})`,
+    'STATUS:CONFIRMED',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+}
+
+/**
+ * 브라우저 환경에서 .ics 캘린더 파일 자동 다운로드
+ */
+export function downloadActionItemIcs(item: MeetingActionItem, personName?: string): void {
+  try {
+    const icsContent = generateIcsContent(item, personName);
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `ConnectWe_ActionItem_${item.id.slice(0, 8)}.ics`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    console.warn('Failed to download .ics file', err);
+  }
+}

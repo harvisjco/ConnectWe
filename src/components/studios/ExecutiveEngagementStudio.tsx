@@ -19,6 +19,11 @@ import {
   ProtocolEventType, 
   generateProtocolMessage
 } from '../../services/executiveProtocolService';
+import {
+  generateGoogleCalendarUrl,
+  downloadActionItemIcs,
+  MeetingActionItem
+} from '../../services/meetingActionItemService';
 import { 
   X, Sparkles, Coffee, Copy, Check, Mic, MicOff, Save,
   Download, ShieldCheck, Users, Headphones, Gift,
@@ -710,11 +715,47 @@ export const ExecutiveEngagementStudio: React.FC<ExecutiveEngagementStudioProps>
                             {voiceDebriefAnalysis.summary}
                           </p>
                           {voiceDebriefAnalysis.actionItems.length > 0 && (
-                            <div className="text-xs text-indigo-800 dark:text-indigo-300 space-y-1 pt-1 border-t border-indigo-100 dark:border-indigo-900">
-                              <span className="font-bold">추출된 후속 액션 아이템:</span>
-                              {voiceDebriefAnalysis.actionItems.map((item, idx) => (
-                                <div key={idx} className="pl-2">• {item.task} ({item.dueDate}까지)</div>
-                              ))}
+                            <div className="text-xs text-indigo-800 dark:text-indigo-300 space-y-2 pt-1 border-t border-indigo-100 dark:border-indigo-900">
+                              <span className="font-bold">추출된 후속 액션 아이템 & 캘린더 동기화:</span>
+                              {voiceDebriefAnalysis.actionItems.map((item, idx) => {
+                                const actionItemObj: MeetingActionItem = {
+                                  id: `debrief-${idx}-${Date.now()}`,
+                                  personId: currentPerson.id,
+                                  content: item.task,
+                                  isCompleted: false,
+                                  detectedDate: new Date().toISOString().slice(0, 10),
+                                  dueDateHint: item.dueDate
+                                };
+                                const gcalUrl = generateGoogleCalendarUrl(actionItemObj, currentPerson.name);
+
+                                return (
+                                  <div key={idx} className="p-2 rounded-xl bg-white/70 dark:bg-slate-900/70 border border-indigo-100 dark:border-indigo-900 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                    <span className="pl-1 leading-relaxed">
+                                      • <strong>{item.task}</strong> ({item.dueDate}까지)
+                                    </span>
+                                    <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
+                                      <a
+                                        href={gcalUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="px-2 py-1 text-[11px] font-semibold rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 transition-colors"
+                                      >
+                                        📅 Google 캘린더
+                                      </a>
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          downloadActionItemIcs(actionItemObj, currentPerson.name);
+                                          onShowToast(`'${item.task}' 캘린더 파일(.ics)이 다운로드되었습니다.`, 'success');
+                                        }}
+                                        className="px-2 py-1 text-[11px] font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:text-slate-300 border border-slate-200 dark:border-slate-700 transition-colors cursor-pointer"
+                                      >
+                                        📥 .ICS
+                                      </button>
+                                    </div>
+                                  </div>
+                                );
+                              })}
                             </div>
                           )}
                         </div>

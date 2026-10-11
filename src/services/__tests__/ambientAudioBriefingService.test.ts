@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { 
   generateAudioBriefingScript, 
+  generatePodcastBriefingScript,
   isSpeechSynthesisSupported,
   playBriefingSpeech,
   stopBriefingSpeech 
@@ -81,5 +82,15 @@ describe('ambientAudioBriefingService - 에어팟 앰비언트 30초 오디오 �
 
     // 정지 시도 시 에러 없이 종료
     expect(() => stopBriefingSpeech()).not.toThrow();
+  });
+
+  it('3. 3분 심층 팟캐스트 모드 스크립트가 4개 핵심 세그먼트와 180초 예상 시간으로 생성되어야 한다', () => {
+    const podcastScript = generatePodcastBriefingScript(samplePerson);
+
+    expect(podcastScript.estimatedDurationSec).toBe(180);
+    expect(podcastScript.segments).toHaveLength(4);
+    expect(podcastScript.segments[0].durationLabel).toBe('40초');
+    expect(podcastScript.segments[3].categoryLabel).toContain('에티켓 팁');
+    expect(podcastScript.fullText).toContain('ConnectWe 3분 심층 오디오 팟캐스트 브리핑');
   });
 });

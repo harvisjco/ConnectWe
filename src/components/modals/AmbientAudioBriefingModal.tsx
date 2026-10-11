@@ -14,6 +14,7 @@ import {
 import { Person } from '../../types/network';
 import { 
   generateAudioBriefingScript, 
+  generatePodcastBriefingScript,
   playBriefingSpeech, 
   stopBriefingSpeech, 
   isSpeechSynthesisSupported 
@@ -32,17 +33,44 @@ export const AmbientAudioBriefingModal: React.FC<AmbientAudioBriefingModalProps>
   person,
   onShowToast
 }) => {
+  const [briefingMode, setBriefingMode] = useState<'quick' | 'podcast'>('quick');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [playbackRate, setPlaybackRate] = useState<number>(1.1);
   const [activeSegmentIndex, setActiveSegmentIndex] = useState<number>(0);
   const [isCopied, setIsCopied] = useState<boolean>(false);
+  const [sleepTimerMinutes, setSleepTimerMinutes] = useState<number>(0);
 
   const script = useMemo(() => {
     if (!person) return null;
-    return generateAudioBriefingScript(person);
-  }, [person]);
+    return briefingMode === 'podcast'
+      ? generatePodcastBriefingScript(person)
+      : generateAudioBriefingScript(person);
+  }, [person, briefingMode]);
 
   const isTtsSupported = isSpeechSynthesisSupported();
+
+  // ESC 키보드 리스너
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  // 슬립 타이머 처리
+  useEffect(() => {
+    if (!isPlaying || sleepTimerMinutes <= 0) return;
+    const timer = setTimeout(() => {
+      stopBriefingSpeech();
+      setIsPlaying(false);
+      onShowToast(`슬립 타이머(${sleepTimerMinutes}분)에 의해 오디오가 자동 종료되었습니다.`, 'info');
+    }, sleepTimerMinutes * 60 * 1000);
+    return () => clearTimeout(timer);
+  }, [isPlaying, sleepTimerMinutes, onShowToast]);
 
   // 모달 닫힐 때 음성 정지 방어
   useEffect(() => {
@@ -113,7 +141,7 @@ export const AmbientAudioBriefingModal: React.FC<AmbientAudioBriefingModalProps>
       // fallback
     }
     setIsCopied(true);
-    onShowToast('30초 오디오 브리핑 스크립트가 클립보드에 복사되었습니다.', 'success');
+    onShowToast(`${briefingMode === 'podcast' ? '3분 심층 팟캐스트' : '30초 오디오 브리핑'} 스크립트가 클립보드에 복사되었습니다.`, 'success');
     setTimeout(() => setIsCopied(false), 1500);
   };
 
@@ -137,10 +165,10 @@ export const AmbientAudioBriefingModal: React.FC<AmbientAudioBriefingModalProps>
             <div>
               <div className="flex items-center gap-2">
                 <h2 className="text-base font-bold text-slate-900 dark:text-white">
-                  에어팟 앰비언트 30초 오디오 브리핑
+                  {briefingMode === 'podcast' ? 'C-Level 3분 심층 오디오 팟캐스트' : '에어팟 앰비언트 30초 오디오 브리핑'}
                 </h2>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 dark:bg-indigo-950/70 text-indigo-600 dark:text-indigo-400 border border-indigo-200/50 dark:border-indigo-800">
-                  라디오 팟캐스트 모드
+                  {briefingMode === 'podcast' ? '🎧 Executive Podcast' : '📻 Ambient Radio'}
                 </span>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -157,6 +185,60 @@ export const AmbientAudioBriefingModal: React.FC<AmbientAudioBriefingModalProps>
           </button>
         </div>
 
+        {/* Mode Switcher & Sleep Timer Bar */}
+        <div className="px-6 py-2.5 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => {
+                if (isPlaying) stopBriefingSpeech();
+                setIsPlaying(false);
+                setBriefingMode('quick');
+              }}
+              className={`px-3 py-1 rounded-xl font-bold transition-all ${
+                briefingMode === 'quick'
+                  ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-2xs border border-slate-200/80 dark:border-slate-600'
+                  : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+              }`}
+            >
+              ⚡ 30초 퀵 브리프
+            </button>
+            <button
+              onClick={() => {
+                if (isPlaying) stopBriefingSpeech();
+                setIsPlaying(false);
+                setBriefingMode('podcast');
+              }}
+              className={`px-3 py-1 rounded-xl font-bold transition-all flex items-center gap-1 ${
+                briefingMode === 'podcast'
+                  ? 'bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 shadow-2xs border border-slate-200/80 dark:border-slate-600'
+                  : 'text-slate-500 hover:text-slate-800 dark:text-slate-400'
+              }`}
+            >
+              🎙️ 3분 심층 팟캐스트
+            </button>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+            <span className="text-[11px]">슬립 타이머:</span>
+            {[0, 5, 10].map((mins) => (
+              <button
+                key={mins}
+                onClick={() => {
+                  setSleepTimerMinutes(mins);
+                  onShowToast(mins === 0 ? '슬립 타이머가 해제되었습니다.' : `${mins}분 슬립 타이머가 설정되었습니다.`, 'info');
+                }}
+                className={`px-2 py-0.5 rounded-lg text-[11px] font-mono transition-all ${
+                  sleepTimerMinutes === mins
+                    ? 'bg-indigo-600 text-white font-bold'
+                    : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300'
+                }`}
+              >
+                {mins === 0 ? 'OFF' : `${mins}m`}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Body */}
         <div className="flex-1 overflow-y-auto p-6 space-y-5">
           {/* 미니멀 오디오 플레이어 카드 */}
@@ -168,11 +250,15 @@ export const AmbientAudioBriefingModal: React.FC<AmbientAudioBriefingModalProps>
               <div className="flex items-center justify-between text-xs text-slate-300">
                 <span className="flex items-center gap-1.5">
                   <Radio className={`w-3.5 h-3.5 ${isPlaying ? 'text-emerald-400 animate-pulse' : 'text-slate-400'}`} />
-                  <span>{isPlaying ? '미팅 사전 브리핑 재생 중...' : '30초 온디바이스 음성 대기 중'}</span>
+                  <span>
+                    {isPlaying 
+                      ? `${briefingMode === 'podcast' ? '3분 심층 팟캐스트' : '30초 퀵 브리프'} 재생 중...` 
+                      : `${briefingMode === 'podcast' ? '3분 팟캐스트' : '30초 온디바이스'} 음성 대기 중`}
+                  </span>
                 </span>
                 <span className="font-mono text-slate-400 flex items-center gap-1">
                   <Clock className="w-3 h-3" />
-                  <span>예상 30초</span>
+                  <span>예상 {script.estimatedDurationSec}초</span>
                 </span>
               </div>
 
