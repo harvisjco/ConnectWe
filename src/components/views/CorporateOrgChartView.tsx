@@ -14,8 +14,10 @@ import {
   Calendar, ShieldCheck,
   ChevronDown, ChevronUp, Copy, Printer, Check, Eye, EyeOff, Layers,
   ExternalLink, GitCompare, TrendingUp, UserPlus, ArrowDown,
-  Crown, Zap, Briefcase, Users, DollarSign, GitMerge
+  Crown, Zap, Briefcase, Users, DollarSign, GitMerge,
+  ZoomIn, ZoomOut, RotateCcw, Move, LayoutGrid
 } from 'lucide-react';
+import { triggerHaptic } from '../../utils/hapticFeedback';
 
 interface CorporateOrgChartViewProps {
   people: Person[];
@@ -48,6 +50,29 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
   const [diffMode, setDiffMode] = useState<boolean>(false);
   const [copiedPromoId, setCopiedPromoId] = useState<string | null>(null);
   const promotionEvents = useMemo(() => loadPromotionEvents(people), [people]);
+
+  // Miro 스타일 무한 캔버스 Pan & Zoom 상태
+  const [viewMode, setViewMode] = useState<'canvas' | 'list'>('canvas');
+  const [zoomLevel, setZoomLevel] = useState<number>(1.0);
+  const [panOffset, setPanOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState<boolean>(false);
+  const [startPos, setStartPos] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  const handleZoomIn = () => {
+    setZoomLevel(prev => Math.min(2.0, Number((prev + 0.15).toFixed(2))));
+    triggerHaptic('selection');
+  };
+
+  const handleZoomOut = () => {
+    setZoomLevel(prev => Math.max(0.4, Number((prev - 0.15).toFixed(2))));
+    triggerHaptic('selection');
+  };
+
+  const handleResetCanvas = () => {
+    setZoomLevel(1.0);
+    setPanOffset({ x: 0, y: 0 });
+    triggerHaptic('pin');
+  };
 
   // 섹션 접기/펼치기 토글
   const toggleSection = (key: string) => {
@@ -533,6 +558,32 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
               <span>변동 비교</span>
             </button>
 
+            {/* Miro 스타일 무한 캔버스 vs 일반 문서 뷰 토글 */}
+            <button
+              onClick={() => {
+                setViewMode(viewMode === 'canvas' ? 'list' : 'canvas');
+                triggerHaptic('selection');
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all shadow-2xs cursor-pointer ${
+                viewMode === 'canvas'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200/80'
+              }`}
+              title="Miro 스타일 무한 캔버스 Pan & Zoom 조망 모드 전환"
+            >
+              {viewMode === 'canvas' ? (
+                <>
+                  <Move className="w-3.5 h-3.5 text-blue-100" />
+                  <span>무한 캔버스 (활성)</span>
+                </>
+              ) : (
+                <>
+                  <LayoutGrid className="w-3.5 h-3.5 text-slate-500" />
+                  <span>문서 뷰</span>
+                </>
+              )}
+            </button>
+
             {/* 내 인맥 필터 */}
             <button
               onClick={() => setOnlyConnectedFilter(!onlyConnectedFilter)}
@@ -641,22 +692,25 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
         </div>
       )}
 
-      {/* 3. 계층형 조직도 렌더링 섹션 */}
-      {orgChart && (
-        <div className="space-y-5">
-          {/* Level 0 & 1: 최고 경영진 */}
-          {(orgChart.hierarchy.chairpersons.length > 0 || orgChart.hierarchy.ceos.length > 0) && (
-            <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
-              <div 
-                onClick={() => toggleSection('leadership')}
-                className="flex items-center justify-between border-b border-slate-100 pb-2 cursor-pointer hover:opacity-90 select-none transition-opacity"
-              >
-                <div className="flex items-center gap-2">
-                  <Crown className="w-4 h-4 text-indigo-600 shrink-0" />
-                  <h3 className="text-xs font-bold text-slate-900 tracking-tight">
-                    최고 경영진 (Board of Directors & CEO)
-                  </h3>
-                </div>
+      {/* 3. 계층형 조직도 공통 섹션 정의 */}
+      {(() => {
+        const renderHierarchySections = () => {
+          if (!orgChart) return null;
+          return (
+            <div className="space-y-5">
+              {/* Level 0 & 1: 최고 경영진 */}
+              {(orgChart.hierarchy.chairpersons.length > 0 || orgChart.hierarchy.ceos.length > 0) && (
+                <div className="p-5 rounded-2xl bg-white border border-slate-200/90 shadow-2xs space-y-3">
+                  <div 
+                    onClick={() => toggleSection('leadership')}
+                    className="flex items-center justify-between border-b border-slate-100 pb-2 cursor-pointer hover:opacity-90 select-none transition-opacity"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Crown className="w-4 h-4 text-indigo-600 shrink-0" />
+                      <h3 className="text-xs font-bold text-slate-900 tracking-tight">
+                        최고 경영진 (Board of Directors & CEO)
+                      </h3>
+                    </div>
                 <div className="flex items-center gap-2">
                   <span className="text-[11px] text-slate-400 font-medium">
                     {orgChart.hierarchy.chairpersons.length + orgChart.hierarchy.ceos.length}명
@@ -870,7 +924,100 @@ export const CorporateOrgChartView: React.FC<CorporateOrgChartViewProps> = ({
             </div>
           )}
         </div>
-      )}
+      );
+    };
+
+    if (!orgChart) return null;
+
+    if (viewMode === 'canvas') {
+      return (
+        <div 
+          className="relative overflow-hidden rounded-2xl border border-slate-200/90 shadow-2xs bg-slate-50/70"
+          style={{
+            height: '740px',
+            cursor: isPanning ? 'grabbing' : 'grab',
+            backgroundImage: 'radial-gradient(circle, #cbd5e1 1.2px, transparent 1.2px)',
+            backgroundSize: '24px 24px'
+          }}
+          onMouseDown={(e) => {
+            if ((e.target as HTMLElement).closest('button, input, select, a')) return;
+            setIsPanning(true);
+            setStartPos({ x: e.clientX - panOffset.x, y: e.clientY - panOffset.y });
+          }}
+          onMouseMove={(e) => {
+            if (!isPanning) return;
+            setPanOffset({ x: e.clientX - startPos.x, y: e.clientY - startPos.y });
+          }}
+          onMouseUp={() => setIsPanning(false)}
+          onMouseLeave={() => setIsPanning(false)}
+          onWheel={(e) => {
+            e.preventDefault();
+            const zoomFactor = e.deltaY < 0 ? 1.08 : 0.92;
+            setZoomLevel(prev => Math.min(2.0, Math.max(0.4, Number((prev * zoomFactor).toFixed(2)))));
+          }}
+        >
+          {/* Miro 플로팅 줌 컨트롤 바 */}
+          <div className="absolute top-4 right-4 z-20 flex items-center gap-1.5 p-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-slate-200/90 shadow-md text-xs select-none">
+            <button
+              type="button"
+              onClick={handleZoomOut}
+              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+              title="축소 (Zoom Out)"
+            >
+              <ZoomOut className="w-3.5 h-3.5" />
+            </button>
+            
+            <span className="px-2 py-0.5 rounded-md bg-slate-100 font-mono text-[11px] font-bold text-slate-700 min-w-[48px] text-center">
+              {Math.round(zoomLevel * 100)}%
+            </span>
+
+            <button
+              type="button"
+              onClick={handleZoomIn}
+              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+              title="확대 (Zoom In)"
+            >
+              <ZoomIn className="w-3.5 h-3.5" />
+            </button>
+
+            <div className="w-[1px] h-4 bg-slate-200 mx-0.5" />
+
+            <button
+              type="button"
+              onClick={handleResetCanvas}
+              className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer flex items-center gap-1"
+              title="100% 원위치 리셋"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              <span className="text-[10px] font-medium hidden sm:inline">리셋</span>
+            </button>
+          </div>
+
+          {/* 좌측 하단 조작 가이드 안내 뱃지 */}
+          <div className="absolute bottom-4 left-4 z-20 hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/90 backdrop-blur-md border border-slate-200/90 shadow-2xs text-[11px] text-slate-500 font-medium select-none pointer-events-none">
+            <Move className="w-3.5 h-3.5 text-blue-600" />
+            <span>캔버스 드래그로 이동 · 마우스 휠로 확대/축소</span>
+          </div>
+
+          {/* 캔버스 트랜스폼 래퍼 */}
+          <div
+            style={{
+              transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoomLevel})`,
+              transformOrigin: 'top center',
+              transition: isPanning ? 'none' : 'transform 0.1s ease-out',
+              width: '100%',
+              minWidth: '1000px',
+              padding: '32px'
+            }}
+          >
+            {renderHierarchySections()}
+          </div>
+        </div>
+      );
+    }
+
+    return renderHierarchySections();
+  })()}
     </div>
   );
 };
