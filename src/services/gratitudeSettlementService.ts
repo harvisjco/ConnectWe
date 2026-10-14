@@ -203,3 +203,63 @@ export function generateMockSettlements(people: Person[], deals: BusinessDeal[])
     }
   ];
 }
+
+/**
+ * 감사 답례 정산 내역을 Excel 호환 UTF-8 BOM CSV 문자열로 변환 (법인 세무 증빙 및 감사 보고서용)
+ * - 헌장 원칙: Windows Excel 한글 깨짐 방지를 위해 최상단 첫 바이트에 반드시 \uFEFF 삽입
+ */
+export function exportSettlementsToCsv(settlements: GratitudeSettlement[]): string {
+  const headers = [
+    '정산 ID',
+    '딜 명칭',
+    '딜 규모',
+    '추천 감사 대상자',
+    '소속 기업',
+    '직책',
+    '감사 리워드 유형',
+    '리워드 내용',
+    '정산 상태',
+    '예정일',
+    '완료일',
+    '메모'
+  ];
+
+  const rows = settlements.map(s => [
+    s.id,
+    `"${(s.dealTitle || '').replace(/"/g, '""')}"`,
+    `"${(s.dealSize || '').replace(/"/g, '""')}"`,
+    `"${(s.referrerName || '').replace(/"/g, '""')}"`,
+    `"${(s.referrerCompany || '').replace(/"/g, '""')}"`,
+    `"${(s.referrerTitle || '').replace(/"/g, '""')}"`,
+    `"${(GRATITUDE_REWARD_PRESETS[s.rewardType]?.label || s.rewardType).replace(/"/g, '""')}"`,
+    `"${(s.rewardValue || '').replace(/"/g, '""')}"`,
+    s.status === 'COMPLETED' ? '완료' : s.status === 'SENT' ? '전달 완료' : '예정',
+    s.plannedDate || '',
+    s.completedDate || '',
+    `"${(s.notes || '').replace(/"/g, '""')}"`
+  ]);
+
+  const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+  return `\uFEFF${csvContent}`;
+}
+
+/**
+ * 브라우저 환경에서 감사 답례 정산 CSV 보고서 다운로드 실행
+ */
+export function downloadSettlementsCsv(
+  settlements: GratitudeSettlement[], 
+  filename = `ConnectWe_감사정산보고서_${new Date().toISOString().slice(0, 10)}.csv`
+): void {
+  if (typeof window === 'undefined' || typeof document === 'undefined') return;
+  const csv = exportSettlementsToCsv(settlements);
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.setAttribute('href', url);
+  link.setAttribute('download', filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+

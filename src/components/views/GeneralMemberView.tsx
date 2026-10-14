@@ -13,15 +13,14 @@ import {
 } from '../../services/communityService';
 import { 
   Users, Cake, Calendar, Plus, Search, 
-  Check, Copy, Phone, Mail, 
+  Check, Copy, 
   GraduationCap, Clock, MapPin, DollarSign, Camera, Sparkles, Rocket, Coffee,
   Award, Heart, ShieldCheck
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
 import { GovernanceHubTab, TalentHubTab, MeetingHubTab } from '../../types/masterHub';
 import { isPureChoseong, matchChoseong } from '../../utils/koreanUtils';
-import { PersonMiniPreviewTooltip } from '../common/PersonMiniPreviewTooltip';
-import { getExecutiveStatusBadge } from '../../services/executiveToneService';
+import { VirtualPersonGrid } from '../common/VirtualPersonGrid';
 
 interface GeneralMemberViewProps {
   people: Person[];
@@ -531,91 +530,12 @@ export const GeneralMemberView: React.FC<GeneralMemberViewProps> = ({
               )}
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredPeople.map((person) => {
-                const bdayInfo = birthdays.find(b => b.id === person.id);
-                return (
-                  <div
-                    key={person.id}
-                    onClick={() => onSelectPerson(person)}
-                    className="group bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 hover:border-emerald-500 hover:shadow-md transition-all cursor-pointer relative"
-                  >
-                    {/* 생일 인디케이터 */}
-                    {bdayInfo && (
-                      <div className={`absolute top-4 right-4 text-[11px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 ${
-                        bdayInfo.isToday 
-                          ? 'bg-rose-500 text-white animate-bounce' 
-                          : 'bg-pink-50 dark:bg-pink-950/60 text-pink-700 dark:text-pink-300 border border-pink-200 dark:border-pink-800'
-                      }`}>
-                        <Cake className="w-3 h-3" />
-                        {bdayInfo.isToday ? '오늘 생일!' : `생일 D-${bdayInfo.daysUntil}`}
-                      </div>
-                    )}
-
-                    <div className="flex items-start gap-3">
-                      <div className="w-11 h-11 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 text-white font-bold text-base flex items-center justify-center shadow-sm shrink-0">
-                        {person.name.slice(0, 1)}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <h4 className="text-base font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 transition-colors">
-                            <PersonMiniPreviewTooltip person={person} onSelectPerson={onSelectPerson}>
-                              <span>{person.name}</span>
-                            </PersonMiniPreviewTooltip>
-                          </h4>
-                          {(() => {
-                            const badge = getExecutiveStatusBadge(person);
-                            return (
-                              <span 
-                                className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${badge.badgeClass}`}
-                                title={badge.subLabel}
-                              >
-                                {badge.label}
-                              </span>
-                            );
-                          })()}
-                        </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate mt-0.5">
-                          {person.currentCompany} · {person.currentTitle}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* 학력 및 소속 정보 */}
-                    <div className="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 space-y-1.5 text-xs text-slate-600 dark:text-slate-400">
-                      {person.academics && person.academics.length > 0 && (
-                        <div className="flex items-center gap-1.5">
-                          <GraduationCap className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                          <span className="truncate">
-                            {person.academics.map(a => `${a.schoolName} ${a.major || ''}`).join(', ')}
-                          </span>
-                        </div>
-                      )}
-                      <div className="flex items-center gap-1.5">
-                        <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span>{person.mobile || '연락처 미등록'}</span>
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                        <span className="truncate">{person.email || '이메일 미등록'}</span>
-                      </div>
-                    </div>
-
-                    {/* 태그 / 도메인 */}
-                    <div className="mt-3 flex flex-wrap gap-1">
-                      <span className="text-[10px] px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
-                        {person.primaryDomain}
-                      </span>
-                      {person.skills?.slice(0, 2).map((s, i) => (
-                        <span key={i} className="text-[10px] px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300">
-                          #{s}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+            <VirtualPersonGrid
+              people={filteredPeople}
+              birthdays={birthdays}
+              onSelectPerson={onSelectPerson}
+              pageSize={30}
+            />
           )}
         </div>
       )}

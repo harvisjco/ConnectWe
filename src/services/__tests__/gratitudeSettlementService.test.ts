@@ -4,6 +4,7 @@ import {
   generateThankYouLetter, 
   loadSettlementsFromStorage, 
   saveSettlementsToStorage,
+  exportSettlementsToCsv,
   GratitudeSettlement
 } from '../gratitudeSettlementService';
 import { BusinessDeal } from '../dealPipelineService';
@@ -122,4 +123,40 @@ describe('gratitudeSettlementService - 딜 추천 감사 리워드 및 답례 �
       expect(loaded[0].rewardType).toBe('DINING');
     });
   });
+
+  describe('exportSettlementsToCsv - UTF-8 BOM 엑셀 호환 보고서 생성 검증', () => {
+    it('CSV 최상단 첫 바이트가 반드시 UTF-8 BOM(\\uFEFF)으로 시작해야 한다 (Excel 한글 깨짐 방지 헌장 준수)', () => {
+      const settlements: GratitudeSettlement[] = [
+        {
+          id: 'set-test-1',
+          dealId: 'deal-1',
+          dealTitle: '대형 프로젝트 파트너십',
+          dealSize: '10억원',
+          referrerPersonId: 'p-1',
+          referrerName: '이임원',
+          referrerCompany: '네이버',
+          referrerTitle: '전무',
+          rewardType: 'DINING',
+          rewardValue: '호텔 프리미엄 다이닝 2인 초대권',
+          status: 'COMPLETED',
+          plannedDate: '2026-10-10',
+          completedDate: '2026-10-11',
+          thankYouLetter: '감사합니다.',
+          notes: '성공적인 결실에 대한 감사',
+          createdAt: new Date().toISOString()
+        }
+      ];
+
+      const csv = exportSettlementsToCsv(settlements);
+      // UTF-8 BOM (\uFEFF) 확인
+      expect(csv.charCodeAt(0)).toBe(0xFEFF);
+      expect(csv.startsWith('\uFEFF')).toBe(true);
+      expect(csv).toContain('정산 ID,딜 명칭,딜 규모');
+      expect(csv).toContain('"대형 프로젝트 파트너십"');
+      expect(csv).toContain('"이임원"');
+      expect(csv).toContain('"네이버"');
+      expect(csv).toContain('완료');
+    });
+  });
 });
+

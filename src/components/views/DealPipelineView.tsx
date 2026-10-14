@@ -25,6 +25,7 @@ import {
   Search, AlertCircle
 } from 'lucide-react';
 import { ViewHeader } from '../ui';
+import { triggerHaptic } from '../../utils/hapticFeedback';
 
 interface DealPipelineViewProps {
   people: Person[];
@@ -433,6 +434,7 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
                 setDragOverStage(null);
                 setDraggingDealId(null);
                 if (dealId) {
+                  triggerHaptic('drag_drop');
                   handleStageChange(dealId, stage.id);
                 }
               }}
@@ -487,6 +489,7 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
                     key={deal.id}
                     draggable={true}
                     onDragStart={(e) => {
+                      triggerHaptic('drag_start');
                       e.dataTransfer.setData('text/plain', deal.id);
                       e.dataTransfer.effectAllowed = 'move';
                       setDraggingDealId(deal.id);

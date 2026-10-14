@@ -40,5 +40,25 @@ describe('hapticFeedback - 모바일 터치 햅틱 피드백 유틸리티', () =
     if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
       expect(vibrateMock).toHaveBeenCalledWith([30, 60, 30]);
     }
+
+    triggerHaptic('drag_start');
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      expect(vibrateMock).toHaveBeenCalledWith(12);
+    }
+
+    triggerHaptic('drag_drop');
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      expect(vibrateMock).toHaveBeenCalledWith([15, 30, 20]);
+    }
+
+    triggerHaptic('pin');
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      expect(vibrateMock).toHaveBeenCalledWith([10, 40, 15]);
+    }
+
+    triggerHaptic('selection');
+    if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+      expect(vibrateMock).toHaveBeenCalledWith(8);
+    }
   });
 });

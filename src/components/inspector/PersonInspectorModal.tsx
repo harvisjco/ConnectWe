@@ -24,6 +24,7 @@ import {
 import { BusinessLetterComposerModal } from '../modals/BusinessLetterComposerModal';
 import { MeetingPrepBriefModal } from '../modals/MeetingPrepBriefModal';
 import { maskPerson } from '../../services/privacyShieldService';
+import { triggerHaptic } from '../../utils/hapticFeedback';
 import {
   loadActionItems,
   saveActionItems,
@@ -138,6 +139,7 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
   // VIP 핀 토글
   const handleTogglePin = () => {
     if (!person) return;
+    triggerHaptic('pin');
     const updated = { ...person, isPinned: !person.isPinned };
     onUpdatePerson(updated);
   };

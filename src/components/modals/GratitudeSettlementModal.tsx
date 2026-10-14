@@ -10,13 +10,15 @@ import {
   saveSettlementsToStorage,
   matchPotentialReferrers,
   generateThankYouLetter,
-  generateMockSettlements
+  generateMockSettlements,
+  downloadSettlementsCsv
 } from '../../services/gratitudeSettlementService';
 import { 
   X, Gift, CheckCircle2, Send, 
   Copy, Plus, Briefcase, 
-  HeartHandshake, FileText, Check
+  HeartHandshake, FileText, Check, Download
 } from 'lucide-react';
+import { triggerHaptic } from '../../utils/hapticFeedback';
 
 interface GratitudeSettlementModalProps {
   people: Person[];
@@ -119,6 +121,7 @@ export const GratitudeSettlementModal: React.FC<GratitudeSettlementModalProps> =
     const next = [newSettlement, ...settlements];
     setSettlements(next);
     saveSettlementsToStorage(next);
+    triggerHaptic('success');
     setActiveTab('list');
     onShowToast(`[${currentReferrer.name}] 리더님을 위한 추천 감사 답례 일정이 성공적으로 등록되었습니다.`);
   };
@@ -137,6 +140,7 @@ export const GratitudeSettlementModal: React.FC<GratitudeSettlementModalProps> =
     });
     setSettlements(updated);
     saveSettlementsToStorage(updated);
+    triggerHaptic('medium');
     onShowToast(`감사 답례 진행 상태가 [${nextStatus === 'SENT' ? '전달 완료' : nextStatus === 'COMPLETED' ? '감사 회신 완료' : '답례 준비 중'}] 상태로 갱신되었습니다.`);
   };
 
@@ -144,8 +148,16 @@ export const GratitudeSettlementModal: React.FC<GratitudeSettlementModalProps> =
   const handleCopyLetter = (id: string, text: string) => {
     navigator.clipboard.writeText(text);
     setCopiedId(id);
+    triggerHaptic('light');
     onShowToast('정중한 C-Level 감사 서신 전문이 클립보드에 복사되었습니다.');
     setTimeout(() => setCopiedId(null), 2500);
+  };
+
+  // CSV 보고서 다운로드 (법인 세무 증빙 및 감사 보고서용 UTF-8 BOM 지원)
+  const handleDownloadCsv = () => {
+    downloadSettlementsCsv(settlements);
+    triggerHaptic('success');
+    onShowToast('법인 세무 증빙용 감사 답례 정산 보고서가 다운로드되었습니다. (Excel 완벽 호환)');
   };
 
   // 통계 계산
@@ -187,10 +199,13 @@ export const GratitudeSettlementModal: React.FC<GratitudeSettlementModalProps> =
         </div>
 
         {/* Sub Header Navigation Tabs & Action */}
-        <div className="px-6 py-3 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between shrink-0">
+        <div className="px-6 py-3 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between shrink-0 flex-wrap gap-2">
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setActiveTab('list')}
+              onClick={() => {
+                triggerHaptic('selection');
+                setActiveTab('list');
+              }}
               className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer ${
                 activeTab === 'list'
                   ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-xs'
@@ -200,7 +215,10 @@ export const GratitudeSettlementModal: React.FC<GratitudeSettlementModalProps> =
               정산 내역 목록 ({totalCount})
             </button>
             <button
-              onClick={() => setActiveTab('create')}
+              onClick={() => {
+                triggerHaptic('selection');
+                setActiveTab('create');
+              }}
               className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                 activeTab === 'create'
                   ? 'bg-emerald-600 text-white shadow-xs'
@@ -212,19 +230,32 @@ export const GratitudeSettlementModal: React.FC<GratitudeSettlementModalProps> =
             </button>
           </div>
 
-          {/* Quick Metrics */}
-          <div className="hidden sm:flex items-center gap-3 text-xs">
-            <span className="text-slate-500">
-              준비 중 <b className="text-amber-600">{plannedCount}</b>건
-            </span>
-            <span className="text-slate-300">|</span>
-            <span className="text-slate-500">
-              전달 완료 <b className="text-sky-600">{sentCount}</b>건
-            </span>
-            <span className="text-slate-300">|</span>
-            <span className="text-slate-500">
-              회신 완료 <b className="text-emerald-600">{completedCount}</b>건
-            </span>
+          <div className="flex items-center gap-3">
+            {/* Quick Metrics */}
+            <div className="hidden sm:flex items-center gap-3 text-xs">
+              <span className="text-slate-500">
+                준비 중 <b className="text-amber-600">{plannedCount}</b>건
+              </span>
+              <span className="text-slate-300">|</span>
+              <span className="text-slate-500">
+                전달 완료 <b className="text-sky-600">{sentCount}</b>건
+              </span>
+              <span className="text-slate-300">|</span>
+              <span className="text-slate-500">
+                회신 완료 <b className="text-emerald-600">{completedCount}</b>건
+              </span>
+            </div>
+
+            {/* CSV Download Button */}
+            <button
+              type="button"
+              onClick={handleDownloadCsv}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold border border-slate-200/80 dark:border-slate-700 transition-all active:scale-95 cursor-pointer shadow-2xs"
+              title="법인 세무 증빙 및 감사 보고서용 UTF-8 BOM CSV 다운로드 (Excel 완벽 호환)"
+            >
+              <Download className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <span>엑셀/CSV 보고서</span>
+            </button>
           </div>
         </div>
 
