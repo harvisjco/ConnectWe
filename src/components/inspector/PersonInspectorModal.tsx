@@ -470,7 +470,7 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
           {/* TAB 1: 핵심 프로필 & 슈퍼파워 */}
           {activeTab === 'profile' && (
             <div className="space-y-4">
-              {/* 빠른 소통 액션 & C-Level 미팅 브리핑 히어로 버튼 */}
+              {/* 빠른 소통 연락처 & 미팅 1-Page 브리프 히어로 */}
               <div className="space-y-2">
                 <div className="grid grid-cols-2 gap-2.5">
                   <a
@@ -490,7 +490,7 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
                   </a>
                 </div>
 
-                {/* C-Level 미팅 10분 전 스마트 브리핑 룸 원터치 실행 */}
+                {/* C-Level 미팅 10분 전 스마트 브리핑 룸 메인 히어로 버튼 */}
                 <button
                   type="button"
                   onClick={() => {
@@ -500,92 +500,118 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
                       onOpenDossier(person);
                     }
                   }}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-gradient-to-r from-indigo-900 to-slate-900 hover:from-indigo-800 hover:to-slate-800 text-white text-xs font-bold transition-all active:scale-[0.98] shadow-md shadow-indigo-950/20 border border-indigo-900 cursor-pointer"
+                  className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 dark:bg-indigo-600 dark:hover:bg-indigo-500 text-white text-xs font-bold transition-all active:scale-[0.98] shadow-xs cursor-pointer"
                 >
                   <Sparkles className="w-4 h-4 text-amber-400" />
-                  <span>C-Level 미팅 10분 전 스마트 브리핑 룸 열기 (1-Page Brief)</span>
+                  <span>C-Level 미팅 10분 전 스마트 브리핑 룸 (1-Page Brief)</span>
                 </button>
+              </div>
 
-                {/* 미팅 직후 빠른 회고 */}
-                {onOpenDebrief && (
-                  <button
-                    type="button"
-                    onClick={() => onOpenDebrief(person)}
-                    className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 text-xs font-semibold transition-all active:scale-[0.98] cursor-pointer"
-                  >
-                    <Clock className="w-3.5 h-3.5 text-rose-500" />
-                    <span>미팅 직후 빠른 회고 & AI 액션 아이템 추출</span>
-                  </button>
-                )}
+              {/* 경영진 파트너십 & 인텔리전스 실행 허브 (정돈된 2열 카드) */}
+              <div className="rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-slate-50/60 dark:bg-slate-900/40 p-3 space-y-2.5">
+                <div className="flex items-center justify-between px-1">
+                  <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300">
+                    비즈니스 실행 & 소통 코파일럿
+                  </span>
+                  <span className="text-[10px] text-slate-400 font-medium">원터치 지원</span>
+                </div>
 
-                {/* 2대 차세대 C-Level 킬러 액션: 음성 회고 & 최단 신뢰 소개 경로 */}
                 <div className="grid grid-cols-2 gap-2">
+                  {onOpenTeaTimeModal && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenTeaTimeModal(person)}
+                      className="flex items-center gap-2 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 hover:border-amber-400 dark:hover:border-amber-600 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:shadow-2xs transition-all active:scale-[0.98] cursor-pointer text-left group"
+                    >
+                      <Coffee className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
+                      <div className="min-w-0">
+                        <div className="truncate font-bold">티타임 일정 조율</div>
+                        <div className="text-[10px] text-slate-400 truncate">캘린더 초대 (.ics)</div>
+                      </div>
+                    </button>
+                  )}
+
+                  {onOpenGoldenCare && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenGoldenCare(person)}
+                      className="flex items-center gap-2 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 hover:border-amber-400 dark:hover:border-amber-600 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:shadow-2xs transition-all active:scale-[0.98] cursor-pointer text-left group"
+                    >
+                      <BellRing className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0 group-hover:scale-110 transition-transform" />
+                      <div className="min-w-0">
+                        <div className="truncate font-bold">골든타임 안부 케어</div>
+                        <div className="text-[10px] text-slate-400 truncate">맞춤 서신 코파일럿</div>
+                      </div>
+                    </button>
+                  )}
+
                   {onOpenVoiceDebrief && (
                     <button
                       type="button"
                       onClick={() => onOpenVoiceDebrief(person)}
-                      className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer"
+                      className="flex items-center gap-2 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 hover:border-indigo-400 dark:hover:border-indigo-600 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:shadow-2xs transition-all active:scale-[0.98] cursor-pointer text-left group"
                     >
-                      <Mic className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                      <span>30초 음성 회고</span>
+                      <Mic className="w-4 h-4 text-indigo-600 dark:text-indigo-400 shrink-0 group-hover:scale-110 transition-transform" />
+                      <div className="min-w-0">
+                        <div className="truncate font-bold">30초 음성 회고</div>
+                        <div className="text-[10px] text-slate-400 truncate">음성 AI 텍스트 전사</div>
+                      </div>
                     </button>
                   )}
+
+                  {onOpenDebrief && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenDebrief(person)}
+                      className="flex items-center gap-2 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 hover:border-rose-400 dark:hover:border-rose-600 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:shadow-2xs transition-all active:scale-[0.98] cursor-pointer text-left group"
+                    >
+                      <Clock className="w-4 h-4 text-rose-500 shrink-0 group-hover:scale-110 transition-transform" />
+                      <div className="min-w-0">
+                        <div className="truncate font-bold">미팅 후 빠른 회고</div>
+                        <div className="text-[10px] text-slate-400 truncate">AI 액션 아이템 추출</div>
+                      </div>
+                    </button>
+                  )}
+
                   {onOpenWarmIntroPath && (
                     <button
                       type="button"
                       onClick={() => onOpenWarmIntroPath(person)}
-                      className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer"
+                      className="flex items-center gap-2 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 hover:border-purple-400 dark:hover:border-purple-600 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:shadow-2xs transition-all active:scale-[0.98] cursor-pointer text-left group"
                     >
-                      <Compass className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                      <span>최단 소개 경로 탐색</span>
+                      <Compass className="w-4 h-4 text-purple-600 dark:text-purple-400 shrink-0 group-hover:scale-110 transition-transform" />
+                      <div className="min-w-0">
+                        <div className="truncate font-bold">소개 경로 탐색</div>
+                        <div className="text-[10px] text-slate-400 truncate">최단 신뢰 브릿지</div>
+                      </div>
                     </button>
                   )}
-                </div>
 
-                {/* 경영진 티타임 의제 AI 코파일럿 & 캘린더 초대 (.ICS) 원터치 실행 */}
-                {onOpenTeaTimeModal && (
-                  <button
-                    type="button"
-                    onClick={() => onOpenTeaTimeModal(person)}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-900 dark:text-amber-200 border border-amber-300/80 dark:border-amber-700/60 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer shadow-2xs"
-                  >
-                    <Coffee className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                    <span>경영진 티타임 의제 AI 코파일럿 & 캘린더 초대 (.ICS)</span>
-                  </button>
-                )}
-
-                {/* VIP 골든타임 능동형 안부 서신 코파일럿 (4대 테마) */}
-                {onOpenGoldenCare && (
-                  <button
-                    type="button"
-                    onClick={() => onOpenGoldenCare(person)}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-gradient-to-r from-amber-50 to-orange-50 hover:from-amber-100 hover:to-orange-100 text-amber-900 dark:text-amber-200 border border-amber-300/80 dark:border-amber-700/60 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer shadow-2xs"
-                  >
-                    <BellRing className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                    <span>VIP 골든타임 능동형 안부 서신 코파일럿 (4대 테마)</span>
-                  </button>
-                )}
-
-                {/* 2대 C-Level 차세대 혁신: 에어팟 오디오 브리핑 & 경조사 의전 컨시어지 */}
-                <div className="grid grid-cols-2 gap-2">
                   {onOpenAudioBriefing && (
                     <button
                       type="button"
                       onClick={() => onOpenAudioBriefing(person)}
-                      className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/40 dark:hover:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer shadow-2xs"
+                      className="flex items-center gap-2 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 hover:border-blue-400 dark:hover:border-blue-600 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:shadow-2xs transition-all active:scale-[0.98] cursor-pointer text-left group"
                     >
-                      <Headphones className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                      <span>에어팟 30초 오디오</span>
+                      <Headphones className="w-4 h-4 text-blue-600 dark:text-blue-400 shrink-0 group-hover:scale-110 transition-transform" />
+                      <div className="min-w-0">
+                        <div className="truncate font-bold">에어팟 브리핑</div>
+                        <div className="text-[10px] text-slate-400 truncate">이동 중 30초 청취</div>
+                      </div>
                     </button>
                   )}
+
                   {onOpenProtocol && (
                     <button
                       type="button"
                       onClick={() => onOpenProtocol(person)}
-                      className="flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-900 text-xs font-bold transition-all active:scale-[0.98] cursor-pointer shadow-2xs"
+                      className="flex items-center gap-2 p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 hover:border-emerald-400 dark:hover:border-emerald-600 text-slate-800 dark:text-slate-200 text-xs font-semibold hover:shadow-2xs transition-all active:scale-[0.98] cursor-pointer text-left group col-span-2"
                     >
-                      <Gift className="w-4 h-4 text-rose-600 dark:text-rose-400" />
-                      <span>C-Suite 의전 서신</span>
+                      <Gift className="w-4 h-4 text-emerald-600 dark:text-emerald-400 shrink-0 group-hover:scale-110 transition-transform" />
+                      <div className="min-w-0">
+                        <div className="truncate font-bold">C-Suite 의전 서신 & 감사 답례</div>
+                        <div className="text-[10px] text-slate-400 truncate">승진·영전 축하 및 품격 있는 경조사 예법 서신</div>
+                      </div>
                     </button>
                   )}
                 </div>

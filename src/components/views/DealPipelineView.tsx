@@ -7,7 +7,10 @@ import {
   loadDealsFromStorage, 
   saveDealsToStorage, 
   calculateDealHealthScore,
-  calculatePipelineMetrics 
+  calculatePipelineMetrics,
+  STAGE_PROBABILITIES,
+  parseDealAmount,
+  formatAmountKorean
 } from '../../services/dealPipelineService';
 import { 
   simulateGovernanceImpact,
@@ -33,13 +36,13 @@ interface DealPipelineViewProps {
   onShowToast: (msg: string) => void;
 }
 
-const STAGES: { id: DealStage; label: string; color: string }[] = [
-  { id: 'PROSPECT', label: '1. 기회 탐색', color: 'border-slate-200 dark:border-slate-700 bg-slate-100/60 dark:bg-slate-900/60' },
-  { id: 'WARM_CONTACT', label: '2. 신뢰 접점 형성', color: 'border-blue-200 dark:border-indigo-500/40 bg-blue-50/40 dark:bg-indigo-950/20' },
-  { id: 'MEETING_HELD', label: '3. 미팅 완료', color: 'border-purple-200 dark:border-purple-500/40 bg-purple-50/40 dark:bg-purple-950/20' },
-  { id: 'PROPOSAL', label: '4. 제안서 송부', color: 'border-sky-200 dark:border-sky-500/40 bg-sky-50/40 dark:bg-sky-950/20' },
-  { id: 'NEGOTIATION', label: '5. 조건 협상', color: 'border-amber-200 dark:border-amber-500/40 bg-amber-50/40 dark:bg-amber-950/20' },
-  { id: 'WON', label: '6. 수주 완료', color: 'border-emerald-200 dark:border-emerald-500/40 bg-emerald-50/40 dark:bg-emerald-950/20' },
+const STAGES: { id: DealStage; label: string; color: string; probText: string }[] = [
+  { id: 'PROSPECT', label: '1. 기회 탐색', color: 'border-slate-200 dark:border-slate-700 bg-slate-100/60 dark:bg-slate-900/60', probText: `${Math.round(STAGE_PROBABILITIES.PROSPECT * 100)}%` },
+  { id: 'WARM_CONTACT', label: '2. 신뢰 접점 형성', color: 'border-blue-200 dark:border-indigo-500/40 bg-blue-50/40 dark:bg-indigo-950/20', probText: `${Math.round(STAGE_PROBABILITIES.WARM_CONTACT * 100)}%` },
+  { id: 'MEETING_HELD', label: '3. 미팅 완료', color: 'border-purple-200 dark:border-purple-500/40 bg-purple-50/40 dark:bg-purple-950/20', probText: `${Math.round(STAGE_PROBABILITIES.MEETING_HELD * 100)}%` },
+  { id: 'PROPOSAL', label: '4. 제안서 송부', color: 'border-sky-200 dark:border-sky-500/40 bg-sky-50/40 dark:bg-sky-950/20', probText: `${Math.round(STAGE_PROBABILITIES.PROPOSAL * 100)}%` },
+  { id: 'NEGOTIATION', label: '5. 조건 협상', color: 'border-amber-200 dark:border-amber-500/40 bg-amber-50/40 dark:bg-amber-950/20', probText: `${Math.round(STAGE_PROBABILITIES.NEGOTIATION * 100)}%` },
+  { id: 'WON', label: '6. 수주 완료', color: 'border-emerald-200 dark:border-emerald-500/40 bg-emerald-50/40 dark:bg-emerald-950/20', probText: `${Math.round(STAGE_PROBABILITIES.WON * 100)}%` },
 ];
 
 export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
@@ -55,6 +58,8 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [activeDealForDetail, setActiveDealForDetail] = useState<BusinessDeal | null>(null);
   const [activeDealForAddStakeholder, setActiveDealForAddStakeholder] = useState<BusinessDeal | null>(null);
+  const [draggingDealId, setDraggingDealId] = useState<string | null>(null);
+  const [dragOverStage, setDragOverStage] = useState<DealStage | null>(null);
 
   // DART 거버넌스 시뮬레이터 상태
   const [isGovSimModalOpen, setIsGovSimModalOpen] = useState(false);
@@ -280,15 +285,15 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
 
         <div className="p-3.5 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 shadow-2xs space-y-1">
           <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-            <span className="font-medium">건전도 가중 실질 가치</span>
+            <span className="font-medium">수주 확률 가중 기대치</span>
             <TrendingUp className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
           </div>
           <div className="flex items-baseline gap-1.5">
             <span className="text-lg font-bold font-mono text-emerald-700 dark:text-emerald-400">
-              {metrics.formattedWeightedVolume}
+              {metrics.formattedStageWeightedVolume}
             </span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-semibold border border-emerald-200/60 dark:border-emerald-800">
-              성사 가중치
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 font-semibold border border-emerald-200/60 dark:border-emerald-800" title="단계별 수주 확률(10%~100%) 가중치 반영">
+              단계 가중치
             </span>
           </div>
         </div>
@@ -407,20 +412,54 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 overflow-x-auto pb-4">
         {STAGES.map(stage => {
           const stageDeals = filteredDeals.filter(d => d.stage === stage.id);
+          const stageVolume = stageDeals.reduce((sum, d) => sum + parseDealAmount(d.dealSize), 0);
+          const isOver = dragOverStage === stage.id;
 
           return (
             <div
               key={stage.id}
-              className={`rounded-2xl border p-3 flex flex-col min-h-[480px] space-y-3 ${stage.color}`}
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                if (dragOverStage !== stage.id) setDragOverStage(stage.id);
+              }}
+              onDragLeave={(e) => {
+                if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+                setDragOverStage(null);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                const dealId = e.dataTransfer.getData('text/plain') || draggingDealId;
+                setDragOverStage(null);
+                setDraggingDealId(null);
+                if (dealId) {
+                  handleStageChange(dealId, stage.id);
+                }
+              }}
+              className={`rounded-2xl border p-3 flex flex-col min-h-[480px] space-y-3 transition-all ${
+                isOver 
+                  ? 'ring-2 ring-indigo-500 border-indigo-400 bg-indigo-50/80 dark:bg-indigo-950/40 scale-[1.01] shadow-lg' 
+                  : stage.color
+              }`}
             >
               <div className="flex items-center justify-between pb-2 border-b border-slate-200 dark:border-slate-800 text-xs">
-                <span className="font-bold text-slate-800 dark:text-slate-200">{stage.label}</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-bold text-slate-800 dark:text-slate-200">{stage.label}</span>
+                  <span className="px-1.5 py-0.2 rounded text-[10px] font-semibold bg-white/80 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
+                    {stage.probText}
+                  </span>
+                </div>
                 <span className="px-2 py-0.5 rounded-full bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 text-[11px] font-mono border border-slate-200 dark:border-slate-700">
                   {stageDeals.length}
                 </span>
               </div>
+              {stageVolume > 0 && (
+                <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 font-medium px-0.5 -mt-1">
+                  소계: {formatAmountKorean(stageVolume)}
+                </div>
+              )}
 
-              {/* Deal Cards in this Stage: Compact Summary Mode */}
+              {/* Deal Cards in this Stage: Compact Summary Mode with Drag & Drop */}
               <div className="space-y-2.5 flex-1 overflow-y-auto">
                 {stageDeals.length === 0 ? (
                   dealSearch || keymanFilter !== 'all' ? (
@@ -446,8 +485,20 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
                   stageDeals.map(deal => (
                   <div
                     key={deal.id}
+                    draggable={true}
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData('text/plain', deal.id);
+                      e.dataTransfer.effectAllowed = 'move';
+                      setDraggingDealId(deal.id);
+                    }}
+                    onDragEnd={() => {
+                      setDraggingDealId(null);
+                      setDragOverStage(null);
+                    }}
                     onClick={() => setActiveDealForDetail(deal)}
-                    className="p-3 rounded-xl bg-white border border-slate-200/90 hover:border-blue-400 hover:shadow-xs transition-all space-y-2 shadow-2xs cursor-pointer group"
+                    className={`p-3 rounded-xl bg-white border border-slate-200/90 hover:border-blue-400 hover:shadow-xs transition-all space-y-2 shadow-2xs cursor-grab active:cursor-grabbing select-none group ${
+                      draggingDealId === deal.id ? 'opacity-40 scale-95 border-dashed border-indigo-400' : ''
+                    }`}
                   >
                     <div className="flex items-start justify-between gap-1">
                       <span className="text-[10px] px-2 py-0.5 rounded font-bold bg-blue-50 text-blue-700 border border-blue-200 truncate max-w-[120px]">
@@ -458,7 +509,7 @@ export const DealPipelineView: React.FC<DealPipelineViewProps> = ({
                           e.stopPropagation();
                           handleDeleteDeal(deal.id);
                         }}
-                        className="text-slate-300 hover:text-rose-500 p-0.5 transition-colors"
+                        className="text-slate-300 hover:text-rose-500 p-0.5 transition-colors cursor-pointer"
                         title="딜 삭제"
                       >
                         <Trash2 className="w-3 h-3" />

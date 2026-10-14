@@ -183,6 +183,15 @@ export function saveDealsToStorage(deals: BusinessDeal[]): void {
 
 export const loadBusinessDeals = loadDealsFromStorage;
 
+export const STAGE_PROBABILITIES: Record<DealStage, number> = {
+  PROSPECT: 0.10,
+  WARM_CONTACT: 0.25,
+  MEETING_HELD: 0.40,
+  PROPOSAL: 0.60,
+  NEGOTIATION: 0.80,
+  WON: 1.00,
+};
+
 export interface PipelineMetrics {
   totalDeals: number;
   activeDeals: number;
@@ -191,6 +200,8 @@ export interface PipelineMetrics {
   formattedTotalVolume: string;
   weightedPipelineVolume: number;
   formattedWeightedVolume: string;
+  stageWeightedVolume: number;
+  formattedStageWeightedVolume: string;
   avgHealthScore: number;
   keymanCoverage: number;
 }
@@ -256,6 +267,8 @@ export function calculatePipelineMetrics(deals: BusinessDeal[]): PipelineMetrics
       formattedTotalVolume: '0원',
       weightedPipelineVolume: 0,
       formattedWeightedVolume: '0원',
+      stageWeightedVolume: 0,
+      formattedStageWeightedVolume: '0원',
       avgHealthScore: 0,
       keymanCoverage: 0
     };
@@ -267,6 +280,7 @@ export function calculatePipelineMetrics(deals: BusinessDeal[]): PipelineMetrics
 
   let totalPipelineVolume = 0;
   let weightedPipelineVolume = 0;
+  let stageWeightedVolume = 0;
   let healthSum = 0;
   let dealsWithKeyman = 0;
 
@@ -274,6 +288,7 @@ export function calculatePipelineMetrics(deals: BusinessDeal[]): PipelineMetrics
     const amount = parseDealAmount(deal.dealSize);
     totalPipelineVolume += amount;
     weightedPipelineVolume += amount * (deal.healthScore / 100);
+    stageWeightedVolume += amount * (STAGE_PROBABILITIES[deal.stage] || 0.1);
     healthSum += deal.healthScore;
 
     const hasKeyman = deal.stakeholders.some(
@@ -295,6 +310,8 @@ export function calculatePipelineMetrics(deals: BusinessDeal[]): PipelineMetrics
     formattedTotalVolume: formatAmountKorean(totalPipelineVolume),
     weightedPipelineVolume: Math.round(weightedPipelineVolume),
     formattedWeightedVolume: formatAmountKorean(Math.round(weightedPipelineVolume)),
+    stageWeightedVolume: Math.round(stageWeightedVolume),
+    formattedStageWeightedVolume: formatAmountKorean(Math.round(stageWeightedVolume)),
     avgHealthScore,
     keymanCoverage
   };

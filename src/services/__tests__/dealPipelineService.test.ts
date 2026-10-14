@@ -125,6 +125,9 @@ describe('dealPipelineService - calculateDealHealthScore', () => {
     // 10억 * 0.8 + 5억 * 0.5 = 8억 + 2.5억 = 10.5억
     expect(metrics.weightedPipelineVolume).toBe(1050000000);
     expect(metrics.formattedWeightedVolume).toBe('10.5억원');
+    // stageWeightedVolume: 10억 * 0.6 (PROPOSAL) + 5억 * 1.0 (WON) = 6억 + 5억 = 11억
+    expect(metrics.stageWeightedVolume).toBe(1100000000);
+    expect(metrics.formattedStageWeightedVolume).toBe('11억원');
     expect(metrics.avgHealthScore).toBe(65);
     expect(metrics.keymanCoverage).toBe(50);
   });

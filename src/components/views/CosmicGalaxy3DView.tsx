@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import * as THREE from 'three';
 import { Person } from '../../types/network';
 import { Sparkles, Info } from 'lucide-react';
+import { disposeThreeScene } from '../../utils/threeDisposer';
 
 interface CosmicGalaxy3DViewProps {
   people: Person[];
@@ -241,7 +242,7 @@ export const CosmicGalaxy3DView: React.FC<CosmicGalaxy3DViewProps> = ({
       if (renderer.domElement.parentNode === container) {
         container.removeChild(renderer.domElement);
       }
-      renderer.dispose();
+      disposeThreeScene(scene, renderer);
     };
   }, [people, onSelectPerson]);
 
