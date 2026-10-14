@@ -235,4 +235,18 @@ input::placeholder {
     size: A4 portrait;
     margin: 12mm 15mm 12mm 15mm;
   }
+
+  .no-print,
+  .print-hidden {
+    display: none !important;
+  }
 }
+
+/* Presentation Privacy Blur Mode Utility */
+.sensitive-pii-blur,
+.presentation-mode .sensitive-pii {
+  filter: blur(4px) !important;
+  user-select: none !important;
+  transition: filter 0.2s ease;
+}
+

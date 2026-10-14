@@ -127,11 +127,11 @@ export const VirtualPersonGrid: React.FC<VirtualPersonGridProps> = ({
                 )}
                 <div className="flex items-center gap-1.5">
                   <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span>{person.mobile || '연락처 미등록'}</span>
+                  <span className="sensitive-pii">{person.mobile || '연락처 미등록'}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Mail className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span className="truncate">{person.email || '이메일 미등록'}</span>
+                  <span className="truncate sensitive-pii">{person.email || '이메일 미등록'}</span>
                 </div>
               </div>
             </div>

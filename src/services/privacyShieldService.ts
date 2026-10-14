@@ -84,3 +84,19 @@ export function generateDynamicWatermark(userName?: string): string {
   return `CONFIDENTIAL · ${user} · ${now} · CAPTURE PROHIBITED`;
 }
 
+/**
+ * 화면 발표 및 캡처 시 민감 PII(전화번호, 이메일, 메모) 전용 CSS 블러 클래스 반환
+ */
+export function getPresentationBlurClass(isPresentationMode: boolean): string {
+  return isPresentationMode ? 'blur-[4px] select-none transition-all' : '';
+}
+
+/**
+ * 프레젠테이션/화면공유 모드에서 실명은 유지하되 연락처만 안전하게 마스킹하는 전용 함수
+ */
+export function maskContactForPresentation(contact: string, isPresentationMode: boolean): string {
+  if (!isPresentationMode || !contact) return contact;
+  return '••••••••';
+}
+
+

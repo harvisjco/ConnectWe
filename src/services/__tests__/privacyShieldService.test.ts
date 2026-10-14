@@ -6,7 +6,9 @@ import {
   maskCompany, 
   maskMemo, 
   maskPerson,
-  generateDynamicWatermark
+  generateDynamicWatermark,
+  getPresentationBlurClass,
+  maskContactForPresentation
 } from '../privacyShieldService';
 import { Person } from '../../types/network';
 
@@ -126,6 +128,19 @@ describe('privacyShieldService - VIP 프라이버시 쉴드 모드 검증', () =
       expect(watermark).toContain('CONFIDENTIAL');
       expect(watermark).toContain('김대표');
       expect(watermark).toContain('CAPTURE PROHIBITED');
+    });
+  });
+
+  describe('Presentation Mode 블러 & 마스킹 유틸리티', () => {
+    it('isPresentationMode가 true일 때 블러 클래스를 반환하고 false일 때는 빈 문자열을 반환해야 한다', () => {
+      expect(getPresentationBlurClass(true)).toContain('blur-[4px]');
+      expect(getPresentationBlurClass(false)).toBe('');
+    });
+
+    it('maskContactForPresentation은 발표 모드 활성화 시 전화번호를 불릿 기호로 마스킹해야 한다', () => {
+      expect(maskContactForPresentation('010-1234-5678', true)).toBe('••••••••');
+      expect(maskContactForPresentation('010-1234-5678', false)).toBe('010-1234-5678');
+      expect(maskContactForPresentation('', true)).toBe('');
     });
   });
 });

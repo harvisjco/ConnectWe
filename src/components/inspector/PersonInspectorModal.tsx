@@ -25,6 +25,7 @@ import { BusinessLetterComposerModal } from '../modals/BusinessLetterComposerMod
 import { MeetingPrepBriefModal } from '../modals/MeetingPrepBriefModal';
 import { maskPerson } from '../../services/privacyShieldService';
 import { triggerHaptic } from '../../utils/hapticFeedback';
+import { copyMeetingFollowUpToClipboard } from '../../services/meetingFollowUpService';
 import {
   loadActionItems,
   saveActionItems,
@@ -107,6 +108,18 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
   // 미팅 Action Item 상태
   const [actionItems, setActionItems] = useState<MeetingActionItem[]>([]);
   const [newActionItemText, setNewActionItemText] = useState('');
+
+  // 미팅 직후 감사 서신 복사 상태
+  const [copiedFollowUp, setCopiedFollowUp] = useState<boolean>(false);
+
+  const handleCopyFollowUpMessage = async () => {
+    if (!person) return;
+    const ok = await copyMeetingFollowUpToClipboard(person, { tone: 'FORMAL' });
+    if (ok) {
+      setCopiedFollowUp(true);
+      setTimeout(() => setCopiedFollowUp(false), 2000);
+    }
+  };
 
   // ESC 키 닫기 핸들러
   useEffect(() => {
@@ -370,7 +383,7 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
           </div>
 
           {/* Quick Header Tool Buttons */}
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-1 shrink-0 no-print">
             {/* VIP 핀 고정 토글 */}
             <button
               type="button"
@@ -385,11 +398,35 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
               <Pin className={`w-4 h-4 ${person.isPinned ? 'fill-amber-500' : ''}`} />
             </button>
 
-            {/* 미팅 준비 1-Page 브리프 (A4 인쇄/복사용) */}
+            {/* 미팅 직후 원터치 감사 서신 1초 복사 */}
             <button
               type="button"
-              onClick={() => setIsBriefModalOpen(true)}
-              title="미팅 준비 1-Page 브리프 (A4 요약/출력)"
+              onClick={handleCopyFollowUpMessage}
+              title="미팅 직후 카카오톡/문자 감사 서신 1초 복사"
+              className={`p-2 rounded-xl transition-all cursor-pointer flex items-center gap-1 ${
+                copiedFollowUp
+                  ? 'text-emerald-700 bg-emerald-50 dark:bg-emerald-950 border border-emerald-200'
+                  : 'text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-950/50'
+              }`}
+            >
+              {copiedFollowUp ? (
+                <>
+                  <Check className="w-4 h-4 text-emerald-600" />
+                  <span className="text-[10px] font-bold text-emerald-700 hidden sm:inline">서신 복사됨</span>
+                </>
+              ) : (
+                <MessageSquare className="w-4 h-4" />
+              )}
+            </button>
+
+            {/* A4 규격 1-Page 브리프 인쇄 */}
+            <button
+              type="button"
+              onClick={() => {
+                triggerHaptic('selection');
+                window.print();
+              }}
+              title="A4 규격 1-Page 브리프 인쇄 (Print)"
               className="p-2 rounded-xl text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-950/50 transition-colors cursor-pointer"
             >
               <Printer className="w-4 h-4" />
@@ -480,7 +517,7 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
                     className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200/80 dark:border-slate-700 active:scale-[0.98] transition-all"
                   >
                     <Phone className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                    <span>전화 ({person.mobile || '미등록'})</span>
+                    <span className="sensitive-pii">전화 ({person.mobile || '미등록'})</span>
                   </a>
 
                   <a
@@ -488,7 +525,7 @@ export const PersonInspectorModal: React.FC<PersonInspectorModalProps> = ({
                     className="flex items-center justify-center gap-2 py-2 px-3 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 text-xs font-semibold border border-slate-200/80 dark:border-slate-700 active:scale-[0.98] transition-all"
                   >
                     <Mail className="w-3.5 h-3.5 text-slate-600 dark:text-slate-400" />
-                    <span>이메일 전송</span>
+                    <span className="sensitive-pii">이메일 ({person.email || '미등록'})</span>
                   </a>
                 </div>
 
